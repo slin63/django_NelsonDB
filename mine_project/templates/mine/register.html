@@ -1,0 +1,39 @@
+{% extends 'mine/base.html' %}
+{% block title %}Register{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+    <h1>Register with Nelson Lab</h1>
+    <br />
+    <div class="container-fluid">
+        {% if registered %}
+        <p>Thank you for registering.</p>
+
+        <p><a href="/mine/login/">Login</a></p>
+        {% else %}
+        <form class="form-signin span12" id="user_form" method="post" action="/mine/register/"
+              enctype="multipart/form-data">
+            {% csrf_token %}
+            <h2 class="form-signin-heading">Sign up Here</h2><br/>
+            {% for field in user_form.visible_fields %}
+				<div class="row">
+					<div class="span4 offset1"><font color="247eca">{{ field.help_text }}</font></div>
+					<div class="span3">{{ field }}</div>
+					<div class="span4"><font color="red">{{ field.errors }}</font></div>
+				</div>
+            {% endfor %}
+
+            {% for field in profile_form.visible_fields %}
+				<div class="row">
+					<div class="span4 offset1"><font color="247eca">{{ field.help_text }}</font></div>
+					<div class="span3">{{ field }}</div>
+					<div class="span4"><font color="red">{{ field.errors }}</font></div>
+				</div>
+            {% endfor %}
+
+            <br />
+            <input class="btn btn-primary" type="submit" name="submit" value="Register"/>
+        </form>
+        {% endif %}
+	</div>
+</div>
+{% endblock %}

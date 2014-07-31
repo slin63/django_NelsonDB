@@ -1,0 +1,22 @@
+{% extends 'mine/base.html' %}
+{% block title %}Seed Inventory{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+	<h1>Seed Inventory</h1><br/>
+	<br />
+    <div class="container-fluid">
+		<p>Seeds of genotype 
+			<select name="passportdropdown">
+				<option value="blank">Genotype</option>
+				{% for data in passport_data %}
+					<option value="{{data.genotype}}">{{data.genotype}}</option>
+				{% endfor %}
+			</select>
+			<select name="sourcedropdown">
+			
+			</select>
+	</div>
+
+	
+</div>
+{% endblock %}

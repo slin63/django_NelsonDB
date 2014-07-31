@@ -1,0 +1,20 @@
+
+{% extends 'mine/base.html' %}
+{% block title %}Experiment {{ experiment_name }}{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+	<h1>{{ experiment_name }}</h1><br/>
+	
+	{% if experiment %}
+		<ul>
+			<li><font color="247eca">Date Experiment Started: </font>{{ experiment.experiment_date }}</li>
+			<li><font color="247eca">Originator: </font><a href='/mine/profile/{{ user.username }}/'>{{user.first_name}} {{user.last_name}}</a></li>
+			<li><font color="247eca">Experiment Purpose: </font>{{experiment.experiment_purpose}}</li>
+			<li><font color="247eca">Comments: </font>{{experiment.experiment_comments}}</li>
+		</ul>
+	{% else %}
+		The specified experiment <font color="247eca">{{ experiment_name }}</font> does not exist!
+	{% endif %}
+	
+</div>
+{% endblock %}

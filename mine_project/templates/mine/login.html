@@ -1,0 +1,32 @@
+{% extends 'mine/base.html' %}
+{% block title %}Login{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+    <h1>Login to  Nelson Lab</h1><br/>
+
+    <div class="container-fluid">
+    <form class="form-signin span9" id="login_form" method="post" action="/mine/login/">
+        <h2 class="form-signin-heading">Please sign in</h2><br/>
+        {% csrf_token %}
+
+        {% if bad_details %}
+        <p><strong><font color="red">Your username and/or password were incorrect!</font></strong></p>
+        {% elif disabled_account %}
+        <p><strong><font color="red">Your Rango account is currently disabled; we can't log you in!</font></strong></p>
+        {% endif %}
+		<div class="row">
+			<div class="span3 offset1"><font color="247eca">Username:</div>
+			<div class="span5"><input type="text" class="input-block-level" placeholder="Username" name="username" value=""/></div>
+        </div>
+		<div class="row">
+			<div class="span3 offset1"><font color="247eca">Password:</div>
+			<div class="span5"><input type="password" class="input-block-level" placeholder="Password" name="password" value=""/></div>
+        </div>
+		<br/>
+        <button class="btn btn-primary" type="submit">Sign in</button>
+    </form>
+
+    </div>
+    <!-- /container -->
+</div>
+{% endblock %}

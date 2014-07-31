@@ -1,0 +1,34 @@
+{% extends "mine/base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body_block %}
+<div class="hero-unit">
+    <h1> Profile <h1> <br/>
+    <h2>{{ user.username }}</h2>
+	<p>{{ user.first_name }} {{ user.last_name }}
+    <p>Email: {{ user.email }}</p>
+
+    {% if userprofile %}
+		{% if userprofile.phone %}
+			<p>Phone: {{ userprofile.phone }}</p>
+		{% endif %}
+		{% if userprofile.job_title %}
+			<p>Title: {{ userprofile.job_title }}</p>
+		{% endif %}
+		{% if userprofile.organization %}
+			<p>Organization: {{ userprofile.organization }}</p>
+		{% endif %}
+		{% if userprofile.notes %}
+			<p>Notes: {{ userprofile.notes }}</p>
+		{% endif %}
+		{% if userprofile.website %}
+			<p>Website: <a href="{{ userprofile.website }}">{{ userprofile.website }}</a></p>
+		{% endif %}
+        <br/>
+        {% if userprofile.picture %}
+            <img src="{{ userprofile.picture.url }}"  />
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
