@@ -24,3 +24,31 @@ $('#expsuggestion').keyup(function(){
 			$('#exps').html(data);
         });
 });
+
+$('#pedigreesuggestion').keyup(function(){
+				var query;
+				query = $(this).val();
+				$.get('/mine/suggest_pedigree/', {suggestion: query}, function(data){
+			$('#passports').html(data);
+				});
+});
+
+$('#localitysuggestion').keyup(function(){
+				var query;
+				query = $(this).val();
+				$.get('/mine/suggest_locality/', {suggestion: query}, function(data){
+			$('#localitys').html(data);
+				});
+});
+
+$('#fieldsuggestion').keyup(function(){
+				var query;
+				query = $(this).val();
+				$.get('/mine/suggest_field/', {suggestion: query}, function(data){
+			$('#fields').html(data);
+				});
+});
+
+$(document).ready(function() {
+		$('#selected_stocks').dataTable();
+} );

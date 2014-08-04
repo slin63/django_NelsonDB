@@ -1,0 +1,25 @@
+{% if selected_stocks %}
+<hr>
+    <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Stock Tagname</th>
+        <th>Date</th>
+        <th>Cross Type</th>
+        <th>Ear Number</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for stock in selected_stocks %}
+      <tr>
+        <td>{{ stock.id }}</td>
+        <td>{{ stock.source_tagname }}</td>
+        <td>{{ stock.stock_date }}</td>
+        <td>{{ stock.cross_type }}</td>
+        <td>{{ stock.ear_num }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% endif %}

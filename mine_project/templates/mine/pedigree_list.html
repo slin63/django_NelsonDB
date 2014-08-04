@@ -1,0 +1,26 @@
+{% if pedigree_list %}
+<table id="selected_pedigree" class="table table-striped table-bordered" cellspacing="0" width="100%">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>CollectingID</th>
+    <th>SourceID</th>
+    <th>TaxonomyID</th>
+    <th>Pedigree</th>
+    <th>Comments</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for pedigree in pedigree_list %}
+  <tr>
+    <td><a href="/mine/seed_inventory/stock/{{ pedigree.url }}">{{ pedigree.id }}</a></td>
+    <td>{{ pedigree.accession_collecting }}</td>
+    <td>{{ pedigree.source }}</td>
+    <td>{{ pedigree.taxonomy }}</td>
+    <td>{{ pedigree.pedigree }}</td>
+    <td>{{ pedigree.passport_comments }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}

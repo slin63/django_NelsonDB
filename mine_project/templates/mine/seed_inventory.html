@@ -1,22 +1,97 @@
 {% extends 'mine/base.html' %}
+{% load static %}
 {% block title %}Seed Inventory{% endblock %}
 {% block body_block %}
 <div class="hero-unit">
 	<h1>Seed Inventory</h1><br/>
+</div>
 	<br />
-    <div class="container-fluid">
-		<p>Seeds of genotype 
-			<select name="passportdropdown">
-				<option value="blank">Genotype</option>
-				{% for data in passport_data %}
-					<option value="{{data.genotype}}">{{data.genotype}}</option>
-				{% endfor %}
-			</select>
-			<select name="sourcedropdown">
-			
-			</select>
+	<div class="container-fluid">
+		<div class="row-fluid">
+			<div class="span3">
+				<ul class="nav nav-list">
+					<li class="nav-header">Pick a Locality</li>
+					<form>
+					<label></label>
+					<li><input  class="search-query" type="text" name="localitysuggestion" value="{{ selected_locality_name }}" id="localitysuggestion" /></li>
+					</form>
+				</ul>
+			</div>
+			<div id="localitys">
+				{% include 'mine/locality_list.html' with locality_list=locality_list %}
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span3">
+				<ul class="nav nav-list">
+					<li class="nav-header">Choose a Field</li>
+					<form>
+					<label></label>
+					<li><input  class="search-query" type="text" name="fieldsuggestion" value="{{ selected_field_name }}" id="fieldsuggestion" /></li>
+					</form>
+				</ul>
+			</div>
+			<div id="fields">
+				{% include 'mine/field_list.html' with field_list=field_list %}
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span3">
+				<ul class="nav nav-list">
+					<li class="nav-header">Collection Details</li>
+					<form>
+					<label></label>
+					<li><input  class="search-query" type="text" name="collectionsuggestion" value="" id="collectionsuggestion" /></li>
+					</form>
+				</ul>
+				<div id="collections">
+
+				</div>
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span3">
+				<ul class="nav nav-list">
+					<li class="nav-header">Was it sourced?</li>
+					<form>
+					<label></label>
+					<li><input  class="search-query" type="text" name="sourcesuggestion" value="" id="sourcesuggestion" /></li>
+					</form>
+				</ul>
+				<div id="sources">
+
+				</div>
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span3">
+				<ul class="nav nav-list">
+					<li class="nav-header">Select taxonomy</li>
+					<form>
+					<label></label>
+					<li><input  class="search-query" type="text" name="taxonomysuggestion" value="" id="taxonomysuggestion" /></li>
+					</form>
+				</ul>
+				<div id="taxonomy">
+
+				</div>
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span3">
+				<ul class="nav nav-list">
+					<li class="nav-header">Find a Pedigree</li>
+					<form>
+					<label></label>
+					<li><input  class="search-query" type="text" name="pedigreesuggestion" value="" id="pedigreesuggestion" /></li>
+					</form>
+				</ul>
+				<div id="passports">
+					{% include 'mine/pedigree_list.html' with pedigree_list=pedigree_list %}
+				</div>
+			</div>
+		</div>
 	</div>
 
-	
-</div>
+{% include 'mine/stock_table.html' %}
 {% endblock %}
