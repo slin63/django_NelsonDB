@@ -49,6 +49,14 @@ $('#fieldsuggestion').keyup(function(){
 				});
 });
 
+$('#collectionsuggestion').keyup(function(){
+				var query;
+				query = $(this).val();
+				$.get('/mine/suggest_collection/', {suggestion: query}, function(data){
+			$('#collections').html(data);
+				});
+});
+
 $(document).ready(function() {
 		$('#selected_stocks').dataTable();
 } );

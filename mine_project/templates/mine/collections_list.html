@@ -1,0 +1,28 @@
+{% if collections_list %}
+<table id="selected_collection" class="table table-striped table-bordered" cellspacing="0" width="100%">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>FieldID</th>
+    <th>Collector</th>
+    <th>Collection Date</th>
+    <th>Collection Number</th>
+    <th>Method</th>
+    <th>Comments</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for collection in collections_list %}
+  <tr>
+    <td><a href="/mine/seed_inventory/collection/{{ collection.url }}">{{ collection.id }}</td>
+    <td>{{ collection.field }}</td>
+    <td>{{ collection.user }}</td>
+    <td>{{ collection.collection_date }}</td>
+    <td>{{ collection.collection_number }}</td>
+    <td>{{ collection.collection_method}}</td>
+    <td>{{ collection.collection_comments}}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
