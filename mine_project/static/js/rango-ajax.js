@@ -52,8 +52,24 @@ $('#fieldsuggestion').keyup(function(){
 $('#collectionsuggestion').keyup(function(){
 				var query;
 				query = $(this).val();
-				$.get('/mine/suggest_collection/', {suggestion: query}, function(data){
+				$.get('/mine/suggest_collecting/', {suggestion: query}, function(data){
 			$('#collections').html(data);
+				});
+});
+
+$('#sourcesuggestion').keyup(function(){
+				var query;
+				query = $(this).val();
+				$.get('/mine/suggest_source/', {suggestion: query}, function(data){
+			$('#sources').html(data);
+				});
+});
+
+$('#taxonomysuggestion').keyup(function(){
+				var query;
+				query = $(this).val();
+				$.get('/mine/suggest_taxonomy/', {suggestion: query}, function(data){
+			$('#taxonomy').html(data);
 				});
 });
 
