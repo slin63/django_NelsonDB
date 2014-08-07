@@ -15,8 +15,8 @@
   {% for collecting in collecting_list %}
   <tr>
     <td><a href="/mine/seed_inventory/collection/{{ collecting.url }}">{{ collecting.id }}</td>
-    <td>{{ collecting.field }}</td>
-    <td>{{ collecting.user }}</td>
+    <td>{{ collecting.field.id }}</td>
+    <td><a href='/mine/profile/{{ collecting.user }}/'>{{ collecting.user }}</a></td>
     <td>{{ collecting.collection_date }}</td>
     <td>{{ collecting.collection_number }}</td>
     <td>{{ collecting.collection_method}}</td>
@@ -25,4 +25,6 @@
   {% endfor %}
   </tbody>
 </table>
+<br/><br/><hr>
+
 {% endif %}

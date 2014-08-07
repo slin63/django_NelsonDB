@@ -16,7 +16,7 @@
   {% for field in field_list %}
   <tr>
     <td><a href="/mine/seed_inventory/field/{{ field.url }}">{{ field.id }}</td>
-    <td>{{ field.locality }}</td>
+    <td>{{ field.locality.id }}</td>
     <td>{{ field.field_name }}</td>
     <td>{{ field.field_number }}</td>
     <td>{{ field.latitude }}</td>
@@ -27,4 +27,6 @@
   {% endfor %}
   </tbody>
 </table>
+<br/><br/><hr>
+
 {% endif %}

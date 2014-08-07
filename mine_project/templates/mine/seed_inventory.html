@@ -57,11 +57,11 @@
 					<li class="nav-header">Collection Details</li>
 					<form>
 					<label></label>
-					<li><input  class="search-query" type="text" name="collectionsuggestion" value="{{ selected_collecting_name }}" id="collectionsuggestion" /></li>
+					<li><input  class="search-query" type="text" name="collectionsuggestion" value="{{ selected_collecting_id }}" id="collectionsuggestion" /></li>
 					</form>
 				</ul>
 			</div>
-			{% if selected_collecting_name %}
+			{% if selected_collecting_id %}
 			<div class="span3">
 				<form id="clear_collection" method="post" action="/mine/seed_inventory/clear/selected_collecting/">
 					{% csrf_token %}

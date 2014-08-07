@@ -1,5 +1,6 @@
 {% if selected_stocks %}
 <hr>
+<h2>Stocks in Inventory</h2><br/>
     <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
       <thead>
       <tr>
@@ -13,7 +14,7 @@
       <tbody>
       {% for stock in selected_stocks %}
       <tr>
-        <td><a href="/mine/seed_inventory/stock_packet/{{ stock.url }}">{{ stock.id }}</a></td>
+        <td><a href="/mine/seed_inventory/stock/{{ stock.id }}">{{ stock.id }}</a></td>
         <td>{{ stock.source_tagname }}</td>
         <td>{{ stock.stock_date }}</td>
         <td>{{ stock.cross_type }}</td>

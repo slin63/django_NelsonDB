@@ -30,6 +30,10 @@ $('#pedigreesuggestion').keyup(function(){
 				query = $(this).val();
 				$.get('/mine/suggest_pedigree/', {suggestion: query}, function(data){
 			$('#passports').html(data);
+			$('#selected_pedigree').dataTable({"searching": false,
+				"scrollY": "300px",
+  			"scrollCollapse": true,
+  			"paginate": false });
 				});
 });
 
@@ -38,6 +42,10 @@ $('#localitysuggestion').keyup(function(){
 				query = $(this).val();
 				$.get('/mine/suggest_locality/', {suggestion: query}, function(data){
 			$('#localitys').html(data);
+			$('#selected_locality').dataTable({"searching": false,
+				"scrollY": "300px",
+				"scrollCollapse": true,
+				"paginate": false });
 				});
 });
 
@@ -46,6 +54,10 @@ $('#fieldsuggestion').keyup(function(){
 				query = $(this).val();
 				$.get('/mine/suggest_field/', {suggestion: query}, function(data){
 			$('#fields').html(data);
+			$('#selected_field').dataTable({"searching": false,
+				"scrollY": "300px",
+				"scrollCollapse": true,
+				"paginate": false });
 				});
 });
 
@@ -54,6 +66,10 @@ $('#collectionsuggestion').keyup(function(){
 				query = $(this).val();
 				$.get('/mine/suggest_collecting/', {suggestion: query}, function(data){
 			$('#collections').html(data);
+			$('#selected_collection').dataTable({"searching": false,
+				"scrollY": "300px",
+				"scrollCollapse": true,
+				"paginate": false });
 				});
 });
 
@@ -62,6 +78,10 @@ $('#sourcesuggestion').keyup(function(){
 				query = $(this).val();
 				$.get('/mine/suggest_source/', {suggestion: query}, function(data){
 			$('#sources').html(data);
+			$('#selected_source').dataTable({"searching": false,
+				"scrollY": "300px",
+				"scrollCollapse": true,
+				"paginate": false });
 				});
 });
 
@@ -70,6 +90,10 @@ $('#taxonomysuggestion').keyup(function(){
 				query = $(this).val();
 				$.get('/mine/suggest_taxonomy/', {suggestion: query}, function(data){
 			$('#taxonomy').html(data);
+			$('#selected_taxonomy').dataTable({"searching": false,
+				"scrollY": "300px",
+				"scrollCollapse": true,
+				"paginate": false });
 				});
 });
 

@@ -14,8 +14,8 @@
   {% for pedigree in pedigree_list %}
   <tr>
     <td><a href="/mine/seed_inventory/passport/{{ pedigree.url }}">{{ pedigree.id }}</a></td>
-    <td>{{ pedigree.accession_collecting }}</td>
-    <td>{{ pedigree.source }}</td>
+    <td>{{ pedigree.accession_collecting.id }}</td>
+    <td>{{ pedigree.source.id }}</td>
     <td>{{ pedigree.taxonomy }}</td>
     <td>{{ pedigree.pedigree }}</td>
     <td>{{ pedigree.passport_comments }}</td>
@@ -23,4 +23,6 @@
   {% endfor %}
   </tbody>
 </table>
+<br/><br/>
+
 {% endif %}

@@ -24,10 +24,10 @@
 
 				   <div class="nav-collapse collapse">
 					   <ul class="nav pull-right">
-						   {% if user.is_authenticated %}
-							<li class="navbar-text">Welcome {{user.username}}!</li>
+						   {% if logged_in_user %}
+							<li class="navbar-text">Welcome {{logged_in_user}}!</li>
 							<li><a href="/mine/logout/">Logout</a></li>
-							<li><a href="/mine/profile">Profile</a></li>
+							<li><a href="/mine/profile/{{logged_in_user}}/">Profile</a></li>
 						   {% else %}
 							<li><a href="/mine/register/">Register</a></li>
 							<li><a href="/mine/login/">Login</a></li>
