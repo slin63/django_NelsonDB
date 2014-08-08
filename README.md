@@ -22,7 +22,7 @@ INSTALLED_APPS = (
 	'registration',
 )
 
-3. In the command line, cd to the project directory and enter python manage.py syncdb
+3. In the command line, cd to the project directory and enter "python manage.py syncdb"
 4. To populate the database, edit populate_experiment.py to reflect the location of person.csv, experiment.csv, and seed.csv on your computer. Enter in the command line "python populate_experiment.py" to populate the experiment and people tables, as well as to populate the seed inventory with what is available. 
 5. Type "python manage.py runserver" 
 
