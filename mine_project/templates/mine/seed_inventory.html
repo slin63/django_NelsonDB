@@ -120,7 +120,7 @@
 		<div class="row-fluid">
 			<div class="span3">
 				<ul class="nav nav-list">
-					<li class="nav-header">Find a Pedigree</li>
+					<li class="nav-header">Find a Genotype</li>
 					<form>
 					<label></label>
 					<li><input  class="search-query" type="text" name="pedigreesuggestion" value="{{ selected_passport_name }}" id="pedigreesuggestion" /></li>
@@ -131,7 +131,7 @@
 			<div class="span3">
 				<form id="clear_passport" method="post" action="/mine/seed_inventory/clear/selected_passport/">
 					{% csrf_token %}
-				<button class="btn btn-primary" type="submit">Clear Passport</button>
+				<button class="btn btn-primary" type="submit">Clear Genotype</button>
 				</form>
 			</div>
 			{% endif %}
