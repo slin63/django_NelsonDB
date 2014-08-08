@@ -1,4 +1,3 @@
-"""asd"""
 
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
@@ -45,18 +44,9 @@ def get_experiment_list(max_results=0, starts_with=''):
 
 def index(request):
 	context = RequestContext(request)
-	category_list = Category.objects.order_by('-likes')[:5]
-	for category in category_list:
-		category.url = encode_url(category.name)
-
-	context_dict = {'categories': category_list}
-	context_dict['category_list'] = category_list
-
+	context_dict = {}
 	exp_list = get_experiment_list()
 	context_dict['exp_list'] = exp_list
-	page_list = Page.objects.order_by('-views')[:5]
-	context_dict['page_list'] = page_list
-
 	if request.session.get('last_visit'):
 		last_visit = request.session.get('last_visit')
 		visits = request.session.get('visits', 0)
@@ -508,12 +498,8 @@ def seed_inventory_sort(request):
 						selected_stocks = Stock.objects.all()
 	return selected_stocks
 
-def seed_inventory(request):
-	context = RequestContext(request)
+def session_variable_check(request):
 	context_dict = {}
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
-	selected_stocks=seed_inventory_sort(request)
 	if request.session.get('selected_passport_id', None):
 		context_dict['selected_passport_name'] = request.session.get('selected_passport_name')
 	if request.session.get('selected_taxonomy_id', None):
@@ -526,183 +512,115 @@ def seed_inventory(request):
 		context_dict['selected_field_id'] = request.session.get('selected_field_id')
 	if request.session.get('selected_locality_id', None):
 		context_dict['selected_locality_name'] = request.session.get('selected_locality_name')
+	return context_dict
+
+def seed_inventory(request):
+	context = RequestContext(request)
+	context_dict = {}
+	selected_stocks = seed_inventory_sort(request)
+	context_dict = session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
+	exp_list = get_experiment_list()
+	context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/seed_inventory.html', context_dict, context)
 
 def seed_inventory_select_locality(request,locality_id):
 	context = RequestContext(request)
 	context_dict = {}
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	selected_locality = Locality.objects.get(id=locality_id)
 	request.session['selected_locality_name'] = selected_locality.locality_name
 	request.session['selected_locality_id'] = selected_locality.id
-	selected_stocks=seed_inventory_sort(request)
-	if request.session.get('selected_passport_id', None):
-		context_dict['selected_passport_name'] = request.session.get('selected_passport_name')
-	if request.session.get('selected_taxonomy_id', None):
-		context_dict['selected_taxonomy_name'] = request.session.get('selected_taxonomy_name')
-	if request.session.get('selected_source_id', None):
-		context_dict['selected_source_name'] = request.session.get('selected_source_name')
-	if request.session.get('selected_collecting_id', None):
-		context_dict['selected_collecting_id'] = request.session.get('selected_collecting_id')
-	if request.session.get('selected_field_id', None):
-		context_dict['selected_field_id'] = request.session.get('selected_field_id')
-	if request.session.get('selected_locality_id', None):
-		context_dict['selected_locality_name'] = request.session.get('selected_locality_name')
+	selected_stocks = seed_inventory_sort(request)
+	context_dict = session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
+	exp_list = get_experiment_list()
+	context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/seed_inventory.html', context_dict, context)
 
 def seed_inventory_select_field(request,field_id):
 	context = RequestContext(request)
 	context_dict = {}
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	selected_field = Field.objects.get(id=field_id)
 	request.session['selected_field_name'] = selected_field.field_name
 	request.session['selected_field_id'] = selected_field.id
-	selected_stocks=seed_inventory_sort(request)
-	if request.session.get('selected_passport_id', None):
-		context_dict['selected_passport_name'] = request.session.get('selected_passport_name')
-	if request.session.get('selected_taxonomy_id', None):
-		context_dict['selected_taxonomy_name'] = request.session.get('selected_taxonomy_name')
-	if request.session.get('selected_source_id', None):
-		context_dict['selected_source_name'] = request.session.get('selected_source_name')
-	if request.session.get('selected_collecting_id', None):
-		context_dict['selected_collecting_id'] = request.session.get('selected_collecting_id')
-	if request.session.get('selected_field_id', None):
-		context_dict['selected_field_id'] = request.session.get('selected_field_id')
-	if request.session.get('selected_locality_id', None):
-		context_dict['selected_locality_name'] = request.session.get('selected_locality_name')
+	selected_stocks = seed_inventory_sort(request)
+	context_dict = session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
+	exp_list = get_experiment_list()
+	context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/seed_inventory.html', context_dict, context)
 
 def seed_inventory_select_collection(request,collecting_id):
 	context = RequestContext(request)
 	context_dict = {}
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	selected_collection = AccessionCollecting.objects.get(id=collecting_id)
 	request.session['selected_collecting_name'] = selected_collection.collection_date
 	request.session['selected_collecting_id'] = selected_collection.id
-	selected_stocks=seed_inventory_sort(request)
-	if request.session.get('selected_passport_id', None):
-		context_dict['selected_passport_name'] = request.session.get('selected_passport_name')
-	if request.session.get('selected_taxonomy_id', None):
-		context_dict['selected_taxonomy_name'] = request.session.get('selected_taxonomy_name')
-	if request.session.get('selected_source_id', None):
-		context_dict['selected_source_name'] = request.session.get('selected_source_name')
-	if request.session.get('selected_collecting_id', None):
-		context_dict['selected_collecting_id'] = request.session.get('selected_collecting_id')
-	if request.session.get('selected_field_id', None):
-		context_dict['selected_field_id'] = request.session.get('selected_field_id')
-	if request.session.get('selected_locality_id', None):
-		context_dict['selected_locality_name'] = request.session.get('selected_locality_name')
+	selected_stocks = seed_inventory_sort(request)
+	context_dict = session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
+	exp_list = get_experiment_list()
+	context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/seed_inventory.html', context_dict, context)
 
 def seed_inventory_select_taxonomy(request,taxonomy_id):
 	context = RequestContext(request)
 	context_dict = {}
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	selected_taxonomy = Taxonomy.objects.get(id=taxonomy_id)
 	request.session['selected_taxonomy_name'] = selected_taxonomy.species
 	request.session['selected_taxonomy_id'] = selected_taxonomy.id
-	selected_stocks=seed_inventory_sort(request)
-	if request.session.get('selected_passport_id', None):
-		context_dict['selected_passport_name'] = request.session.get('selected_passport_name')
-	if request.session.get('selected_taxonomy_id', None):
-		context_dict['selected_taxonomy_name'] = request.session.get('selected_taxonomy_name')
-	if request.session.get('selected_source_id', None):
-		context_dict['selected_source_name'] = request.session.get('selected_source_name')
-	if request.session.get('selected_collecting_id', None):
-		context_dict['selected_collecting_id'] = request.session.get('selected_collecting_id')
-	if request.session.get('selected_field_id', None):
-		context_dict['selected_field_id'] = request.session.get('selected_field_id')
-	if request.session.get('selected_locality_id', None):
-		context_dict['selected_locality_name'] = request.session.get('selected_locality_name')
+	selected_stocks = seed_inventory_sort(request)
+	context_dict = session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
+	exp_list = get_experiment_list()
+	context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/seed_inventory.html', context_dict, context)
 
 def seed_inventory_select_source(request,source_id):
 	context = RequestContext(request)
 	context_dict = {}
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	selected_source = Source.objects.get(id=source_id)
 	request.session['selected_source_name'] = selected_source.source_name
 	request.session['selected_source_id'] = selected_source.id
-	selected_stocks=seed_inventory_sort(request)
-	if request.session.get('selected_passport_id', None):
-		context_dict['selected_passport_name'] = request.session.get('selected_passport_name')
-	if request.session.get('selected_taxonomy_id', None):
-		context_dict['selected_taxonomy_name'] = request.session.get('selected_taxonomy_name')
-	if request.session.get('selected_source_id', None):
-		context_dict['selected_source_name'] = request.session.get('selected_source_name')
-	if request.session.get('selected_collecting_id', None):
-		context_dict['selected_collecting_id'] = request.session.get('selected_collecting_id')
-	if request.session.get('selected_field_id', None):
-		context_dict['selected_field_id'] = request.session.get('selected_field_id')
-	if request.session.get('selected_locality_id', None):
-		context_dict['selected_locality_name'] = request.session.get('selected_locality_name')
+	selected_stocks = seed_inventory_sort(request)
+	context_dict = session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
+	exp_list = get_experiment_list()
+	context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/seed_inventory.html', context_dict, context)
 
 def seed_inventory_select_passport(request,passport_id):
 	context = RequestContext(request)
 	context_dict = {}
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	selected_passport = Passport.objects.get(id=passport_id)
 	request.session['selected_passport_name'] = selected_passport.pedigree
 	request.session['selected_passport_id'] = selected_passport.id
-	selected_stocks=seed_inventory_sort(request)
-	if request.session.get('selected_passport_id', None):
-		context_dict['selected_passport_name'] = request.session.get('selected_passport_name')
-	if request.session.get('selected_taxonomy_id', None):
-		context_dict['selected_taxonomy_name'] = request.session.get('selected_taxonomy_name')
-	if request.session.get('selected_source_id', None):
-		context_dict['selected_source_name'] = request.session.get('selected_source_name')
-	if request.session.get('selected_collecting_id', None):
-		context_dict['selected_collecting_id'] = request.session.get('selected_collecting_id')
-	if request.session.get('selected_field_id', None):
-		context_dict['selected_field_id'] = request.session.get('selected_field_id')
-	if request.session.get('selected_locality_id', None):
-		context_dict['selected_locality_name'] = request.session.get('selected_locality_name')
+	selected_stocks = seed_inventory_sort(request)
+	context_dict = session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
+	exp_list = get_experiment_list()
+	context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/seed_inventory.html', context_dict, context)
 
 def seed_inventory_clear(request, clear_selected):
 	context = RequestContext(request)
 	context_dict = {}
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	clear_selected_name = '{}_name'.format(clear_selected)
 	clear_selected_id = '{}_id'.format(clear_selected)
 	del request.session[clear_selected_name]
 	del request.session[clear_selected_id]
-	selected_stocks=seed_inventory_sort(request)
-	if request.session.get('selected_passport_id', None):
-		context_dict['selected_passport_name'] = request.session.get('selected_passport_name')
-	if request.session.get('selected_taxonomy_id', None):
-		context_dict['selected_taxonomy_name'] = request.session.get('selected_taxonomy_name')
-	if request.session.get('selected_source_id', None):
-		context_dict['selected_source_name'] = request.session.get('selected_source_name')
-	if request.session.get('selected_collecting_id', None):
-		context_dict['selected_collecting_id'] = request.session.get('selected_collecting_id')
-	if request.session.get('selected_field_id', None):
-		context_dict['selected_field_id'] = request.session.get('selected_field_id')
-	if request.session.get('selected_locality_id', None):
-		context_dict['selected_locality_name'] = request.session.get('selected_locality_name')
+	selected_stocks = seed_inventory_sort(request)
+	context_dict = session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
+	exp_list = get_experiment_list()
+	context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/seed_inventory.html', context_dict, context)
 
