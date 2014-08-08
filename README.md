@@ -33,5 +33,5 @@ The overall project is found at mine_project/mine_project.
 This project is running the django "media server" to store images locally, which means the python library "pillow" must be pip installed.
 
 A simple guide to django is this: 
-URL -> View -> Template
+URL (mine/urls.py) -> View (mine/views.py) -> Template (templates/mine/example.html)
 AJAX is essentailly: Jquery script, mapped to HTML id -> URL -> View -> Template
