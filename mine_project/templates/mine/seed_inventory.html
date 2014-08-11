@@ -10,6 +10,50 @@
 		<div class="row-fluid">
 			<div class="span3">
 				<ul class="nav nav-list">
+					<li class="nav-header">Find a Genotype</li>
+					<form>
+					<label></label>
+					<li><input  class="search-query" type="text" name="pedigreesuggestion" value="{{ selected_passport_name }}" id="pedigreesuggestion" /></li>
+					</form>
+				</ul>
+			</div>
+			{% if selected_passport_name %}
+			<div class="span3">
+				<form id="clear_passport" method="post" action="/mine/seed_inventory/clear/selected_passport/">
+					{% csrf_token %}
+				<button class="btn btn-primary" type="submit">Clear Genotype</button>
+				</form>
+			</div>
+			{% endif %}
+		</div>
+		<div id="passports">
+			{% include 'mine/pedigree_list.html' with pedigree_list=pedigree_list %}
+		</div>
+		<div class="row-fluid">
+			<div class="span3">
+				<ul class="nav nav-list">
+					<li class="nav-header">Select taxonomy</li>
+					<form>
+					<label></label>
+					<li><input  class="search-query" type="text" name="taxonomysuggestion" value="{{ selected_taxonomy_name }}" id="taxonomysuggestion" /></li>
+					</form>
+				</ul>
+			</div>
+			{% if selected_taxonomy_name %}
+			<div class="span3">
+				<form id="clear_taxonomy" method="post" action="/mine/seed_inventory/clear/selected_taxonomy/">
+					{% csrf_token %}
+				<button class="btn btn-primary" type="submit">Clear Taxonomy</button>
+				</form>
+			</div>
+			{% endif %}
+		</div>
+		<div id="taxonomy">
+			{% include 'mine/taxonomy_list.html' with taxonomy_list=taxonomy_list %}
+		</div>
+		<div class="row-fluid">
+			<div class="span3">
+				<ul class="nav nav-list">
 					<li class="nav-header">Pick a Locality</li>
 					<form>
 					<label></label>
@@ -94,50 +138,6 @@
 		</div>
 		<div id="sources">
 			{% include 'mine/sources_list.html' with sources_list=sources_list %}
-		</div>
-		<div class="row-fluid">
-			<div class="span3">
-				<ul class="nav nav-list">
-					<li class="nav-header">Select taxonomy</li>
-					<form>
-					<label></label>
-					<li><input  class="search-query" type="text" name="taxonomysuggestion" value="{{ selected_taxonomy_name }}" id="taxonomysuggestion" /></li>
-					</form>
-				</ul>
-			</div>
-			{% if selected_taxonomy_name %}
-			<div class="span3">
-				<form id="clear_taxonomy" method="post" action="/mine/seed_inventory/clear/selected_taxonomy/">
-					{% csrf_token %}
-				<button class="btn btn-primary" type="submit">Clear Taxonomy</button>
-				</form>
-			</div>
-			{% endif %}
-		</div>
-		<div id="taxonomy">
-			{% include 'mine/taxonomy_list.html' with taxonomy_list=taxonomy_list %}
-		</div>
-		<div class="row-fluid">
-			<div class="span3">
-				<ul class="nav nav-list">
-					<li class="nav-header">Find a Genotype</li>
-					<form>
-					<label></label>
-					<li><input  class="search-query" type="text" name="pedigreesuggestion" value="{{ selected_passport_name }}" id="pedigreesuggestion" /></li>
-					</form>
-				</ul>
-			</div>
-			{% if selected_passport_name %}
-			<div class="span3">
-				<form id="clear_passport" method="post" action="/mine/seed_inventory/clear/selected_passport/">
-					{% csrf_token %}
-				<button class="btn btn-primary" type="submit">Clear Genotype</button>
-				</form>
-			</div>
-			{% endif %}
-		</div>
-		<div id="passports">
-			{% include 'mine/pedigree_list.html' with pedigree_list=pedigree_list %}
 		</div>
 	</div>
 
