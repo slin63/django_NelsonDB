@@ -34,3 +34,8 @@ Icon
 # Files that might appear on external disk
 .Spotlight-V100
 .Trashes
+
+mine_project/mine.db
+*.db
+mine_project/mine.db-journal
+mine_project/mine.db
