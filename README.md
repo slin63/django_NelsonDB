@@ -4,6 +4,8 @@ Seed_inventory_revamp Branch
 
 Nick's django front-end for Nelson lab DB
 
+Now running Mysql
+
 To run this:
 
 1. Set up the development environment following these steps http://www.tangowithdjango.com/book/chapters/requirements.html#installing-the-software
@@ -36,3 +38,10 @@ This project is running the django "media server" to store images locally, which
 A simple guide to django is this: 
 URL (mine/urls.py) -> View (mine/views.py) -> Template (templates/mine/example.html)
 AJAX is essentailly: Jquery script, mapped to HTML id -> URL -> View -> Template
+
+
+MySQL:
+I am using XAMPP to run a mysql database. I like XAMPP because it uses phpMyadmin to interface the database directly. 
+To populate the legacy database, use the sql code in the legacy_data folder.
+To populate the new database, use the populate_experiment.py script.
+Note, both the new and old database are running on the same Mysql database. 
