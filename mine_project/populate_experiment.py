@@ -2,7 +2,7 @@ import os
 import csv
 
 def csv_import_people():
-	ifile = csv.DictReader(open('c://person.csv'))
+	ifile = csv.DictReader(open('c://person.csv'), dialect='excel')
 	for row in ifile:
 		user = row["user"]
 		email = row["email"]
@@ -20,7 +20,7 @@ def csv_import_people():
 		add_userp(user, phone, location, 'profile_images/underwater.jpg', title, web, notes)
 
 def csv_import_experiment():
-	ifile = csv.DictReader(open('c://experiments.csv'))
+	ifile = csv.DictReader(open('c://experiments.csv'), dialect='excel')
 	for row in ifile:
 		name = row["name"]
 		date = row["date"]
@@ -37,7 +37,7 @@ def csv_import_experiment():
 		add_experiment(name, date, user, purpose, comments)
 
 def csv_import_seed():
-		ifile = csv.DictReader(open('c://seed.csv'))
+		ifile = csv.DictReader(open('c://seed.csv'), dialect='excel')
 		for row in ifile:
 			tagname = row["Current_barcode"]
 			timestamp = row["Timestamp_barcode"]
