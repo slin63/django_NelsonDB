@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url
 from mine import views
 
 urlpatterns = patterns('',
-        url(r'^$', views.index, name='index'),
+    url(r'^$', views.index, name='index'),
 		url(r'^about/$', views.about, name='about'),
 		url(r'^error_prelim/$', views.error_prelim, name='error_prelim'),
 		url(r'^add_category/$', views.add_category, name='add_category'),
@@ -31,4 +31,4 @@ urlpatterns = patterns('',
     url(r'^suggest_collecting/$', views.suggest_collecting, name='suggest_collecting'),
     url(r'^suggest_category/$', views.suggest_category, name='suggest_category'),
     url(r'^suggest_experiment/$', views.suggest_experiment, name='suggest_experiment'),
-    url(r'^seed_inventory/clear/(?P<clear_selected>\w+)/$', views.seed_inventory_clear, name='seed_inventory_clear'),)
+    url(r'^seed_inventory/clear/(?P<clear_selected>\w+)/$', views.seed_inventory_clear, name='seed_inventory_clear'))
