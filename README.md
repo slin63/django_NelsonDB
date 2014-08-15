@@ -30,7 +30,7 @@ INSTALLED_APPS = (
 5. Type "python manage.py runserver" 
 
 This project is modeled after the tango_with_django project, where there are separate "applications" in the overall project.
-Currently there is only one application, called "mine" and can be found at mine_project/mine.
+Currently there are two applications, one called "mine" and can be found at mine_project/mine, the other called "legacy" can be found at mine_project/legacy.
 The overall project is found at mine_project/mine_project.
 
 This project is running the django "media server" to store images locally, which means the python library "pillow" must be pip installed.
