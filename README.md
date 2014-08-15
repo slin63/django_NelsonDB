@@ -22,7 +22,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
 	'django_like',
 	'mine',
-	'registration',
+  	'legacy',
 )
 
 3. In the command line, cd to the project directory and enter "python manage.py syncdb"
