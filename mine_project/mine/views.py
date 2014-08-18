@@ -495,7 +495,7 @@ def seed_inventory_sort(request):
 						taxonomy_id = request.session.get('selected_taxonomy_id')
 						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(taxonomy=Taxonomy.objects.get(id=taxonomy_id)))
 					else:
-						selected_stocks = Stock.objects.all()
+						selected_stocks = Stock.objects.all()[:1000]
 	return selected_stocks
 
 def session_variable_check(request):

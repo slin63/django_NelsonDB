@@ -97,6 +97,28 @@ $('#taxonomysuggestion').keyup(function(){
 				});
 });
 
+$('#legacypedigreesuggestion').keyup(function(){
+				var query;
+				query = $(this).val();
+				var radio;
+				radio = $('input:radio[name=query_option]:checked').val();
+				$.get('/legacy/suggest_legacy_pedigree/', {suggestion: query, radio: radio}, function(data){
+			$('#stock_div').html(data);
+			$('#selected_stocks').dataTable();
+		});
+});
+
+$('input:radio[name=query_option]').click(function(){
+				var query;
+				query = $('#legacypedigreesuggestion').val();
+				var radio;
+				radio = $(this).val();
+				$.get('/legacy/suggest_legacy_pedigree/', {suggestion: query, radio: radio}, function(data){
+			$('#stock_div').html(data);
+			$('#selected_stocks').dataTable();
+		});
+});
+
 $(document).ready(function() {
 		$('#selected_stocks').dataTable();
 } );

@@ -5,20 +5,26 @@
       <thead>
       <tr>
         <th>ID</th>
-        <th>Stock Tagname</th>
-        <th>Date</th>
+        <th>Seed ID</th>
+        <th>Seed Name</th>
+        <th>Row Name</th>
         <th>Cross Type</th>
-        <th>Ear Number</th>
+        <th>Pedigree</th>
+        <th>Person</th>
+        <th>Notes</th>
       </tr>
       </thead>
       <tbody>
       {% for stock in selected_stocks %}
       <tr>
-        <td><a href="/mine/seed_inventory/stock/{{ stock.id }}">{{ stock.id }}</a></td>
-        <td>{{ stock.source_tagname }}</td>
-        <td>{{ stock.stock_date }}</td>
+        <td><a href="/legacy/legacy_seed_inventory/stock/{{ stock.id }}">{{ stock.id }}</a></td>
+        <td>{{ stock.seed_id }}</td>
+        <td>{{ stock.seed_name }}</td>
+        <td>{{ stock.row_name }}</td>
         <td>{{ stock.cross_type }}</td>
-        <td>{{ stock.ear_num }}</td>
+        <td>{{ stock.seed_pedigree}}</td>
+        <td>{{ stock.seed_person_id}}</td>
+        <td>{{ stock.notes}}</td>
       </tr>
       {% endfor %}
       </tbody>

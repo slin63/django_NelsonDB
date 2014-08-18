@@ -9,7 +9,7 @@ Now running Mysql
 To run this:
 
 1. Set up the development environment following these steps http://www.tangowithdjango.com/book/chapters/requirements.html#installing-the-software
-2. pip install django-like, registration and pillow. Make sure mine_project/mine_project/settings.py shows the following
+2. pip install django-like and pillow. Make sure mine_project/mine_project/settings.py shows the following
 
 INSTALLED_APPS = (
     'django.contrib.auth',

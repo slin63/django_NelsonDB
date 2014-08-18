@@ -186,6 +186,35 @@ class People(models.Model):
     def __unicode__(self):
         return self.person_name
 
+"""Testing Seed Model With No Foreign Keys"""
+
+class Seed(models.Model):
+    seed_id = models.CharField(max_length=100)
+    plant_id_origin = models.CharField(max_length=100)
+    row_id_origin = models.CharField(max_length=100)
+    experiment_id_origin = models.CharField(max_length=100)
+    plant_name = models.CharField(max_length=100)
+    row_name = models.CharField(max_length=100)
+    seed_name = models.CharField(max_length=100)
+    cross_type = models.CharField(max_length=100)
+    male_parent_id = models.CharField(max_length=100)
+    male_parent_name = models.CharField(max_length=100)
+    program_origin = models.CharField(max_length=100)
+    seed_pedigree = models.CharField(max_length=100)
+    line_num = models.CharField(max_length=100)
+    seed_person_id = models.CharField(max_length=100)
+    disease_info = models.CharField(max_length=100)
+    notes = models.CharField(max_length=100)
+    accession = models.CharField(max_length=100)
+    lot = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.seed_id
+
+"""
+This Seed Model Still Has the Foreign Keys
+
+
 class Seed(models.Model):
     seed_id = models.CharField(max_length=100, primary_key=True)
     plant_id_origin = models.ForeignKey(Plant)
@@ -208,6 +237,7 @@ class Seed(models.Model):
 
     def __unicode__(self):
         return self.seed_id
+"""
 
 class Seed_inventory(models.Model):
     ID_placeholder = models.CharField(max_length=100, primary_key=True)
