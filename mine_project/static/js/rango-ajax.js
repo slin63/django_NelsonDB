@@ -30,11 +30,13 @@ $('#pedigreesuggestion').keyup(function(){
 				query = $(this).val();
 				$.get('/mine/suggest_pedigree/', {suggestion: query}, function(data){
 			$('#passports').html(data);
-			$('#selected_pedigree').dataTable({"searching": false,
+			$('#selected_pedigree').dataTable({
+				"searching": false,
 				"scrollY": "300px",
   			"scrollCollapse": true,
-  			"paginate": false });
+  			"paginate": false
 				});
+		});
 });
 
 $('#localitysuggestion').keyup(function(){
@@ -42,11 +44,13 @@ $('#localitysuggestion').keyup(function(){
 				query = $(this).val();
 				$.get('/mine/suggest_locality/', {suggestion: query}, function(data){
 			$('#localitys').html(data);
-			$('#selected_locality').dataTable({"searching": false,
+			$('#selected_locality').dataTable({
+				"searching": false,
 				"scrollY": "300px",
 				"scrollCollapse": true,
-				"paginate": false });
+				"paginate": false
 				});
+		});
 });
 
 $('#fieldsuggestion').keyup(function(){
@@ -54,11 +58,13 @@ $('#fieldsuggestion').keyup(function(){
 				query = $(this).val();
 				$.get('/mine/suggest_field/', {suggestion: query}, function(data){
 			$('#fields').html(data);
-			$('#selected_field').dataTable({"searching": false,
+			$('#selected_field').dataTable({
+				"searching": false,
 				"scrollY": "300px",
 				"scrollCollapse": true,
-				"paginate": false });
+				"paginate": false
 				});
+		});
 });
 
 $('#collectionsuggestion').keyup(function(){
@@ -66,11 +72,13 @@ $('#collectionsuggestion').keyup(function(){
 				query = $(this).val();
 				$.get('/mine/suggest_collecting/', {suggestion: query}, function(data){
 			$('#collections').html(data);
-			$('#selected_collection').dataTable({"searching": false,
+			$('#selected_collection').dataTable({
+				"searching": false,
 				"scrollY": "300px",
 				"scrollCollapse": true,
-				"paginate": false });
+				"paginate": false
 				});
+		});
 });
 
 $('#sourcesuggestion').keyup(function(){
@@ -78,11 +86,13 @@ $('#sourcesuggestion').keyup(function(){
 				query = $(this).val();
 				$.get('/mine/suggest_source/', {suggestion: query}, function(data){
 			$('#sources').html(data);
-			$('#selected_source').dataTable({"searching": false,
+			$('#selected_source').dataTable({
+				"searching": false,
 				"scrollY": "300px",
 				"scrollCollapse": true,
-				"paginate": false });
+				"paginate": false
 				});
+		});
 });
 
 $('#taxonomysuggestion').keyup(function(){
@@ -90,32 +100,76 @@ $('#taxonomysuggestion').keyup(function(){
 				query = $(this).val();
 				$.get('/mine/suggest_taxonomy/', {suggestion: query}, function(data){
 			$('#taxonomy').html(data);
-			$('#selected_taxonomy').dataTable({"searching": false,
+			$('#selected_taxonomy').dataTable({
+				"searching": false,
 				"scrollY": "300px",
 				"scrollCollapse": true,
-				"paginate": false });
+				"paginate": false
 				});
+		});
 });
 
 $('#legacypedigreesuggestion').keyup(function(){
 				var query;
 				query = $(this).val();
 				var radio;
-				radio = $('input:radio[name=query_option]:checked').val();
+				radio = $('input:radio[name=query_pedigree_option]:checked').val();
 				$.get('/legacy/suggest_legacy_pedigree/', {suggestion: query, radio: radio}, function(data){
-			$('#stock_div').html(data);
-			$('#selected_stocks').dataTable();
+			$('#legacy_pedigrees').html(data);
+			$('#selected_legacy_pedigree').dataTable({
+				"searching": false,
+				"scrollY": "300px",
+				"scrollCollapse": true,
+				"paginate": false
+				});
 		});
 });
 
-$('input:radio[name=query_option]').click(function(){
+$('input:radio[name=query_pedigree_option]').click(function(){
 				var query;
 				query = $('#legacypedigreesuggestion').val();
 				var radio;
 				radio = $(this).val();
 				$.get('/legacy/suggest_legacy_pedigree/', {suggestion: query, radio: radio}, function(data){
-			$('#stock_div').html(data);
-			$('#selected_stocks').dataTable();
+			$('#legacy_pedigrees').html(data);
+			$('#selected_legacy_pedigree').dataTable({
+				"searching": false,
+				"scrollY": "300px",
+				"scrollCollapse": true,
+				"paginate": false
+				});
+		});
+});
+
+$('#legacyexperimentsuggestion').keyup(function(){
+				var query;
+				query = $(this).val();
+				var radio;
+				radio = $('input:radio[name=query_experiment_option]:checked').val();
+				$.get('/legacy/suggest_legacy_experiment/', {suggestion: query, radio: radio}, function(data){
+			$('#legacy_experiments').html(data);
+			$('#selected_legacy_experiment').dataTable({
+				"searching": false,
+				"scrollY": "300px",
+				"scrollCollapse": true,
+				"paginate": false
+				});
+		});
+});
+
+$('input:radio[name=query_experiment_option]').click(function(){
+				var query;
+				query = $('#legacyexperimentsuggestion').val();
+				var radio;
+				radio = $(this).val();
+				$.get('/legacy/suggest_legacy_experiment/', {suggestion: query, radio: radio}, function(data){
+			$('#legacy_experiments').html(data);
+			$('#selected_legacy_experiment').dataTable({
+				"searching": false,
+				"scrollY": "300px",
+				"scrollCollapse": true,
+				"paginate": false
+				});
 		});
 });
 

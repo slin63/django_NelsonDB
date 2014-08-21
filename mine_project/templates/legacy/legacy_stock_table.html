@@ -1,5 +1,6 @@
 {% if selected_stocks %}
 <hr>
+
 <h2>Stocks in Inventory</h2><br/>
     <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
       <thead>
@@ -7,6 +8,7 @@
         <th>ID</th>
         <th>Seed ID</th>
         <th>Seed Name</th>
+        <th>Row ID</th>
         <th>Row Name</th>
         <th>Cross Type</th>
         <th>Pedigree</th>
@@ -20,10 +22,11 @@
         <td><a href="/legacy/legacy_seed_inventory/stock/{{ stock.id }}">{{ stock.id }}</a></td>
         <td>{{ stock.seed_id }}</td>
         <td>{{ stock.seed_name }}</td>
+        <td><a href="/legacy/legacy_seed_inventory/stock/{{ stock.id }}">{{ stock.row_id_origin }}</a></td>
         <td>{{ stock.row_name }}</td>
         <td>{{ stock.cross_type }}</td>
         <td>{{ stock.seed_pedigree}}</td>
-        <td>{{ stock.seed_person_id}}</td>
+        <td><a href="/legacy/legacy_seed_inventory/stock/{{ stock.id }}">{{ stock.seed_person_id}}</a></td>
         <td>{{ stock.notes}}</td>
       </tr>
       {% endfor %}
