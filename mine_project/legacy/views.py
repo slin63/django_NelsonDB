@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from mine.models import Category, Page, UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, Source, AccessionCollecting, Field, Locality, Location
-from legacy.models import Legacy_Seed, Legacy_Row, Legacy_Experiment
+from legacy.models import Legacy_Seed, Legacy_Row, Legacy_Experiment, Legacy_Seed_Inventory
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -41,9 +41,17 @@ def suggest_legacy_pedigree(request):
     radio = request.POST['radio']
   if starts_with:
     if radio == 'variable':
-      pedigree_list = Legacy_Seed.objects.filter(seed_pedigree__like='%{}%'.format(starts_with)).values('seed_pedigree').distinct()[:1000]
+      if request.session.get('selected_legacy_experiment', None):
+        experiment = request.session.get('selected_legacy_experiment')
+        pedigree_list = Legacy_Seed.objects.filter(seed_pedigree__like='%{}%'.format(starts_with), experiment_id_origin = experiment).values('seed_pedigree').distinct()[:1000]
+      else:
+        pedigree_list = Legacy_Seed.objects.filter(seed_pedigree__like='%{}%'.format(starts_with)).values('seed_pedigree').distinct()[:1000]
     if radio == 'exact':
-      pedigree_list = Legacy_Seed.objects.filter(seed_pedigree = starts_with).values('seed_pedigree').distinct()[:1000]
+      if request.session.get('selected_legacy_experiment', None):
+        experiment = request.session.get('selected_legacy_experiment')
+        pedigree_list = Legacy_Seed.objects.filter(seed_pedigree = starts_with, experiment_id_origin = experiment).values('seed_pedigree').distinct()[:1000]
+      else:
+        pedigree_list = Legacy_Seed.objects.filter(seed_pedigree = starts_with).values('seed_pedigree').distinct()[:1000]
   else:
     pedigree_list = Legacy_Seed.objects.all().values('seed_pedigree').distinct()[:1000]
   """Need to encode each pedigree for the url"""
@@ -63,11 +71,23 @@ def suggest_legacy_experiment(request):
     radio = request.POST['radio']
   if starts_with:
     if radio == 'variable':
-      experiment_list = Legacy_Experiment.objects.filter(experiment_id__like='%{}%'.format(starts_with))[:1000]
+      if request.session.get('selected_legacy_pedigree', None):
+        pedigree = request.session.get('selected_legacy_pedigree')
+        experiment_list = Legacy_Experiment.objects.filter(experiment_id__like='%{}%'.format(starts_with), legacy_seed__seed_pedigree__exact=pedigree).distinct()[:1000]
+      else:
+        experiment_list = Legacy_Experiment.objects.filter(experiment_id__like='%{}%'.format(starts_with)).distinct()[:1000]
     if radio == 'exact':
-      experiment_list = Legacy_Experiment.objects.filter(experiment_id = starts_with)[:1000]
+      if request.session.get('selected_legacy_pedigree', None):
+        pedigree = request.session.get('selected_legacy_pedigree')
+        experiment_list = Legacy_Experiment.objects.filter(experiment_id = starts_with, legacy_seed__seed_pedigree__exact=pedigree).distinct()[:1000]
+      else:
+        experiment_list = Legacy_Experiment.objects.filter(experiment_id = starts_with).distinct()[:1000]
   else:
-    experiment_list = Legacy_Experiment.objects.all()
+    if request.session.get('selected_legacy_pedigree', None):
+      pedigree = request.session.get('selected_legacy_pedigree')
+      experiment_list = Legacy_Experiment.objects.filter(legacy_seed__seed_pedigree__exact=pedigree).distinct()[:1000]
+    else:
+      experiment_list = Legacy_Experiment.objects.all()
   context_dict = {'experiment_list': experiment_list}
   return render_to_response('legacy/legacy_experiment_list.html', context_dict, context)
 
@@ -142,3 +162,13 @@ def legacy_inventory_clear(request, clear_selected):
   context_dict['exp_list'] = exp_list
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('legacy/legacy_seed_inventory.html', context_dict, context)
+
+def select_legacy_stock(request, legacy_stock):
+  context = RequestContext(request)
+  context_dict = {}
+  stock_info = Legacy_Seed_Inventory.objects.filter(seed_id = legacy_stock)
+  context_dict['selected_stock'] = stock_info
+  exp_list = get_experiment_list()
+  context_dict['exp_list'] = exp_list
+  context_dict['logged_in_user'] = request.user.username
+  return render_to_response('legacy/legacy_stock.html', context_dict, context)

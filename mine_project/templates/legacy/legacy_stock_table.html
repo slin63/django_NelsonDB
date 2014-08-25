@@ -19,14 +19,14 @@
       <tbody>
       {% for stock in selected_stocks %}
       <tr>
-        <td><a href="/legacy/legacy_seed_inventory/stock/{{ stock.id }}">{{ stock.id }}</a></td>
+        <td><a href="/legacy/legacy_seed_inventory/stock/{{ stock.seed_id }}">{{ stock.id }}</a></td>
         <td>{{ stock.seed_id }}</td>
         <td>{{ stock.seed_name }}</td>
-        <td><a href="/legacy/legacy_seed_inventory/stock/{{ stock.id }}">{{ stock.row_id_origin }}</a></td>
+        <td><a href="/legacy/legacy_seed_inventory/row/{{ stock.row_id_origin }}">{{ stock.row_id_origin }}</a></td>
         <td>{{ stock.row_name }}</td>
         <td>{{ stock.cross_type }}</td>
         <td>{{ stock.seed_pedigree}}</td>
-        <td><a href="/legacy/legacy_seed_inventory/stock/{{ stock.id }}">{{ stock.seed_person_id}}</a></td>
+        <td><a href="/legacy/legacy_seed_inventory/people/{{ stock.seed_person_id }}">{{ stock.seed_person_id}}</a></td>
         <td>{{ stock.notes}}</td>
       </tr>
       {% endfor %}

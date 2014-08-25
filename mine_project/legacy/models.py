@@ -338,7 +338,7 @@ class Legacy_Seed(models.Model):
     seed_id = models.CharField(max_length=100)
     plant_id_origin = models.CharField(max_length=100)
     row_id_origin = models.CharField(max_length=100)
-    experiment_id_origin = models.CharField(max_length=100)
+    experiment_id_origin = models.ForeignKey(Legacy_Experiment, to_field='experiment_id')
     plant_name = models.CharField(max_length=100)
     row_name = models.CharField(max_length=100)
     seed_name = models.CharField(max_length=100)
@@ -401,8 +401,8 @@ class Seed_inventory(models.Model):
         return self.seed_id
 """
 
-class Legacy_Seed_inventory(models.Model):
-    ID_placeholder = models.CharField(max_length=100, primary_key=True)
+class Legacy_Seed_Inventory(models.Model):
+    ID = models.CharField(max_length=100, primary_key=True)
     seed_id = models.CharField(max_length=100)
     seed_name = models.CharField(max_length=100)
     inventory_date = models.CharField(max_length=100)
