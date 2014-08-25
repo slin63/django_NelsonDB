@@ -53,7 +53,11 @@ def suggest_legacy_pedigree(request):
       else:
         pedigree_list = Legacy_Seed.objects.filter(seed_pedigree = starts_with).values('seed_pedigree').distinct()[:1000]
   else:
-    pedigree_list = Legacy_Seed.objects.all().values('seed_pedigree').distinct()[:1000]
+    if request.session.get('selected_legacy_experiment', None):
+      experiment = request.session.get('selected_legacy_experiment')
+      pedigree_list = Legacy_Seed.objects.filter(experiment_id_origin = experiment).values('seed_pedigree').distinct()[:1000]
+    else:
+      pedigree_list = Legacy_Seed.objects.all().values('seed_pedigree').distinct()[:1000]
   """Need to encode each pedigree for the url"""
   context_dict['pedigree_list'] = pedigree_list
   return render_to_response('legacy/legacy_pedigree_list.html', context_dict, context)
