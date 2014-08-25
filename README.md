@@ -1,6 +1,6 @@
 django_NelsonDB
 ===============
-Seed_inventory_revamp Branch
+Legacy Branch
 
 Nick's django front-end for Nelson lab DB
 
