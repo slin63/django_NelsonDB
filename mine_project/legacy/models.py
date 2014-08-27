@@ -273,10 +273,108 @@ class Row(models.Model):
         return self.row_id
 """
 
+class Legacy_Seed(models.Model):
+    seed_id = models.CharField(max_length=100, unique=True)
+    plant_id_origin = models.CharField(max_length=100)
+    row_id_origin = models.CharField(max_length=100)
+    experiment_id_origin = models.ForeignKey(Legacy_Experiment, to_field='experiment_id')
+    plant_name = models.CharField(max_length=100)
+    row_name = models.CharField(max_length=100)
+    seed_name = models.CharField(max_length=100)
+    cross_type = models.CharField(max_length=100)
+    male_parent_id = models.CharField(max_length=100)
+    male_parent_name = models.CharField(max_length=100)
+    program_origin = models.CharField(max_length=100)
+    seed_pedigree = models.CharField(max_length=100)
+    line_num = models.CharField(max_length=100)
+    seed_person_id = models.CharField(max_length=100)
+    disease_info = models.CharField(max_length=100)
+    notes = models.CharField(max_length=100)
+    accession = models.CharField(max_length=100)
+    lot = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.seed_id
+
+"""
+This Seed Model Still Has the Foreign Keys
+class Seed(models.Model):
+    seed_id = models.CharField(max_length=100, primary_key=True)
+    plant_id_origin = models.ForeignKey(Plant)
+    row_id_origin = models.ForeignKey(Row)
+    experiment_id_origin = models.ForeignKey(Experiment)
+    plant_name = models.CharField(max_length=100)
+    row_name = models.CharField(max_length=100)
+    seed_name = models.CharField(max_length=100)
+    cross_type = models.CharField(max_length=100)
+    male_parent_id = models.CharField(max_length=100)
+    male_parent_name = models.CharField(max_length=100)
+    program_origin = models.CharField(max_length=100)
+    seed_pedigree = models.CharField(max_length=100)
+    line_num = models.CharField(max_length=100)
+    seed_person_id = models.ForeignKey(People)
+    disease_info = models.CharField(max_length=100)
+    notes = models.CharField(max_length=100)
+    accession = models.CharField(max_length=100)
+    lot = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.seed_id
+"""
+
+class Legacy_Seed(models.Model):
+    seed_id = models.CharField(max_length=100, primary_key=True)
+    plant_id_origin = models.CharField(max_length=100)
+    row_id_origin = models.CharField(max_length=100)
+    experiment_id_origin = models.ForeignKey(Legacy_Experiment, to_field='experiment_id')
+    plant_name = models.CharField(max_length=100)
+    row_name = models.CharField(max_length=100)
+    seed_name = models.CharField(max_length=100)
+    cross_type = models.CharField(max_length=100)
+    male_parent_id = models.CharField(max_length=100)
+    male_parent_name = models.CharField(max_length=100)
+    program_origin = models.CharField(max_length=100)
+    seed_pedigree = models.CharField(max_length=100)
+    line_num = models.CharField(max_length=100)
+    seed_person_id = models.CharField(max_length=100)
+    disease_info = models.CharField(max_length=100)
+    notes = models.CharField(max_length=100)
+    accession = models.CharField(max_length=100)
+    lot = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.seed_id
+
+"""
+This Seed Model Still Has the Foreign Keys
+class Seed(models.Model):
+    seed_id = models.CharField(max_length=100, primary_key=True)
+    plant_id_origin = models.ForeignKey(Plant)
+    row_id_origin = models.ForeignKey(Row)
+    experiment_id_origin = models.ForeignKey(Experiment)
+    plant_name = models.CharField(max_length=100)
+    row_name = models.CharField(max_length=100)
+    seed_name = models.CharField(max_length=100)
+    cross_type = models.CharField(max_length=100)
+    male_parent_id = models.CharField(max_length=100)
+    male_parent_name = models.CharField(max_length=100)
+    program_origin = models.CharField(max_length=100)
+    seed_pedigree = models.CharField(max_length=100)
+    line_num = models.CharField(max_length=100)
+    seed_person_id = models.ForeignKey(People)
+    disease_info = models.CharField(max_length=100)
+    notes = models.CharField(max_length=100)
+    accession = models.CharField(max_length=100)
+    lot = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.seed_id
+"""
+
 class Legacy_Row(models.Model):
     row_id = models.CharField(max_length=100, primary_key=True)
     row_name = models.CharField(max_length=100)
-    experiment_id = models.CharField(max_length=100)
+    experiment_id = models.ForeignKey(Legacy_Experiment, to_field='experiment_id')
     pedigree = models.CharField(max_length=100)
     line_num = models.CharField(max_length=100)
     source_seed_id = models.CharField(max_length=100)
@@ -331,59 +429,6 @@ class Legacy_People(models.Model):
 
     def __unicode__(self):
         return self.person_name
-
-"""Testing Seed Model With No Foreign Keys"""
-
-class Legacy_Seed(models.Model):
-    seed_id = models.CharField(max_length=100)
-    plant_id_origin = models.CharField(max_length=100)
-    row_id_origin = models.CharField(max_length=100)
-    experiment_id_origin = models.ForeignKey(Legacy_Experiment, to_field='experiment_id')
-    plant_name = models.CharField(max_length=100)
-    row_name = models.CharField(max_length=100)
-    seed_name = models.CharField(max_length=100)
-    cross_type = models.CharField(max_length=100)
-    male_parent_id = models.CharField(max_length=100)
-    male_parent_name = models.CharField(max_length=100)
-    program_origin = models.CharField(max_length=100)
-    seed_pedigree = models.CharField(max_length=100)
-    line_num = models.CharField(max_length=100)
-    seed_person_id = models.CharField(max_length=100)
-    disease_info = models.CharField(max_length=100)
-    notes = models.CharField(max_length=100)
-    accession = models.CharField(max_length=100)
-    lot = models.CharField(max_length=100)
-
-    def __unicode__(self):
-        return self.seed_id
-
-"""
-This Seed Model Still Has the Foreign Keys
-
-
-class Seed(models.Model):
-    seed_id = models.CharField(max_length=100, primary_key=True)
-    plant_id_origin = models.ForeignKey(Plant)
-    row_id_origin = models.ForeignKey(Row)
-    experiment_id_origin = models.ForeignKey(Experiment)
-    plant_name = models.CharField(max_length=100)
-    row_name = models.CharField(max_length=100)
-    seed_name = models.CharField(max_length=100)
-    cross_type = models.CharField(max_length=100)
-    male_parent_id = models.CharField(max_length=100)
-    male_parent_name = models.CharField(max_length=100)
-    program_origin = models.CharField(max_length=100)
-    seed_pedigree = models.CharField(max_length=100)
-    line_num = models.CharField(max_length=100)
-    seed_person_id = models.ForeignKey(People)
-    disease_info = models.CharField(max_length=100)
-    notes = models.CharField(max_length=100)
-    accession = models.CharField(max_length=100)
-    lot = models.CharField(max_length=100)
-
-    def __unicode__(self):
-        return self.seed_id
-"""
 
 """This has FK
 class Seed_inventory(models.Model):

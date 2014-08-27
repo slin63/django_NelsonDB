@@ -175,3 +175,13 @@ def select_legacy_stock(request, legacy_stock):
   context_dict['exp_list'] = exp_list
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('legacy/legacy_stock.html', context_dict, context)
+
+def select_legacy_row(request, legacy_row):
+  context = RequestContext(request)
+  context_dict = {}
+  row_info = Legacy_Row.objects.filter(row_id = legacy_row)
+  context_dict['selected_row'] = row_info
+  exp_list = get_experiment_list()
+  context_dict['exp_list'] = exp_list
+  context_dict['logged_in_user'] = request.user.username
+  return render_to_response('legacy/legacy_row.html', context_dict, context)
