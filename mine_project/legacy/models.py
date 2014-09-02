@@ -377,7 +377,7 @@ class Legacy_Row(models.Model):
     experiment_id = models.ForeignKey(Legacy_Experiment, to_field='experiment_id')
     pedigree = models.CharField(max_length=100)
     line_num = models.CharField(max_length=100)
-    source_seed_id = models.CharField(max_length=100)
+    source_seed_id = models.CharField(max_length=100, default='0')
     source_seed_name = models.CharField(max_length=100)
     range_num = models.CharField(max_length=100)
     plot = models.CharField(max_length=100)

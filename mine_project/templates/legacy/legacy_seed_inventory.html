@@ -15,14 +15,14 @@
         <form>
         <label></label>
         <li><input  class="search-query" type="text" name="legacypedigreesuggestion" value="{{ selected_legacy_pedigree }}" id="legacypedigreesuggestion" /></li>
-        <li>Exact Match: <input type="radio" id="query_pedigree_option_exact" name="query_pedigree_option" value="exact"  checked="checked" /></li>
-        <li>Variable Match: <input type="radio" id="query_pedigree_option_variable" name="query_pedigree_option" value="variable" /></li>
+        <li>Exact Match: <input type="radio" id="query_pedigree_option_exact" name="query_pedigree_option" value="exact" /></li>
+        <li>Variable Match: <input type="radio" id="query_pedigree_option_variable" name="query_pedigree_option" value="variable" checked="checked"/></li>
         </form>
       </ul>
     </div>
     {% if selected_legacy_pedigree %}
-    <div class="span3">
-      <form id="clear_pedigree" method="post" action="/legacy/legacy_seed_inventory/clear/selected_legacy_pedigree/">
+    <div class="span9">
+      <form id="clear_legacy_pedigree" method="post" action="/legacy/legacy_seed_inventory/clear/selected_legacy_pedigree/">
         {% csrf_token %}
       <button class="btn btn-primary" type="submit">Clear Genotype</button>
       </form>
@@ -39,14 +39,14 @@
         <form>
         <label></label>
         <li><input  class="search-query" type="text" name="legacyexperimentsuggestion" value="{{ selected_legacy_experiment }}" id="legacyexperimentsuggestion" /></li>
-        <li>Exact Match: <input type="radio" id="query_experiment_option_exact" name="query_experiment_option" value="exact"  checked="checked" /></li>
-        <li>Variable Match: <input type="radio" id="query_experiment_option_variable" name="query_experiment_option" value="variable" /></li>
+        <li>Exact Match: <input type="radio" id="query_experiment_option_exact" name="query_experiment_option" value="exact" /></li>
+        <li>Variable Match: <input type="radio" id="query_experiment_option_variable" name="query_experiment_option" value="variable" checked="checked"/></li>
         </form>
       </ul>
     </div>
     {% if selected_legacy_experiment %}
-    <div class="span3">
-      <form id="clear_pedigree" method="post" action="/legacy/legacy_seed_inventory/clear/selected_legacy_experiment/">
+    <div class="span9">
+      <form id="clear_legacy_experiment" method="post" action="/legacy/legacy_seed_inventory/clear/selected_legacy_experiment/">
         {% csrf_token %}
       <button class="btn btn-primary" type="submit">Clear Experiment</button>
       </form>

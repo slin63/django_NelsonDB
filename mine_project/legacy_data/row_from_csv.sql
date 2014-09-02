@@ -22,7 +22,7 @@ CREATE TABLE `legacy_legacy_row` (
 
 """Could not add 08SN, 09NC, 09PM, 09PX, 10GT, 12MY, 10JH """
 
-load data local infile 'C://Users/Nick/Documents/GitHub/mineproject/mine_project/legacy_data/nelson_lab_row_table.csv' 
+load data local infile 'C://Users/Nick/Documents/GitHub/mineproject/mine_project/legacy_data/nelson_lab_row_table_c1.csv' 
 into table legacy_legacy_row fields terminated by ','
 enclosed by '"'
 lines terminated by '\n'

@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from mine.models import Category, Page, UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, Source, AccessionCollecting, Field, Locality, Location
-from legacy.models import Legacy_Seed, Legacy_Row, Legacy_Experiment, Legacy_Seed_Inventory
+from legacy.models import Legacy_Seed, Legacy_Row, Legacy_Experiment, Legacy_Seed_Inventory, Legacy_People
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -109,6 +109,8 @@ def legacy_seed_inventory_sort(request):
       selected_stocks = Legacy_Seed.objects.filter(experiment_id_origin=experiment)
     else:
       selected_stocks = Legacy_Seed.objects.all()[:1000]
+  for stock in selected_stocks:
+    stock.person = Legacy_People.objects.get(person_id = stock.seed_person_id)
   return selected_stocks
 
 def legacy_session_variable_check(request):
@@ -176,11 +178,48 @@ def select_legacy_stock(request, legacy_stock):
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('legacy/legacy_stock.html', context_dict, context)
 
-def select_legacy_row(request, legacy_row):
+def select_legacy_row(request, legacy_row, legacy_seed):
   context = RequestContext(request)
   context_dict = {}
-  row_info = Legacy_Row.objects.filter(row_id = legacy_row)
+  selected_seed = Legacy_Seed.objects.get(seed_id = legacy_seed)
+  context_dict['selected_seed'] = selected_seed
+  row_info = Legacy_Row.objects.get(row_id = legacy_row)
   context_dict['selected_row'] = row_info
+  Legacy_seed_person = Legacy_People.objects.get(person_id = selected_seed.seed_person_id)
+  context_dict['selected_seed_person'] = Legacy_seed_person.person_name
+  try:
+    source_seed1 = Legacy_Seed.objects.get(seed_id = row_info.source_seed_id)
+    Legacy_seed_person1 = Legacy_People.objects.get(person_id = source_seed1.seed_person_id)
+    context_dict['selected_seed_person1'] = Legacy_seed_person1.person_name
+  except Legacy_Seed.DoesNotExist:
+    source_seed1 = None
+  if source_seed1 is not None:
+    try:
+      source_row1 = Legacy_Row.objects.get(row_id = source_seed1.row_id_origin )
+    except Legacy_Row.DoesNotExist:
+      source_row1 = None
+  else:
+    source_row1 = None
+  if source_row1 is not None:
+    try:
+      source_seed2 = Legacy_Seed.objects.get(seed_id = source_row1.source_seed_id )
+      Legacy_seed_person2 = Legacy_People.objects.get(person_id = source_seed2.seed_person_id)
+      context_dict['selected_seed_person2'] = Legacy_seed_person2.person_name
+    except Legacy_Seed.DoesNotExist:
+      source_seed2 = None
+  else:
+    source_seed2 = None
+  if source_seed2 is not None:
+    try:
+      source_row2 = Legacy_Row.objects.get(row_id = source_seed2.row_id_origin )
+    except Legacy_Row.DoesNotExist:
+      source_row2 = None
+  else:
+    source_row2 = None
+  context_dict['source_seed1'] = source_seed1
+  context_dict['source_row1'] = source_row1
+  context_dict['source_seed2'] = source_seed2
+  context_dict['source_row2'] = source_row2
   exp_list = get_experiment_list()
   context_dict['exp_list'] = exp_list
   context_dict['logged_in_user'] = request.user.username
