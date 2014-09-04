@@ -169,16 +169,6 @@ def legacy_inventory_clear(request, clear_selected):
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('legacy/legacy_seed_inventory.html', context_dict, context)
 
-def select_legacy_stock(request, legacy_stock):
-  context = RequestContext(request)
-  context_dict = {}
-  stock_info = Legacy_Seed_Inventory.objects.filter(seed_id = legacy_stock)
-  context_dict['selected_stock'] = stock_info
-  exp_list = get_experiment_list()
-  context_dict['exp_list'] = exp_list
-  context_dict['logged_in_user'] = request.user.username
-  return render_to_response('legacy/legacy_stock.html', context_dict, context)
-
 def select_legacy_row(request, legacy_row, legacy_seed):
   context = RequestContext(request)
   context_dict = {}
@@ -194,6 +184,11 @@ def select_legacy_row(request, legacy_row, legacy_seed):
   except Legacy_Row.DoesNotExist:
     row_info = None
   context_dict['selected_row'] = row_info
+  try:
+    storage_info = Legacy_Seed_Inventory.objects.filter(seed_id = legacy_seed)
+  except Legacy_Seed_Inventory.DoesNotExist:
+    storage_info = None
+  context_dict['storage_info'] = storage_info
 
   if row_info is not None:
     try:
@@ -201,13 +196,19 @@ def select_legacy_row(request, legacy_row, legacy_seed):
       legacy_seed_person1 = Legacy_People.objects.get(person_id = source_seed1.seed_person_id)
       source_seed1.person = legacy_seed_person1.person_name
       try:
+        storage_info1 = Legacy_Seed_Inventory.objects.filter(seed_id = row_info.source_seed_id)
+      except Legacy_Seed_Inventory.DoesNotExist:
+        storage_info1 = None
+      try:
         source_row1 = Legacy_Row.objects.get(row_id = source_seed1.row_id_origin)
       except Legacy_Row.DoesNotExist:
         source_row1 = None
     except Legacy_Seed.DoesNotExist:
       source_seed1 = None
       source_row1 = None
+      storage_info1 = None
     context_dict['source_seed1'] = source_seed1
+    context_dict['storage_info1'] = storage_info1
   else:
     source_row1 = None
   context_dict['source_row1'] = source_row1
@@ -218,13 +219,19 @@ def select_legacy_row(request, legacy_row, legacy_seed):
       legacy_seed_person2 = Legacy_People.objects.get(person_id = source_seed2.seed_person_id)
       source_seed2.person = legacy_seed_person2.person_name
       try:
+        storage_info2 = Legacy_Seed_Inventory.objects.filter(seed_id = source_row1.source_seed_id)
+      except Legacy_Seed_Inventory.DoesNotExist:
+        storage_info2 = None
+      try:
         source_row2 = Legacy_Row.objects.get(row_id = source_seed2.row_id_origin )
       except Legacy_Row.DoesNotExist:
         source_row2 = None
     except Legacy_Seed.DoesNotExist:
       source_seed2 = None
       source_row2 = None
+      storage_info2 = None
     context_dict['source_seed2'] = source_seed2
+    context_dict['storage_info2'] = storage_info2
   else:
     source_row2 = None
   context_dict['source_row2'] = source_row2
@@ -235,13 +242,19 @@ def select_legacy_row(request, legacy_row, legacy_seed):
       legacy_seed_person3 = Legacy_People.objects.get(person_id = source_seed3.seed_person_id)
       source_seed2.person = legacy_seed_person3.person_name
       try:
+        storage_info3 = Legacy_Seed_Inventory.objects.filter(seed_id = source_row2.source_seed_id)
+      except Legacy_Seed_Inventory.DoesNotExist:
+        storage_info3 = None
+      try:
         source_row3 = Legacy_Row.objects.get(row_id = source_seed3.row_id_origin )
       except Legacy_Row.DoesNotExist:
         source_row3 = None
     except Legacy_Seed.DoesNotExist:
       source_seed3 = None
       source_row3 = None
+      storage_info3 = None
     context_dict['source_seed3'] = source_seed3
+    context_dict['storage_info3'] = storage_info3
   else:
     source_row3 = None
   context_dict['source_row3'] = source_row3
