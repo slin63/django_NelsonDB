@@ -30,7 +30,7 @@
               <td>{{ selected_seed.row_name }}</td>
               <td>{{ selected_seed.cross_type }}</td>
               <td>{{ selected_seed.seed_pedigree}}</td>
-              <td>{% if selected_seed_person %}<a href="/mine/profile/{{ selected_seed_person }}">{{ selected_seed_person}}</a>{% endif %}</td>
+              <td><a href="/mine/profile/{{ selected_seed.person }}">{{ selected_seed.person }}</a></td>
               <td>{{ selected_seed.notes}}</td>
             </tr>
           </tbody>
@@ -95,7 +95,7 @@
             <td>{{ source_seed1.row_name }}</td>
             <td>{{ source_seed1.cross_type }}</td>
             <td>{{ source_seed1.seed_pedigree}}</td>
-            <td><a href="/mine/profile/{{ selected_seed_person1 }}">{{ selected_seed_person1 }}</a></td>
+            <td><a href="/mine/profile/{{ source_seed1.person }}">{{ source_seed1.person }}</a></td>
             <td>{{ source_seed1.notes}}</td>
           </tr>
         </tbody>
@@ -160,7 +160,7 @@
             <td>{{ source_seed2.row_name }}</td>
             <td>{{ source_seed2.cross_type }}</td>
             <td>{{ source_seed2.seed_pedigree}}</td>
-            <td><a href="/mine/profile/{{ selected_seed_person2 }}">{{ selected_seed_person2 }}</a></td>
+            <td><a href="/mine/profile/{{ source_seed2.person }}">{{ source_seed2.person }}</a></td>
             <td>{{ source_seed2.notes}}</td>
           </tr>
         </tbody>

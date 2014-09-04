@@ -8,55 +8,59 @@
 <br />
 
 <div class="container-fluid">
-  <div class="row-fluid">
-    <div class="span3">
-      <ul class="nav nav-list">
-        <li class="nav-header">Find a Genotype</li>
-        <form>
-        <label></label>
-        <li><input  class="search-query" type="text" name="legacypedigreesuggestion" value="{{ selected_legacy_pedigree }}" id="legacypedigreesuggestion" /></li>
-        <li>Exact Match: <input type="radio" id="query_pedigree_option_exact" name="query_pedigree_option" value="exact" /></li>
-        <li>Variable Match: <input type="radio" id="query_pedigree_option_variable" name="query_pedigree_option" value="variable" checked="checked"/></li>
+  <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+    <div class="row-fluid">
+      <div class="span3">
+        <ul class="nav nav-list">
+          <li class="nav-header">Find a Genotype</li>
+          <form>
+          <label></label>
+          <li><input  class="search-query" type="text" name="legacypedigreesuggestion" value="{{ selected_legacy_pedigree }}" id="legacypedigreesuggestion" /></li>
+          <li>Exact Match: <input type="radio" id="query_pedigree_option_exact" name="query_pedigree_option" value="exact" /></li>
+          <li>Variable Match: <input type="radio" id="query_pedigree_option_variable" name="query_pedigree_option" value="variable" checked="checked"/></li>
+          </form>
+        </ul>
+      </div>
+      {% if selected_legacy_pedigree %}
+      <div class="span2 offset7">
+        <form id="clear_legacy_pedigree" method="post" action="/legacy/legacy_seed_inventory/clear/selected_legacy_pedigree/">
+          {% csrf_token %}
+        <button class="btn btn-primary" type="submit">Clear Genotype</button>
         </form>
-      </ul>
+      </div>
+      {% endif %}
     </div>
-    {% if selected_legacy_pedigree %}
-    <div class="span9">
-      <form id="clear_legacy_pedigree" method="post" action="/legacy/legacy_seed_inventory/clear/selected_legacy_pedigree/">
-        {% csrf_token %}
-      <button class="btn btn-primary" type="submit">Clear Genotype</button>
-      </form>
+    <div id="legacy_pedigrees">
+      {% include 'legacy/legacy_pedigree_list.html' with pedigree_list=pedigree_list %}
     </div>
-    {% endif %}
-  </div>
-  <div id="legacy_pedigrees">
-    {% include 'legacy/legacy_pedigree_list.html' with pedigree_list=pedigree_list %}
-  </div>
-  <div class="row-fluid">
-    <div class="span3">
-      <ul class="nav nav-list">
-        <li class="nav-header">Sort by Experiment</li>
-        <form>
-        <label></label>
-        <li><input  class="search-query" type="text" name="legacyexperimentsuggestion" value="{{ selected_legacy_experiment }}" id="legacyexperimentsuggestion" /></li>
-        <li>Exact Match: <input type="radio" id="query_experiment_option_exact" name="query_experiment_option" value="exact" /></li>
-        <li>Variable Match: <input type="radio" id="query_experiment_option_variable" name="query_experiment_option" value="variable" checked="checked"/></li>
+  </div><br/><br/>
+  <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+    <div class="row-fluid">
+      <div class="span3">
+        <ul class="nav nav-list">
+          <li class="nav-header">Sort by Experiment</li>
+          <form>
+          <label></label>
+          <li><input  class="search-query" type="text" name="legacyexperimentsuggestion" value="{{ selected_legacy_experiment }}" id="legacyexperimentsuggestion" /></li>
+          <li>Exact Match: <input type="radio" id="query_experiment_option_exact" name="query_experiment_option" value="exact" /></li>
+          <li>Variable Match: <input type="radio" id="query_experiment_option_variable" name="query_experiment_option" value="variable" checked="checked"/></li>
+          </form>
+        </ul>
+      </div>
+      {% if selected_legacy_experiment %}
+      <div class="span2 offset7">
+        <form id="clear_legacy_experiment" method="post" action="/legacy/legacy_seed_inventory/clear/selected_legacy_experiment/">
+          {% csrf_token %}
+        <button class="btn btn-primary" type="submit">Clear Experiment</button>
         </form>
-      </ul>
+      </div>
+      {% endif %}
     </div>
-    {% if selected_legacy_experiment %}
-    <div class="span9">
-      <form id="clear_legacy_experiment" method="post" action="/legacy/legacy_seed_inventory/clear/selected_legacy_experiment/">
-        {% csrf_token %}
-      <button class="btn btn-primary" type="submit">Clear Experiment</button>
-      </form>
+    <div id="legacy_experiments">
+      {% include 'legacy/legacy_experiment_list.html' with experiment_list=experiment_list %}
     </div>
-    {% endif %}
   </div>
-  <div id="legacy_experiments">
-    {% include 'legacy/legacy_experiment_list.html' with experiment_list=experiment_list %}
-  </div>
-</div>
+</div><br/>
 
 <div id="stock_div">
   {% include 'legacy/legacy_stock_table.html' with selected_stocks=selected_stocks %}

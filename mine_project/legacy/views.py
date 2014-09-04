@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
+from collections import defaultdict
 
 def encode_url(str):
   return str.replace(' ', '_')
@@ -181,48 +182,71 @@ def select_legacy_stock(request, legacy_stock):
 def select_legacy_row(request, legacy_row, legacy_seed):
   context = RequestContext(request)
   context_dict = {}
-  selected_seed = Legacy_Seed.objects.get(seed_id = legacy_seed)
-  context_dict['selected_seed'] = selected_seed
-  row_info = Legacy_Row.objects.get(row_id = legacy_row)
-  context_dict['selected_row'] = row_info
-  Legacy_seed_person = Legacy_People.objects.get(person_id = selected_seed.seed_person_id)
-  context_dict['selected_seed_person'] = Legacy_seed_person.person_name
   try:
-    source_seed1 = Legacy_Seed.objects.get(seed_id = row_info.source_seed_id)
-    Legacy_seed_person1 = Legacy_People.objects.get(person_id = source_seed1.seed_person_id)
-    context_dict['selected_seed_person1'] = Legacy_seed_person1.person_name
+    selected_seed = Legacy_Seed.objects.get(seed_id = legacy_seed)
+    legacy_seed_person = Legacy_People.objects.get(person_id = selected_seed.seed_person_id)
+    selected_seed.person = legacy_seed_person.person_name
   except Legacy_Seed.DoesNotExist:
-    source_seed1 = None
-  if source_seed1 is not None:
+    selected_seed = None
+  context_dict['selected_seed'] = selected_seed
+  try:
+    row_info = Legacy_Row.objects.get(row_id = legacy_row)
+  except Legacy_Row.DoesNotExist:
+    row_info = None
+  context_dict['selected_row'] = row_info
+
+  if row_info is not None:
     try:
-      source_row1 = Legacy_Row.objects.get(row_id = source_seed1.row_id_origin )
-    except Legacy_Row.DoesNotExist:
+      source_seed1 = Legacy_Seed.objects.get(seed_id = row_info.source_seed_id)
+      legacy_seed_person1 = Legacy_People.objects.get(person_id = source_seed1.seed_person_id)
+      source_seed1.person = legacy_seed_person1.person_name
+      try:
+        source_row1 = Legacy_Row.objects.get(row_id = source_seed1.row_id_origin)
+      except Legacy_Row.DoesNotExist:
+        source_row1 = None
+    except Legacy_Seed.DoesNotExist:
+      source_seed1 = None
       source_row1 = None
+    context_dict['source_seed1'] = source_seed1
   else:
     source_row1 = None
+  context_dict['source_row1'] = source_row1
+
   if source_row1 is not None:
     try:
       source_seed2 = Legacy_Seed.objects.get(seed_id = source_row1.source_seed_id )
-      Legacy_seed_person2 = Legacy_People.objects.get(person_id = source_seed2.seed_person_id)
-      context_dict['selected_seed_person2'] = Legacy_seed_person2.person_name
+      legacy_seed_person2 = Legacy_People.objects.get(person_id = source_seed2.seed_person_id)
+      source_seed2.person = legacy_seed_person2.person_name
+      try:
+        source_row2 = Legacy_Row.objects.get(row_id = source_seed2.row_id_origin )
+      except Legacy_Row.DoesNotExist:
+        source_row2 = None
     except Legacy_Seed.DoesNotExist:
       source_seed2 = None
-  else:
-    source_seed2 = None
-  if source_seed2 is not None:
-    try:
-      source_row2 = Legacy_Row.objects.get(row_id = source_seed2.row_id_origin )
-    except Legacy_Row.DoesNotExist:
       source_row2 = None
+    context_dict['source_seed2'] = source_seed2
   else:
     source_row2 = None
-  context_dict['source_seed1'] = source_seed1
-  context_dict['source_row1'] = source_row1
-  context_dict['source_seed2'] = source_seed2
   context_dict['source_row2'] = source_row2
+
+  if source_row2 is not None:
+    try:
+      source_seed3 = Legacy_Seed.objects.get(seed_id = source_row2.source_seed_id )
+      legacy_seed_person3 = Legacy_People.objects.get(person_id = source_seed3.seed_person_id)
+      source_seed2.person = legacy_seed_person3.person_name
+      try:
+        source_row3 = Legacy_Row.objects.get(row_id = source_seed3.row_id_origin )
+      except Legacy_Row.DoesNotExist:
+        source_row3 = None
+    except Legacy_Seed.DoesNotExist:
+      source_seed3 = None
+      source_row3 = None
+    context_dict['source_seed3'] = source_seed3
+  else:
+    source_row3 = None
+  context_dict['source_row3'] = source_row3
+
   exp_list = get_experiment_list()
   context_dict['exp_list'] = exp_list
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('legacy/legacy_row.html', context_dict, context)
-
-  """testing"""
