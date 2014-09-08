@@ -112,10 +112,10 @@
         {% endif %}
       </div>
     {% endif %}
-    {% if source_seed4 and source_seed5 %}
-      <img style="padding:5px; display: block; margin:0 auto;" src="{% static 'img/down_arrow.jpg' %}" alt="Down Arrow" />
-    {% endif %}
   </div>
+  {% if source_seed4 and source_seed5 %}
+    <img style="padding:5px; display: block; margin:0 auto;" src="{% static 'img/down_arrow.jpg' %}" alt="Down Arrow" />
+  {% endif %}
   <div class="showhim">
     <div class="row-fluid">
       <div class="span4 offset4">
@@ -221,10 +221,10 @@
         {% endif %}
       </div>
     {% endif %}
-    {% if source_seed3 and source_seed4 %}
-      <img style="padding:5px; display: block; margin:0 auto;" src="{% static 'img/down_arrow.jpg' %}" alt="Down Arrow" />
-    {% endif %}
   </div>
+  {% if source_seed3 and source_seed4 %}
+    <img style="padding:5px; display: block; margin:0 auto;" src="{% static 'img/down_arrow.jpg' %}" alt="Down Arrow" />
+  {% endif %}
   <div class="showhim">
     <div class="row-fluid">
       <div class="span4 offset4">
@@ -330,10 +330,10 @@
         {% endif %}
       </div>
     {% endif %}
-    {% if source_seed2 and source_seed3 %}
-      <img style="padding:5px; display: block; margin:0 auto;" src="{% static 'img/down_arrow.jpg' %}" alt="Down Arrow" />
-    {% endif %}
   </div>
+  {% if source_seed2 and source_seed3 %}
+    <img style="padding:5px; display: block; margin:0 auto;" src="{% static 'img/down_arrow.jpg' %}" alt="Down Arrow" />
+  {% endif %}
   <div class="showhim">
     <div class="row-fluid">
       <div class="span4 offset4">
@@ -439,10 +439,10 @@
         {% endif %}
       </div>
     {% endif %}
-    {% if source_seed1 and source_seed2 %}
-      <img style="padding:5px; display: block; margin:0 auto;" src="{% static 'img/down_arrow.jpg' %}" alt="Down Arrow" />
-    {% endif %}
   </div>
+  {% if source_seed1 and source_seed2 %}
+    <img style="padding:5px; display: block; margin:0 auto;" src="{% static 'img/down_arrow.jpg' %}" alt="Down Arrow" />
+  {% endif %}
   <div class="showhim">
     <div class="row-fluid">
       <div class="span4 offset4">
@@ -548,10 +548,10 @@
         {% endif %}
       </div>
     {% endif %}
-    {% if selected_seed and source_seed1 %}
-      <img style="padding:5px; display: block; margin:0 auto;" src="{% static 'img/down_arrow.jpg' %}" alt="Down Arrow" />
-    {% endif %}
   </div>
+  {% if selected_seed and source_seed1 %}
+    <img style="padding:5px; display: block; margin:0 auto;" src="{% static 'img/down_arrow.jpg' %}" alt="Down Arrow" />
+  {% endif %}
   <div class="showhim">
     <div class="row-fluid">
       <div class="span4 offset4">
@@ -658,9 +658,12 @@
       </div>
     {% endif %}
   </div>
+  {% if selected_seed and child_rows %}
+    <img style="padding:5px; display: block; margin:0 auto;" src="{% static 'img/down_arrow.jpg' %}" alt="Down Arrow" />
+  {% endif %}
 </div>
 
-<br/><br/><hr>
+<hr>
 {% if child_rows %}
   <br/>
     <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
