@@ -1,0 +1,12 @@
+.showme{
+  display: none;
+}
+
+.showhim:hover .showme{
+  display : block;
+}
+
+.showhim:hover h4{
+  opacity: 0.5;
+  filter: alpha(opacity=50); /* For IE8 and earlier */
+}

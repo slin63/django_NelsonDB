@@ -176,3 +176,12 @@ $('input:radio[name=query_experiment_option]').click(function(){
 $(document).ready(function() {
 		$('#selected_stocks').dataTable();
 } );
+
+$(document).ready(function() {
+		$('#selected_legacy_stock_child_row').dataTable({
+			"searching": false,
+			"scrollY": "500px",
+			"scrollCollapse": true,
+			"paginate": false
+			});
+} );

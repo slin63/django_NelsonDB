@@ -1,111 +1,671 @@
 {% extends 'mine/base.html' %}
+{% load static %}
 {% block title %}Find a Stock{% endblock %}
 {% block body_block %}
 <div class="hero-unit">
-  <h1>Find a Stock</h1><br/>
+  <h1>Pedigree Tree</h1><br/>
 </div>
-{% if selected_seed %}
-  <hr>
-  <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-    <h2>Selected Stock</h2>
-    <table id="selected_legacy_seed" class="table table-striped table-bordered" cellspacing="0" width="100%">
-      <thead>
-        <tr>
-          <th>Seed ID</th>
-          <th>Seed Name</th>
-          <th>Row ID</th>
-          <th>Row Name</th>
-          <th>Cross Type</th>
-          <th>Pedigree</th>
-          <th>Person</th>
-          <th>Notes</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>{{ selected_seed.seed_id }}</td>
-          <td>{{ selected_seed.seed_name }}</td>
-          <td>{{ selected_seed.row_id_origin }}</td>
-          <td>{{ selected_seed.row_name }}</td>
-          <td>{{ selected_seed.cross_type }}</td>
-          <td>{{ selected_seed.seed_pedigree}}</td>
-          <td><a href="/mine/profile/{{ selected_seed.person }}">{{ selected_seed.person }}</a></td>
-          <td>{{ selected_seed.notes}}</td>
-        </tr>
-      </tbody>
-    </table>
-    {% if selected_row %}
-      <h3>Row Info</h3>
-      <table id="selected_legacy_row" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
-        <tr>
-          <th>Row ID</th>
-          <th>Row Name</th>
-          <th>Experiment ID</th>
-          <th>Pedigree</th>
-          <th>Source Seed ID</th>
-          <th>Range</th>
-          <th>Plot</th>
-          <th>Block</th>
-          <th>Population</th>
-          <th>Notes</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>{{ selected_row.row_id }}</td>
-          <td>{{ selected_row.row_name }}</td>
-          <td><a href="/mine/experiment/{{ selected_row.experiment_id_id }}">{{ selected_row.experiment_id_id }}</a></td>
-          <td>{{ selected_row.pedigree }}</td>
-          <td>{{ selected_row.source_seed_id }}</td>
-          <td>{{ selected_row.range_num }}</td>
-          <td>{{ selected_row.plot }}</td>
-          <td>{{ selected_row.block }}</td>
-          <td>{{ selected_row.pop }}</td>
-          <td>{{ selected_row.notes }}</td>
-        </tr>
-        </tbody>
-      </table>
+
+<div class="container-fluid">
+  <div class="showhim">
+    <div class="row-fluid">
+      <div class="span4 offset4">
+        {% if source_seed5 %}
+          <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:5px; text-align:center">
+            <h4>{{ source_seed5.seed_id }}</h4>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    {% if source_seed5 %}
+      <div class="showme" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+        <h2>Great-Great-Great-Grandparent Stock</h2>
+        <table id="selected_legacy_source_seed5" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Seed ID</th>
+              <th>Seed Name</th>
+              <th>Row ID</th>
+              <th>Row Name</th>
+              <th>Cross Type</th>
+              <th>Pedigree</th>
+              <th>Person</th>
+              <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>{{ source_seed5.seed_id }}</td>
+              <td>{{ source_seed5.seed_name }}</td>
+              <td>{{ source_seed5.row_id_origin }}</td>
+              <td>{{ source_seed5.row_name }}</td>
+              <td>{{ source_seed5.cross_type }}</td>
+              <td>{{ source_seed5.seed_pedigree}}</td>
+              <td><a href="/mine/profile/{{ source_seed5.person }}">{{ source_seed5.person }}</a></td>
+              <td>{{ source_seed5.notes}}</td>
+            </tr>
+          </tbody>
+        </table>
+        {% if source_row5 %}
+          <h3>Row Info</h3>
+          <table id="selected_legacy_stock_source_row5" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+              <th>Row ID</th>
+              <th>Row Name</th>
+              <th>Experiment ID</th>
+              <th>Pedigree</th>
+              <th>Source Seed ID</th>
+              <th>Range</th>
+              <th>Plot</th>
+              <th>Block</th>
+              <th>Population</th>
+              <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>{{ source_row5.row_id }}</td>
+              <td>{{ source_row5.row_name }}</td>
+              <td><a href="/mine/experiment/{{ source_row5.experiment_id_id }}">{{ source_row5.experiment_id_id }}</a></td>
+              <td>{{ source_row5.pedigree }}</td>
+              <td>{{ source_row5.source_seed_id }}</td>
+              <td>{{ source_row5.range_num }}</td>
+              <td>{{ source_row5.plot }}</td>
+              <td>{{ source_row5.block }}</td>
+              <td>{{ source_row5.pop }}</td>
+              <td>{{ source_row5.notes }}</td>
+            </tr>
+            </tbody>
+          </table>
+        {% endif %}
+        {% if seed_storage5 %}
+          <h3>Storage</h3>
+          <table id="selected_legacy_stock_storage5" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+              <th>Seed ID</th>
+              <th>Seed Name</th>
+              <th>Weight (g)</th>
+              <th>Inventory Date</th>
+              <th>Inventory Person</th>
+              <th>Location</th>
+              <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for packet in seed_storage5 %}
+            <tr>
+              <td>{{ packet.seed_id }}</td>
+              <td>{{ packet.seed_name }}</td>
+              <td>{{ packet.weight_g }}</td>
+              <td>{{ packet.inventory_date }}</td>
+              <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
+              <td>{{ packet.location }}</td>
+              <td>{{ packet.notes }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <h3>Not Inventoried</h3>
+        {% endif %}
+      </div>
     {% endif %}
-    {% if storage_info %}
-      <h3>Storage</h3>
-      <table id="selected_legacy_stock_storage" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
-        <tr>
-          <th>Seed ID</th>
-          <th>Seed Name</th>
-          <th>Weight (g)</th>
-          <th>Inventory Date</th>
-          <th>Inventory Person</th>
-          <th>Location</th>
-          <th>Notes</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for packet in storage_info %}
-        <tr>
-          <td>{{ packet.seed_id }}</td>
-          <td>{{ packet.seed_name }}</td>
-          <td>{{ packet.weight_g }}</td>
-          <td>{{ packet.inventory_date }}</td>
-          <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
-          <td>{{ packet.location }}</td>
-          <td>{{ packet.notes }}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <h3>Not Inventoried</h3>
+    {% if source_seed4 and source_seed5 %}
+      <img style="padding:5px; display: block; margin:0 auto;" src="{% static 'img/down_arrow.jpg' %}" alt="Down Arrow" />
     {% endif %}
   </div>
-{% endif %}
-<br/>
-{% if source_seed1 %}
+  <div class="showhim">
+    <div class="row-fluid">
+      <div class="span4 offset4">
+        {% if source_seed4 %}
+          <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:5px; text-align:center">
+            <h4>{{ source_seed4.seed_id }}</h4>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    {% if source_seed4 %}
+      <div class="showme" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+        <h2>Great-Great-Grandparent Stock</h2>
+        <table id="selected_legacy_source_seed3" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Seed ID</th>
+              <th>Seed Name</th>
+              <th>Row ID</th>
+              <th>Row Name</th>
+              <th>Cross Type</th>
+              <th>Pedigree</th>
+              <th>Person</th>
+              <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>{{ source_seed4.seed_id }}</td>
+              <td>{{ source_seed4.seed_name }}</td>
+              <td>{{ source_seed4.row_id_origin }}</td>
+              <td>{{ source_seed4.row_name }}</td>
+              <td>{{ source_seed4.cross_type }}</td>
+              <td>{{ source_seed4.seed_pedigree}}</td>
+              <td><a href="/mine/profile/{{ source_seed4.person }}">{{ source_seed4.person }}</a></td>
+              <td>{{ source_seed4.notes}}</td>
+            </tr>
+          </tbody>
+        </table>
+        {% if source_row4 %}
+          <h3>Row Info</h3>
+          <table id="selected_legacy_stock_source_row4" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+              <th>Row ID</th>
+              <th>Row Name</th>
+              <th>Experiment ID</th>
+              <th>Pedigree</th>
+              <th>Source Seed ID</th>
+              <th>Range</th>
+              <th>Plot</th>
+              <th>Block</th>
+              <th>Population</th>
+              <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>{{ source_row4.row_id }}</td>
+              <td>{{ source_row4.row_name }}</td>
+              <td><a href="/mine/experiment/{{ source_row4.experiment_id_id }}">{{ source_row4.experiment_id_id }}</a></td>
+              <td>{{ source_row4.pedigree }}</td>
+              <td>{{ source_row4.source_seed_id }}</td>
+              <td>{{ source_row4.range_num }}</td>
+              <td>{{ source_row4.plot }}</td>
+              <td>{{ source_row4.block }}</td>
+              <td>{{ source_row4.pop }}</td>
+              <td>{{ source_row4.notes }}</td>
+            </tr>
+            </tbody>
+          </table>
+        {% endif %}
+        {% if seed_storage4 %}
+          <h3>Storage</h3>
+          <table id="selected_legacy_stock_storage4" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+              <th>Seed ID</th>
+              <th>Seed Name</th>
+              <th>Weight (g)</th>
+              <th>Inventory Date</th>
+              <th>Inventory Person</th>
+              <th>Location</th>
+              <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for packet in seed_storage4 %}
+            <tr>
+              <td>{{ packet.seed_id }}</td>
+              <td>{{ packet.seed_name }}</td>
+              <td>{{ packet.weight_g }}</td>
+              <td>{{ packet.inventory_date }}</td>
+              <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
+              <td>{{ packet.location }}</td>
+              <td>{{ packet.notes }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <h3>Not Inventoried</h3>
+        {% endif %}
+      </div>
+    {% endif %}
+    {% if source_seed3 and source_seed4 %}
+      <img style="padding:5px; display: block; margin:0 auto;" src="{% static 'img/down_arrow.jpg' %}" alt="Down Arrow" />
+    {% endif %}
+  </div>
+  <div class="showhim">
+    <div class="row-fluid">
+      <div class="span4 offset4">
+        {% if source_seed3 %}
+          <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:5px; text-align:center">
+            <h4>{{ source_seed3.seed_id }}</h4>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    {% if source_seed3 %}
+      <div class="showme" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+        <h2>Great-Grandparent Stock</h2>
+        <table id="selected_legacy_source_seed3" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Seed ID</th>
+              <th>Seed Name</th>
+              <th>Row ID</th>
+              <th>Row Name</th>
+              <th>Cross Type</th>
+              <th>Pedigree</th>
+              <th>Person</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ source_seed3.seed_id }}</td>
+              <td>{{ source_seed3.seed_name }}</td>
+              <td>{{ source_seed3.row_id_origin }}</td>
+              <td>{{ source_seed3.row_name }}</td>
+              <td>{{ source_seed3.cross_type }}</td>
+              <td>{{ source_seed3.seed_pedigree}}</td>
+              <td><a href="/mine/profile/{{ source_seed3.person }}">{{ source_seed3.person }}</a></td>
+              <td>{{ source_seed3.notes}}</td>
+            </tr>
+          </tbody>
+        </table>
+        {% if source_row3 %}
+          <h3>Row Info</h3>
+          <table id="selected_legacy_stock_source_row3" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+              <th>Row ID</th>
+              <th>Row Name</th>
+              <th>Experiment ID</th>
+              <th>Pedigree</th>
+              <th>Source Seed ID</th>
+              <th>Range</th>
+              <th>Plot</th>
+              <th>Block</th>
+              <th>Population</th>
+              <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>{{ source_row3.row_id }}</td>
+              <td>{{ source_row3.row_name }}</td>
+              <td><a href="/mine/experiment/{{ source_row3.experiment_id_id }}">{{ source_row3.experiment_id_id }}</a></td>
+              <td>{{ source_row3.pedigree }}</td>
+              <td>{{ source_row3.source_seed_id }}</td>
+              <td>{{ source_row3.range_num }}</td>
+              <td>{{ source_row3.plot }}</td>
+              <td>{{ source_row3.block }}</td>
+              <td>{{ source_row3.pop }}</td>
+              <td>{{ source_row3.notes }}</td>
+            </tr>
+            </tbody>
+          </table>
+        {% endif %}
+        {% if seed_storage3 %}
+          <h3>Storage</h3>
+          <table id="selected_legacy_stock_storage3" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+              <th>Seed ID</th>
+              <th>Seed Name</th>
+              <th>Weight (g)</th>
+              <th>Inventory Date</th>
+              <th>Inventory Person</th>
+              <th>Location</th>
+              <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for packet in seed_storage3 %}
+            <tr>
+              <td>{{ packet.seed_id }}</td>
+              <td>{{ packet.seed_name }}</td>
+              <td>{{ packet.weight_g }}</td>
+              <td>{{ packet.inventory_date }}</td>
+              <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
+              <td>{{ packet.location }}</td>
+              <td>{{ packet.notes }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <h3>Not Inventoried</h3>
+        {% endif %}
+      </div>
+    {% endif %}
+    {% if source_seed2 and source_seed3 %}
+      <img style="padding:5px; display: block; margin:0 auto;" src="{% static 'img/down_arrow.jpg' %}" alt="Down Arrow" />
+    {% endif %}
+  </div>
+  <div class="showhim">
+    <div class="row-fluid">
+      <div class="span4 offset4">
+        {% if source_seed2 %}
+          <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:5px; text-align:center">
+            <h4>{{ source_seed2.seed_id }}</h4>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    {% if source_seed2 %}
+      <div class="showme" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+        <h2>Grandparent Stock</h2>
+        <table id="selected_legacy_source_seed2" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Seed ID</th>
+              <th>Seed Name</th>
+              <th>Row ID</th>
+              <th>Row Name</th>
+              <th>Cross Type</th>
+              <th>Pedigree</th>
+              <th>Person</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ source_seed2.seed_id }}</td>
+              <td>{{ source_seed2.seed_name }}</td>
+              <td>{{ source_seed2.row_id_origin }}</td>
+              <td>{{ source_seed2.row_name }}</td>
+              <td>{{ source_seed2.cross_type }}</td>
+              <td>{{ source_seed2.seed_pedigree}}</td>
+              <td><a href="/mine/profile/{{ source_seed2.person }}">{{ source_seed2.person }}</a></td>
+              <td>{{ source_seed2.notes}}</td>
+            </tr>
+          </tbody>
+        </table>
+        {% if source_row2 %}
+          <h3>Row Info</h3>
+          <table id="selected_legacy_stock_source_row2" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+              <th>Row ID</th>
+              <th>Row Name</th>
+              <th>Experiment ID</th>
+              <th>Pedigree</th>
+              <th>Source Seed ID</th>
+              <th>Range</th>
+              <th>Plot</th>
+              <th>Block</th>
+              <th>Population</th>
+              <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>{{ source_row2.row_id }}</td>
+              <td>{{ source_row2.row_name }}</td>
+              <td><a href="/mine/experiment/{{ source_row2.experiment_id_id }}">{{ source_row2.experiment_id_id }}</a></td>
+              <td>{{ source_row2.pedigree }}</td>
+              <td>{{ source_row2.source_seed_id }}</td>
+              <td>{{ source_row2.range_num }}</td>
+              <td>{{ source_row2.plot }}</td>
+              <td>{{ source_row2.block }}</td>
+              <td>{{ source_row2.pop }}</td>
+              <td>{{ source_row2.notes }}</td>
+            </tr>
+            </tbody>
+          </table>
+        {% endif %}
+        {% if seed_storage2 %}
+          <h3>Storage</h3>
+          <table id="selected_legacy_stock_storage2" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+              <th>Seed ID</th>
+              <th>Seed Name</th>
+              <th>Weight (g)</th>
+              <th>Inventory Date</th>
+              <th>Inventory Person</th>
+              <th>Location</th>
+              <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for packet in seed_storage2 %}
+            <tr>
+              <td>{{ packet.seed_id }}</td>
+              <td>{{ packet.seed_name }}</td>
+              <td>{{ packet.weight_g }}</td>
+              <td>{{ packet.inventory_date }}</td>
+              <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
+              <td>{{ packet.location }}</td>
+              <td>{{ packet.notes }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <h3>Not Inventoried</h3>
+        {% endif %}
+      </div>
+    {% endif %}
+    {% if source_seed1 and source_seed2 %}
+      <img style="padding:5px; display: block; margin:0 auto;" src="{% static 'img/down_arrow.jpg' %}" alt="Down Arrow" />
+    {% endif %}
+  </div>
+  <div class="showhim">
+    <div class="row-fluid">
+      <div class="span4 offset4">
+        {% if source_seed1 %}
+          <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:5px; text-align:center">
+            <h4>{{ source_seed1.seed_id }}</h4>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    {% if source_seed1 %}
+      <div class="showme"style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+        <h2>Parent Stock</h2>
+        <table id="selected_legacy_source_seed1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Seed ID</th>
+              <th>Seed Name</th>
+              <th>Row ID</th>
+              <th>Row Name</th>
+              <th>Cross Type</th>
+              <th>Pedigree</th>
+              <th>Person</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ source_seed1.seed_id }}</td>
+              <td>{{ source_seed1.seed_name }}</td>
+              <td>{{ source_seed1.row_id_origin }}</td>
+              <td>{{ source_seed1.row_name }}</td>
+              <td>{{ source_seed1.cross_type }}</td>
+              <td>{{ source_seed1.seed_pedigree}}</td>
+              <td><a href="/mine/profile/{{ source_seed1.person }}">{{ source_seed1.person }}</a></td>
+              <td>{{ source_seed1.notes}}</td>
+            </tr>
+          </tbody>
+        </table>
+        {% if source_row1 %}
+          <h3>Row Info</h3>
+          <table id="selected_legacy_stock_source_row1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+              <th>Row ID</th>
+              <th>Row Name</th>
+              <th>Experiment ID</th>
+              <th>Pedigree</th>
+              <th>Source Seed ID</th>
+              <th>Range</th>
+              <th>Plot</th>
+              <th>Block</th>
+              <th>Population</th>
+              <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>{{ source_row1.row_id }}</td>
+              <td>{{ source_row1.row_name }}</td>
+              <td><a href="/mine/experiment/{{ source_row1.experiment_id_id }}">{{ source_row1.experiment_id_id }}</a></td>
+              <td>{{ source_row1.pedigree }}</td>
+              <td>{{ source_row1.source_seed_id }}</td>
+              <td>{{ source_row1.range_num }}</td>
+              <td>{{ source_row1.plot }}</td>
+              <td>{{ source_row1.block }}</td>
+              <td>{{ source_row1.pop }}</td>
+              <td>{{ source_row1.notes }}</td>
+            </tr>
+            </tbody>
+          </table>
+        {% endif %}
+        {% if seed_storage1 %}
+          <h3>Storage</h3>
+          <table id="selected_legacy_stock_storage1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+              <th>Seed ID</th>
+              <th>Seed Name</th>
+              <th>Weight (g)</th>
+              <th>Inventory Date</th>
+              <th>Inventory Person</th>
+              <th>Location</th>
+              <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for packet in seed_storage1 %}
+            <tr>
+              <td>{{ packet.seed_id }}</td>
+              <td>{{ packet.seed_name }}</td>
+              <td>{{ packet.weight_g }}</td>
+              <td>{{ packet.inventory_date }}</td>
+              <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
+              <td>{{ packet.location }}</td>
+              <td>{{ packet.notes }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <h3>Not Inventoried</h3>
+        {% endif %}
+      </div>
+    {% endif %}
+    {% if selected_seed and source_seed1 %}
+      <img style="padding:5px; display: block; margin:0 auto;" src="{% static 'img/down_arrow.jpg' %}" alt="Down Arrow" />
+    {% endif %}
+  </div>
+  <div class="showhim">
+    <div class="row-fluid">
+      <div class="span4 offset4">
+        {% if selected_seed %}
+          <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:5px; text-align:center">
+            <h4><font color="247eca">Selected:</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ selected_seed.seed_id }}</h4>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    {% if selected_seed %}
+      <div class="showme" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+        <h2>Selected Stock</h2>
+        <table id="selected_legacy_seed" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Seed ID</th>
+              <th>Seed Name</th>
+              <th>Row ID</th>
+              <th>Row Name</th>
+              <th>Cross Type</th>
+              <th>Pedigree</th>
+              <th>Person</th>
+              <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>{{ selected_seed.seed_id }}</td>
+              <td>{{ selected_seed.seed_name }}</td>
+              <td>{{ selected_seed.row_id_origin }}</td>
+              <td>{{ selected_seed.row_name }}</td>
+              <td>{{ selected_seed.cross_type }}</td>
+              <td>{{ selected_seed.seed_pedigree}}</td>
+              <td><a href="/mine/profile/{{ selected_seed.person }}">{{ selected_seed.person }}</a></td>
+              <td>{{ selected_seed.notes}}</td>
+            </tr>
+          </tbody>
+        </table>
+        {% if selected_row %}
+          <h3>Row Info</h3>
+          <table id="selected_legacy_row" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+              <th>Row ID</th>
+              <th>Row Name</th>
+              <th>Experiment ID</th>
+              <th>Pedigree</th>
+              <th>Source Seed ID</th>
+              <th>Range</th>
+              <th>Plot</th>
+              <th>Block</th>
+              <th>Population</th>
+              <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>{{ selected_row.row_id }}</td>
+              <td>{{ selected_row.row_name }}</td>
+              <td><a href="/mine/experiment/{{ selected_row.experiment_id_id }}">{{ selected_row.experiment_id_id }}</a></td>
+              <td>{{ selected_row.pedigree }}</td>
+              <td>{{ selected_row.source_seed_id }}</td>
+              <td>{{ selected_row.range_num }}</td>
+              <td>{{ selected_row.plot }}</td>
+              <td>{{ selected_row.block }}</td>
+              <td>{{ selected_row.pop }}</td>
+              <td>{{ selected_row.notes }}</td>
+            </tr>
+            </tbody>
+          </table>
+        {% endif %}
+        {% if storage_info %}
+          <h3>Storage</h3>
+          <table id="selected_legacy_stock_storage" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+              <th>Seed ID</th>
+              <th>Seed Name</th>
+              <th>Weight (g)</th>
+              <th>Inventory Date</th>
+              <th>Inventory Person</th>
+              <th>Location</th>
+              <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for packet in storage_info %}
+            <tr>
+              <td>{{ packet.seed_id }}</td>
+              <td>{{ packet.seed_name }}</td>
+              <td>{{ packet.weight_g }}</td>
+              <td>{{ packet.inventory_date }}</td>
+              <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
+              <td>{{ packet.location }}</td>
+              <td>{{ packet.notes }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <h3>Not Inventoried</h3>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<br/><br/><hr>
+{% if child_rows %}
   <br/>
     <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-      <h2>Parent Stock</h2>
-      <table id="selected_legacy_source_seed1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <h2>Child Stocks</h2>
+      <table id="selected_legacy_child_seed" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
           <tr>
             <th>Seed ID</th>
@@ -119,21 +679,22 @@
           </tr>
           </thead>
           <tbody>
+            {% for child_seed1 in child_seed1 %}
           <tr>
-            <td>{{ source_seed1.seed_id }}</td>
-            <td>{{ source_seed1.seed_name }}</td>
-            <td>{{ source_seed1.row_id_origin }}</td>
-            <td>{{ source_seed1.row_name }}</td>
-            <td>{{ source_seed1.cross_type }}</td>
-            <td>{{ source_seed1.seed_pedigree}}</td>
-            <td><a href="/mine/profile/{{ source_seed1.person }}">{{ source_seed1.person }}</a></td>
-            <td>{{ source_seed1.notes}}</td>
+            <td>{{ child_seed1.seed_id }}</td>
+            <td>{{ child_seed1.seed_name }}</td>
+            <td>{{ child_seed1.row_id_origin }}</td>
+            <td>{{ child_seed1.row_name }}</td>
+            <td>{{ child_seed1.cross_type }}</td>
+            <td>{{ child_seed1.seed_pedigree}}</td>
+            <td><a href="/mine/profile/{{ child_seed1.person }}">{{ child_seed1.person }}</a></td>
+            <td>{{ child_seed1.notes}}</td>
           </tr>
+          {% endfor %}
         </tbody>
       </table>
-    {% if source_row1 %}
       <h3>Row Info</h3>
-      <table id="selected_legacy_stock_source_row1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <table id="selected_legacy_stock_child_row" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
         <tr>
           <th>Row ID</th>
@@ -149,412 +710,25 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-          <td>{{ source_row1.row_id }}</td>
-          <td>{{ source_row1.row_name }}</td>
-          <td><a href="/mine/experiment/{{ source_row1.experiment_id_id }}">{{ source_row1.experiment_id_id }}</a></td>
-          <td>{{ source_row1.pedigree }}</td>
-          <td>{{ source_row1.source_seed_id }}</td>
-          <td>{{ source_row1.range_num }}</td>
-          <td>{{ source_row1.plot }}</td>
-          <td>{{ source_row1.block }}</td>
-          <td>{{ source_row1.pop }}</td>
-          <td>{{ source_row1.notes }}</td>
-        </tr>
-        </tbody>
-      </table>
-    {% endif %}
-    {% if seed_storage1 %}
-      <h3>Storage</h3>
-      <table id="selected_legacy_stock_storage1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
-        <tr>
-          <th>Seed ID</th>
-          <th>Seed Name</th>
-          <th>Weight (g)</th>
-          <th>Inventory Date</th>
-          <th>Inventory Person</th>
-          <th>Location</th>
-          <th>Notes</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for packet in seed_storage1 %}
-        <tr>
-          <td>{{ packet.seed_id }}</td>
-          <td>{{ packet.seed_name }}</td>
-          <td>{{ packet.weight_g }}</td>
-          <td>{{ packet.inventory_date }}</td>
-          <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
-          <td>{{ packet.location }}</td>
-          <td>{{ packet.notes }}</td>
-        </tr>
+        {% for child in child_rows %}
+          <tr>
+            <td>{{ child.row_id }}</td>
+            <td>{{ child.row_name }}</td>
+            <td><a href="/mine/experiment/{{ child.experiment_id_id }}">{{ child.experiment_id_id }}</a></td>
+            <td>{{ child.pedigree }}</td>
+            <td>{{ child.source_seed_id }}</td>
+            <td>{{ child.range_num }}</td>
+            <td>{{ child.plot }}</td>
+            <td>{{ child.block }}</td>
+            <td>{{ child.pop }}</td>
+            <td>{{ child.notes }}</td>
+          </tr>
         {% endfor %}
         </tbody>
       </table>
-    {% else %}
-      <h3>Not Inventoried</h3>
-    {% endif %}
-  </div>
-{% endif %}
-<br/>
-{% if source_seed2 %}
-  <br/>
-    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-      <h2>Grandparent Stock</h2>
-      <table id="selected_legacy_source_seed2" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
-          <tr>
-            <th>Seed ID</th>
-            <th>Seed Name</th>
-            <th>Row ID</th>
-            <th>Row Name</th>
-            <th>Cross Type</th>
-            <th>Pedigree</th>
-            <th>Person</th>
-            <th>Notes</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <td>{{ source_seed2.seed_id }}</td>
-            <td>{{ source_seed2.seed_name }}</td>
-            <td>{{ source_seed2.row_id_origin }}</td>
-            <td>{{ source_seed2.row_name }}</td>
-            <td>{{ source_seed2.cross_type }}</td>
-            <td>{{ source_seed2.seed_pedigree}}</td>
-            <td><a href="/mine/profile/{{ source_seed2.person }}">{{ source_seed2.person }}</a></td>
-            <td>{{ source_seed2.notes}}</td>
-          </tr>
-        </tbody>
-      </table>
-    {% if source_row2 %}
-      <h3>Row Info</h3>
-      <table id="selected_legacy_stock_source_row2" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
-        <tr>
-          <th>Row ID</th>
-          <th>Row Name</th>
-          <th>Experiment ID</th>
-          <th>Pedigree</th>
-          <th>Source Seed ID</th>
-          <th>Range</th>
-          <th>Plot</th>
-          <th>Block</th>
-          <th>Population</th>
-          <th>Notes</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>{{ source_row2.row_id }}</td>
-          <td>{{ source_row2.row_name }}</td>
-          <td><a href="/mine/experiment/{{ source_row2.experiment_id_id }}">{{ source_row2.experiment_id_id }}</a></td>
-          <td>{{ source_row2.pedigree }}</td>
-          <td>{{ source_row2.source_seed_id }}</td>
-          <td>{{ source_row2.range_num }}</td>
-          <td>{{ source_row2.plot }}</td>
-          <td>{{ source_row2.block }}</td>
-          <td>{{ source_row2.pop }}</td>
-          <td>{{ source_row2.notes }}</td>
-        </tr>
-        </tbody>
-      </table>
-    {% endif %}
-    {% if seed_storage2 %}
-      <h3>Storage</h3>
-      <table id="selected_legacy_stock_storage2" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
-        <tr>
-          <th>Seed ID</th>
-          <th>Seed Name</th>
-          <th>Weight (g)</th>
-          <th>Inventory Date</th>
-          <th>Inventory Person</th>
-          <th>Location</th>
-          <th>Notes</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for packet in seed_storage2 %}
-        <tr>
-          <td>{{ packet.seed_id }}</td>
-          <td>{{ packet.seed_name }}</td>
-          <td>{{ packet.weight_g }}</td>
-          <td>{{ packet.inventory_date }}</td>
-          <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
-          <td>{{ packet.location }}</td>
-          <td>{{ packet.notes }}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <h3>Not Inventoried</h3>
-    {% endif %}
-  </div>
-{% endif %}
-<br/>
-{% if source_seed3 %}
-  <br/>
-    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-      <h2>Great-Grandparent Stock</h2>
-      <table id="selected_legacy_source_seed3" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
-          <tr>
-            <th>Seed ID</th>
-            <th>Seed Name</th>
-            <th>Row ID</th>
-            <th>Row Name</th>
-            <th>Cross Type</th>
-            <th>Pedigree</th>
-            <th>Person</th>
-            <th>Notes</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <td>{{ source_seed3.seed_id }}</td>
-            <td>{{ source_seed3.seed_name }}</td>
-            <td>{{ source_seed3.row_id_origin }}</td>
-            <td>{{ source_seed3.row_name }}</td>
-            <td>{{ source_seed3.cross_type }}</td>
-            <td>{{ source_seed3.seed_pedigree}}</td>
-            <td><a href="/mine/profile/{{ source_seed3.person }}">{{ source_seed3.person }}</a></td>
-            <td>{{ source_seed3.notes}}</td>
-          </tr>
-        </tbody>
-      </table>
-    {% if source_row3 %}
-      <h3>Row Info</h3>
-      <table id="selected_legacy_stock_source_row3" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
-        <tr>
-          <th>Row ID</th>
-          <th>Row Name</th>
-          <th>Experiment ID</th>
-          <th>Pedigree</th>
-          <th>Source Seed ID</th>
-          <th>Range</th>
-          <th>Plot</th>
-          <th>Block</th>
-          <th>Population</th>
-          <th>Notes</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>{{ source_row3.row_id }}</td>
-          <td>{{ source_row3.row_name }}</td>
-          <td><a href="/mine/experiment/{{ source_row3.experiment_id_id }}">{{ source_row3.experiment_id_id }}</a></td>
-          <td>{{ source_row3.pedigree }}</td>
-          <td>{{ source_row3.source_seed_id }}</td>
-          <td>{{ source_row3.range_num }}</td>
-          <td>{{ source_row3.plot }}</td>
-          <td>{{ source_row3.block }}</td>
-          <td>{{ source_row3.pop }}</td>
-          <td>{{ source_row3.notes }}</td>
-        </tr>
-        </tbody>
-      </table>
-    {% endif %}
-    {% if seed_storage3 %}
-      <h3>Storage</h3>
-      <table id="selected_legacy_stock_storage3" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
-        <tr>
-          <th>Seed ID</th>
-          <th>Seed Name</th>
-          <th>Weight (g)</th>
-          <th>Inventory Date</th>
-          <th>Inventory Person</th>
-          <th>Location</th>
-          <th>Notes</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for packet in seed_storage3 %}
-        <tr>
-          <td>{{ packet.seed_id }}</td>
-          <td>{{ packet.seed_name }}</td>
-          <td>{{ packet.weight_g }}</td>
-          <td>{{ packet.inventory_date }}</td>
-          <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
-          <td>{{ packet.location }}</td>
-          <td>{{ packet.notes }}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <h3>Not Inventoried</h3>
-    {% endif %}
-  </div>
-{% endif %}
-<br/>
-{% if source_seed4 %}
-  <br/>
-    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-      <h2>Great-Great-Grandparent Stock</h2>
-      <table id="selected_legacy_source_seed3" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
-          <tr>
-            <th>Seed ID</th>
-            <th>Seed Name</th>
-            <th>Row ID</th>
-            <th>Row Name</th>
-            <th>Cross Type</th>
-            <th>Pedigree</th>
-            <th>Person</th>
-            <th>Notes</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <td>{{ source_seed4.seed_id }}</td>
-            <td>{{ source_seed4.seed_name }}</td>
-            <td>{{ source_seed4.row_id_origin }}</td>
-            <td>{{ source_seed4.row_name }}</td>
-            <td>{{ source_seed4.cross_type }}</td>
-            <td>{{ source_seed4.seed_pedigree}}</td>
-            <td><a href="/mine/profile/{{ source_seed4.person }}">{{ source_seed4.person }}</a></td>
-            <td>{{ source_seed4.notes}}</td>
-          </tr>
-        </tbody>
-      </table>
-    {% if source_row4 %}
-      <h3>Row Info</h3>
-      <table id="selected_legacy_stock_source_row4" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
-        <tr>
-          <th>Row ID</th>
-          <th>Row Name</th>
-          <th>Experiment ID</th>
-          <th>Pedigree</th>
-          <th>Source Seed ID</th>
-          <th>Range</th>
-          <th>Plot</th>
-          <th>Block</th>
-          <th>Population</th>
-          <th>Notes</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>{{ source_row4.row_id }}</td>
-          <td>{{ source_row4.row_name }}</td>
-          <td><a href="/mine/experiment/{{ source_row4.experiment_id_id }}">{{ source_row4.experiment_id_id }}</a></td>
-          <td>{{ source_row4.pedigree }}</td>
-          <td>{{ source_row4.source_seed_id }}</td>
-          <td>{{ source_row4.range_num }}</td>
-          <td>{{ source_row4.plot }}</td>
-          <td>{{ source_row4.block }}</td>
-          <td>{{ source_row4.pop }}</td>
-          <td>{{ source_row4.notes }}</td>
-        </tr>
-        </tbody>
-      </table>
-    {% endif %}
-    {% if seed_storage4 %}
-      <h3>Storage</h3>
-      <table id="selected_legacy_stock_storage4" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
-        <tr>
-          <th>Seed ID</th>
-          <th>Seed Name</th>
-          <th>Weight (g)</th>
-          <th>Inventory Date</th>
-          <th>Inventory Person</th>
-          <th>Location</th>
-          <th>Notes</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for packet in seed_storage4 %}
-        <tr>
-          <td>{{ packet.seed_id }}</td>
-          <td>{{ packet.seed_name }}</td>
-          <td>{{ packet.weight_g }}</td>
-          <td>{{ packet.inventory_date }}</td>
-          <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
-          <td>{{ packet.location }}</td>
-          <td>{{ packet.notes }}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <h3>Not Inventoried</h3>
-    {% endif %}
-  </div>
-{% endif %}
-<br/>
-{% if source_seed5 %}
-  <br/>
-    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-      <h2>Great-Great-Great-Grandparent Stock</h2>
-      <table id="selected_legacy_source_seed5" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
-          <tr>
-            <th>Seed ID</th>
-            <th>Seed Name</th>
-            <th>Row ID</th>
-            <th>Row Name</th>
-            <th>Cross Type</th>
-            <th>Pedigree</th>
-            <th>Person</th>
-            <th>Notes</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <td>{{ source_seed5.seed_id }}</td>
-            <td>{{ source_seed5.seed_name }}</td>
-            <td>{{ source_seed5.row_id_origin }}</td>
-            <td>{{ source_seed5.row_name }}</td>
-            <td>{{ source_seed5.cross_type }}</td>
-            <td>{{ source_seed5.seed_pedigree}}</td>
-            <td><a href="/mine/profile/{{ source_seed5.person }}">{{ source_seed5.person }}</a></td>
-            <td>{{ source_seed5.notes}}</td>
-          </tr>
-        </tbody>
-      </table>
-    {% if source_row5 %}
-      <h3>Row Info</h3>
-      <table id="selected_legacy_stock_source_row5" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
-        <tr>
-          <th>Row ID</th>
-          <th>Row Name</th>
-          <th>Experiment ID</th>
-          <th>Pedigree</th>
-          <th>Source Seed ID</th>
-          <th>Range</th>
-          <th>Plot</th>
-          <th>Block</th>
-          <th>Population</th>
-          <th>Notes</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>{{ source_row5.row_id }}</td>
-          <td>{{ source_row5.row_name }}</td>
-          <td><a href="/mine/experiment/{{ source_row5.experiment_id_id }}">{{ source_row5.experiment_id_id }}</a></td>
-          <td>{{ source_row5.pedigree }}</td>
-          <td>{{ source_row5.source_seed_id }}</td>
-          <td>{{ source_row5.range_num }}</td>
-          <td>{{ source_row5.plot }}</td>
-          <td>{{ source_row5.block }}</td>
-          <td>{{ source_row5.pop }}</td>
-          <td>{{ source_row5.notes }}</td>
-        </tr>
-        </tbody>
-      </table>
-    {% endif %}
     {% if seed_storage5 %}
       <h3>Storage</h3>
-      <table id="selected_legacy_stock_storage5" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <table id="selected_legacy_child_storage" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
         <tr>
           <th>Seed ID</th>
@@ -584,5 +758,7 @@
       <h3>Not Inventoried</h3>
     {% endif %}
   </div>
+  {% else %}
+    <h2>No Child Stocks Found</h2>
 {% endif %}
 {% endblock %}

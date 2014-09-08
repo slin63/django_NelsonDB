@@ -191,11 +191,12 @@ def select_legacy_row(request, legacy_row, legacy_seed):
     storage_info = None
   results_dict['storage_info'] = storage_info
 
-  if selected_seed is not None:
-    try:
-      child_rows = Legacy_Row.objects.filter(source_seed_id = legacy_seed)
-    except Legacy_Row.DoesNotExist:
-      child_rows = None
+  try:
+    child_rows = Legacy_Row.objects.filter(source_seed_id = legacy_seed)
+
+  except Legacy_Row.DoesNotExist:
+    child_rows = None
+  results_dict['child_rows'] = child_rows
 
   step = 1
   source_row_value = row_info
@@ -223,10 +224,9 @@ def select_legacy_row(request, legacy_row, legacy_seed):
     results_dict[source_seed_key] = source_seed_value
     results_dict[seed_storage_key] = seed_storage_value
     results_dict[source_row_key] = source_row_value
-    results_dict[step_key] = step
     step = step + 1
-
+  results_dict['step_count'] = reversed(range(1,step))
   exp_list = get_experiment_list()
-  context_dict['exp_list'] = exp_list
-  context_dict['logged_in_user'] = request.user.username
+  results_dict['exp_list'] = exp_list
+  results_dict['logged_in_user'] = request.user.username
   return render_to_response('legacy/legacy_row.html', results_dict, context)
