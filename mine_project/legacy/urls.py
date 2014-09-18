@@ -2,10 +2,11 @@ from django.conf.urls import patterns, url
 from legacy import views
 
 urlpatterns = patterns('',
-    url(r'^legacy_seed_inventory/$', views.legacy_seed_inv, name='legacy_seed_inventory'),
-    url(r'^legacy_seed_inventory/pedigree/(?P<legacy_pedigree>.+)/$', views.select_legacy_pedigree, name='select_legacy_pedigree'),
+    url(r'^legacy_seed_inventory/$', views.checkbox_legacy_seed_inv, name='checkbox_legacy_seed_inv'),
     url(r'^legacy_seed_inventory/row/(?P<legacy_row>.+)/(?P<legacy_seed>.+)/$', views.select_legacy_row, name='select_legacy_row'),
-    url(r'^legacy_seed_inventory/experiment/(?P<legacy_experiment>\w+)/$', views.select_legacy_experiment, name='select_legacy_experiment'),
-    url(r'^suggest_legacy_pedigree/$', views.suggest_legacy_pedigree, name='suggest_legacy_pedigree'),
-    url(r'^suggest_legacy_experiment/$', views.suggest_legacy_experiment, name='suggest_legacy_experiment'),
-    url(r'^legacy_seed_inventory/clear/(?P<clear_selected>\w+)/$', views.legacy_inventory_clear, name='legacy_inventory_clear'),)
+    url(r'^select_legacy_experiment/$', views.checkbox_selected_legacy_experiment, name='checkbox_selected_legacy_experiment'),
+    url(r'^select_legacy_pedigree/$', views.checkbox_selected_legacy_pedigree, name='checkbox_selected_legacy_pedigree'),
+    url(r'^checkbox_suggest_legacy_experiment/$', views.checkbox_suggest_legacy_experiment, name='checkbox_suggest_legacy_experiment'),
+    url(r'^checkbox_suggest_legacy_pedigree/$', views.checkbox_suggest_legacy_pedigree, name='checkbox_suggest_legacy_pedigree'),
+    url(r'^legacy_seed_inventory/checkbox_clear/(?P<clear_selected>\w+)/$', views.checkbox_legacy_inventory_clear, name='checkbox_legacy_inventory_clear'),
+)

@@ -1,18 +1,23 @@
 {% if pedigree_list %}
+<form id="select_legacy_pedigree_form" method="post" action="/legacy/select_legacy_pedigree/">
+{% csrf_token %}
 <table id="selected_legacy_pedigree" class="table table-striped table-bordered" cellspacing="0" width="100%">
   <thead>
   <tr>
+    <th>Select</th>
     <th>Pedigree</th>
   </tr>
   </thead>
   <tbody>
   {% for pedigree in pedigree_list %}
   <tr>
-    <td><a href="/legacy/legacy_seed_inventory/pedigree/{{ pedigree.seed_pedigree }}">{{ pedigree.seed_pedigree }}</td>
+    <td><input type="checkbox" name="checkbox_legacy_pedigree" value="{{ pedigree.seed_pedigree }}"></td>
+    <td>{{ pedigree.seed_pedigree }}</td>
   </tr>
   {% endfor %}
   </tbody>
 </table>
-<br/><br/>
-
+<br/>
+<input class="btn btn-primary" type="submit" name="submit" value="Select Pedigrees"/>
+</form>
 {% endif %}

@@ -114,7 +114,7 @@ $('#legacypedigreesuggestion').keyup(function(){
 				query = $(this).val();
 				var radio;
 				radio = $('input:radio[name=query_pedigree_option]:checked').val();
-				$.get('/legacy/suggest_legacy_pedigree/', {suggestion: query, radio: radio}, function(data){
+				$.get('/legacy/checkbox_suggest_legacy_pedigree/', {suggestion: query, radio: radio}, function(data){
 			$('#legacy_pedigrees').html(data);
 			$('#selected_legacy_pedigree').dataTable({
 				"searching": false,
@@ -130,7 +130,7 @@ $('input:radio[name=query_pedigree_option]').click(function(){
 				query = $('#legacypedigreesuggestion').val();
 				var radio;
 				radio = $(this).val();
-				$.get('/legacy/suggest_legacy_pedigree/', {suggestion: query, radio: radio}, function(data){
+				$.get('/legacy/checkbox_suggest_legacy_pedigree/', {suggestion: query, radio: radio}, function(data){
 			$('#legacy_pedigrees').html(data);
 			$('#selected_legacy_pedigree').dataTable({
 				"searching": false,
@@ -146,7 +146,7 @@ $('#legacyexperimentsuggestion').keyup(function(){
 				query = $(this).val();
 				var radio;
 				radio = $('input:radio[name=query_experiment_option]:checked').val();
-				$.get('/legacy/suggest_legacy_experiment/', {suggestion: query, radio: radio}, function(data){
+				$.get('/legacy/checkbox_suggest_legacy_experiment/', {suggestion: query, radio: radio}, function(data){
 			$('#legacy_experiments').html(data);
 			$('#selected_legacy_experiment').dataTable({
 				"searching": false,
@@ -162,7 +162,7 @@ $('input:radio[name=query_experiment_option]').click(function(){
 				query = $('#legacyexperimentsuggestion').val();
 				var radio;
 				radio = $(this).val();
-				$.get('/legacy/suggest_legacy_experiment/', {suggestion: query, radio: radio}, function(data){
+				$.get('/legacy/checkbox_suggest_legacy_experiment/', {suggestion: query, radio: radio}, function(data){
 			$('#legacy_experiments').html(data);
 			$('#selected_legacy_experiment').dataTable({
 				"searching": false,

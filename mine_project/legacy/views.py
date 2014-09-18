@@ -9,6 +9,7 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from collections import defaultdict
+from itertools import chain
 
 def encode_url(str):
   return str.replace(' ', '_')
@@ -28,7 +29,7 @@ def get_experiment_list(max_results=0, starts_with=''):
   for exp in exp_list:
     exp.url = encode_url(exp.name)
   return exp_list
-
+'''
 def suggest_legacy_pedigree(request):
   context = RequestContext(request)
   context_dict = {}
@@ -168,6 +169,17 @@ def legacy_inventory_clear(request, clear_selected):
   context_dict['exp_list'] = exp_list
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('legacy/legacy_seed_inventory.html', context_dict, context)
+'''
+def checkbox_legacy_seed_inv(request):
+  context = RequestContext(request)
+  context_dict = {}
+  selected_stocks = checkbox_legacy_seed_inventory_sort(request)
+  context_dict = checkbox_legacy_session_variable_check(request)
+  context_dict['selected_stocks'] = selected_stocks
+  exp_list = get_experiment_list()
+  context_dict['exp_list'] = exp_list
+  context_dict['logged_in_user'] = request.user.username
+  return render_to_response('legacy/legacy_seed_inventory.html', context_dict, context)
 
 def select_legacy_row(request, legacy_row, legacy_seed):
   context = RequestContext(request)
@@ -190,10 +202,8 @@ def select_legacy_row(request, legacy_row, legacy_seed):
   except Legacy_Seed_Inventory.DoesNotExist:
     storage_info = None
   results_dict['storage_info'] = storage_info
-
   try:
     child_rows = Legacy_Row.objects.filter(source_seed_id = legacy_seed)
-
   except Legacy_Row.DoesNotExist:
     child_rows = None
   results_dict['child_rows'] = child_rows
@@ -230,3 +240,155 @@ def select_legacy_row(request, legacy_row, legacy_seed):
   results_dict['exp_list'] = exp_list
   results_dict['logged_in_user'] = request.user.username
   return render_to_response('legacy/legacy_row.html', results_dict, context)
+
+def checkbox_legacy_seed_inventory_sort(request):
+  selected_stocks = []
+  checkbox_experiment_list = []
+  checkbox_pedigree_list = []
+  if request.session.get('checkbox_legacy_experiment', None):
+    checkbox_experiment_list = request.session.get('checkbox_legacy_experiment')
+    if request.session.get('checkbox_legacy_pedigree', None):
+      checkbox_pedigree_list = request.session.get('checkbox_legacy_pedigree')
+      for pedigree in checkbox_pedigree_list:
+        for experiment in checkbox_experiment_list:
+          stocks = Legacy_Seed.objects.filter(seed_pedigree=pedigree, experiment_id_origin=experiment)
+          selected_stocks = list(chain(selected_stocks, stocks))
+    else:
+      for experiment in checkbox_experiment_list:
+        stocks = Legacy_Seed.objects.filter(experiment_id_origin=experiment)
+        selected_stocks = list(chain(selected_stocks, stocks))
+  else:
+    if request.session.get('checkbox_legacy_pedigree', None):
+      checkbox_pedigree_list = request.session.get('checkbox_legacy_pedigree')
+      for pedigree in checkbox_pedigree_list:
+        stocks = Legacy_Seed.objects.filter(seed_pedigree=pedigree)
+        selected_stocks = list(chain(selected_stocks, stocks))
+    else:
+      selected_stocks = Legacy_Seed.objects.all()[:1000]
+  for stock in selected_stocks:
+    stock.person = Legacy_People.objects.get(person_id = stock.seed_person_id)
+  return selected_stocks
+
+def checkbox_legacy_session_variable_check(request):
+  context_dict = {}
+  if request.session.get('checkbox_legacy_pedigree', None):
+    context_dict['checkbox_legacy_pedigree'] = request.session.get('checkbox_legacy_pedigree')
+  if request.session.get('checkbox_legacy_experiment', None):
+    context_dict['checkbox_legacy_experiment'] = request.session.get('checkbox_legacy_experiment')
+  return context_dict
+
+def checkbox_selected_legacy_experiment(request):
+  context = RequestContext(request)
+  context_dict = {}
+  checkbox_experiment_list = request.POST.getlist('checkbox_legacy_experiment')
+  request.session['checkbox_legacy_experiment'] = checkbox_experiment_list
+  selected_stocks = checkbox_legacy_seed_inventory_sort(request)
+  context_dict = checkbox_legacy_session_variable_check(request)
+  context_dict['selected_stocks'] = selected_stocks
+  exp_list = get_experiment_list()
+  context_dict['exp_list'] = exp_list
+  context_dict['logged_in_user'] = request.user.username
+  return render_to_response('legacy/legacy_seed_inventory.html', context_dict, context)
+
+def checkbox_selected_legacy_pedigree(request):
+  context = RequestContext(request)
+  context_dict = {}
+  checkbox_pedigree_list = request.POST.getlist('checkbox_legacy_pedigree')
+  request.session['checkbox_legacy_pedigree'] = checkbox_pedigree_list
+  selected_stocks = checkbox_legacy_seed_inventory_sort(request)
+  context_dict = checkbox_legacy_session_variable_check(request)
+  context_dict['selected_stocks'] = selected_stocks
+  exp_list = get_experiment_list()
+  context_dict['exp_list'] = exp_list
+  context_dict['logged_in_user'] = request.user.username
+  return render_to_response('legacy/legacy_seed_inventory.html', context_dict, context)
+
+def checkbox_suggest_legacy_experiment(request):
+  context = RequestContext(request)
+  context_dict = {}
+  experiment_list = []
+  starts_with = ''
+  if request.method == 'GET':
+    starts_with = request.GET['suggestion']
+    radio = request.GET['radio']
+  else:
+    starts_with = request.POST['suggestion']
+    radio = request.POST['radio']
+  if starts_with:
+    if radio == 'variable':
+      if request.session.get('checkbox_legacy_pedigree', None):
+        pedigree_list = request.session.get('checkbox_legacy_pedigree')
+        for pedigree in pedigree_list:
+          experiment = Legacy_Experiment.objects.filter(experiment_id__like='%{}%'.format(starts_with), legacy_seed__seed_pedigree__exact=pedigree).distinct()[:1000]
+          experiment_list = list(chain(experiment_list, experiment))
+      else:
+        experiment_list = Legacy_Experiment.objects.filter(experiment_id__like='%{}%'.format(starts_with)).distinct()[:1000]
+    if radio == 'exact':
+      if request.session.get('checkbox_legacy_pedigree', None):
+        pedigree_list = request.session.get('checkbox_legacy_pedigree')
+        for pedigree in pedigree_list:
+          experiment = Legacy_Experiment.objects.filter(experiment_id = starts_with, legacy_seed__seed_pedigree__exact=pedigree).distinct()[:1000]
+          experiment_list = list(chain(experiment, experiment_list))
+      else:
+        experiment_list = Legacy_Experiment.objects.filter(experiment_id = starts_with).distinct()[:1000]
+  else:
+    if request.session.get('checkbox_legacy_pedigree', None):
+      pedigree_list = request.session.get('checkbox_legacy_pedigree')
+      for pedigree in pedigree_list:
+        experiment = Legacy_Experiment.objects.filter(legacy_seed__seed_pedigree__exact=pedigree).distinct()[:1000]
+        experiment_list = list(chain(experiment, experiment_list))
+    else:
+      experiment_list = Legacy_Experiment.objects.all()
+  context_dict = {'experiment_list': experiment_list}
+  return render_to_response('legacy/legacy_experiment_list.html', context_dict, context)
+
+def checkbox_suggest_legacy_pedigree(request):
+  context = RequestContext(request)
+  context_dict = {}
+  pedigree_list = []
+  starts_with = ''
+  if request.method == 'GET':
+    starts_with = request.GET['suggestion']
+    radio = request.GET['radio']
+  else:
+    starts_with = request.POST['suggestion']
+    radio = request.POST['radio']
+  if starts_with:
+    if radio == 'variable':
+      if request.session.get('checkbox_legacy_experiment', None):
+        experiment_list = request.session.get('checkbox_legacy_experiment')
+        for experiment in experiment_list:
+          pedigree = Legacy_Seed.objects.filter(seed_pedigree__like='%{}%'.format(starts_with), experiment_id_origin = experiment).values('seed_pedigree').distinct()[:3000]
+          pedigree_list = list(chain(pedigree_list, pedigree))
+      else:
+        pedigree_list = Legacy_Seed.objects.filter(seed_pedigree__like='%{}%'.format(starts_with)).values('seed_pedigree').distinct()[:3000]
+    if radio == 'exact':
+      if request.session.get('checkbox_legacy_experiment', None):
+        experiment_list = request.session.get('checkbox_legacy_experiment')
+        for experiment in experiment_list:
+          pedigree = Legacy_Seed.objects.filter(seed_pedigree = starts_with, experiment_id_origin = experiment).values('seed_pedigree').distinct()[:3000]
+          pedigree_list = list(chain(pedigree_list, pedigree))
+      else:
+        pedigree_list = Legacy_Seed.objects.filter(seed_pedigree = starts_with).values('seed_pedigree').distinct()[:3000]
+  else:
+    if request.session.get('checkbox_legacy_experiment', None):
+      experiment_list = request.session.get('checkbox_legacy_experiment')
+      for experiment in experiment_list:
+        pedigree = Legacy_Seed.objects.filter(experiment_id_origin = experiment).values('seed_pedigree').distinct()[:3000]
+        pedigree_list = list(chain(pedigree_list, pedigree))
+    else:
+      pedigree_list = Legacy_Seed.objects.all().values('seed_pedigree').distinct()[:3000]
+  context_dict['pedigree_list'] = pedigree_list
+  return render_to_response('legacy/legacy_pedigree_list.html', context_dict, context)
+
+def checkbox_legacy_inventory_clear(request, clear_selected):
+  context = RequestContext(request)
+  context_dict = {}
+  del request.session[clear_selected]
+  selected_stocks = checkbox_legacy_seed_inventory_sort(request)
+  context_dict = checkbox_legacy_session_variable_check(request)
+  context_dict['selected_stocks'] = selected_stocks
+  exp_list = get_experiment_list()
+  context_dict['exp_list'] = exp_list
+  context_dict['logged_in_user'] = request.user.username
+  return render_to_response('legacy/legacy_seed_inventory.html', context_dict, context)

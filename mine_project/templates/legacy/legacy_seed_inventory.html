@@ -3,7 +3,7 @@
 {% block title %}Legacy Seed Inventory{% endblock %}
 {% block body_block %}
 <div class="hero-unit">
-  <h1>Legacy Seed Inventory</h1><br/>
+  <h1>Legacy Seed Inventory<br/><small>Find seed based on genotype and/or what experiment it was from.<br/>Select as many experiments and/or genotypes as you need.</small></h1>
 </div>
 <br />
 
@@ -12,20 +12,20 @@
     <div class="row-fluid">
       <div class="span3">
         <ul class="nav nav-list">
-          <li class="nav-header">Find a Genotype</li>
+          <h4>Find a Genotype</h4>
           <form>
           <label></label>
-          <li><input  class="search-query" type="text" name="legacypedigreesuggestion" value="{{ selected_legacy_pedigree }}" id="legacypedigreesuggestion" /></li>
+          <li><input  class="search-query" type="text" name="legacypedigreesuggestion" id="legacypedigreesuggestion" placeholder="Type a Genotype"/></li>
           <li>Exact Match: <input type="radio" id="query_pedigree_option_exact" name="query_pedigree_option" value="exact" /></li>
           <li>Variable Match: <input type="radio" id="query_pedigree_option_variable" name="query_pedigree_option" value="variable" checked="checked"/></li>
           </form>
         </ul>
       </div>
-      {% if selected_legacy_pedigree %}
+      {% if checkbox_legacy_pedigree %}
       <div class="span2 offset7">
-        <form id="clear_legacy_pedigree" method="post" action="/legacy/legacy_seed_inventory/clear/selected_legacy_pedigree/">
+        <form id="clear_legacy_pedigree" method="post" action="/legacy/legacy_seed_inventory/checkbox_clear/checkbox_legacy_pedigree/">
           {% csrf_token %}
-        <button class="btn btn-primary" type="submit">Clear Genotype</button>
+        <button class="btn btn-primary" type="submit">Clear Genotypes</button>
         </form>
       </div>
       {% endif %}
@@ -33,25 +33,32 @@
     <div id="legacy_pedigrees">
       {% include 'legacy/legacy_pedigree_list.html' with pedigree_list=pedigree_list %}
     </div>
+    {% if checkbox_legacy_pedigree %}
+      <hr>
+      <h5>Selected Genotypes</h5>
+      {% for ped in checkbox_legacy_pedigree %}
+        <li>{{ ped }}</li>
+      {% endfor %}
+    {% endif %}
   </div><br/><br/>
   <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
     <div class="row-fluid">
       <div class="span3">
         <ul class="nav nav-list">
-          <li class="nav-header">Sort by Experiment</li>
+          <h4>Sort by Experiment</h4>
           <form>
           <label></label>
-          <li><input  class="search-query" type="text" name="legacyexperimentsuggestion" value="{{ selected_legacy_experiment }}" id="legacyexperimentsuggestion" /></li>
+          <li><input  class="search-query" type="text" name="legacyexperimentsuggestion" id="legacyexperimentsuggestion" placeholder="Type an Experiment"/></li>
           <li>Exact Match: <input type="radio" id="query_experiment_option_exact" name="query_experiment_option" value="exact" /></li>
           <li>Variable Match: <input type="radio" id="query_experiment_option_variable" name="query_experiment_option" value="variable" checked="checked"/></li>
           </form>
         </ul>
       </div>
-      {% if selected_legacy_experiment %}
+      {% if checkbox_legacy_experiment %}
       <div class="span2 offset7">
-        <form id="clear_legacy_experiment" method="post" action="/legacy/legacy_seed_inventory/clear/selected_legacy_experiment/">
+        <form id="clear_legacy_experiment" method="post" action="/legacy/legacy_seed_inventory/checkbox_clear/checkbox_legacy_experiment/">
           {% csrf_token %}
-        <button class="btn btn-primary" type="submit">Clear Experiment</button>
+        <button class="btn btn-primary" type="submit">Clear Experiments</button>
         </form>
       </div>
       {% endif %}
@@ -59,6 +66,13 @@
     <div id="legacy_experiments">
       {% include 'legacy/legacy_experiment_list.html' with experiment_list=experiment_list %}
     </div>
+    {% if checkbox_legacy_experiment %}
+      <hr>
+      <h5>Selected Experiments</h5>
+      {% for exp in checkbox_legacy_experiment %}
+        <li>{{ exp }}</li>
+      {% endfor %}
+    {% endif %}
   </div>
 </div><br/>
 
