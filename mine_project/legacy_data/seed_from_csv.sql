@@ -25,7 +25,7 @@ CREATE TABLE `legacy_legacy_seed` (
 """Could not add """
 
 
-load data local infile 'C://Users/Nick/Documents/GitHub/mineproject/mine_project/legacy_data/nelson_lab_seed_table_c1.csv' 
+load data local infile 'C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/legacy_data/nelson_lab_seed_table_c1.2.csv' 
 into table legacy_legacy_seed fields terminated by ','
 enclosed by '"'
 lines terminated by '\n'
