@@ -78,7 +78,7 @@ def about(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/about.html', context_dict, context)
 
-"""Was from tango_with_django project. Not used anymore.
+"""Was from tango_with_django project. Not used anymore."""
 def category(request, category_name_url):
 	context = RequestContext(request)
 	category_name = decode_url(category_name_url)
@@ -95,6 +95,7 @@ def category(request, category_name_url):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/category.html', context_dict, context)
 
+"""Was from tango_with_django project. Not used anymore."""
 @login_required
 def like_category(request):
 	context = RequestContext(request)
@@ -110,6 +111,7 @@ def like_category(request):
 			category.save()
 	return HttpResponse(likes)
 
+"""Was from tango_with_django project. Not used anymore."""
 @login_required
 def add_category(request):
 	context = RequestContext(request)
@@ -124,6 +126,7 @@ def add_category(request):
 		form = CategoryForm()
 	return render_to_response('mine/add_category.html', {'form': form}, context)
 
+"""Was from tango_with_django project. Not used anymore."""
 def add_page(request, category_name_url):
 	context = RequestContext(request)
 	category_name = decode_url(category_name_url)
@@ -145,7 +148,6 @@ def add_page(request, category_name_url):
 	else:
 		form = PageForm()
 	return render_to_response('mine/add_page.html', {'category_name_url': category_name_url, 'category_name': category_name, 'form': form}, context)
-"""
 
 def error_prelim(request, error_message):
 	context = RequestContext(request)
@@ -199,6 +201,7 @@ def user_logout(request):
 	logout(request)
 	return HttpResponseRedirect('/mine/')
 
+"""Was from tango_with_django project. Not used anymore."""
 def suggest_category(request):
 	context = RequestContext(request)
 	cat_list = []
