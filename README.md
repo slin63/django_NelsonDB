@@ -2,7 +2,7 @@ django_NelsonDB
 ===============
 Legacy Branch
 
-Hosted at nmorales3142.pythonanywhere.com
+Hosted at http://nmorales3142.pythonanywhere.com/
 
 The Legacy application is running directly off of the current NelsonDB table schema. The FKs are being incorporated slowly, but the integrity of the data needs to be cleaned up, before it can be imported. So far the Seed, Seed_Inventory, and Experiment tables are being worked on.
 
