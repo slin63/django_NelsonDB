@@ -348,10 +348,9 @@ def checkbox_suggest_legacy_experiment(request):
         """Here the selected pedigrees are looped over in a for loop"""
         for pedigree in pedigree_list:
           """Here the text input and the selected pedigree are used to query the Legacy_Experiment table"""
-          experiment = Legacy_Experiment.objects.filter(experiment_id__like='%{}%'.format(starts_with), legacy_seed__seed_pedigree__exact=pedigree).distinct()[:1000]\
+          experiment = Legacy_Experiment.objects.filter(experiment_id__like='%{}%'.format(starts_with), legacy_seed__seed_pedigree__exact=pedigree).distinct()[:1000]
           """experiment_list is recursively defined here to create a list that includes all experiments that match the user's input and pedigree selections"""
           experiment_list = list(chain(experiment_list, experiment))
-      """If the user did not select any pedigrees"""
       else:
         experiment_list = Legacy_Experiment.objects.filter(experiment_id__like='%{}%'.format(starts_with)).distinct()[:1000]
     if radio == 'exact':
@@ -362,7 +361,6 @@ def checkbox_suggest_legacy_experiment(request):
           experiment_list = list(chain(experiment, experiment_list))
       else:
         experiment_list = Legacy_Experiment.objects.filter(experiment_id = starts_with).distinct()[:1000]
-  """If the user has not typed anything"""
   else:
     if request.session.get('checkbox_legacy_pedigree', None):
       pedigree_list = request.session.get('checkbox_legacy_pedigree')

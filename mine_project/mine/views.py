@@ -10,12 +10,14 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 
+"""Used to handle data from URL, to ensure blank spaces don't mess things up"""
 def encode_url(str):
 	return str.replace(' ', '_')
 
 def decode_url(str):
 	return str.replace('_', ' ')
 
+""""AJAX for suggesting category_list. This is obsolete and from the tango_with_django project
 def get_category_list(max_results=0, starts_with=''):
 	cat_list = []
 	if starts_with:
@@ -28,7 +30,9 @@ def get_category_list(max_results=0, starts_with=''):
 	for cat in cat_list:
 		cat.url = encode_url(cat.name)
 	return cat_list
+"""
 
+"""This is used to process AJAX requests when something is typed in the "find an experiment" input. It is used to display the experiments on the left side of the templates."""
 def get_experiment_list(max_results=0, starts_with=''):
 	exp_list = []
 	if starts_with:
@@ -50,7 +54,6 @@ def index(request):
 	if request.session.get('last_visit'):
 		last_visit = request.session.get('last_visit')
 		visits = request.session.get('visits', 0)
-
 		if(datetime.now() - datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")).days > 0:
 			request.session['visits'] = visits + 1
 			request.session['last_visit'] = str(datetime.now())
@@ -75,6 +78,7 @@ def about(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/about.html', context_dict, context)
 
+"""Was from tango_with_django project. Not used anymore.
 def category(request, category_name_url):
 	context = RequestContext(request)
 	category_name = decode_url(category_name_url)
@@ -141,6 +145,7 @@ def add_page(request, category_name_url):
 	else:
 		form = PageForm()
 	return render_to_response('mine/add_page.html', {'category_name_url': category_name_url, 'category_name': category_name, 'form': form}, context)
+"""
 
 def error_prelim(request, error_message):
 	context = RequestContext(request)
