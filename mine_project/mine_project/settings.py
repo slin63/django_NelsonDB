@@ -17,6 +17,17 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+# For python anywhere connection
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'nmorales3142$nelson_db',
+#         'USER': 'nmorales3142',
+#         'PASSWORD': 'n7Stars*',
+#         'HOST': 'mysql.server',   # Or an IP Address that your DB is hosted on
+#         'PORT': '3306',
+#     }
+# }
 
 DATABASES = {
     'default': {
