@@ -326,6 +326,23 @@ def checkbox_selected_legacy_pedigree(request):
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('legacy/legacy_seed_inventory.html', context_dict, context)
 
+"""Working on removing duplicates from the experiment and pedigree suggestions"""
+def remove_duplicates(seq, idfun=None):
+   # order preserving
+   if idfun is None:
+       def idfun(x): return x
+   seen = {}
+   result = []
+   for item in seq:
+       marker = idfun(item)
+       # in old Python versions:
+       # if seen.has_key(marker)
+       # but in new ones:
+       if marker in seen: continue
+       seen[marker] = 1
+       result.append(item)
+   return result
+
 """This function processes AJAX requests for suggesting experiments. Note that this function checks if the user has previously selected pedigrees, and limits the suggested experiments based on those selections."""
 def checkbox_suggest_legacy_experiment(request):
   context = RequestContext(request)
