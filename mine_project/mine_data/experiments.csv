@@ -1,0 +1,155 @@
+name,location,date,tissue_collection,inoculations,inoculations_date1,inoculations_date2,inoculations_date3,pathogen,harvest_date,desc,notes,person
+00CC,NULL,1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,Various seed sources from Chia-Lin that did not have seed_id,These seed packages do are not labeled by seed_id but by seed_name,chialin_chung
+04NC,"Clayton, NC",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+05CN,"Aurora, NY",2005-05-09,y,1,7/18/2005 0:00,NULL,NULL,EtNY000,NULL,"""2005 Chia-Lin Chung NLB trial (SEC 4.5, ROW 165-249 in Margaret Smith's field plot)""",NULL,chialin_chung
+05FL,"Homested, FL",1900-01-01,y,0,NULL,NULL,NULL,NULL,NULL,2005-2006 Flordia Nursery,NULL,unknown
+05RW,"Aurora, NY",1900-01-01,y,0,NULL,NULL,NULL,NULL,NULL,"2005 Randy Aurora, NY Nursery",NULL,randy_wisser
+06CN,"Aurora, NY",2006-05-24,y,1,7/10/2006 0:00,NULL,NULL,EtNY001,NULL,"""2006 Chia-Lin Chung NLB trial (CC06_C, CC06_H, CC06_T, CC06_D)""",NULL,chialin_chung
+06FL,"Homested, FL",1900-01-01,y,0,NULL,NULL,NULL,NULL,NULL,2006-2007 Flordia Nursery,NULL,unknown
+06PN,"Aurora, NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+07CA,"Aurora, NY",2007-05-23,y,2,7/3/2007 0:00,8/27/2007 0:00,NULL,Gg001,NULL,2007 Chia-Lin Chung ALB and ASR trials (CC07_C_127-246),NULL,chialin_chung
+07CG,"Andrews, NC",2007-05-08,y,0,NULL,NULL,NULL,Natural infection,NULL,NULL,NULL,unknown
+07CNa,"Aurora, NY",2007-05-23,y,1,7/3/2007 0:00,NULL,NULL,EtNY001,NULL,"""2007 Chia-Lin Chung NLB trial (CC07_C_1-126, CC07_C_247-259, CC07_C_D, CC07_C_T)""",NULL,chialin_chung
+07CNb,"Aurora, NY",2007-05-29,y,1,7/27/2007 0:00,NULL,NULL,EtNY001,NULL,"""2007 Chia-Lin Chung NLB trial (CC07_C_C2, CC07_C_T2)""",NULL,chialin_chung
+07CS,"Clayton, NC",2007-04-24,y,1,5/31/2007 0:00,NULL,NULL,Cochliobolus heterosrophus race 0 (isolate 2-16Bm),NULL,NULL,NULL,unknown
+07FL,"Homested, FL",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+07JD,NULL,1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+07JR,NULL,1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+07K,"Aurora, NY",2007-05-15,y,1,7/2/2007 0:00,NULL,NULL,EtNY001,NULL,2007 NAM trial,NULL,unknown
+07NC,"Clayton, NC",2007-04-24,y,1,5/31/2007 0:00,NULL,NULL,Cochliobolus heterosrophus race 0 (isolate 2-16Bm),NULL,2008 SLB trial Jesse,NULL,jesse_poland
+07PF,"Aurora, NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+07PG,"Andrews, NC",2007-05-08,y,0,NULL,NULL,NULL,GLS natural infection,NULL,2007 GLS trial Jesse,NULL,jesse_poland
+07PK,NULL,1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+07PN,"Aurora, NY",2007-05-22,y,0,NULL,NULL,NULL,NULL,NULL,2007 Jesse Nursery,NULL,jesse_poland
+08BB,"Blacksburg, VA",2008-05-22,y,0,NULL,NULL,NULL,NULL,NULL,2008 NAM GLS trial,NULL,unknown
+08CA,"Aurora, NY",2008-05-23,y,2,8/14/2008 0:00,8/22/2008 0:00,NULL,Gg001,NULL,2008 Chia-Lin Chung ASR trial,NULL,chialin_chung
+08CF,"Aurora, NY",2008-05-23,y,1,6/28/2008 0:00,NULL,NULL,EtNY001,NULL,"""2008 Chia-Lin Chung fine-mapping for qEt1.06, 6.05 and 8.06""",NULL,chialin_chung
+08CG,"Blacksburg, VA",2008-05-22,y,0,NULL,NULL,NULL,Natural infection,NULL,2008 Chia-Lin Chung GLS trial,NULL,chialin_chung
+08CN,"Aurora, NY",2008-05-23,y,1,6/28/2008 0:00,NULL,NULL,EtNY001,NULL,2008 Chia-Lin Chung NLB trial,NULL,chialin_chung
+08CP,"Aurora, NY",2008-05-23,y,1,6/30/2008 0:00,NULL,NULL,PsNY003,NULL,2008 Chia-Lin Chung Stewart's wilt trial,NULL,chialin_chung
+08CS,"Clayton, NC",2008-04-22,y,1,6/9/2008 0:00,NULL,NULL,Cochliobolus heterosrophus race 0 (isolate 2-16Bm),NULL,2008 Chia-Lin Chung SLB trial,NULL,chialin_chung
+08CU,"Aurora, NY",2008-05-23,y,3,8/16/2008 0:00,8/21/2008 0:00,NULL,"""UmNY001, UmNY002, UmNY003, UmNY004, UmNY008, UmNY009""",NULL,2008 Chia-Lin Chung smut trial (a few late flowering lines were inoculated on 29-Aug-08),NULL,chialin_chung
+08FL,"Homested, FL",2008-11-17,y,0,NULL,NULL,NULL,NULL,NULL,2008 Flordia Nursery,NULL,unknown
+08GC,NULL,1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+08GC05,"Cornell GH, NY",2008-04-28,y,2,5/29/2008 0:00,5/30/2008 0:00,NULL,EtNY001,NULL,2008 Chia-Lin Chung fine-mapping for qEt8.06,NULL,chialin_chung
+08GC08,"Cornell GH, NY",2008-08-28,NULL,1,9/25/2008 0:00,NULL,NULL,"""EtNY001, Et10a, Et86A, Et28A. Et1001A""",NULL,2008 Chia-Lin Chung NLB race specificity trial,NULL,chialin_chung
+08GC12,"Cornell GH, NY",2008-12-19,y,0,NULL,NULL,NULL,NULL,NULL,2008 Chia-Lin Chung screening recombinants for qEt8.06,NULL,chialin_chung
+08JD,NULL,1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+08K,"Aurora, NY",2008-05-14,y,1,6/26/2008 0:00,NULL,NULL,EtNY001,NULL,2008 NAM trial,NULL,unknown
+08NC,"Clayton, NC",2008-04-22,y,1,6/9/2008 0:00,NULL,NULL,Cochliobolus heterosrophus race 0 (isolate 2-16Bm),NULL,2008 SLB trial Jesse,NULL,jesse_poland
+08PF,"Aurora, NY",2008-05-16,y,1,6/26/2008 0:00,NULL,NULL,EtNY001,NULL,2008 B73/32-24 F2:3 NLB trial,NULL,unknown
+08PG,"Andrews, NC",1900-01-01,y,0,NULL,NULL,NULL,GLS natural infection,NULL,2008 GLS trial,NULL,unknown
+08PN,"Aurora, NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+08PS,"Aurora, NY",2008-06-05,y,2,7/8/2008 0:00,7/16/2008 0:00,NULL,NULL,NULL,2008 B73/32-24 F2:3 rust trial,NULL,unknown
+08PT,"Aurora, NY",2008-05-14,y,1,6/27/2008 0:00,NULL,NULL,EtNY001,NULL,2008 Teo trial,NULL,unknown
+08RW,"Aurora, NY",2008-05-14,y,1,6/26/2008 0:00,NULL,NULL,EtNY001,NULL,2008 Randy SM trial,NULL,randy_wisser
+08SB,"Aurora, NY",2008-05-24,y,1,NULL,NULL,NULL,NRRL 3357,NULL,"2008 Santiago, founder inbreds",NULL,santiago_mideros
+08SC,"Aurora, NY",2008-05-24,y,1,NULL,NULL,NULL,NRRL 3357,NULL,"2008 Santiago, B73xCML322 pop",NULL,santiago_mideros
+08SM,"Mississippi State, MS",2008-04-24,y,1,NULL,NULL,NULL,NRRL 3357,NULL,"Santiago 2008 Mississippi, B73xCML322 pop, various NILs and inbreds","locally labeled as exp 810 & 811, rows 1- 412",santiago_mideros
+08SN,"Aurora, NY",2008-05-24,y,1,NULL,NULL,NULL,NRRL 3357,NULL,"2008 Santiago, Tx303 TBBC3 lines, CML52 HIFs",NULL,santiago_mideros
+09AR,Argentina,2009-11-12,y,0,NULL,NULL,NULL,NULL,3/15/2010 0:00,2009-2010 Argentina Winter Nursery qEt1.06Tx303fine mapping (to fix recombinants),NULL,unknown
+09BB,"Blacksburg, VA",2009-05-18,y,0,NULL,NULL,NULL,NULL,NULL,2009 NAM GLS trial,planting occurred from the 18 to the 21st,unknown
+09BD,"Blacksburg, VA",2009-05-14,y,0,NULL,NULL,NULL,NULL,10/17/2009 0:00,2009 Diversity Panel GLS trial,NULL,unknown
+09CN1,"Aurora, NY",2009-05-16,y,1,6/25/2009 0:00,NULL,NULL,EtNY001,NULL,"2009 qEt1.06B73 , qEt6.05Tx303 Nursery",NULL,unknown
+09CN2,"Aurora, NY",2009-06-05,y,1,6/25/2009 0:00,NULL,NULL,EtNY001,NULL,2009 qEt8.06DK888 Fine mapping,NULL,unknown
+09CN3,"Aurora, NY",2009-06-05,y,1,6/25/2009 0:00,NULL,NULL,EtNY001,NULL,2009 qEt8.06DK888 Allelism test in field,NULL,unknown
+09CP,"Aurora, NY",2009-06-05,y,1,6/19/2009 0:00,NULL,NULL,NULL,NULL,"2009 Stewart's Wilt Trial for 1.06, 6.05, 8.06",NULL,unknown
+09CR,"Aurora, NY",2009-05-15,y,1,6/16/2009 0:00,NULL,NULL,NULL,NULL,"2009 Rust Trial for 1.02, 1.06, 8.06",NULL,unknown
+09GC,NULL,1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+09GC01,"Cornell GH, NY",2009-01-23,y,0,NULL,NULL,NULL,NULL,NULL,2009 Chia-Lin Chung making crosses for allelic test of qEt8.06,NULL,chialin_chung
+09GC06,"Cornell GH, NY",1900-01-01,y,1,NULL,NULL,NULL,EtNY001,NULL,2009 qEt8.06DK888 Allelism test in GH,NULL,unknown
+09JH,NULL,1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+09K,"Aurora, NY",2009-05-18,y,1,6/19/2009 0:00,7/7/2009 0:00,NULL,EtNY001,NULL,2009 NAM NLB trial,"first inoc spore susp., second inoc. Sorghum",unknown
+09NC,"Clayton, NC",2009-05-13,y,1,6/12/2009 0:00,NULL,NULL,Cochliobolus heterosrophus race 0 (isolate 2-16Bm),NULL,32-24 RIL trial for SLB,NULL,unknown
+09PB,"Blacksburg, VA",2009-06-01,y,0,NULL,NULL,NULL,NULL,NULL,2009 Poland RS GLS trial,NULL,jesse_poland
+09PF,"Aurora, NY",2009-05-18,y,1,6/19/2009 0:00,6/24/2009 0:00,NULL,EtNY001,NULL,32-24 RIL trial for NLB,"first inoc spore susp., second inoc. Sorghum",unknown
+09PM,"Aurora, NY",2009-05-18,y,1,6/19/2009 0:00,6/24/2009 0:00,NULL,EtNY001,NULL,multi-scoring for NLB,"first inoc spore susp., second inoc. Sorghum",unknown
+09PN,"Aurora, NY",2009-05-15,y,1,7/3/2009 0:00,NULL,NULL,EtNY001,NULL,Jesse Nursery,NULL,jesse_poland
+09PR,NULL,1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+09PS,"Aurora, NY",2009-06-05,y,1,7/16/2009 0:00,7/21/2009 0:00,NULL,rust,NULL,32-24 RIL trial for common rust / P29 & P30 pop per se,0.5ml @ 3x10^5 for first inoc.; 0.5ml @ 2x10^5 for second inoc.,unknown
+09PT,"Aurora, NY",2009-05-15,NULL,1,6/19/2009 0:00,6/24/2009 0:00,NULL,EtNY001,NULL,teo introgression lines,"first inoc spore susp., second inoc. Sorghum",unknown
+09PX,"Aurora, NY",2009-06-05,NULL,1,7/16/2009 0:00,7/21/2009 0:00,NULL,rust,NULL,multi-scoring for common rust,0.5ml @ 3x10^5 for first inoc.; 0.5ml @ 2x10^5 for second inoc.,unknown
+09SB,"Aurora, NY",2010-05-19,y,1,NULL,NULL,NULL,NRRL 3357,NULL,2009 Founder Inbreds,inoculated in-vitro at different dates,unknown
+09SC,"Aurora, NY",2010-05-19,y,1,NULL,NULL,NULL,NRRL 3357,NULL,2009 B73xCML322 RILs,inoculated in-vitro at different dates,unknown
+09SM,"Mississippi State, MS",2010-04-27,y,1,NULL,NULL,NULL,NRRL 3357,NULL,"2009 Mississippi B73xCML322 RILs, founder inbreds and Tx303 NILs",inoculated in silk chanel and side needle at different dates; inbreds and NILs are exp927 and the RILs are exp926,unknown
+09SN,"Aurora, NY",2010-05-19,y,1,NULL,NULL,NULL,NRRL 3357,NULL,2009 Tx303 NILs,inoculated in-vitro at different dates,unknown
+09ST,"Aurora, NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+09SX,"Aurora, NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+09TF,"Aurora, NY",2009-05-15,y,1,6/25/2009 0:00,NULL,NULL,EtNY001,NULL,1.02 Fine mapping,NULL,unknown
+09TF1,"Aurora, NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+09TF2,"Aurora, NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+09TT,"Clayton, NY",2009-04-21,y,1,6/9/2009 0:00,NULL,NULL,NULL,NULL,2009 NC teo trial for NLB,NULL,unknown
+10BB,"Blacksburg, VA",2010-07-15,y,0,NULL,NULL,NULL,NULL,NULL,2010 NAM GLS trial,that planting occurred from the 15th to the 16th,unknown
+10CH,Chile,2010-11-01,y,0,NULL,NULL,NULL,NULL,NULL,R.Nelson lab winter nursery in Chile,"Managed by Tuniche Seed Services in Chile; exact planting date unknown, only reported as November 2010",unknown
+10GT,NULL,1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+10JH,"Blacksburg, VA",2010-05-15,y,0,NULL,NULL,NULL,NULL,10/18/2010 0:00,2010 HIF GLS trial,NULL,unknown
+10MA,"Mississippi State, MS",2010-04-16,y,1,NULL,NULL,NULL,NRRL 3357,NULL,2010 Mississippi inbreds and NILs experiments,Locally experiment 38,unknown
+10MB,"Mississippi State, MS",2010-04-16,y,1,NULL,NULL,NULL,NRRL 3357,NULL,2010 Mississippi RILs of CML322xB73 pop,Locally experiment 34,unknown
+10NC,"Clayton, NC",1900-01-01,y,1,NULL,NULL,NULL,Cochliobolus heterosrophus race 0 (isolate 2-16Bm),NULL,2010 Jesse RS-RIL SLB trial,NULL,jesse_poland
+10OA,"Aurora, NY",2010-05-25,y,1,7/9/2010 0:00,7/9/2010 0:00,NULL,Gg001,NULL,Oliver NLB,NULL,oliver_ott
+10PB,"Blacksburg, VA",1900-01-01,y,0,NULL,NULL,NULL,GLS natural,NULL,2010 Jesse RS-RIL GLS trial,NULL,jesse_poland
+10PF,"Aurora, NY",2010-05-17,y,1,5/18/2010 0:00,6/28/2010 0:00,NULL,EtNY001,NULL,2010 Jesse RS-RIL NLB trial,NULL,jesse_poland
+10PR,NULL,1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+10PS,"Aurora, NY",2010-05-17,y,1,7/16/2010 0:00,NULL,NULL,rust,NULL,2010 Jesse RS-RIL rust trial,NULL,jesse_poland
+10SH,"Aurora, NY",2010-05-25,y,1,NULL,NULL,NULL,NRRL 3357,NULL,Santiago HIFs,depending on genotyping will evaluate a few rows,santiago_mideros
+10SN,"Aurora, NY",2010-05-25,y,1,NULL,NULL,NULL,NRRL 3357,NULL,2010 NILs test,for in-vitro inoculation,unknown
+10ST,"Aurora, NY",2010-05-25,y,1,NULL,NULL,NULL,NRRL 3357,NULL,Tx303 3:1 segregation?,for in-vitro inoculation,unknown
+10SX,"Aurora, NY",2010-05-25,y,1,NULL,NULL,NULL,NRRL 3357,NULL,Santiago Nursery,part of the NIL99 will use for in-vitro inoculation depending on genotype,santiago_mideros
+10T,NULL,1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+10TA,"Aurora, NY",2010-05-25,y,1,8/10/2010 0:00,NULL,NULL,EtNY001,NULL,Tiffany ASR,NULL,tiffany_jamann
+10TA1,"Aurora, NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+10TA2,"Aurora, NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+10TF,"Aurora, NY",2010-05-25,y,0,NULL,NULL,NULL,EtNY001,NULL,Tiffany 1.02 Fine-mapping: fix recombinants,NULL,tiffany_jamann
+10TH,"Aurora, NY",2010-05-25,y,1,7/9/2010 0:00,7/9/2010 0:00,NULL,EtNY001,NULL,Tiffany Fine mapping,NULL,tiffany_jamann
+10TI,NULL,1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+10TN,"Aurora, NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+10TN0,"Aurora, NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+10TN1,"Aurora, NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+10TN2,"Aurora, NY",2010-05-25,y,1,7/9/2010 0:00,7/9/2010 0:00,NULL,EtNY001,NULL,Tiffany 1.02 NLB fine mapping,NULL,tiffany_jamann
+10TN6,"Aurora, NY",2010-05-25,y,1,6/28/2010 0:00,6/29/2010 0:00,NULL,EtNY001,NULL,Tiffany 1.06 NLB fine mapping,NULL,tiffany_jamann
+10TR,"Aurora, NY",2010-05-25,y,1,7/1/2010 0:00,NULL,NULL,NULL,NULL,Tiffany 1.02 Fine-mapping: rust,rust spores collected in 2007,tiffany_jamann
+10TR2,"Aurora, NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+10TS,"Aurora, NY",2010-05-25,y,1,6/28/2010 0:00,NULL,NULL,PsNY003,NULL,Tiffany Stewart's wilt,NULL,tiffany_jamann
+10TS2,"Aurora, NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+10TS6,"Aurora, NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+11AO,NULL,1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+11BN,"Blacksburg,VA",2011-05-19,n,NULL,NULL,NULL,NULL,NULL,NULL,NAM NIL Screen for GLS,NULL,unknown
+11JH,"Blacksburg, VA",2011-05-18,y,NULL,NULL,NULL,NULL,NULL,10/22/2011 0:00,GLS Fine-mapping Screen/Pollinate,NULL,unknown
+11JS,NULL,1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+11PB,"Blacksburg, VA",2011-05-19,n,NULL,NULL,NULL,NULL,NULL,NULL,RS Screen for GLS (Jesse's Pop),NULL,jesse_poland
+11PBJT,"Blacksburg, VA",2011-05-19,y,NULL,NULL,NULL,NULL,NULL,NULL,JT Mutant Screen for GLS,NULL,unknown
+11PF,"Aurora, NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+11PR,Puerto Rico Winter Nurser,2011-11-18,n,NULL,NULL,NULL,NULL,NULL,NULL,"Seed Increase, Fix lines, Increase Recomb Breakpoints",NULL,unknown
+11TF,"Aurora, NY",2011-05-31,y,0,NULL,NULL,NULL,NULL,NULL,Tiffany Identify recombinants,NULL,tiffany_jamann
+11TM,NULL,1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+11TN,"Aurora, NY",2011-06-01,y,1,7/8/2011 0:00,NULL,NULL,StNY001,NULL,Tiffany NLB Trials,NULL,tiffany_jamann
+11TR,"Aurora, NY",2011-06-01,y,1,7/15/2011 0:00,NULL,NULL,rust-GH07,NULL,Tiffany Rust trials,NULL,tiffany_jamann
+11TS,"Aurora, NY",2011-06-01,y,1,6/12/2011 0:00,NULL,NULL,PsNY003,NULL,Tiffany Stewart's wilt trials,NULL,tiffany_jamann
+12CH,"Santa Rafaela, Graneros,",2012-10-27,NULL,NULL,NULL,NULL,NULL,NULL,3/21/2013 0:00,"Winter nursery, seed increase",www.tunicheseedservices.cl,unknown
+12GEFR,"Clayton, NC",2012-04-11,y,2,7/7/2012 0:00,7/14/2012 0:00,NULL,Fusarium verticillioides,NULL,2012 Laura GEFR Fusarium experiment,NULL,laura_morales
+12JH,"Blacksburg, VA",1900-01-01,y,0,NULL,NULL,NULL,NULL,NULL,GLS Screen,NULL,unknown
+12LF,"Aurora, NY",2012-05-25,y,2,8/16/2012 0:00,8/23/2012 0:00,NULL,Fusarium verticillioides,NULL,2012 Laura NAM founders Fusarium experiment,NULL,laura_morales
+12LG,"Clayton, NC",2012-04-11,y,2,7/7/2012 0:00,7/14/2012 0:00,NULL,Fusarium verticillioides,NULL,2012 Laura GEFR Fusarium experiment,NULL,laura_morales
+12MH,"Aurora, NY",2012-05-25,y,1,6/28/2012 0:00,NULL,NULL,,NULL,2012 Tingting fine-mapping for 8.06,,tingting_ma
+12MN,"Clayton, NC",2012-04-19,y,NULL,NULL,NULL,NULL,natural,NULL,Metamaize experiment NC.,"field B11A, rows 6621-6748. Incomplete blocks design, to be repeated in Aurora.",unknown
+12MY,"Aurora, NY",2012-05-25,y,NULL,NULL,NULL,NULL,natural,10/25/2012 0:00,Metamaize experiment NY.,""" Incomplete blocks design, to be repeated in Clayton, rows 1-45 harvested on 18Oct2012""",unknown
+12SH,"Aurora, NY",2012-05-25,n,NULL,6/28/2012 0:00,NULL,NULL,StNY001,NULL,Ht differentials,NULL,unknown
+12TH,"Aurora, NY",2012-05-25,y,1,NULL,NULL,NULL,StNY0001,NULL,2012 Tiffany fine-mapping for 8.06,NULL,tiffany_jamann
+12TN,"Aurora, NY",2012-05-25,y,NULL,6/28/2012 0:00,NULL,NULL,StNY001,NULL,NLB Fine Mapping Trials,NULL,unknown
+12TP,"Aurora, NY",2012-05-25,y,NULL,6/28/2012 0:00,NULL,NULL,NULL,NULL,Pan Mutant NLB Trial,NULL,unknown
+12TR,"Aurora, NY",2012-05-24,y,NULL,7/23/2012 0:00,NULL,NULL,GH07 and AUR07 IL14HxB73 RIL,NULL,Rust Fine Mapping Trials,26000spore/ml,unknown
+12TS,"Aurora, NY",2012-05-24,y,NULL,7/9/2012 0:00,7/15/2012 0:00,NULL,PsNY003,NULL,Stewart's wilt Fine Mapping Trials,NULL,unknown
+12TT,"Aurora, NY",2012-05-25,y,NULL,6/28/2012 0:00,NULL,NULL,NULL,NULL,NLB Teosinte Introgression Trials,NULL,unknown
+13GS,"Ithaca, NY",2013-04-05,n,223,NULL,NULL,NULL,Stx,NULL,Trial for linkage mapping of avrHt1,NULL,unknown
+13JT,"Aurora,NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+13LN,"""Clayton, NC""",2013-04-25,n,1,7/20/2013 0:00,NULL,NULL,F. verticillioides,9/16/2013 0:00,2013 Laura NAM ear rot and fumonisin,NULL,laura_morales
+13LW,"""Clayton, NC""",2013-04-19,n,1,7/18/2013 0:00,NULL,NULL,F. verticillioides,9/16/2013 0:00,2013 Laura UW BiomAP ear rot and fumonisin,NULL,laura_morales
+13MN,"Clayton, NC",2013-04-25,y,NULL,NULL,NULL,NULL,NULL,NULL,Metamaize experiment NC,NULL,unknown
+13MY,"Aurora, NY",2013-05-16,y,NULL,NULL,NULL,NULL,NULL,NULL,Metamaize experiment NY,NULL,unknown
+13TE,"Aurora, NY",2013-05-17,y,1,NULL,NULL,NULL,StNY001,NULL,2013 expression,NULL,unknown
+13TM,"Aurora, NY",2013-05-17,y,1,NULL,NULL,NULL,StNY001,NULL,2013 NLB Mu Mutant Pop,NULL,unknown
+13TN,"Aurora, NY",2013-05-17,y,1,NULL,NULL,NULL,StNY001,NULL,2013 NLB Fine mapping,NULL,unknown
+13TP,"Aurora, NY",2013-05-17,n,1,NULL,NULL,NULL,StNY001,NULL,2013 NLB Pan mutants,NULL,unknown
+13TR,"Aurora, NY",2013-05-16,n,1,NULL,NULL,NULL,07rust,NULL,2013 rust- pan mutants,,unknown
+13TS,"Aurora, NY",2013-05-16,n,1,NULL,NULL,NULL,PsNY003,NULL,2013 Stewart's wilt- mutants,NULL,unknown
+14TN,"Aurora,NY",1900-01-01,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown

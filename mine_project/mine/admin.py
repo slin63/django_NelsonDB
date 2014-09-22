@@ -15,21 +15,21 @@ class UserProfileAdmin(admin.ModelAdmin):
 	list_display = ('user', 'phone', 'organization', 'job_title', 'notes', 'website', 'picture')
 
 class ExperimentAdmin(admin.ModelAdmin):
-	list_display = ('name', 'experiment_date', 'user', 'experiment_purpose', 'experiment_comments')
-	list_filter = ('name', 'experiment_date')
+	list_display = ('name', 'start_date', 'user', 'factor', 'purpose', 'comments')
+	list_filter = ('name', 'start_date')
 
 class LocalityAdmin(admin.ModelAdmin):
-	list_display = ('locality_name', 'city', 'state', 'country', 'zipcode')
-	list_filter = ('locality_name', 'state')
+	list_display = ('city', 'state', 'country', 'zipcode')
+	list_filter = ('city', 'country')
 
 class FieldAdmin(admin.ModelAdmin):
-	list_display = ('locality', 'field_name', 'field_number', 'latitude', 'longitude', 'altitude', 'field_comments')
+	list_display = ('locality', 'field_name', 'field_number', 'latitude', 'longitude', 'comments')
 
 class TaxonomyAdmin(admin.ModelAdmin):
 	list_display = ('genus', 'species', 'subspecies', 'population', 'common_name')
 
 class AccessionCollectingAdmin(admin.ModelAdmin):
-	list_display = ('field', 'user', 'collection_date', 'collection_number', 'collection_method', 'collection_comments')
+	list_display = ('field', 'user', 'collection_date', 'collection_number', 'collection_method', 'comments')
 
 class SourceAdmin(admin.ModelAdmin):
 	list_display = ('source_name')
@@ -41,10 +41,10 @@ class LocationAdmin(admin.ModelAdmin):
 	list_display = ('locality', 'building_name', 'room', 'section', 'column', 'shelf', 'box_name')
 
 class StockAdmin(admin.ModelAdmin):
-	list_display = ('id', 'passport', 'source_tagname', 'stock_name', 'cross_type', 'bulk_type', 'stock_status', 'stock_date', 'ear_num')
+	list_display = ('id', 'passport', 'source_tagname', 'stock_name', 'cross_type', 'bulk_type', 'stock_status', 'stock_date')
 
 class StockPacketAdmin(admin.ModelAdmin):
-	list_display = ('timestamp', 'stock', 'location', 'weight', 'number_of_seeds', 'stock_packet_comments')
+	list_display = ('barcode', 'stock', 'location', 'weight', 'num_seeds', 'comments')
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)

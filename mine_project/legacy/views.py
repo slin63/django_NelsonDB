@@ -287,6 +287,7 @@ def checkbox_legacy_seed_inventory_sort(request):
       selected_stocks = Legacy_Seed.objects.all()[:1000]
   for stock in selected_stocks:
     stock.person = Legacy_People.objects.get(person_id = stock.seed_person_id)
+    stock.location = Legacy_Seed_Inventory.objects.filter(seed_id = stock.seed_id)
   return selected_stocks
 
 """This function checks if experiments and pedigrees have been checkbox selected by the user. It is mainly useful for displaying the user's selections on the template, through the context_dict"""
