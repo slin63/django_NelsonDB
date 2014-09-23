@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from mine.models import Category, Page, UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, Source, AccessionCollecting, Field, Locality, Location
-from mine.forms import CategoryForm, PageForm, UserForm, UserProfileForm
+from mine.forms import CategoryForm, PageForm, UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -187,7 +187,6 @@ def user_login(request):
 		if user:
 			if user.is_active:
 				login(request, user)
-				request.session['signin_username'] = user.username
 				return HttpResponseRedirect('/mine/')
 			else:
 				return render_to_response('mine/login.html', {'disabled_account': 'disabled'}, context)
@@ -343,8 +342,61 @@ def profile(request, profile_name):
 		up = None
 	context_dict['user'] = u
 	context_dict['userprofile'] = up
+	if User.is_authenticated and profile_name == request.user.username:
+		context_dict['checked_user'] = True
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/profile.html', context_dict, context)
+
+def profile_change_password(request):
+  context = RequestContext(request)
+  context_dict = {}
+  if request.method == 'POST':
+    change_password_form = ChangePasswordForm(data=request.POST)
+    if change_password_form.is_valid():
+      if change_password_form.cleaned_data['new_password'] == change_password_form.cleaned_data['new_password_repeat']:
+        user = authenticate(username=request.user.username, password=change_password_form.cleaned_data['old_password'])
+        if user is not None:
+          user.set_password(change_password_form.cleaned_data['new_password'])
+          user.save()
+          logout(request)
+          return HttpResponseRedirect('/mine/login/')
+        else:
+          context_dict['wrong_password'] = 'wrong_password'
+      else:
+        context_dict['wrong_repeat'] = 'wrong_repeat'
+    else:
+      print(change_password_form.errors)
+  else:
+    change_password_form = ChangePasswordForm()
+  context_dict['change_password_form'] = change_password_form
+  context_dict['logged_in_user'] = request.user.username
+  return render_to_response('mine/profile_change_password.html', context_dict, context)
+
+def edit_profile(request):
+	context = RequestContext(request)
+	context_dict = {}
+	user_instance = request.user
+	profile_instance = UserProfile.objects.get(user=user_instance)
+	user_form = EditUserForm(request.POST or None, instance=user_instance)
+	profile_form = EditUserProfileForm(request.POST or None, instance=profile_instance)
+	if user_form.is_valid() and profile_form.is_valid():
+		user = authenticate(username=request.user.username, password=user_form.cleaned_data['password'])
+		if user is not None:
+			user_form.save()
+			profile = profile_form.save(commit=False)
+			profile.user = user
+			if 'picture' in request.FILES:
+				profile.picture = request.FILES['picture']
+			profile.save()
+			context_dict['edit_complete'] = 'edit_complete'
+		else:
+			context_dict['wrong_password'] = 'wrong_password'
+	else:
+		print(user_form.errors, profile_form.errors)
+	context_dict['user_form'] = user_form
+	context_dict['profile_form'] = profile_form
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('mine/edit_profile.html', context_dict, context)
 
 def track_url(request):
 	context = RequestContext(request)

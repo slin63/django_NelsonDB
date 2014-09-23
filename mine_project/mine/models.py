@@ -35,7 +35,7 @@ class User:
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(User)
-	website = models.URLField(blank=True)
+	website = models.CharField(max_length=250)
 	picture = models.ImageField(upload_to='profile_images', blank=True)
 	phone = models.CharField(max_length=30)
 	organization = models.CharField(max_length=200)

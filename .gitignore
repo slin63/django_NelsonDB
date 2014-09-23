@@ -39,3 +39,6 @@ mine_project/mine.db
 *.db
 mine_project/mine.db-journal
 mine_project/mine.db
+*.jpg
+*.pyc
+*.pyc
