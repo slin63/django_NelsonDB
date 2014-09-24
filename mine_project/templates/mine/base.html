@@ -51,17 +51,35 @@
 				<div class="span3">
 					<div class="well sidebar-nav">
 							<ul class="nav nav-list">
-								<li class="nav-header">Find an Experiment</li>
-								<form>
-								<label></label>
-								<li><input  class="search-query span10" type="text" name="expsuggestion" value="" id="expsuggestion" /></li>
-								</form>
+								<li class="nav-header"><h4>About</h4></li>
+								<li class="nav-list"><a href='http://www.plantpath.cornell.edu/labs/nelson_r/index.html'>Lab Page</a></li>
+								<li class="nav-list"><a href=''>Goals</a></li>
+								<li class="nav-list"><a href=''>People</a></li>
+								<li class="nav-list"><a href=''>Collaborators</a></li>
+								<li class="nav-list"><a href=''>Literature</a></li>
 							</ul>
-							{% if exp_list %}
-								<div id="exps">
-									{% include 'mine/experiment_list.html' with exp_list=exp_list %}
-								</div>
-							{% endif %}
+							<br/>
+							<ul class="nav nav-list">
+								<li class="nav-header"><h4>Germplasm</h4></li>
+								<li class="nav-list"><a href=''>Current Data-Structure</a></li>
+								<li class="nav-list"><a href=''>New Data-Structure</a></li>
+							</ul>
+							<br/>
+							<ul class="nav nav-list">
+								<li class="nav-header"><h4>Experimental Data</h4></li>
+								<li class="nav-list"><a href=''>Find an Experiment</a></li>
+								<li class="nav-list"><a href=''>Browse Analyses</a></li>
+								<li class="nav-list"><a href=''>Phenotypic Data</a></li>
+								<li class="nav-list"><a href=''>Genotypic Data</a></li>
+							</ul>
+							<br/>
+							<ul class="nav nav-list">
+								<li class="nav-header"><h4>Resources</h4></li>
+								<li class="nav-list"><a href=''>Publications</a></li>
+								<li class="nav-list"><a href=''>Links</a></li>
+								<li class="nav-list"><a href=''>Downloads</a></li>
+								<li class="nav-list"><a href=''>Site Map</a></li>
+							</ul>
 					</div>
 				</div>
 				<!--/span-->

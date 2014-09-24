@@ -4,13 +4,23 @@
 {% block title %}About{% endblock %}
 {% block body_block %}
 <div class="hero-unit">
-    <h1>About Nelson Lab</h1>
-    This is <strong>the lab's about page</strong>.<br />
+  <h1>About Nelson Lab</h1>
+  <hr>
 
-    You've visited the site on <strong>{{ visits }} occasion(s)</strong>.<br />
+  <h3><a href='http://www.plantpath.cornell.edu/labs/nelson_r/index.html'>Lab Page</a></h3>
+  <h3><a href=''>People</a></h3>
+  <h3><a href=''>Literature</a></h3>
 
-    Here's a picture!<br />
-    <img src="{% static 'road.png' %}" alt="Picture" />
-    <p></p>
+  <br/>
+  <p><small>Diseases take a toll on maize productivity, and this burden is especially heavy in Africa. The use of genetic resistance is the most important method for reducing these losses. Our lab is working to understand the genetic basis of disease resistance in maize in collaboration with groups in the US and Kenya.</small></p>
+
+  <p><small>In maize, as in plants in general, two general categories of resistance have long been recognized. Various terms have been used for these types of resistance, including qualitative vs. quantitative forms of resistance, and major vs. minor gene resistance. In their extreme forms, these types of resistance are clear and easily distinguished: qualitative resistance is strong or complete resistance conditioned by single genes that are involved in the recognition process, while quantitative resistance is incomplete resistance conditioned by multiple genes of small effects. While the former is relatively easy and attractive to work with, it is associated with race specificity and is often thus relatively rapidly overcome by evolving pathogen populations. Because quantitative resistance is the most durable and agronomically important form of resistance in maize and many other crops, we have focused on this type of resistance.</small></p>
+
+  <p><small>We have a range of powerful genetic tools to allow us to dissect various forms of genetic resistance, to understand the mechanisms that the plants use to reduce pathogen success, and to identify the genes that condition resistance. We are intrigued by the idea of multiple disease resistance; we have evidence that a component of quantitative resistance may be effective for more than one disease.</small></p>
+
+  <p><small>Our work involves field studies in the US and Africa. Each summer we run a large field trial at Aurora, New York, at a Cornell research farm about 40 minutes from the main campus in Ithaca. We also do inoculation experiments in the greenhouse and growth chamber. In the lab, we conduct various analyses using molecular markers, measure pathogen growth by quantitative PCR and do bioinformatics. Please see our photo gallery for images of these sites.</small></p>
+
+  <hr>
+  <img src="{% static 'road.png' %}" alt="Picture" />
 </div>
 {% endblock %}

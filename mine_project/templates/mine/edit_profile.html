@@ -12,10 +12,10 @@
     {% csrf_token %}
     <h2 class="form-signin-heading">Edit Your Profile</h2><br/>
     {% if wrong_password %}
-      <h4><font color="red">Wrong password!</font></h4><br/>
+      <h4 class="bg-danger"><br/>Wrong password!<br/>&nbsp;</h4><br/>
     {% endif %}
     {% if edit_complete %}
-      <h4><font color="247eca">Your Edit Was Saved!</font></h4><br/>
+      <h4 class="bg-success"><br/>Your Edit Was Saved!<br/>&nbsp;</h4><br/>
     {% endif %}
     {% for field in user_form.visible_fields %}
       <div class="row">

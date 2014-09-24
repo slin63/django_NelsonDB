@@ -3,6 +3,20 @@
 {% block title %}Experiment: {{ experiment_name }}{% endblock %}
 {% block body_block %}
 <div class="hero-unit">
+
+	<ul class="nav nav-list">
+		<li class="nav-header">Find an Experiment</li>
+		<form>
+		<label></label>
+		<li><input  class="search-query span10" type="text" name="expsuggestion" value="" id="expsuggestion" /></li>
+		</form>
+	</ul>
+	{% if exp_list %}
+		<div id="exps">
+			{% include 'mine/experiment_list.html' with exp_list=exp_list %}
+		</div>
+	{% endif %}
+
 	<h1>{{ experiment_name }}</h1><br/>
 
 	{% if experiment %}

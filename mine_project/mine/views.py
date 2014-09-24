@@ -66,15 +66,8 @@ def index(request):
 def about(request):
 	context = RequestContext(request)
 	context_dict={}
-	cat_list = get_category_list()
-	context_dict['cat_list'] = cat_list
 	exp_list = get_experiment_list()
 	context_dict['exp_list'] = exp_list
-	if request.session.get('visits'):
-		count = request.session.get('visits')
-	else:
-		count =0
-	context_dict['visits'] = count
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/about.html', context_dict, context)
 
