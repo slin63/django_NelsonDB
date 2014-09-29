@@ -1,9 +1,29 @@
-<ul class="nav nav-list">
-    {% if exp_list %}
-        {% for exp in exp_list %}
-            <li><a href="/mine/experiment/{{ exp.url }}">{{ exp.name }}</a></li>
-        {% endfor %}
-    {% else %}
-        <li>No experiments at present.</li>
-   {% endif %}
-</ul>
+{% if exp_list %}
+<hr>
+
+<h2>Search Experiments</h2>
+    <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Factor</th>
+        <th>Start Date</th>
+        <th>Investigator</th>
+        <th>Purpose</th>
+        <th>Comments</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for exp in exp_list %}
+      <tr>
+        <td><a href="/mine/experiment/{{ exp.name }}/">{{ exp.name }}</a></td>
+        <td>{{ exp.factor }}</td>
+        <td>{{ exp.start_date }}</td>
+        <td><a href="/mine/profile/{{ exp.user.username }}">{{ exp.user.username }}</a></td>
+        <td>{{ exp.purpose}}</td>
+        <td>{{ exp.comments}}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% endif %}

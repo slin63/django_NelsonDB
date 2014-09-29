@@ -49,8 +49,6 @@ def get_experiment_list(max_results=0, starts_with=''):
 def index(request):
 	context = RequestContext(request)
 	context_dict = {}
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	if request.session.get('last_visit'):
 		last_visit = request.session.get('last_visit')
 		visits = request.session.get('visits', 0)
@@ -63,13 +61,25 @@ def index(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/index.html', context_dict, context)
 
-def about(request):
+def about_people(request):
 	context = RequestContext(request)
-	context_dict={}
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('mine/about.html', context_dict, context)
+	context_dict = {}
+	return render_to_response('mine/index.html', context_dict, context)
+
+def about_literature(request):
+	context = RequestContext(request)
+	context_dict = {}
+	return render_to_response('mine/index.html', context_dict, context)
+
+def about_goals(request):
+	context = RequestContext(request)
+	context_dict = {}
+	return render_to_response('mine/index.html', context_dict, context)
+
+def about_collaborators(request):
+	context = RequestContext(request)
+	context_dict = {}
+	return render_to_response('mine/index.html', context_dict, context)
 
 """Was from tango_with_django project. Not used anymore."""
 def category(request, category_name_url):
@@ -326,8 +336,7 @@ def suggest_taxonomy(request):
 
 def profile(request, profile_name):
 	context = RequestContext(request)
-	exp_list = get_experiment_list()
-	context_dict = {'exp_list': exp_list}
+	context_dict = {}
 	u = User.objects.get(username=profile_name)
 	try:
 		up = UserProfile.objects.get(user=u)
@@ -411,15 +420,17 @@ def experiment(request, experiment_name_url):
 	context = RequestContext(request)
 	experiment_name = decode_url(experiment_name_url)
 	context_dict = {'experiment_name': experiment_name}
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
-	try:
-		experiment = Experiment.objects.get(name=experiment_name)
-		context_dict['experiment'] = experiment
-		u = User.objects.get(username=experiment.user)
-		context_dict['user'] = u
-	except Experiment.DoesNotExist:
-		pass
+	if experiment_name is not 'search':
+		try:
+			experiment = Experiment.objects.get(name=experiment_name)
+			context_dict['experiment'] = experiment
+			u = User.objects.get(username=experiment.user)
+			context_dict['user'] = u
+		except Experiment.DoesNotExist:
+			pass
+	if experiment_name == 'search':
+		exp_list = get_experiment_list()
+		context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/experiment.html', context_dict, context)
 
@@ -573,8 +584,6 @@ def seed_inventory(request):
 	selected_stocks = seed_inventory_sort(request)
 	context_dict = session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/seed_inventory.html', context_dict, context)
 
@@ -587,8 +596,6 @@ def seed_inventory_select_locality(request,locality_id):
 	selected_stocks = seed_inventory_sort(request)
 	context_dict = session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/seed_inventory.html', context_dict, context)
 
@@ -601,8 +608,6 @@ def seed_inventory_select_field(request,field_id):
 	selected_stocks = seed_inventory_sort(request)
 	context_dict = session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/seed_inventory.html', context_dict, context)
 
@@ -615,8 +620,6 @@ def seed_inventory_select_collection(request,collecting_id):
 	selected_stocks = seed_inventory_sort(request)
 	context_dict = session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/seed_inventory.html', context_dict, context)
 
@@ -629,8 +632,6 @@ def seed_inventory_select_taxonomy(request,taxonomy_id):
 	selected_stocks = seed_inventory_sort(request)
 	context_dict = session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/seed_inventory.html', context_dict, context)
 
@@ -643,8 +644,6 @@ def seed_inventory_select_source(request,source_id):
 	selected_stocks = seed_inventory_sort(request)
 	context_dict = session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/seed_inventory.html', context_dict, context)
 
@@ -657,8 +656,6 @@ def seed_inventory_select_passport(request,passport_id):
 	selected_stocks = seed_inventory_sort(request)
 	context_dict = session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/seed_inventory.html', context_dict, context)
 
@@ -672,16 +669,12 @@ def seed_inventory_clear(request, clear_selected):
 	selected_stocks = seed_inventory_sort(request)
 	context_dict = session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/seed_inventory.html', context_dict, context)
 
 def seed_inventory_select_stock(request, stock_id):
 	context = RequestContext(request)
 	context_dict = {}
-	exp_list = get_experiment_list()
-	context_dict['exp_list'] = exp_list
 	selected_packets = StockPacket.objects.filter(stock=Stock.objects.get(id=stock_id))
 	context_dict['selected_packets'] = selected_packets
 	return render_to_response('mine/stock.html', context_dict, context)

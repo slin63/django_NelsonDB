@@ -3,7 +3,10 @@ from mine import views
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
-		url(r'^about/$', views.about, name='about'),
+    url(r'^about/goals/$', views.about_goals, name='about_goals'),
+    url(r'^about/collaborators/$', views.about_collaborators, name='about_collaborators'),
+    url(r'^about/people/$', views.about_people, name='about_people'),
+    url(r'^about/literature/$', views.about_literature, name='about_literature'),
 		url(r'^error_prelim/$', views.error_prelim, name='error_prelim'),
 		url(r'^add_category/$', views.add_category, name='add_category'),
 		url(r'^category/(?P<category_name_url>\w+)/add_page/$', views.add_page, name='add_page'),

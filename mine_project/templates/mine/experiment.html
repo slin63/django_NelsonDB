@@ -3,22 +3,12 @@
 {% block title %}Experiment: {{ experiment_name }}{% endblock %}
 {% block body_block %}
 <div class="hero-unit">
+<h1>Experiments</h1>
+</div>
 
-	<ul class="nav nav-list">
-		<li class="nav-header">Find an Experiment</li>
-		<form>
-		<label></label>
-		<li><input  class="search-query span10" type="text" name="expsuggestion" value="" id="expsuggestion" /></li>
-		</form>
-	</ul>
-	{% if exp_list %}
-		<div id="exps">
-			{% include 'mine/experiment_list.html' with exp_list=exp_list %}
-		</div>
-	{% endif %}
-
+{% if experiment %}
+	<hr>
 	<h1>{{ experiment_name }}</h1><br/>
-
 	{% if experiment %}
 		<ul>
 			<li><font color="247eca">Date Experiment Started: </font>{{ experiment.start_date }}</li>
@@ -32,6 +22,24 @@
 		</ul>
 	{% else %}
 		The specified experiment <font color="247eca">{{ experiment_name }}</font> does not exist!
+	{% endif %}
+	<hr><br/>
+{% endif %}
+
+	<!--
+	<ul class="nav nav-list">
+		<li class="nav-header">Find an Experiment by Name</li>
+		<form>
+		<label></label>
+		<li><input  class="search-query span10" type="text" name="expsuggestion" value="" id="expsuggestion" /></li>
+		</form>
+	</ul>
+	-->
+
+	{% if exp_list %}
+		<div id="exps">
+			{% include 'mine/experiment_list.html' with exp_list=exp_list %}
+		</div>
 	{% endif %}
 
 </div>
