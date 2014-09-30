@@ -272,19 +272,19 @@ def checkbox_legacy_seed_inventory_sort(request):
       for pedigree in checkbox_pedigree_list:
         for experiment in checkbox_experiment_list:
           stocks = Legacy_Seed.objects.filter(seed_pedigree=pedigree, experiment_id_origin=experiment)
-          selected_stocks = list(chain(selected_stocks, stocks))
+          selected_stocks = list(chain(selected_stocks, stocks))[:500]
     else:
       for experiment in checkbox_experiment_list:
         stocks = Legacy_Seed.objects.filter(experiment_id_origin=experiment)
-        selected_stocks = list(chain(selected_stocks, stocks))
+        selected_stocks = list(chain(selected_stocks, stocks))[:500]
   else:
     if request.session.get('checkbox_legacy_pedigree', None):
       checkbox_pedigree_list = request.session.get('checkbox_legacy_pedigree')
       for pedigree in checkbox_pedigree_list:
         stocks = Legacy_Seed.objects.filter(seed_pedigree=pedigree)
-        selected_stocks = list(chain(selected_stocks, stocks))
+        selected_stocks = list(chain(selected_stocks, stocks))[:500]
     else:
-      selected_stocks = Legacy_Seed.objects.all()[:1000]
+      selected_stocks = Legacy_Seed.objects.all()[:500]
   for stock in selected_stocks:
     stock.person = Legacy_People.objects.get(person_id = stock.seed_person_id)
     stock.location = Legacy_Seed_Inventory.objects.filter(seed_id = stock.seed_id)
@@ -308,8 +308,6 @@ def checkbox_selected_legacy_experiment(request):
   selected_stocks = checkbox_legacy_seed_inventory_sort(request)
   context_dict = checkbox_legacy_session_variable_check(request)
   context_dict['selected_stocks'] = selected_stocks
-  exp_list = get_experiment_list()
-  context_dict['exp_list'] = exp_list
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('legacy/legacy_seed_inventory.html', context_dict, context)
 
@@ -322,8 +320,6 @@ def checkbox_selected_legacy_pedigree(request):
   selected_stocks = checkbox_legacy_seed_inventory_sort(request)
   context_dict = checkbox_legacy_session_variable_check(request)
   context_dict['selected_stocks'] = selected_stocks
-  exp_list = get_experiment_list()
-  context_dict['exp_list'] = exp_list
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('legacy/legacy_seed_inventory.html', context_dict, context)
 
@@ -438,7 +434,5 @@ def checkbox_legacy_inventory_clear(request, clear_selected):
   selected_stocks = checkbox_legacy_seed_inventory_sort(request)
   context_dict = checkbox_legacy_session_variable_check(request)
   context_dict['selected_stocks'] = selected_stocks
-  exp_list = get_experiment_list()
-  context_dict['exp_list'] = exp_list
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('legacy/legacy_seed_inventory.html', context_dict, context)

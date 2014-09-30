@@ -1,4 +1,11 @@
-close repo:
+setup webapp/virtualenv:
+-use python2.7 and django1.6
+	$ source virtualenvwrapper.sh
+	$ mkvirtualenv name
+-pip install apps
+-configure wsgi
+	
+clone repo:
 
 git clone -b my-branch git@github.com:user/myproject.git
 

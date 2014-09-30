@@ -64,7 +64,8 @@ def index(request):
 def about_people(request):
 	context = RequestContext(request)
 	context_dict = {}
-	return render_to_response('mine/index.html', context_dict, context)
+	context_dict['users'] = zip(User.objects.all(), UserProfile.objects.all())
+	return render_to_response('mine/people.html', context_dict, context)
 
 def about_literature(request):
 	context = RequestContext(request)
