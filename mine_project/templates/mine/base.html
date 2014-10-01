@@ -9,6 +9,8 @@
 		<link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet">
 		<link href="{% static 'css/jquery.dataTables.css' %}" rel="stylesheet">
 		<link href="{% static 'css/additional.css' %}" rel="stylesheet">
+		<link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+		<link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
 		<title>{% block title %}Nelson Lab{% endblock %}</title>
 	</head>
 
@@ -36,6 +38,7 @@
 					   </ul>
 					   <ul class="nav">
 						   {% if user.is_authenticated %}
+							<li><a href="">Submit Content</a></li>
 						   {% endif %}
 					   </ul>
 				   </div>

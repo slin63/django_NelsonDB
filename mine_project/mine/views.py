@@ -65,22 +65,26 @@ def about_people(request):
 	context = RequestContext(request)
 	context_dict = {}
 	context_dict['users'] = zip(User.objects.all(), UserProfile.objects.all())
+	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('mine/people.html', context_dict, context)
 
 def about_literature(request):
 	context = RequestContext(request)
 	context_dict = {}
-	return render_to_response('mine/index.html', context_dict, context)
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('mine/literature.html', context_dict, context)
 
 def about_goals(request):
 	context = RequestContext(request)
 	context_dict = {}
-	return render_to_response('mine/index.html', context_dict, context)
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('mine/goals.html', context_dict, context)
 
 def about_collaborators(request):
 	context = RequestContext(request)
 	context_dict = {}
-	return render_to_response('mine/index.html', context_dict, context)
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('mine/collaborators.html', context_dict, context)
 
 """Was from tango_with_django project. Not used anymore."""
 def category(request, category_name_url):
