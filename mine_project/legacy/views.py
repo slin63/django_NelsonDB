@@ -185,7 +185,6 @@ def checkbox_legacy_seed_inv(request):
 def select_legacy_row(request, legacy_row, legacy_seed):
   context = RequestContext(request)
   results_dict = {}
-  context_dict = {}
   try:
     """Seed info for the selected stock is pulled from the Legacy_Seed table"""
     selected_seed = Legacy_Seed.objects.get(seed_id = legacy_seed)
@@ -220,8 +219,7 @@ def select_legacy_row(request, legacy_row, legacy_seed):
   """The following code builds the parental pedigree tree. Note that source_row_value is defined above as row_info for the selected seed."""
   step = 1
   source_row_value = row_info
-  while source_row_value is not None:
-    step_key = 'step{}'.format(step)
+  while source_row_value is not None and step<6:
     """Unique keys for each parental generation are formed. These keys are for the results_dict"""
     source_row_key = 'source_row{}'.format(step)
     source_seed_key = 'source_seed{}'.format(step)
@@ -255,8 +253,6 @@ def select_legacy_row(request, legacy_row, legacy_seed):
   """I am working on a way to iterate over results_dict to display the results in the template. Right now the template is hardcoded to display up to 5 results. This is a work in progress."""
   results_dict['step_count'] = reversed(range(1,step))
 
-  exp_list = get_experiment_list()
-  results_dict['exp_list'] = exp_list
   results_dict['logged_in_user'] = request.user.username
   return render_to_response('legacy/legacy_row.html', results_dict, context)
 

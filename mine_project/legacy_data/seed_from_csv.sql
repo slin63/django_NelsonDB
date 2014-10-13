@@ -21,10 +21,6 @@ CREATE TABLE `legacy_legacy_seed` (
   `lot` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB;
 
-"""Could not add 10JH, 08SN, 12MY seeds due to Experiment FK"""
-"""Could not add """
-
-
 load data local infile 'C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/legacy_data/nelson_lab_seed_table_c1.2.csv' 
 into table legacy_legacy_seed fields terminated by ','
 enclosed by '"'

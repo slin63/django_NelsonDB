@@ -44,7 +44,7 @@
 08RW,"Aurora, NY",5/14/2008 0:00,y,1,6/26/2008 0:00,NULL,NULL,EtNY001,NULL,2008 Randy SM trial,NULL
 08SB,"Aurora, NY",5/24/2008 0:00,y,1,NULL,NULL,NULL,NRRL 3357,NULL,"2008 Santiago, founder inbreds",NULL
 08SC,"Aurora, NY",5/24/2008 0:00,y,1,NULL,NULL,NULL,NRRL 3357,NULL,"2008 Santiago, B73xCML322 pop",NULL
-08SM,"Mississippi State, MS",4/24/2008 0:00,y,1,NULL,NULL,NULL,NRRL 3357,NULL,"Santiago 2008 Mississippi, B73xCML322 pop, various NILs and inbreds","locally labeled as exp 810 & 811, rows 1- 412"
+08SM,"Mississippi State, MS",4/24/2008 0:00,y,1,NULL,NULL,NULL,NRRL 3357,NULL,"Santiago 2008 Mississippi, B73xCML322 pop, various NILs and inbreds",Locally labeled as exp 810 & 811 rows 1- 412
 08SN,"Aurora, NY",5/24/2008 0:00,y,1,NULL,NULL,NULL,NRRL 3357,NULL,"2008 Santiago, Tx303 TBBC3 lines, CML52 HIFs",NULL
 09AR,Argentina,11/12/2009 0:00,y,0,NULL,NULL,NULL,NULL,3/15/2010 0:00,2009-2010 Argentina Winter  Nursery; qEt1.06Tx303 fine mapping (to fix recombinants),NULL
 09BB,"Blacksburg, VA",5/18/2009 0:00,y,0,NULL,NULL,NULL,NULL,NULL,2009 NAM GLS trial,planting occurred from the 18 to the 21st
@@ -58,15 +58,15 @@
 09GC01,"Cornell GH, NY",1/23/2009 0:00,y,0,NULL,NULL,NULL,NULL,NULL,2009 Chia-Lin Chung making crosses for allelic test of qEt8.06,NULL
 09GC06,"Cornell GH, NY",NULL,y,1,NULL,NULL,NULL,EtNY001,NULL,2009 qEt8.06DK888 Allelism test in GH,NULL
 09JH,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
-09K,"Aurora, NY",5/18/2009 0:00,y,1,6/19/2009 0:00,7/7/2009 0:00,NULL,EtNY001,NULL,2009 NAM NLB trial,"first inoc spore susp., second inoc. Sorghum"
+09K,"Aurora, NY",5/18/2009 0:00,y,1,6/19/2009 0:00,7/7/2009 0:00,NULL,EtNY001,NULL,2009 NAM NLB trial,First inoc spore susp. Second inoc Sorghum
 09NC,"Clayton, NC",5/13/2009 0:00,y,1,6/12/2009 0:00,NULL,NULL,Cochliobolus heterosrophus race 0 (isolate 2-16Bm),NULL,32-24 RIL trial for SLB,NULL
 09PB,"Blacksburg, VA",6/1/2009 0:00,y,0,NULL,NULL,NULL,NULL,NULL,2009 Poland RS GLS trial,NULL
-09PF,"Aurora, NY",5/18/2009 0:00,y,1,6/19/2009 0:00,6/24/2009 0:00,NULL,EtNY001,NULL,32-24 RIL trial for NLB,"first inoc spore susp., second inoc. Sorghum"
-09PM,"Aurora, NY",5/18/2009 0:00,y,1,6/19/2009 0:00,6/24/2009 0:00,NULL,EtNY001,NULL,multi-scoring for NLB,"first inoc spore susp., second inoc. Sorghum"
+09PF,"Aurora, NY",5/18/2009 0:00,y,1,6/19/2009 0:00,6/24/2009 0:00,NULL,EtNY001,NULL,32-24 RIL trial for NLB,First inoc spore susp. Second inoc Sorghum
+09PM,"Aurora, NY",5/18/2009 0:00,y,1,6/19/2009 0:00,6/24/2009 0:00,NULL,EtNY001,NULL,multi-scoring for NLB,First inoc spore susp. Second inoc Sorghum
 09PN,"Aurora, NY",5/15/2009 0:00,y,1,7/3/2009 0:00,NULL,NULL,EtNY001,NULL,Jesse Nursery,NULL
 09PR,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
 09PS,"Aurora, NY",6/5/2009 0:00,y,1,7/16/2009 0:00,7/21/2009 0:00,NULL,rust,NULL,32-24 RIL trial for common rust / P29 & P30 pop per se,0.5ml @ 3x10^5 for first inoc.; 0.5ml @ 2x10^5 for second inoc.
-09PT,"Aurora, NY",5/15/2009 0:00,NULL,1,6/19/2009 0:00,6/24/2009 0:00,NULL,EtNY001,NULL,teo introgression lines,"first inoc spore susp., second inoc. Sorghum"
+09PT,"Aurora, NY",5/15/2009 0:00,NULL,1,6/19/2009 0:00,6/24/2009 0:00,NULL,EtNY001,NULL,teo introgression lines,First inoc spore susp. Second inoc Sorghum
 09PX,"Aurora, NY",6/5/2009 0:00,NULL,1,7/16/2009 0:00,7/21/2009 0:00,NULL,rust,NULL,multi-scoring for common rust,0.5ml @ 3x10^5 for first inoc.; 0.5ml @ 2x10^5 for second inoc.
 09SB,"Aurora, NY",5/19/2010 0:00,y,1,NULL,NULL,NULL,NRRL 3357,NULL,2009 Founder Inbreds,inoculated in-vitro at different dates
 09SC,"Aurora, NY",5/19/2010 0:00,y,1,NULL,NULL,NULL,NRRL 3357,NULL,2009 B73xCML322 RILs,inoculated in-vitro at different dates
@@ -79,9 +79,9 @@
 09TF2,"Aurora, NY",NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
 09TT,"Clayton, NY",4/21/2009 0:00,y,1,6/9/2009 0:00,NULL,NULL,NULL,NULL,2009 NC teo trial for NLB,NULL
 10BB,"Blacksburg, VA",7/15/2010 0:00,y,0,NULL,NULL,NULL,NULL,NULL,2010 NAM GLS trial,that planting occurred from the 15th to the 16th
-10CH,Chile,11/1/2010 0:00,y,0,NULL,NULL,NULL,NULL,NULL,R.Nelson lab winter nursery in Chile,"Managed by Tuniche Seed Services in Chile; exact planting date unknown, only reported as November 2010"
+10CH,Chile,11/1/2010 0:00,y,0,NULL,NULL,NULL,NULL,NULL,R.Nelson lab winter nursery in Chile,Managed by Tuniche Seed Services in Chile. Exact planting date unknown. Only reported as November 2010
 10GT,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
-10JH,"Blacksburg, VA",5/15/2010 0:00,y,0,NULL,NULL,NULL,NULL,10/18/2010 0:00,2010 HIF GLS trial,NULL
+10JH,"Blacksburg, VA",5/15/2010,y,0,NULL,NULL,NULL,NULL,10/18/2010,2010 HIF FLS trial,NULL
 10MA,"Mississippi State, MS",4/16/2010 0:00,y,1,NULL,NULL,NULL,NRRL 3357,NULL,2010 Mississippi inbreds and NILs experiments,Locally experiment 38
 10MB,"Mississippi State, MS",4/16/2010 0:00,y,1,NULL,NULL,NULL,NRRL 3357,NULL,2010 Mississippi RILs of CML322xB73 pop,Locally experiment 34
 10NC,"Clayton, NC",NULL,y,1,NULL,NULL,NULL,Cochliobolus heterosrophus race 0 (isolate 2-16Bm),NULL,2010 Jesse RS-RIL SLB trial,NULL
@@ -130,8 +130,8 @@
 12LF,"Aurora, NY",5/25/2012 0:00,y,2,8/16/2012 0:00,8/23/2012 0:00,NULL,Fusarium verticillioides,NULL,2012 Laura NAM founders Fusarium experiment,NULL
 12LG,"Clayton, NC",4/11/2012 0:00,y,2,7/7/2012 0:00,7/14/2012 0:00,NULL,Fusarium verticillioides,NULL,2012 Laura GEFR Fusarium experiment,NULL
 12MH,"Aurora, NY",5/25/2012 0:00,y,1,6/28/2012 0:00,NULL,NULL,,NULL,2012 Tingting fine-mapping for 8.06,
-12MN,"Clayton, NC",4/19/2012 0:00,y,NULL,NULL,NULL,NULL,natural,NULL,Metamaize experiment NC.,"""field B11A, rows 6621-6748.  Incomplete blocks design, to be repeated in Aurora."""
-12MY,"Aurora, NY",5/25/2012 0:00,y,NULL,NULL,NULL,NULL,natural,10/25/2012 0:00,Metamaize experiment NY.,""" Incomplete blocks design, to be repeated in Clayton, rows 1-45 harvested on 18Oct2012"""
+12MN,"Clayton, NC",4/19/2012 0:00,y,NULL,NULL,NULL,NULL,natural,NULL,Metamaize experiment NC.,Field B11A rows 6621-6748. Incomplete blocks design to be repeated in Aurora.
+12MY,"Aurora, NY",5/25/2012 0:00,y,NULL,NULL,NULL,NULL,natural,10/25/2012 0:00,Metamaize experiment NY.,Incomplete blocks design to be repeated in Clayton. Rows 1-45 harvested on 18Oct2012
 12SH,"Aurora, NY",5/25/2012 0:00,n,NULL,6/28/2012 0:00,NULL,NULL,StNY001,NULL,Ht differentials,NULL
 12TH,"Aurora, NY",5/25/2012 0:00,y,1,NULL,NULL,NULL,StNY0001,NULL,2012 Tiffany fine-mapping for 8.06,NULL
 12TN,"Aurora, NY",5/25/2012 0:00,y,NULL,6/28/2012 0:00,NULL,NULL,StNY001,NULL,NLB Fine Mapping Trials,NULL

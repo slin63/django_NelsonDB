@@ -15,7 +15,7 @@ CREATE TABLE `legacy_legacy_experiment` (
   `notes` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB;
 
-load data local infile 'C://Users/Nick/Documents/GitHub/mineproject/mine_project/legacy_data/nelson_lab_experiment_table.csv' 
+load data local infile 'C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/legacy_data/nelson_lab_experiment_table.csv' 
 into table legacy_legacy_experiment fields terminated by ','
 enclosed by '"'
 lines terminated by '\n'
