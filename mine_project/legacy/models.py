@@ -364,6 +364,22 @@ class Legacy_Plant(models.Model):
     def __unicode__(self):
         return self.plant_id
 
+class Legacy_Tissue(models.Model):
+    ID = models.CharField(max_length=100, primary_key=True)
+    experiment_id = models.CharField(max_length=100)
+    entity_id = models.CharField(max_length=100)
+    entity_name = models.CharField(max_length=100)
+    pedigree = models.CharField(max_length=100)
+    row_name = models.CharField(max_length=100)
+    plant = models.CharField(max_length=100)
+    tissue_type = models.CharField(max_length=100)
+    well = models.CharField(max_length=100)
+    tissue_plate_id = models.CharField(max_length=100)
+    comments = models.CharField(max_length=1000)
+
+    def __unicode__(self):
+        return self.well
+
 class Legacy_People(models.Model):
     person_id = models.CharField(max_length=100, primary_key=True)
     person_name = models.CharField(max_length=100)

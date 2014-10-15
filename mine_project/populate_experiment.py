@@ -1,9 +1,9 @@
 import os
 import csv
 
-"""----------------------------------------------------------------------------------------
-Populates User and UserProfile Models using data from current people table. Adds a password of 123123 for all users and adds a default profile picture for all users.
-----------------------------------------------------------------------------------------"""
+#----------------------------------------------------------------------------------------
+#  Populates User and UserProfile Models using data from current people table. Adds a password of 123123 for all users and adds a default profile picture for all users.
+#----------------------------------------------------------------------------------------
 
 def csv_import_people():
 	ifile = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/person.csv'), dialect='excel')
@@ -37,9 +37,9 @@ def add_userp(user, phone, org, pic, title, web, notes):
 	p = UserProfile.objects.get_or_create(user=User.objects.get(username=user), phone=phone, organization=org, picture=pic, job_title=title, website=web, notes=notes)[0]
 	return p
 
-"""----------------------------------------------------------------------------------------
-Populates ExperimentFactor and Experiment Models using data from current experiment table.
-----------------------------------------------------------------------------------------"""
+#----------------------------------------------------------------------------------------
+#  Populates ExperimentFactor and Experiment Models using data from current experiment table.
+#----------------------------------------------------------------------------------------
 
 def experiment_factor_pop():
 	add_exp_factor('Example Experimental Factor', 'Field Experiment Factor', 'Disease Resistance Trial', 'This is simply an example of what an experiment_factor could be. Real experimental factors need to be added and linked to experiments. Or this ExperimentFactor table can be eliminated if it is not useful.')
@@ -70,9 +70,9 @@ def add_experiment(name, date, user, purpose, comments):
 	e = Experiment.objects.get_or_create(factor=ExperimentFactor.objects.get(factor_name='Example Experimental Factor'), name=name, start_date=date, user=User.objects.get(username=user), purpose=purpose, comments=comments)[0]
 	return e
 
-"""----------------------------------------------------------------------------------------
-Populates
-----------------------------------------------------------------------------------------"""
+#----------------------------------------------------------------------------------------
+#  Populates
+#----------------------------------------------------------------------------------------
 
 def csv_import_seed():
 		ifile = csv.DictReader(open('c://seed.csv'), dialect='excel')
@@ -184,9 +184,9 @@ def add_stock(locality_name, state, person, source_year, genus, species, subspec
 def add_stockpacket(timestamp, weight, box, locality_name, state, person, source_year, genus, species, subspecies, population, common_name, pedigree, cross, tagname, ear_num, year):
 	sp = StockPacket.objects.get_or_create(timestamp=timestamp, stock=Stock.objects.get(passport=Passport.objects.get(source=Source.objects.get(source_name='No Source'), accession_collecting=AccessionCollecting.objects.get(field=Field.objects.get(locality=Locality.objects.get(locality_name=locality_name, state=state)), user=User.objects.get(username=person), collection_date=source_year), taxonomy=Taxonomy.objects.get(genus=genus, species=species, subspecies=subspecies, population=population, common_name=common_name), pedigree=pedigree), cross_type=cross, stock_date=year, source_tagname=tagname, ear_num=ear_num), location=Location.objects.get(locality=Locality.objects.get(locality_name='Cold Storage', state='NY'), box_name=box), weight=weight)
 
-"""-------------------------------------------------------------------------
-Start execution here!
--------------------------------------------------------------------------"""
+#-------------------------------------------------------------------------
+#  Start execution here!
+#-------------------------------------------------------------------------
 
 if __name__ == '__main__':
 	os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mine_project.settings')

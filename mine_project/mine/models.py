@@ -45,20 +45,29 @@ class UserProfile(models.Model):
 	def __unicode__(self):
 		return self.user.username
 
-class ExperimentFactor(models.Model):
-  factor_name = models.CharField(max_length=200, unique=True)
-  factor_type = models.CharField(max_length=200)
-  description = models.CharField(max_length=1000)
+class Locality(models.Model):
+  city = models.CharField(max_length=200)
+  state = models.CharField(max_length=200)
+  country = models.CharField(max_length=200)
+  zipcode = models.CharField(max_length=30)
+
+  def __unicode__(self):
+    return self.city
+
+class Field(models.Model):
+  locality = models.ForeignKey(Locality)
+  field_name = models.CharField(max_length=200)
+  field_num = models.CharField(max_length=200)
   comments = models.CharField(max_length=1000)
 
   def __unicode__(self):
-    return self.factor_name
+    return self.field_name
 
 class Experiment(models.Model):
-  factor = models.ForeignKey(ExperimentFactor)
   user = models.ForeignKey(User)
+  field = models.ForeignKey(Field)
   name = models.CharField(max_length=200, unique=True)
-  start_date = models.DateField(blank=True)
+  start_date = models.CharField(max_length=200)
   purpose = models.CharField(max_length=1000)
   comments = models.CharField(max_length=1000)
 
@@ -75,42 +84,9 @@ class Publication(models.Model):
   def __unicode__(self):
     return self.name_of_paper
 
-class Locality(models.Model):
-	city = models.CharField(max_length=200)
-	state = models.CharField(max_length=200)
-	country = models.CharField(max_length=200)
-	zipcode = models.CharField(max_length=30)
-
-	def __unicode__(self):
-		return self.city
-
-class Location(models.Model):
-  locality = models.ForeignKey(Locality)
-  building_name = models.CharField(max_length=200)
-  room = models.CharField(max_length=200)
-  section = models.CharField(max_length=200)
-  column = models.CharField(max_length=200)
-  shelf = models.CharField(max_length=200)
-  box_name = models.CharField(max_length=200)
-  comments = models.CharField(max_length=1000)
-
-  def __unicode__(self):
-    return self.building_name
-
-class Citation(models.Model):
-  citation_name = models.CharField(max_length=200)
-  citation_type = models.CharField(max_length=200)
-  citation_date = models.DateField()
-  info = models.CharField(max_length=200)
-  notes = models.CharField(max_length=1000)
-
-  def __unicode__(self):
-    return self.citation_name
-
 class Taxonomy(models.Model):
 	genus = models.CharField(max_length=200)
 	species = models.CharField(max_length=200)
-	subspecies = models.CharField(max_length=200)
 	population = models.CharField(max_length=200)
 	common_name = models.CharField(max_length=200)
 
@@ -119,31 +95,24 @@ class Taxonomy(models.Model):
 
 class Source(models.Model):
 	source_name = models.CharField(max_length=200)
-	institute = models.CharField(max_length=200)
 	contact_name = models.CharField(max_length=200)
-	source_phone = models.CharField(max_length=30)
-	source_email = models.CharField(max_length=200)
+	phone = models.CharField(max_length=30)
+	email = models.CharField(max_length=200)
 	comments = models.CharField(max_length=1000)
 
 	def __unicode__(self):
 		return self.source_name
 
-class Field(models.Model):
-	locality = models.ForeignKey(Locality)
-	field_name = models.CharField(max_length=200)
-	field_number = models.CharField(max_length=200)
-	latitude = models.CharField(max_length=200, blank=True)
-	longitude = models.CharField(max_length=200, blank=True)
-	comments = models.CharField(max_length=1000)
+class ObsSelector(models.Model):
+  experiment = models.ForeignKey(Experiment)
 
-	def __unicode__(self):
-		return self.field_name
+  def __unicode__(self):
+    return self.experiment.name
 
-class AccessionCollecting(models.Model):
-	field = models.ForeignKey(Field)
+class Collecting(models.Model):
+	obs_selector = models.ForeignKey(ObsSelector)
 	user = models.ForeignKey(User)
-	collection_date = models.DateField()
-	collection_number = models.CharField(max_length=200, blank=True)
+	collection_date = models.CharField(max_length=200)
 	collection_method = models.CharField(max_length=1000, blank=True)
 	comments = models.CharField(max_length=1000, blank=True)
 
@@ -151,204 +120,84 @@ class AccessionCollecting(models.Model):
 		return self.collection_date
 
 class Passport(models.Model):
-	accession_collecting = models.ForeignKey(AccessionCollecting)
+	collecting = models.ForeignKey(Collecting)
 	source = models.ForeignKey(Source)
 	taxonomy = models.ForeignKey(Taxonomy)
-	pedigree = models.CharField(max_length=200)
-	comments = models.CharField(max_length=1000)
 
 	def __unicode__(self):
-		return self.pedigree
-
-class OrderingInfo(models.Model):
-  user = models.ForeignKey(User)
-  source = models.ForeignKey(Source)
-  what_ordered = models.CharField(max_length=200)
-  date_ordered = models.DateField()
-  comments = models.CharField(max_length=1000)
-
-  def __unicode__(self):
-    return self.what_ordered
-
-class DiseaseInfo(models.Model):
-	disease_name = models.CharField(max_length=200)
-	disease_abbrev = models.CharField(max_length=200)
-	comments = models.CharField(max_length=1000)
-
-	def __unicode__(self):
-		return self.disease_name
-
-class Media(models.Model):
-  citation = models.ForeignKey(Citation)
-  media_name = models.CharField(max_length=200)
-  media_purpose = models.CharField(max_length=1000)
-
-  def __unicode__(self):
-    return self.media_name
-
-class Inoculations(models.Model):
-	disease_info = models.ForeignKey(DiseaseInfo)
-	inoculations_date = models.DateField()
-	method = models.CharField(max_length=1000)
-	comments = models.CharField(max_length=1000)
-
-	def __unicode__(self):
-		return self.inoculations_date
-
-class MatingPlan(models.Model):
-	mating_type = models.CharField(max_length=200)
-	role = models.CharField(max_length=200)
-	comments = models.CharField(max_length=1000)
-
-	def __unicode__(self):
-		return self.mating_type
+		return self.taxonomy.population
 
 class Stock(models.Model):
   passport = models.ForeignKey(Passport)
-  stock_name = models.CharField(max_length=200)
+  seed_id = models.CharField(max_length=200)
+  seed_name = models.CharField(max_length=200)
   cross_type = models.CharField(max_length=200)
-  bulk_type = models.CharField(max_length=200)
+  pedigree = models.CharField(max_length=200)
   stock_status = models.CharField(max_length=200)
-  stock_date = models.DateField()
-  source_tagname = models.CharField(max_length=200)
-
-  def __unicode__(self):
-      return self.source_tagname
-
-class StockPacket(models.Model):
-  barcode = models.CharField(max_length=200, unique=True)
-  stock = models.ForeignKey(Stock)
-  location = models.ForeignKey(Location)
-  weight = models.CharField(max_length=30)
-  num_seeds = models.CharField(max_length=30)
+  stock_date = models.CharField(max_length=200)
   comments = models.CharField(max_length=1000)
 
   def __unicode__(self):
-    return self.weight
+      return self.seed_id
+
+class ObsRow(models.Model):
+  obs_selector = models.ForeignKey(ObsSelector)
+  field = models.ForeignKey(Field)
+  stock = models.ForeignKey(Stock)
+  row_id = models.CharField(max_length=200)
+  row_name = models.CharField(max_length=200)
+  range_num = models.CharField(max_length=200)
+  plot = models.CharField(max_length=200)
+  block = models.CharField(max_length=200)
+  rep = models.CharField(max_length=200)
+  kernel_num = models.CharField(max_length=200)
+  planting_date = models.CharField(max_length=200)
+  harvest_date = models.CharField(max_length=200)
+  comments = models.CharField(max_length=1000)
+
+  def __unicode__(self):
+    return self.row_id
 
 class ObsPlant(models.Model):
-	field = models.ForeignKey(Field)
-	stock = models.ForeignKey(Stock)
-	inoculations = models.ForeignKey(Inoculations)
-	mating_plan = models.ForeignKey(MatingPlan)
-	row_num = models.CharField(max_length=200)
-	range_num = models.CharField(max_length=200)
-	plant_num = models.CharField(max_length=200)
-	plot = models.CharField(max_length=200)
-	row = models.CharField(max_length=200)
-	tagname = models.CharField(max_length=200)
-	planting_date = models.DateField()
-	harvest_date = models.DateField()
-	comments = models.CharField(max_length=1000)
+  obs_selector = models.ForeignKey(ObsSelector)
+  obs_row = models.ForeignKey(ObsRow)
+  plant_id = models.CharField(max_length=200)
+  plant_num = models.CharField(max_length=200)
+  comments = models.CharField(max_length=1000)
 
-	def __unicode__(self):
-		return self.tagname
+  def __unicode__(self):
+    return self.plant_id
 
 class ObsTissue(models.Model):
-  obs_plant = models.ForeignKey(ObsPlant)
-  tissue_name = models.CharField(max_length=200)
+  obs_selector = models.ForeignKey(ObsSelector)
+  obs_row = models.ForeignKey(ObsRow)
   tissue_type = models.CharField(max_length=200)
-  date_collected = models.DateField()
+  plant = models.CharField(max_length=200)
+  well = models.CharField(max_length=200)
+  plate_id = models.CharField(max_length=200)
   comments = models.CharField(max_length=1000)
 
   def __unicode__(self):
-    return self.tissue_name
+    return self.well
 
-class ObsCulture(models.Model):
-	obs_tissue = models.ForeignKey(ObsTissue)
-	media = models.ForeignKey(Media)
-	date_plated = models.DateField()
-
-	def __unicode__(self):
-		return self.date_plated
-
-class Microbe(models.Model):
-  obs_culture = models.ForeignKey(ObsCulture)
-  microbe_type = models.CharField(max_length=200)
-  glycerol_stock_id = models.CharField(max_length=200)
-  dna_isolate_id = models.CharField(max_length=200)
-  picture = models.ImageField(upload_to='microbe_images', blank=True)
-
-  def __unicode__(self):
-    return self.glycerol_stock_id
-
-class Primers(models.Model):
-  citation = models.ForeignKey(Citation)
-  ordering_info = models.ForeignKey(OrderingInfo)
-  primer_code = models.CharField(max_length=200)
-  primer_seq = models.CharField(max_length=1000)
-  direction = models.CharField(max_length=200)
-  gene_target = models.CharField(max_length=1000)
-  purpose = models.CharField(max_length=1000)
+class Location(models.Model):
+  locality = models.ForeignKey(Locality)
+  building_name = models.CharField(max_length=200)
+  room = models.CharField(max_length=200)
+  shelf = models.CharField(max_length=200)
+  column = models.CharField(max_length=200)
+  box_name = models.CharField(max_length=200)
   comments = models.CharField(max_length=1000)
 
   def __unicode__(self):
-    return self.primer_seq
+    return self.building_name
 
-class Sequence(models.Model):
-  obs_culture = models.ForeignKey(ObsCulture)
-  primer_id1 = models.ForeignKey(Primers, related_name='sequence_primer_id1')
-  primer_id2 = models.ForeignKey(Primers, related_name='sequence_primer_id2')
-  sequence = models.CharField(max_length=1000)
-  genus_species = models.CharField(max_length=1000)
+class StockPacket(models.Model):
+  stock = models.ForeignKey(Stock)
+  location = models.ForeignKey(Location)
+  weight = models.CharField(max_length=200)
+  num_seeds = models.CharField(max_length=200)
   comments = models.CharField(max_length=1000)
 
   def __unicode__(self):
-    return self.genus_species
-
-class ObsSelector(models.Model):
-  obs_plant = models.ForeignKey(ObsPlant)
-  obs_tissue = models.ForeignKey(ObsTissue)
-  obs_culture = models.ForeignKey(ObsCulture)
-  experiment = models.ForeignKey(Experiment)
-
-  def __unicode__(self):
-    return self.experiment.name
-
-class MeasurementParameter(models.Model):
-  measurement_type = models.CharField(max_length=200)
-  parameter = models.CharField(max_length=200)
-  protocol = models.CharField(max_length=1000)
-  unit_of_measure = models.CharField(max_length=30)
-
-  def __unicode__(self):
-    return self.parameter
-
-class StatisticType(models.Model):
-  statistic_type = models.CharField(max_length=200)
-  comments = models.CharField(max_length=1000)
-
-  def __unicode__(self):
-    return self.statistic_type
-
-class Measurement(models.Model):
-  obs_selector = models.ForeignKey(ObsSelector)
-  parameter = models.ForeignKey(MeasurementParameter)
-  statistic_type = models.ForeignKey(StatisticType)
-  time_of_measurement = models.DateTimeField(auto_now_add=True)
-  value = models.CharField(max_length=200)
-
-  def __unicode__(self):
-    return self.value
-
-class Analysis(models.Model):
-  disease_info = models.ForeignKey(DiseaseInfo)
-  publication = models.ForeignKey(Publication)
-  date = models.DateField()
-
-  def __unicode__(self):
-    return self.publication.name_of_paper
-
-class PhenoSet(models.Model):
-  measurement = models.ForeignKey(Measurement)
-  analysis = models.ForeignKey(Analysis)
-
-  def __unicode__(self):
-    return self.analysis.publication.name_of_paper
-
-class ObsSet(models.Model):
-  obs_selector = models.ForeignKey(ObsSelector)
-  analysis = models.ForeignKey(Analysis)
-
-  def __unicode__(self):
-    return self.analysis.publication.name_of_paper
+    return self.stock.seed_id
