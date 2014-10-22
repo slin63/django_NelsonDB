@@ -6,7 +6,6 @@
       <thead>
       <tr>
         <th>Name</th>
-        <th>Factor</th>
         <th>Start Date</th>
         <th>Investigator</th>
         <th>Purpose</th>
@@ -17,7 +16,6 @@
       {% for exp in exp_list %}
       <tr>
         <td><a href="/mine/experiment/{{ exp.name }}/">{{ exp.name }}</a></td>
-        <td>{{ exp.factor }}</td>
         <td>{{ exp.start_date }}</td>
         <td><a href="/mine/profile/{{ exp.user.username }}">{{ exp.user.username }}</a></td>
         <td>{{ exp.purpose}}</td>

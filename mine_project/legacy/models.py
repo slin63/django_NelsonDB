@@ -3,15 +3,14 @@ from django.contrib.auth.models import User
 
 # orphan table
 class Legacy_DiseaseInfo(models.Model):
-    Trait = models.CharField(max_length=100)
-    DiseaseName = models.CharField(max_length=100)
-    Abbreviation = models.CharField(max_length=100)
-    Topic = models.CharField(max_length=100)
-    DiseaseInfo = models.CharField(max_length=100)
-    upsize_ts = models.CharField(max_length=100)
+    trait = models.CharField(max_length=100)
+    disease_name = models.CharField(max_length=100)
+    abbreviation = models.CharField(max_length=100)
+    topic = models.CharField(max_length=100)
+    disease_info = models.CharField(max_length=100)
 
     def __unicode__(self):
-        return self.Abbreviation
+        return self.abbreviation
 
 # phenotype and row feed into it, no forein keys
 class Legacy_Experiment(models.Model):
@@ -74,7 +73,7 @@ class genotype(models.Model):
     """
 
 class Legacy_Genotype(models.Model):
-    genotype_plate_id = models.CharField(max_length=100, primary_key=True)
+    genotype_plate_id = models.CharField(max_length=100)
     genotype_well_id = models.CharField(max_length=100)
     genotype_plate_name = models.CharField(max_length=100)
     well_A01 = models.CharField(max_length=100)
@@ -98,7 +97,7 @@ class Legacy_Genotype(models.Model):
     passive_ref = models.CharField(max_length=100)
     quality_value = models.CharField(max_length=100)
     call_type = models.CharField(max_length=100)
-    call = models.CharField(max_length=100)
+    call_name = models.CharField(max_length=100)
     genotype = models.CharField(max_length=100)
     brc_plate_num = models.CharField(max_length=100)
     brc_sample_num = models.CharField(max_length=100)
@@ -379,6 +378,28 @@ class Legacy_Tissue(models.Model):
 
     def __unicode__(self):
         return self.well
+
+class Legacy_Isolate(models.Model):
+    ID = models.CharField(max_length=100, primary_key=True)
+    isolate_id = models.CharField(max_length=100)
+    isolate_name = models.CharField(max_length=100)
+    scientific_name = models.CharField(max_length=100)
+    other_sname = models.CharField(max_length=100)
+    pathotype_race = models.CharField(max_length=100)
+    mating_type = models.CharField(max_length=100)
+    disease_common_name = models.CharField(max_length=100)
+    collection_site = models.CharField(max_length=100)
+    collection_date = models.CharField(max_length=100)
+    plant_organ = models.CharField(max_length=100)
+    collector = models.CharField(max_length=100)
+    provider = models.CharField(max_length=100)
+    glycerol_stock_n80c = models.CharField(max_length=100)
+    mycelium_4c = models.CharField(max_length=100)
+    cite = models.CharField(max_length=100)
+    notes = models.CharField(max_length=1000)
+
+    def __unicode__(self):
+        return self.isolate_id
 
 class Legacy_People(models.Model):
     person_id = models.CharField(max_length=100, primary_key=True)

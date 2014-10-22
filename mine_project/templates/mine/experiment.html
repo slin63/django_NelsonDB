@@ -15,11 +15,7 @@
 				<li><font color="247eca">Date Experiment Started: </font>{{ experiment.start_date }}</li>
 				<li><font color="247eca">Originator: </font><a href='/mine/profile/{{ experiment.user }}/'>{{experiment.user}}</a></li>
 				<li><font color="247eca">Experiment Purpose: </font>{{experiment.purpose}}</li>
-				<li><font color="247eca">Comments: </font>{{experiment.comments}}</li><br/>
-				<li><font color="247eca">Experimental Factor: </font>{{experiment.factor.factor_name}}</li>
-				<li><font color="247eca">Factor Type: </font>{{experiment.factor.factor_type}}</li>
-				<li><font color="247eca">Factor Description: </font>{{experiment.factor.description}}</li>
-				<li><font color="247eca">Factor Comments: </font>{{experiment.factor.comments}}</li>
+				<li><font color="247eca">Comments: </font>{{experiment.comments}}</li>
 			</ul>
 		{% else %}
 			The specified experiment <font color="247eca">{{ experiment_name }}</font> does not exist!

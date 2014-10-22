@@ -89,19 +89,23 @@ class Taxonomy(models.Model):
 	species = models.CharField(max_length=200)
 	population = models.CharField(max_length=200)
 	common_name = models.CharField(max_length=200)
+	alias = models.CharField(max_length=200)
+	race = models.CharField(max_length=200)
+	subtaxa = models.CharField(max_length=200)
 
 	def __unicode__(self):
-		return self.common_name
+		return self.genus
 
-class Source(models.Model):
-	source_name = models.CharField(max_length=200)
-	contact_name = models.CharField(max_length=200)
+class People(models.Model):
+	first_name = models.CharField(max_length=200)
+	last_name = models.CharField(max_length=200)
+	organization = models.CharField(max_length=200)
 	phone = models.CharField(max_length=30)
 	email = models.CharField(max_length=200)
 	comments = models.CharField(max_length=1000)
 
 	def __unicode__(self):
-		return self.source_name
+		return self.organization
 
 class ObsSelector(models.Model):
   experiment = models.ForeignKey(Experiment)
@@ -110,22 +114,23 @@ class ObsSelector(models.Model):
     return self.experiment.name
 
 class Collecting(models.Model):
-	obs_selector = models.ForeignKey(ObsSelector)
-	user = models.ForeignKey(User)
-	collection_date = models.CharField(max_length=200)
-	collection_method = models.CharField(max_length=1000, blank=True)
-	comments = models.CharField(max_length=1000, blank=True)
+  obs_selector = models.ForeignKey(ObsSelector)
+  user = models.ForeignKey(User)
+  field = models.ForeignKey(Field)
+  collection_date = models.CharField(max_length=200)
+  collection_method = models.CharField(max_length=1000, blank=True)
+  comments = models.CharField(max_length=1000, blank=True)
 
-	def __unicode__(self):
-		return self.collection_date
+  def __unicode__(self):
+    return self.collection_date
 
 class Passport(models.Model):
 	collecting = models.ForeignKey(Collecting)
-	source = models.ForeignKey(Source)
+	people = models.ForeignKey(People)
 	taxonomy = models.ForeignKey(Taxonomy)
 
 	def __unicode__(self):
-		return self.taxonomy.population
+		return self.taxonomy.genus
 
 class Stock(models.Model):
   passport = models.ForeignKey(Passport)
@@ -139,6 +144,14 @@ class Stock(models.Model):
 
   def __unicode__(self):
       return self.seed_id
+
+class DiseaseInfo(models.Model):
+  common_name = models.CharField(max_length=200)
+  abbrev = models.CharField(max_length=200)
+  comments = models.CharField(max_length=1000)
+
+  def __unicode__(self):
+      return self.common_name
 
 class ObsRow(models.Model):
   obs_selector = models.ForeignKey(ObsSelector)
@@ -183,6 +196,7 @@ class ObsTissue(models.Model):
 class Location(models.Model):
   locality = models.ForeignKey(Locality)
   building_name = models.CharField(max_length=200)
+  location_name = models.CharField(max_length=200)
   room = models.CharField(max_length=200)
   shelf = models.CharField(max_length=200)
   column = models.CharField(max_length=200)
@@ -191,6 +205,18 @@ class Location(models.Model):
 
   def __unicode__(self):
     return self.building_name
+
+class Isolate(models.Model):
+  passport = models.ForeignKey(Passport)
+  location = models.ForeignKey(Location)
+  disease_info = models.ForeignKey(DiseaseInfo)
+  isolate_id = models.CharField(max_length=200)
+  isolate_name = models.CharField(max_length=200)
+  plant_organ = models.CharField(max_length=200)
+  comments = models.CharField(max_length=1000)
+
+  def __unicode__(self):
+      return self.isolate_id
 
 class StockPacket(models.Model):
   stock = models.ForeignKey(Stock)

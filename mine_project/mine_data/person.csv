@@ -61,6 +61,13 @@ ID,user,first_name,last_name,title,location,phone,fax,email,web,notes,org
 70,jenny_cornell,Jenny,Cornell,PhD student,303G Plant Science,6195189988,NULL,jbc268@cornell.edu,NULL,Meta-Maize Project,NULL
 71,tyr_wiesner_hanks,Tyr,Wiesner-Hanks,PhD student,303G Plant Science,4148412271,NULL,tw372@cornell.edu,NULL,NULL,NULL
 72,nick_morales,Nicolas,Morales,Research Assistant,411 S. Albany St. Apt. 2,NULL,NULL,nm529@cornell.edu,NULL,Sensor squad engineer,NULL
-73,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown
-74,unknown_person,Unknown,Person,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+73,surya_saha,Surya,Saha,Research Associate,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+74,f_hodges,F,Hodges,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+75,d_wicklow,D,Wicklow,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+76,peter_romaine,Peter,Romaine,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+77,gillian_turgeon,Gillian,Turgeon,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+78,margaret_smith,Margaret,Smith,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+79,wendy_wilson,Wendy,Wilson,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+80,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown
+81,unknown_person,Unknown,Person,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
 NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL

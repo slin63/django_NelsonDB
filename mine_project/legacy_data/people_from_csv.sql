@@ -15,7 +15,7 @@ CREATE TABLE `legacy_legacy_people` (
   `peopleorg_id` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB;
 
-load data local infile 'C://Users/Nick/Documents/GitHub/mineproject/mine_project/legacy_data/nelson_lab_people_table.csv' 
+load data local infile 'C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/legacy_data/nelson_lab_people_table.csv' 
 into table legacy_legacy_people fields terminated by ','
 enclosed by '"'
 lines terminated by '\n'
