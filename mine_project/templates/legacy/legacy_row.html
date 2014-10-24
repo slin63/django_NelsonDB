@@ -1,4 +1,4 @@
-{% extends 'mine/base.html' %}
+{% extends 'lab/base.html' %}
 {% load static %}
 {% block title %}Find a Stock{% endblock %}
 {% block body_block %}
@@ -41,7 +41,7 @@
               <td>{{ source_seed5.row_name }}</td>
               <td>{{ source_seed5.cross_type }}</td>
               <td>{{ source_seed5.seed_pedigree}}</td>
-              <td><a href="/mine/profile/{{ source_seed5.person }}">{{ source_seed5.person }}</a></td>
+              <td><a href="/lab/profile/{{ source_seed5.person }}">{{ source_seed5.person }}</a></td>
               <td>{{ source_seed5.notes}}</td>
             </tr>
           </tbody>
@@ -67,7 +67,7 @@
             <tr>
               <td>{{ source_row5.row_id }}</td>
               <td>{{ source_row5.row_name }}</td>
-              <td><a href="/mine/experiment/{{ source_row5.experiment_id_id }}">{{ source_row5.experiment_id_id }}</a></td>
+              <td><a href="/lab/experiment/{{ source_row5.experiment_id_id }}">{{ source_row5.experiment_id_id }}</a></td>
               <td>{{ source_row5.pedigree }}</td>
               <td>{{ source_row5.source_seed_id }}</td>
               <td>{{ source_row5.range_num }}</td>
@@ -102,7 +102,7 @@
               <td>{{ packet.seed_name }}</td>
               <td>{{ packet.weight_g }}</td>
               <td>{{ packet.inventory_date }}</td>
-              <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
+              <td><a href="/lab/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
               <td>{{ packet.location }}</td>
               <td>{{ packet.notes }}</td>
             </tr>
@@ -152,7 +152,7 @@
               <td>{{ source_seed4.row_name }}</td>
               <td>{{ source_seed4.cross_type }}</td>
               <td>{{ source_seed4.seed_pedigree}}</td>
-              <td><a href="/mine/profile/{{ source_seed4.person }}">{{ source_seed4.person }}</a></td>
+              <td><a href="/lab/profile/{{ source_seed4.person }}">{{ source_seed4.person }}</a></td>
               <td>{{ source_seed4.notes}}</td>
             </tr>
           </tbody>
@@ -178,7 +178,7 @@
             <tr>
               <td>{{ source_row4.row_id }}</td>
               <td>{{ source_row4.row_name }}</td>
-              <td><a href="/mine/experiment/{{ source_row4.experiment_id_id }}">{{ source_row4.experiment_id_id }}</a></td>
+              <td><a href="/lab/experiment/{{ source_row4.experiment_id_id }}">{{ source_row4.experiment_id_id }}</a></td>
               <td>{{ source_row4.pedigree }}</td>
               <td>{{ source_row4.source_seed_id }}</td>
               <td>{{ source_row4.range_num }}</td>
@@ -213,7 +213,7 @@
               <td>{{ packet.seed_name }}</td>
               <td>{{ packet.weight_g }}</td>
               <td>{{ packet.inventory_date }}</td>
-              <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
+              <td><a href="/lab/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
               <td>{{ packet.location }}</td>
               <td>{{ packet.notes }}</td>
             </tr>
@@ -263,7 +263,7 @@
               <td>{{ source_seed3.row_name }}</td>
               <td>{{ source_seed3.cross_type }}</td>
               <td>{{ source_seed3.seed_pedigree}}</td>
-              <td><a href="/mine/profile/{{ source_seed3.person }}">{{ source_seed3.person }}</a></td>
+              <td><a href="/lab/profile/{{ source_seed3.person }}">{{ source_seed3.person }}</a></td>
               <td>{{ source_seed3.notes}}</td>
             </tr>
           </tbody>
@@ -289,7 +289,7 @@
             <tr>
               <td>{{ source_row3.row_id }}</td>
               <td>{{ source_row3.row_name }}</td>
-              <td><a href="/mine/experiment/{{ source_row3.experiment_id_id }}">{{ source_row3.experiment_id_id }}</a></td>
+              <td><a href="/lab/experiment/{{ source_row3.experiment_id_id }}">{{ source_row3.experiment_id_id }}</a></td>
               <td>{{ source_row3.pedigree }}</td>
               <td>{{ source_row3.source_seed_id }}</td>
               <td>{{ source_row3.range_num }}</td>
@@ -324,7 +324,7 @@
               <td>{{ packet.seed_name }}</td>
               <td>{{ packet.weight_g }}</td>
               <td>{{ packet.inventory_date }}</td>
-              <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
+              <td><a href="/lab/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
               <td>{{ packet.location }}</td>
               <td>{{ packet.notes }}</td>
             </tr>
@@ -374,7 +374,7 @@
               <td>{{ source_seed2.row_name }}</td>
               <td>{{ source_seed2.cross_type }}</td>
               <td>{{ source_seed2.seed_pedigree}}</td>
-              <td><a href="/mine/profile/{{ source_seed2.person }}">{{ source_seed2.person }}</a></td>
+              <td><a href="/lab/profile/{{ source_seed2.person }}">{{ source_seed2.person }}</a></td>
               <td>{{ source_seed2.notes}}</td>
             </tr>
           </tbody>
@@ -400,7 +400,7 @@
             <tr>
               <td>{{ source_row2.row_id }}</td>
               <td>{{ source_row2.row_name }}</td>
-              <td><a href="/mine/experiment/{{ source_row2.experiment_id_id }}">{{ source_row2.experiment_id_id }}</a></td>
+              <td><a href="/lab/experiment/{{ source_row2.experiment_id_id }}">{{ source_row2.experiment_id_id }}</a></td>
               <td>{{ source_row2.pedigree }}</td>
               <td>{{ source_row2.source_seed_id }}</td>
               <td>{{ source_row2.range_num }}</td>
@@ -435,7 +435,7 @@
               <td>{{ packet.seed_name }}</td>
               <td>{{ packet.weight_g }}</td>
               <td>{{ packet.inventory_date }}</td>
-              <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
+              <td><a href="/lab/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
               <td>{{ packet.location }}</td>
               <td>{{ packet.notes }}</td>
             </tr>
@@ -485,7 +485,7 @@
               <td>{{ source_seed1.row_name }}</td>
               <td>{{ source_seed1.cross_type }}</td>
               <td>{{ source_seed1.seed_pedigree}}</td>
-              <td><a href="/mine/profile/{{ source_seed1.person }}">{{ source_seed1.person }}</a></td>
+              <td><a href="/lab/profile/{{ source_seed1.person }}">{{ source_seed1.person }}</a></td>
               <td>{{ source_seed1.notes}}</td>
             </tr>
           </tbody>
@@ -511,7 +511,7 @@
             <tr>
               <td>{{ source_row1.row_id }}</td>
               <td>{{ source_row1.row_name }}</td>
-              <td><a href="/mine/experiment/{{ source_row1.experiment_id_id }}">{{ source_row1.experiment_id_id }}</a></td>
+              <td><a href="/lab/experiment/{{ source_row1.experiment_id_id }}">{{ source_row1.experiment_id_id }}</a></td>
               <td>{{ source_row1.pedigree }}</td>
               <td>{{ source_row1.source_seed_id }}</td>
               <td>{{ source_row1.range_num }}</td>
@@ -546,7 +546,7 @@
               <td>{{ packet.seed_name }}</td>
               <td>{{ packet.weight_g }}</td>
               <td>{{ packet.inventory_date }}</td>
-              <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
+              <td><a href="/lab/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
               <td>{{ packet.location }}</td>
               <td>{{ packet.notes }}</td>
             </tr>
@@ -596,7 +596,7 @@
               <td>{{ selected_seed.row_name }}</td>
               <td>{{ selected_seed.cross_type }}</td>
               <td>{{ selected_seed.seed_pedigree}}</td>
-              <td><a href="/mine/profile/{{ selected_seed.person }}">{{ selected_seed.person }}</a></td>
+              <td><a href="/lab/profile/{{ selected_seed.person }}">{{ selected_seed.person }}</a></td>
               <td>{{ selected_seed.notes}}</td>
             </tr>
           </tbody>
@@ -622,7 +622,7 @@
             <tr>
               <td>{{ selected_row.row_id }}</td>
               <td>{{ selected_row.row_name }}</td>
-              <td><a href="/mine/experiment/{{ selected_row.experiment_id_id }}">{{ selected_row.experiment_id_id }}</a></td>
+              <td><a href="/lab/experiment/{{ selected_row.experiment_id_id }}">{{ selected_row.experiment_id_id }}</a></td>
               <td>{{ selected_row.pedigree }}</td>
               <td>{{ selected_row.source_seed_id }}</td>
               <td>{{ selected_row.range_num }}</td>
@@ -657,7 +657,7 @@
               <td>{{ packet.seed_name }}</td>
               <td>{{ packet.weight_g }}</td>
               <td>{{ packet.inventory_date }}</td>
-              <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
+              <td><a href="/lab/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
               <td>{{ packet.location }}</td>
               <td>{{ packet.notes }}</td>
             </tr>
@@ -702,7 +702,7 @@
             <td>{{ child_seed1.row_name }}</td>
             <td>{{ child_seed1.cross_type }}</td>
             <td>{{ child_seed1.seed_pedigree}}</td>
-            <td><a href="/mine/profile/{{ child_seed1.person }}">{{ child_seed1.person }}</a></td>
+            <td><a href="/lab/profile/{{ child_seed1.person }}">{{ child_seed1.person }}</a></td>
             <td>{{ child_seed1.notes}}</td>
           </tr>
           {% endfor %}
@@ -729,7 +729,7 @@
           <tr>
             <td>{{ child.row_id }}</td>
             <td>{{ child.row_name }}</td>
-            <td><a href="/mine/experiment/{{ child.experiment_id_id }}">{{ child.experiment_id_id }}</a></td>
+            <td><a href="/lab/experiment/{{ child.experiment_id_id }}">{{ child.experiment_id_id }}</a></td>
             <td>{{ child.pedigree }}</td>
             <td>{{ child.source_seed_id }}</td>
             <td>{{ child.range_num }}</td>
@@ -762,7 +762,7 @@
           <td>{{ packet.seed_name }}</td>
           <td>{{ packet.weight_g }}</td>
           <td>{{ packet.inventory_date }}</td>
-          <td><a href="/mine/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
+          <td><a href="/lab/profile/{{ packet.inventory_person }}">{{ packet.inventory_person }}</a></td>
           <td>{{ packet.location }}</td>
           <td>{{ packet.notes }}</td>
         </tr>

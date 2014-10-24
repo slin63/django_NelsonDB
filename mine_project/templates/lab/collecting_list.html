@@ -1,0 +1,30 @@
+{% if collecting_list %}
+<table id="selected_collection" class="table table-striped table-bordered" cellspacing="0" width="100%">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>FieldID</th>
+    <th>Collector</th>
+    <th>Collection Date</th>
+    <th>Collection Number</th>
+    <th>Method</th>
+    <th>Comments</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for collecting in collecting_list %}
+  <tr>
+    <td><a href="/lab/seed_inventory/collection/{{ collecting.url }}">{{ collecting.id }}</td>
+    <td>{{ collecting.field.id }}</td>
+    <td><a href='/lab/profile/{{ collecting.user }}/'>{{ collecting.user }}</a></td>
+    <td>{{ collecting.collection_date }}</td>
+    <td>{{ collecting.collection_number }}</td>
+    <td>{{ collecting.collection_method}}</td>
+    <td>{{ collecting.collection_comments}}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<br/><br/><hr>
+
+{% endif %}

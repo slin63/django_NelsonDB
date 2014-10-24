@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 16, 2014 at 05:24 PM
+-- Generation Time: Oct 24, 2014 at 11:22 AM
 -- Server version: 5.6.16
 -- PHP Version: 5.5.9
 
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `auth_permission` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `content_type_id` (`content_type_id`,`codename`),
   KEY `auth_permission_37ef4eb4` (`content_type_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=112 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=115 ;
 
 -- --------------------------------------------------------
 
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `auth_user` (
   `date_joined` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=67 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=73 ;
 
 -- --------------------------------------------------------
 
@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS `django_content_type` (
   `model` varchar(100) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `app_label` (`app_label`,`model`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=38 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=39 ;
 
 -- --------------------------------------------------------
 
@@ -184,19 +184,348 @@ CREATE TABLE IF NOT EXISTS `django_site` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `lab_collecting`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_collecting` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `obs_selector_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `field_id` int(11) NOT NULL,
+  `collection_date` varchar(200) COLLATE utf8_bin NOT NULL,
+  `collection_method` varchar(1000) COLLATE utf8_bin NOT NULL,
+  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lab_collecting_59bde93e` (`obs_selector_id`),
+  KEY `lab_collecting_6340c63c` (`user_id`),
+  KEY `lab_collecting_aeee0ce4` (`field_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=703 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_diseaseinfo`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_diseaseinfo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `common_name` varchar(200) COLLATE utf8_bin NOT NULL,
+  `abbrev` varchar(200) COLLATE utf8_bin NOT NULL,
+  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=12 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_experiment`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_experiment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `field_id` int(11) NOT NULL,
+  `name` varchar(200) COLLATE utf8_bin NOT NULL,
+  `start_date` varchar(200) COLLATE utf8_bin NOT NULL,
+  `purpose` varchar(1000) COLLATE utf8_bin NOT NULL,
+  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`),
+  KEY `lab_experiment_6340c63c` (`user_id`),
+  KEY `lab_experiment_aeee0ce4` (`field_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=156 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_field`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_field` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `locality_id` int(11) NOT NULL,
+  `field_name` varchar(200) COLLATE utf8_bin NOT NULL,
+  `field_num` varchar(200) COLLATE utf8_bin NOT NULL,
+  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lab_field_0f50bb3a` (`locality_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=40 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_isolate`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_isolate` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `passport_id` int(11) NOT NULL,
+  `location_id` int(11) NOT NULL,
+  `disease_info_id` int(11) NOT NULL,
+  `isolate_id` varchar(200) COLLATE utf8_bin NOT NULL,
+  `isolate_name` varchar(200) COLLATE utf8_bin NOT NULL,
+  `plant_organ` varchar(200) COLLATE utf8_bin NOT NULL,
+  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lab_isolate_69d1a3d5` (`passport_id`),
+  KEY `lab_isolate_afbb987d` (`location_id`),
+  KEY `lab_isolate_1e93574a` (`disease_info_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=309 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_locality`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_locality` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `city` varchar(200) COLLATE utf8_bin NOT NULL,
+  `state` varchar(200) COLLATE utf8_bin NOT NULL,
+  `country` varchar(200) COLLATE utf8_bin NOT NULL,
+  `zipcode` varchar(30) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=27 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_location`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_location` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `locality_id` int(11) NOT NULL,
+  `building_name` varchar(200) COLLATE utf8_bin NOT NULL,
+  `location_name` varchar(200) COLLATE utf8_bin NOT NULL,
+  `room` varchar(200) COLLATE utf8_bin NOT NULL,
+  `shelf` varchar(200) COLLATE utf8_bin NOT NULL,
+  `column` varchar(200) COLLATE utf8_bin NOT NULL,
+  `box_name` varchar(200) COLLATE utf8_bin NOT NULL,
+  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lab_location_0f50bb3a` (`locality_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=29 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_obsplant`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_obsplant` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `obs_selector_id` int(11) NOT NULL,
+  `obs_row_id` int(11) NOT NULL,
+  `plant_id` varchar(200) COLLATE utf8_bin NOT NULL,
+  `plant_num` varchar(200) COLLATE utf8_bin NOT NULL,
+  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lab_obsplant_59bde93e` (`obs_selector_id`),
+  KEY `lab_obsplant_6336f924` (`obs_row_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_obsrow`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_obsrow` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `obs_selector_id` int(11) NOT NULL,
+  `field_id` int(11) NOT NULL,
+  `stock_id` int(11) NOT NULL,
+  `row_id` varchar(200) COLLATE utf8_bin NOT NULL,
+  `row_name` varchar(200) COLLATE utf8_bin NOT NULL,
+  `range_num` varchar(200) COLLATE utf8_bin NOT NULL,
+  `plot` varchar(200) COLLATE utf8_bin NOT NULL,
+  `block` varchar(200) COLLATE utf8_bin NOT NULL,
+  `rep` varchar(200) COLLATE utf8_bin NOT NULL,
+  `kernel_num` varchar(200) COLLATE utf8_bin NOT NULL,
+  `planting_date` varchar(200) COLLATE utf8_bin NOT NULL,
+  `harvest_date` varchar(200) COLLATE utf8_bin NOT NULL,
+  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lab_obsrow_59bde93e` (`obs_selector_id`),
+  KEY `lab_obsrow_aeee0ce4` (`field_id`),
+  KEY `lab_obsrow_80945c99` (`stock_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=668 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_obsselector`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_obsselector` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `experiment_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lab_obsselector_3e8130cb` (`experiment_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=670 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_obstissue`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_obstissue` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `obs_selector_id` int(11) NOT NULL,
+  `obs_row_id` int(11) NOT NULL,
+  `tissue_type` varchar(200) COLLATE utf8_bin NOT NULL,
+  `plant` varchar(200) COLLATE utf8_bin NOT NULL,
+  `well` varchar(200) COLLATE utf8_bin NOT NULL,
+  `plate_id` varchar(200) COLLATE utf8_bin NOT NULL,
+  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lab_obstissue_59bde93e` (`obs_selector_id`),
+  KEY `lab_obstissue_6336f924` (`obs_row_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_passport`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_passport` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `collecting_id` int(11) NOT NULL,
+  `people_id` int(11) NOT NULL,
+  `taxonomy_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lab_passport_4fdd4318` (`collecting_id`),
+  KEY `lab_passport_3cff102f` (`people_id`),
+  KEY `lab_passport_1b516ba0` (`taxonomy_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=719 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_people`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_people` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `first_name` varchar(200) COLLATE utf8_bin NOT NULL,
+  `last_name` varchar(200) COLLATE utf8_bin NOT NULL,
+  `organization` varchar(200) COLLATE utf8_bin NOT NULL,
+  `phone` varchar(30) COLLATE utf8_bin NOT NULL,
+  `email` varchar(200) COLLATE utf8_bin NOT NULL,
+  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_publication`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_publication` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `publisher` varchar(200) COLLATE utf8_bin NOT NULL,
+  `name_of_paper` varchar(200) COLLATE utf8_bin NOT NULL,
+  `publish_date` date NOT NULL,
+  `publication_info` varchar(200) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lab_publication_6340c63c` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_stock`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_stock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `passport_id` int(11) NOT NULL,
+  `seed_id` varchar(200) COLLATE utf8_bin NOT NULL,
+  `seed_name` varchar(200) COLLATE utf8_bin NOT NULL,
+  `cross_type` varchar(200) COLLATE utf8_bin NOT NULL,
+  `pedigree` varchar(200) COLLATE utf8_bin NOT NULL,
+  `stock_status` varchar(200) COLLATE utf8_bin NOT NULL,
+  `stock_date` varchar(200) COLLATE utf8_bin NOT NULL,
+  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lab_stock_69d1a3d5` (`passport_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=669 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_stockpacket`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_stockpacket` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `stock_id` int(11) NOT NULL,
+  `location_id` int(11) NOT NULL,
+  `weight` varchar(200) COLLATE utf8_bin NOT NULL,
+  `num_seeds` varchar(200) COLLATE utf8_bin NOT NULL,
+  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lab_stockpacket_80945c99` (`stock_id`),
+  KEY `lab_stockpacket_afbb987d` (`location_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=364 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_taxonomy`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_taxonomy` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `genus` varchar(200) COLLATE utf8_bin NOT NULL,
+  `species` varchar(200) COLLATE utf8_bin NOT NULL,
+  `population` varchar(200) COLLATE utf8_bin NOT NULL,
+  `common_name` varchar(200) COLLATE utf8_bin NOT NULL,
+  `alias` varchar(200) COLLATE utf8_bin NOT NULL,
+  `race` varchar(200) COLLATE utf8_bin NOT NULL,
+  `subtaxa` varchar(200) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=30 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_userprofile`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_userprofile` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `website` varchar(250) COLLATE utf8_bin NOT NULL,
+  `picture` varchar(100) COLLATE utf8_bin NOT NULL,
+  `phone` varchar(30) COLLATE utf8_bin NOT NULL,
+  `organization` varchar(200) COLLATE utf8_bin NOT NULL,
+  `notes` varchar(1000) COLLATE utf8_bin NOT NULL,
+  `job_title` varchar(200) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_id` (`user_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=73 ;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `legacy_legacy_diseaseinfo`
 --
 
 CREATE TABLE IF NOT EXISTS `legacy_legacy_diseaseinfo` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `Trait` varchar(100) COLLATE utf8_bin NOT NULL,
-  `DiseaseName` varchar(100) COLLATE utf8_bin NOT NULL,
-  `Abbreviation` varchar(100) COLLATE utf8_bin NOT NULL,
-  `Topic` varchar(100) COLLATE utf8_bin NOT NULL,
-  `DiseaseInfo` varchar(100) COLLATE utf8_bin NOT NULL,
-  `upsize_ts` varchar(100) COLLATE utf8_bin NOT NULL,
+  `trait` varchar(100) COLLATE utf8_bin NOT NULL,
+  `disease_name` varchar(100) COLLATE utf8_bin NOT NULL,
+  `abbreviation` varchar(100) COLLATE utf8_bin NOT NULL,
+  `topic` varchar(100) COLLATE utf8_bin NOT NULL,
+  `disease_info` varchar(100) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=31 ;
 
 -- --------------------------------------------------------
 
@@ -227,6 +556,7 @@ CREATE TABLE IF NOT EXISTS `legacy_legacy_experiment` (
 --
 
 CREATE TABLE IF NOT EXISTS `legacy_legacy_genotype` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `genotype_plate_id` varchar(100) COLLATE utf8_bin NOT NULL,
   `genotype_well_id` varchar(100) COLLATE utf8_bin NOT NULL,
   `genotype_plate_name` varchar(100) COLLATE utf8_bin NOT NULL,
@@ -251,7 +581,7 @@ CREATE TABLE IF NOT EXISTS `legacy_legacy_genotype` (
   `passive_ref` varchar(100) COLLATE utf8_bin NOT NULL,
   `quality_value` varchar(100) COLLATE utf8_bin NOT NULL,
   `call_type` varchar(100) COLLATE utf8_bin NOT NULL,
-  `call` varchar(100) COLLATE utf8_bin NOT NULL,
+  `call_name` varchar(100) COLLATE utf8_bin NOT NULL,
   `genotype` varchar(100) COLLATE utf8_bin NOT NULL,
   `brc_plate_num` varchar(100) COLLATE utf8_bin NOT NULL,
   `brc_sample_num` varchar(100) COLLATE utf8_bin NOT NULL,
@@ -259,7 +589,34 @@ CREATE TABLE IF NOT EXISTS `legacy_legacy_genotype` (
   `run_date` varchar(100) COLLATE utf8_bin NOT NULL,
   `genotype_person_id` varchar(100) COLLATE utf8_bin NOT NULL,
   `notes` varchar(100) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`genotype_plate_id`)
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=25110 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `legacy_legacy_isolate`
+--
+
+CREATE TABLE IF NOT EXISTS `legacy_legacy_isolate` (
+  `ID` varchar(100) COLLATE utf8_bin NOT NULL,
+  `isolate_id` varchar(100) COLLATE utf8_bin NOT NULL,
+  `isolate_name` varchar(100) COLLATE utf8_bin NOT NULL,
+  `scientific_name` varchar(100) COLLATE utf8_bin NOT NULL,
+  `other_sname` varchar(100) COLLATE utf8_bin NOT NULL,
+  `pathotype_race` varchar(100) COLLATE utf8_bin NOT NULL,
+  `mating_type` varchar(100) COLLATE utf8_bin NOT NULL,
+  `disease_common_name` varchar(100) COLLATE utf8_bin NOT NULL,
+  `collection_site` varchar(100) COLLATE utf8_bin NOT NULL,
+  `collection_date` varchar(100) COLLATE utf8_bin NOT NULL,
+  `plant_organ` varchar(100) COLLATE utf8_bin NOT NULL,
+  `collector` varchar(100) COLLATE utf8_bin NOT NULL,
+  `provider` varchar(100) COLLATE utf8_bin NOT NULL,
+  `glycerol_stock_n80c` varchar(100) COLLATE utf8_bin NOT NULL,
+  `mycelium_4c` varchar(100) COLLATE utf8_bin NOT NULL,
+  `cite` varchar(100) COLLATE utf8_bin NOT NULL,
+  `notes` varchar(1000) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
@@ -496,325 +853,6 @@ CREATE TABLE IF NOT EXISTS `legacy_legacy_trait_info` (
   PRIMARY KEY (`trait_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_category`
---
-
-CREATE TABLE IF NOT EXISTS `mine_category` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(128) COLLATE utf8_bin NOT NULL,
-  `views` int(11) NOT NULL,
-  `likes` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_collecting`
---
-
-CREATE TABLE IF NOT EXISTS `mine_collecting` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `obs_selector_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `collection_date` varchar(200) COLLATE utf8_bin NOT NULL,
-  `collection_method` varchar(1000) COLLATE utf8_bin NOT NULL,
-  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `mine_collecting_59bde93e` (`obs_selector_id`),
-  KEY `mine_collecting_6340c63c` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1696 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_experiment`
---
-
-CREATE TABLE IF NOT EXISTS `mine_experiment` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `field_id` int(11) NOT NULL,
-  `name` varchar(200) COLLATE utf8_bin NOT NULL,
-  `start_date` varchar(200) COLLATE utf8_bin NOT NULL,
-  `purpose` varchar(1000) COLLATE utf8_bin NOT NULL,
-  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`),
-  KEY `mine_experiment_6340c63c` (`user_id`),
-  KEY `mine_experiment_aeee0ce4` (`field_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=155 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_field`
---
-
-CREATE TABLE IF NOT EXISTS `mine_field` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `locality_id` int(11) NOT NULL,
-  `field_name` varchar(200) COLLATE utf8_bin NOT NULL,
-  `field_num` varchar(200) COLLATE utf8_bin NOT NULL,
-  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `mine_field_0f50bb3a` (`locality_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=17 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_locality`
---
-
-CREATE TABLE IF NOT EXISTS `mine_locality` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `city` varchar(200) COLLATE utf8_bin NOT NULL,
-  `state` varchar(200) COLLATE utf8_bin NOT NULL,
-  `country` varchar(200) COLLATE utf8_bin NOT NULL,
-  `zipcode` varchar(30) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=14 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_location`
---
-
-CREATE TABLE IF NOT EXISTS `mine_location` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `locality_id` int(11) NOT NULL,
-  `building_name` varchar(200) COLLATE utf8_bin NOT NULL,
-  `room` varchar(200) COLLATE utf8_bin NOT NULL,
-  `shelf` varchar(200) COLLATE utf8_bin NOT NULL,
-  `column` varchar(200) COLLATE utf8_bin NOT NULL,
-  `box_name` varchar(200) COLLATE utf8_bin NOT NULL,
-  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `mine_location_0f50bb3a` (`locality_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_obsplant`
---
-
-CREATE TABLE IF NOT EXISTS `mine_obsplant` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `obs_selector_id` int(11) NOT NULL,
-  `obs_row_id` int(11) NOT NULL,
-  `plant_id` varchar(200) COLLATE utf8_bin NOT NULL,
-  `plant_num` varchar(200) COLLATE utf8_bin NOT NULL,
-  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `mine_obsplant_59bde93e` (`obs_selector_id`),
-  KEY `mine_obsplant_6336f924` (`obs_row_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_obsrow`
---
-
-CREATE TABLE IF NOT EXISTS `mine_obsrow` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `obs_selector_id` int(11) NOT NULL,
-  `field_id` int(11) NOT NULL,
-  `stock_id` int(11) NOT NULL,
-  `row_id` varchar(200) COLLATE utf8_bin NOT NULL,
-  `row_name` varchar(200) COLLATE utf8_bin NOT NULL,
-  `range_num` varchar(200) COLLATE utf8_bin NOT NULL,
-  `plot` varchar(200) COLLATE utf8_bin NOT NULL,
-  `block` varchar(200) COLLATE utf8_bin NOT NULL,
-  `rep` varchar(200) COLLATE utf8_bin NOT NULL,
-  `kernel_num` varchar(200) COLLATE utf8_bin NOT NULL,
-  `planting_date` varchar(200) COLLATE utf8_bin NOT NULL,
-  `harvest_date` varchar(200) COLLATE utf8_bin NOT NULL,
-  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `mine_obsrow_59bde93e` (`obs_selector_id`),
-  KEY `mine_obsrow_aeee0ce4` (`field_id`),
-  KEY `mine_obsrow_80945c99` (`stock_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1696 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_obsselector`
---
-
-CREATE TABLE IF NOT EXISTS `mine_obsselector` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `experiment_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `mine_obsselector_3e8130cb` (`experiment_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1697 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_obstissue`
---
-
-CREATE TABLE IF NOT EXISTS `mine_obstissue` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `obs_selector_id` int(11) NOT NULL,
-  `obs_row_id` int(11) NOT NULL,
-  `tissue_type` varchar(200) COLLATE utf8_bin NOT NULL,
-  `plant` varchar(200) COLLATE utf8_bin NOT NULL,
-  `well` varchar(200) COLLATE utf8_bin NOT NULL,
-  `plate_id` varchar(200) COLLATE utf8_bin NOT NULL,
-  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `mine_obstissue_59bde93e` (`obs_selector_id`),
-  KEY `mine_obstissue_6336f924` (`obs_row_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_page`
---
-
-CREATE TABLE IF NOT EXISTS `mine_page` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `category_id` int(11) NOT NULL,
-  `title` varchar(128) COLLATE utf8_bin NOT NULL,
-  `url` varchar(200) COLLATE utf8_bin NOT NULL,
-  `views` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `mine_page_6f33f001` (`category_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_passport`
---
-
-CREATE TABLE IF NOT EXISTS `mine_passport` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `collecting_id` int(11) NOT NULL,
-  `source_id` int(11) NOT NULL,
-  `taxonomy_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `mine_passport_4fdd4318` (`collecting_id`),
-  KEY `mine_passport_a34b03a6` (`source_id`),
-  KEY `mine_passport_1b516ba0` (`taxonomy_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1696 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_publication`
---
-
-CREATE TABLE IF NOT EXISTS `mine_publication` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `publisher` varchar(200) COLLATE utf8_bin NOT NULL,
-  `name_of_paper` varchar(200) COLLATE utf8_bin NOT NULL,
-  `publish_date` date NOT NULL,
-  `publication_info` varchar(200) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `mine_publication_6340c63c` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_source`
---
-
-CREATE TABLE IF NOT EXISTS `mine_source` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `source_name` varchar(200) COLLATE utf8_bin NOT NULL,
-  `contact_name` varchar(200) COLLATE utf8_bin NOT NULL,
-  `phone` varchar(30) COLLATE utf8_bin NOT NULL,
-  `email` varchar(200) COLLATE utf8_bin NOT NULL,
-  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_stock`
---
-
-CREATE TABLE IF NOT EXISTS `mine_stock` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `passport_id` int(11) NOT NULL,
-  `seed_id` varchar(200) COLLATE utf8_bin NOT NULL,
-  `seed_name` varchar(200) COLLATE utf8_bin NOT NULL,
-  `cross_type` varchar(200) COLLATE utf8_bin NOT NULL,
-  `pedigree` varchar(200) COLLATE utf8_bin NOT NULL,
-  `stock_status` varchar(200) COLLATE utf8_bin NOT NULL,
-  `stock_date` varchar(200) COLLATE utf8_bin NOT NULL,
-  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `mine_stock_69d1a3d5` (`passport_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1696 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_stockpacket`
---
-
-CREATE TABLE IF NOT EXISTS `mine_stockpacket` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `stock_id` int(11) NOT NULL,
-  `location_id` int(11) NOT NULL,
-  `weight` varchar(200) COLLATE utf8_bin NOT NULL,
-  `num_seeds` varchar(200) COLLATE utf8_bin NOT NULL,
-  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `mine_stockpacket_80945c99` (`stock_id`),
-  KEY `mine_stockpacket_afbb987d` (`location_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=351 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_taxonomy`
---
-
-CREATE TABLE IF NOT EXISTS `mine_taxonomy` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `genus` varchar(200) COLLATE utf8_bin NOT NULL,
-  `species` varchar(200) COLLATE utf8_bin NOT NULL,
-  `population` varchar(200) COLLATE utf8_bin NOT NULL,
-  `common_name` varchar(200) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=2 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `mine_userprofile`
---
-
-CREATE TABLE IF NOT EXISTS `mine_userprofile` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `website` varchar(250) COLLATE utf8_bin NOT NULL,
-  `picture` varchar(100) COLLATE utf8_bin NOT NULL,
-  `phone` varchar(30) COLLATE utf8_bin NOT NULL,
-  `organization` varchar(200) COLLATE utf8_bin NOT NULL,
-  `notes` varchar(1000) COLLATE utf8_bin NOT NULL,
-  `job_title` varchar(200) COLLATE utf8_bin NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `user_id` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=66 ;
-
 --
 -- Constraints for dumped tables
 --
@@ -854,6 +892,102 @@ ALTER TABLE `django_admin_log`
   ADD CONSTRAINT `content_type_id_refs_id_93d2d1f8` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`);
 
 --
+-- Constraints for table `lab_collecting`
+--
+ALTER TABLE `lab_collecting`
+  ADD CONSTRAINT `user_id_refs_id_d3b81eae` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`),
+  ADD CONSTRAINT `field_id_refs_id_d6182808` FOREIGN KEY (`field_id`) REFERENCES `lab_field` (`id`),
+  ADD CONSTRAINT `obs_selector_id_refs_id_1e1b8ab4` FOREIGN KEY (`obs_selector_id`) REFERENCES `lab_obsselector` (`id`);
+
+--
+-- Constraints for table `lab_experiment`
+--
+ALTER TABLE `lab_experiment`
+  ADD CONSTRAINT `user_id_refs_id_ad023396` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`),
+  ADD CONSTRAINT `field_id_refs_id_b0352b61` FOREIGN KEY (`field_id`) REFERENCES `lab_field` (`id`);
+
+--
+-- Constraints for table `lab_field`
+--
+ALTER TABLE `lab_field`
+  ADD CONSTRAINT `locality_id_refs_id_754060c8` FOREIGN KEY (`locality_id`) REFERENCES `lab_locality` (`id`);
+
+--
+-- Constraints for table `lab_isolate`
+--
+ALTER TABLE `lab_isolate`
+  ADD CONSTRAINT `passport_id_refs_id_fa1ff11a` FOREIGN KEY (`passport_id`) REFERENCES `lab_passport` (`id`),
+  ADD CONSTRAINT `disease_info_id_refs_id_5541a93a` FOREIGN KEY (`disease_info_id`) REFERENCES `lab_diseaseinfo` (`id`),
+  ADD CONSTRAINT `location_id_refs_id_83518ed9` FOREIGN KEY (`location_id`) REFERENCES `lab_location` (`id`);
+
+--
+-- Constraints for table `lab_location`
+--
+ALTER TABLE `lab_location`
+  ADD CONSTRAINT `locality_id_refs_id_598c62cf` FOREIGN KEY (`locality_id`) REFERENCES `lab_locality` (`id`);
+
+--
+-- Constraints for table `lab_obsplant`
+--
+ALTER TABLE `lab_obsplant`
+  ADD CONSTRAINT `obs_row_id_refs_id_4bccc216` FOREIGN KEY (`obs_row_id`) REFERENCES `lab_obsrow` (`id`),
+  ADD CONSTRAINT `obs_selector_id_refs_id_70b01467` FOREIGN KEY (`obs_selector_id`) REFERENCES `lab_obsselector` (`id`);
+
+--
+-- Constraints for table `lab_obsrow`
+--
+ALTER TABLE `lab_obsrow`
+  ADD CONSTRAINT `field_id_refs_id_8e287639` FOREIGN KEY (`field_id`) REFERENCES `lab_field` (`id`),
+  ADD CONSTRAINT `obs_selector_id_refs_id_dd6cf36f` FOREIGN KEY (`obs_selector_id`) REFERENCES `lab_obsselector` (`id`),
+  ADD CONSTRAINT `stock_id_refs_id_257a2602` FOREIGN KEY (`stock_id`) REFERENCES `lab_stock` (`id`);
+
+--
+-- Constraints for table `lab_obsselector`
+--
+ALTER TABLE `lab_obsselector`
+  ADD CONSTRAINT `experiment_id_refs_id_4ae581aa` FOREIGN KEY (`experiment_id`) REFERENCES `lab_experiment` (`id`);
+
+--
+-- Constraints for table `lab_obstissue`
+--
+ALTER TABLE `lab_obstissue`
+  ADD CONSTRAINT `obs_row_id_refs_id_9e8e07b3` FOREIGN KEY (`obs_row_id`) REFERENCES `lab_obsrow` (`id`),
+  ADD CONSTRAINT `obs_selector_id_refs_id_ab4df3eb` FOREIGN KEY (`obs_selector_id`) REFERENCES `lab_obsselector` (`id`);
+
+--
+-- Constraints for table `lab_passport`
+--
+ALTER TABLE `lab_passport`
+  ADD CONSTRAINT `taxonomy_id_refs_id_cf0e987b` FOREIGN KEY (`taxonomy_id`) REFERENCES `lab_taxonomy` (`id`),
+  ADD CONSTRAINT `collecting_id_refs_id_9cafd6c6` FOREIGN KEY (`collecting_id`) REFERENCES `lab_collecting` (`id`),
+  ADD CONSTRAINT `people_id_refs_id_48339a9e` FOREIGN KEY (`people_id`) REFERENCES `lab_people` (`id`);
+
+--
+-- Constraints for table `lab_publication`
+--
+ALTER TABLE `lab_publication`
+  ADD CONSTRAINT `user_id_refs_id_217a1b50` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
+
+--
+-- Constraints for table `lab_stock`
+--
+ALTER TABLE `lab_stock`
+  ADD CONSTRAINT `passport_id_refs_id_2124c94d` FOREIGN KEY (`passport_id`) REFERENCES `lab_passport` (`id`);
+
+--
+-- Constraints for table `lab_stockpacket`
+--
+ALTER TABLE `lab_stockpacket`
+  ADD CONSTRAINT `stock_id_refs_id_358085eb` FOREIGN KEY (`stock_id`) REFERENCES `lab_stock` (`id`),
+  ADD CONSTRAINT `location_id_refs_id_744dc085` FOREIGN KEY (`location_id`) REFERENCES `lab_location` (`id`);
+
+--
+-- Constraints for table `lab_userprofile`
+--
+ALTER TABLE `lab_userprofile`
+  ADD CONSTRAINT `user_id_refs_id_bc0fef46` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
+
+--
 -- Constraints for table `legacy_legacy_row`
 --
 ALTER TABLE `legacy_legacy_row`
@@ -864,99 +998,6 @@ ALTER TABLE `legacy_legacy_row`
 --
 ALTER TABLE `legacy_legacy_seed`
   ADD CONSTRAINT `experiment_id_origin_id_refs_experiment_id_9f87a8ef` FOREIGN KEY (`experiment_id_origin_id`) REFERENCES `legacy_legacy_experiment` (`experiment_id`);
-
---
--- Constraints for table `mine_collecting`
---
-ALTER TABLE `mine_collecting`
-  ADD CONSTRAINT `obs_selector_id_refs_id_5916652f` FOREIGN KEY (`obs_selector_id`) REFERENCES `mine_obsselector` (`id`),
-  ADD CONSTRAINT `user_id_refs_id_297034cf` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
-
---
--- Constraints for table `mine_experiment`
---
-ALTER TABLE `mine_experiment`
-  ADD CONSTRAINT `user_id_refs_id_8da1595a` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`),
-  ADD CONSTRAINT `field_id_refs_id_e3e13dbe` FOREIGN KEY (`field_id`) REFERENCES `mine_field` (`id`);
-
---
--- Constraints for table `mine_field`
---
-ALTER TABLE `mine_field`
-  ADD CONSTRAINT `locality_id_refs_id_3b71a0b8` FOREIGN KEY (`locality_id`) REFERENCES `mine_locality` (`id`);
-
---
--- Constraints for table `mine_location`
---
-ALTER TABLE `mine_location`
-  ADD CONSTRAINT `locality_id_refs_id_753d74db` FOREIGN KEY (`locality_id`) REFERENCES `mine_locality` (`id`);
-
---
--- Constraints for table `mine_obsplant`
---
-ALTER TABLE `mine_obsplant`
-  ADD CONSTRAINT `obs_selector_id_refs_id_d16a51ca` FOREIGN KEY (`obs_selector_id`) REFERENCES `mine_obsselector` (`id`),
-  ADD CONSTRAINT `obs_row_id_refs_id_ab40951b` FOREIGN KEY (`obs_row_id`) REFERENCES `mine_obsrow` (`id`);
-
---
--- Constraints for table `mine_obsrow`
---
-ALTER TABLE `mine_obsrow`
-  ADD CONSTRAINT `obs_selector_id_refs_id_b627618f` FOREIGN KEY (`obs_selector_id`) REFERENCES `mine_obsselector` (`id`),
-  ADD CONSTRAINT `field_id_refs_id_03d57df2` FOREIGN KEY (`field_id`) REFERENCES `mine_field` (`id`),
-  ADD CONSTRAINT `stock_id_refs_id_bc16b7f5` FOREIGN KEY (`stock_id`) REFERENCES `mine_stock` (`id`);
-
---
--- Constraints for table `mine_obsselector`
---
-ALTER TABLE `mine_obsselector`
-  ADD CONSTRAINT `experiment_id_refs_id_a23957ae` FOREIGN KEY (`experiment_id`) REFERENCES `mine_experiment` (`id`);
-
---
--- Constraints for table `mine_obstissue`
---
-ALTER TABLE `mine_obstissue`
-  ADD CONSTRAINT `obs_selector_id_refs_id_0302b777` FOREIGN KEY (`obs_selector_id`) REFERENCES `mine_obsselector` (`id`),
-  ADD CONSTRAINT `obs_row_id_refs_id_47b0fc1a` FOREIGN KEY (`obs_row_id`) REFERENCES `mine_obsrow` (`id`);
-
---
--- Constraints for table `mine_page`
---
-ALTER TABLE `mine_page`
-  ADD CONSTRAINT `category_id_refs_id_6c003ff8` FOREIGN KEY (`category_id`) REFERENCES `mine_category` (`id`);
-
---
--- Constraints for table `mine_passport`
---
-ALTER TABLE `mine_passport`
-  ADD CONSTRAINT `taxonomy_id_refs_id_f8af6f86` FOREIGN KEY (`taxonomy_id`) REFERENCES `mine_taxonomy` (`id`),
-  ADD CONSTRAINT `collecting_id_refs_id_fe56c2e3` FOREIGN KEY (`collecting_id`) REFERENCES `mine_collecting` (`id`),
-  ADD CONSTRAINT `source_id_refs_id_8cc31eee` FOREIGN KEY (`source_id`) REFERENCES `mine_source` (`id`);
-
---
--- Constraints for table `mine_publication`
---
-ALTER TABLE `mine_publication`
-  ADD CONSTRAINT `user_id_refs_id_fc9c420c` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
-
---
--- Constraints for table `mine_stock`
---
-ALTER TABLE `mine_stock`
-  ADD CONSTRAINT `passport_id_refs_id_4f6b143e` FOREIGN KEY (`passport_id`) REFERENCES `mine_passport` (`id`);
-
---
--- Constraints for table `mine_stockpacket`
---
-ALTER TABLE `mine_stockpacket`
-  ADD CONSTRAINT `stock_id_refs_id_76242775` FOREIGN KEY (`stock_id`) REFERENCES `mine_stock` (`id`),
-  ADD CONSTRAINT `location_id_refs_id_c19dc370` FOREIGN KEY (`location_id`) REFERENCES `mine_location` (`id`);
-
---
--- Constraints for table `mine_userprofile`
---
-ALTER TABLE `mine_userprofile`
-  ADD CONSTRAINT `user_id_refs_id_a14f69db` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -52,7 +52,7 @@ DATABASES = {
     }
 }
 
-LOGIN_URL = '/mine/login/'
+LOGIN_URL = '/lab/login/'
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -158,7 +158,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
 	'django_like',
-	'mine',
+	'lab',
   'legacy',
 )
 

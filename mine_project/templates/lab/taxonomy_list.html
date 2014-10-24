@@ -1,0 +1,28 @@
+{% if taxonomy_list %}
+<table id="selected_taxonomy" class="table table-striped table-bordered" cellspacing="0" width="100%">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Genus</th>
+    <th>Species</th>
+    <th>Subspecies</th>
+    <th>Population</th>
+    <th>Common Name</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for taxonomy in taxonomy_list %}
+  <tr>
+    <td><a href="/lab/seed_inventory/taxonomy/{{ taxonomy.url }}">{{ taxonomy.id }}</td>
+    <td>{{ taxonomy.genus }}</td>
+    <td>{{ taxonomy.species }}</td>
+    <td>{{ taxonomy.subspecies }}</td>
+    <td>{{ taxonomy.population }}</td>
+    <td>{{ taxonomy.common_name }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<br/><br/><hr>
+
+{% endif %}

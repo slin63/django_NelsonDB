@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from mine.models import Category, Page, UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, Source, Collecting, Field, Locality, Location
+from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, Collecting, Field, Locality, Location
 from legacy.models import Legacy_Seed, Legacy_Row, Legacy_Experiment, Legacy_Seed_Inventory, Legacy_People
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -18,7 +18,7 @@ def encode_url(str):
 def decode_url(str):
   return str.replace('_', ' ')
 
-"""This function simply handles retrieving the experiments list that is displayed on the side of legacy templates. The ajax request is handled through mine.views get_experiment_list"""
+"""This function simply handles retrieving the experiments list that is displayed on the side of legacy templates. The ajax request is handled through lab.views get_experiment_list"""
 def get_experiment_list(max_results=0, starts_with=''):
   exp_list = []
   exp_list = Experiment.objects.all()

@@ -22,7 +22,7 @@
         <td>{{ stock.row_id_origin }}</td>
         <td>{{ stock.cross_type }}</td>
         <td>{{ stock.seed_pedigree}}</td>
-        <td><a href="/mine/profile/{{ stock.person }}">{{ stock.person}}</a></td>
+        <td><a href="/lab/profile/{{ stock.person }}">{{ stock.person}}</a></td>
         <td>{{ stock.notes}}</td>
         <td>{% for location in stock.location %}{{ location.location}} {% endfor %}</td>
       </tr>
