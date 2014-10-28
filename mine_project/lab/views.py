@@ -383,7 +383,7 @@ def checkbox_seed_inventory_clear(request, clear_selected):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_inventory.html', context_dict, context)
 
-def seed_inventory_select_stock(request, stock_id):
+def select_stocks(request):
 	context = RequestContext(request)
 	context_dict = {}
 	selected_packets = StockPacket.objects.filter(stock=Stock.objects.get(id=stock_id))
