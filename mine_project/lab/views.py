@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
+from itertools import chain
 
 """Used to handle data from URL, to ensure blank spaces don't mess things up"""
 def encode_url(str):
@@ -149,125 +150,6 @@ def user_logout(request):
 	logout(request)
 	return HttpResponseRedirect('/lab/')
 
-def suggest_experiment(request):
-	context = RequestContext(request)
-	exp_list = []
-	starts_with = ''
-	if request.method == 'GET':
-		starts_with = request.GET['suggestion']
-	else:
-		starts_with = request.POST['suggestion']
-	exp_list = get_experiment_list(200, starts_with)
-	return render_to_response('lab/experiment_list.html', {'exp_list': exp_list}, context)
-
-def suggest_pedigree(request):
-	context = RequestContext(request)
-	context_dict = {}
-	pedigree_list = []
-	starts_with = ''
-	if request.method == 'GET':
-		starts_with = request.GET['suggestion']
-	else:
-		starts_with = request.POST['suggestion']
-	if starts_with:
-		pedigree_list = Passport.objects.filter(pedigree__like='%{}%'.format(starts_with))
-	else:
-		pedigree_list = Passport.objects.all()
-	for pedigree in pedigree_list:
-		pedigree.url = pedigree.id
-	context_dict = {'pedigree_list': pedigree_list}
-	return render_to_response('lab/pedigree_list.html', context_dict, context)
-
-def suggest_locality(request):
-	context = RequestContext(request)
-	context_dict = {}
-	locality_list = []
-	starts_with = ''
-	if request.method == 'GET':
-		starts_with = request.GET['suggestion']
-	else:
-		starts_with = request.POST['suggestion']
-	if starts_with:
-		locality_list = Locality.objects.filter(locality_name__like='%{}%'.format(starts_with))
-	else:
-		locality_list = Locality.objects.all()
-	for locality in locality_list:
-		locality.url = locality.id
-	context_dict = {'locality_list': locality_list}
-	return render_to_response('lab/locality_list.html', context_dict, context)
-
-def suggest_field(request):
-	context = RequestContext(request)
-	context_dict = {}
-	field_list = []
-	starts_with = ''
-	if request.method == 'GET':
-		starts_with = request.GET['suggestion']
-	else:
-		starts_with = request.POST['suggestion']
-	if starts_with:
-		field_list = Field.objects.filter(field_name__like='%{}%'.format(starts_with))
-	else:
-		field_list = Field.objects.all()
-	for field in field_list:
-		field.url = field.id
-	context_dict = {'field_list': field_list}
-	return render_to_response('lab/field_list.html', context_dict, context)
-
-def suggest_collecting(request):
-	context = RequestContext(request)
-	context_dict = {}
-	collecting_list = []
-	starts_with = ''
-	if request.method == 'GET':
-		starts_with = request.GET['suggestion']
-	else:
-		starts_with = request.POST['suggestion']
-	if starts_with:
-		collecting_list = AccessionCollecting.objects.filter(collection_date__like='%{}%'.format(starts_with))
-	else:
-		collecting_list = AccessionCollecting.objects.all()
-	for collecting in collecting_list:
-		collecting.url = collecting.id
-	context_dict = {'collecting_list': collecting_list}
-	return render_to_response('lab/collecting_list.html', context_dict, context)
-
-def suggest_source(request):
-	context = RequestContext(request)
-	context_dict = {}
-	source_list = []
-	starts_with = ''
-	if request.method == 'GET':
-		starts_with = request.GET['suggestion']
-	else:
-		starts_with = request.POST['suggestion']
-	if starts_with:
-		source_list = Source.objects.filter(source_name__like='%{}%'.format(starts_with))
-	else:
-		source_list = Source.objects.all()
-	for source in source_list:
-		source.url = source.id
-	context_dict = {'source_list': source_list}
-	return render_to_response('lab/sources_list.html', context_dict, context)
-
-def suggest_taxonomy(request):
-	context = RequestContext(request)
-	context_dict = {}
-	taxonomy_list = []
-	starts_with = ''
-	if request.method == 'GET':
-		starts_with = request.GET['suggestion']
-	else:
-		starts_with = request.POST['suggestion']
-	if starts_with:
-		taxonomy_list = Taxonomy.objects.filter(species__like='%{}%'.format(starts_with))
-	else:
-		taxonomy_list = Taxonomy.objects.all()
-	for taxonomy in taxonomy_list:
-		taxonomy.url = taxonomy.id
-	context_dict = {'taxonomy_list': taxonomy_list}
-	return render_to_response('lab/taxonomy_list.html', context_dict, context)
-
 def profile(request, profile_name):
 	context = RequestContext(request)
 	context_dict = {}
@@ -368,240 +250,135 @@ def experiment(request, experiment_name_url):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/experiment.html', context_dict, context)
 
-def seed_inventory_sort(request):
-	if request.session.get('selected_locality_id', None):
-		locality_id = request.session.get('selected_locality_id')
-		if request.session.get('selected_field_id', None):
-			field_id = request.session.get('selected_field_id')
-			if request.session.get('selected_collecting_id', None):
-				collecting_id = request.session.get('selected_collecting_id')
-				if request.session.get('selected_passport_id', None):
-					passport_id = request.session.get('selected_passport_id')
-					if request.session.get('selected_taxonomy_id', None):
-						taxonomy_id = request.session.get('selected_taxonomy_id')
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(id=passport_id, taxonomy=Taxonomy.objects.get(id=taxonomy_id), accession_collecting=AccessionCollecting.objects.filter(id=collecting_id, field=Field.objects.filter(id=field_id, locality=Locality.objects.get(id=locality_id)))))
-					else:
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(id=passport_id,  accession_collecting=AccessionCollecting.objects.filter(id=collecting_id, field=Field.objects.filter(id=field_id, locality=Locality.objects.get(id=locality_id)))))
-				else:
-					if request.session.get('selected_taxonomy_id', None):
-						taxonomy_id = request.session.get('selected_taxonomy_id')
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(taxonomy=Taxonomy.objects.get(id=taxonomy_id), accession_collecting=AccessionCollecting.objects.filter(id=collecting_id, field=Field.objects.filter(id=field_id, locality=Locality.objects.get(id=locality_id)))))
-					else:
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter( accession_collecting=AccessionCollecting.objects.filter(id=collecting_id, field=Field.objects.filter(id=field_id, locality=Locality.objects.get(id=locality_id)))))
-			else:
-				if request.session.get('selected_passport_id', None):
-					passport_id = request.session.get('selected_passport_id')
-					if request.session.get('selected_taxonomy_id', None):
-						taxonomy_id = request.session.get('selected_taxonomy_id')
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(id=passport_id, taxonomy=Taxonomy.objects.get(id=taxonomy_id), accession_collecting=AccessionCollecting.objects.filter(field=Field.objects.filter(id=field_id, locality=Locality.objects.get(id=locality_id)))))
-					else:
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(id=passport_id,  accession_collecting=AccessionCollecting.objects.filter(field=Field.objects.filter(id=field_id, locality=Locality.objects.get(id=locality_id)))))
-				else:
-					if request.session.get('selected_taxonomy_id', None):
-						taxonomy_id = request.session.get('selected_taxonomy_id')
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(taxonomy=Taxonomy.objects.get(id=taxonomy_id), accession_collecting=AccessionCollecting.objects.filter(field=Field.objects.filter(id=field_id, locality=Locality.objects.get(id=locality_id)))))
-					else:
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter( accession_collecting=AccessionCollecting.objects.filter(field=Field.objects.filter(id=field_id, locality=Locality.objects.get(id=locality_id)))))
+def checkbox_seed_inventory_sort(request):
+	selected_stocks = {}
+	checkbox_taxonomy_list = []
+	checkbox_pedigree_list = []
+	if request.session.get('checkbox_taxonomy', None):
+		checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
+		if request.session.get('checkbox_pedigree', None):
+			checkbox_pedigree_list = request.session.get('checkbox_pedigree')
+			for pedigree in checkbox_pedigree_list:
+				for taxonomy in checkbox_taxonomy_list:
+					stocks = StockPacket.objects.filter(stock__pedigree=pedigree, stock__passport__taxonomy__population=taxonomy)
+					selected_stocks = list(chain(selected_stocks, stocks))[:1000]
 		else:
-			if request.session.get('selected_collecting_id', None):
-				collecting_id = request.session.get('selected_collecting_id')
-				if request.session.get('selected_passport_id', None):
-					passport_id = request.session.get('selected_passport_id')
-					if request.session.get('selected_taxonomy_id', None):
-						taxonomy_id = request.session.get('selected_taxonomy_id')
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(id=passport_id, taxonomy=Taxonomy.objects.get(id=taxonomy_id), accession_collecting=AccessionCollecting.objects.filter(id=collecting_id, field=Field.objects.filter(locality=Locality.objects.get(id=locality_id)))))
-					else:
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(id=passport_id,  accession_collecting=AccessionCollecting.objects.filter(id=collecting_id, field=Field.objects.filter(locality=Locality.objects.get(id=locality_id)))))
-				else:
-					if request.session.get('selected_taxonomy_id', None):
-						taxonomy_id = request.session.get('selected_taxonomy_id')
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(taxonomy=Taxonomy.objects.get(id=taxonomy_id), accession_collecting=AccessionCollecting.objects.filter(id=collecting_id, field=Field.objects.filter(locality=Locality.objects.get(id=locality_id)))))
-					else:
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter( accession_collecting=AccessionCollecting.objects.filter(id=collecting_id, field=Field.objects.filter(locality=Locality.objects.get(id=locality_id)))))
-			else:
-				if request.session.get('selected_passport_id', None):
-					passport_id = request.session.get('selected_passport_id')
-					if request.session.get('selected_taxonomy_id', None):
-						taxonomy_id = request.session.get('selected_taxonomy_id')
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(id=passport_id, taxonomy=Taxonomy.objects.get(id=taxonomy_id), accession_collecting=AccessionCollecting.objects.filter(field=Field.objects.filter(locality=Locality.objects.get(id=locality_id)))))
-					else:
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(id=passport_id,  accession_collecting=AccessionCollecting.objects.filter(field=Field.objects.filter(locality=Locality.objects.get(id=locality_id)))))
-				else:
-					if request.session.get('selected_taxonomy_id', None):
-						taxonomy_id = request.session.get('selected_taxonomy_id')
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(taxonomy=Taxonomy.objects.get(id=taxonomy_id), accession_collecting=AccessionCollecting.objects.filter(field=Field.objects.filter(locality=Locality.objects.get(id=locality_id)))))
-					else:
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter( accession_collecting=AccessionCollecting.objects.filter(field=Field.objects.filter(locality=Locality.objects.get(id=locality_id)))))
+			for taxonomy in checkbox_taxonomy_list:
+				stocks = StockPacket.objects.filter(stock__passport__taxonomy__population=taxonomy)
+				selected_stocks = list(chain(selected_stocks, stocks))[:1000]
 	else:
-		if request.session.get('selected_field_id', None):
-			field_id = request.session.get('selected_field_id')
-			if request.session.get('selected_collecting_id', None):
-				collecting_id = request.session.get('selected_collecting_id')
-				if request.session.get('selected_passport_id', None):
-					passport_id = request.session.get('selected_passport_id')
-					if request.session.get('selected_taxonomy_id', None):
-						taxonomy_id = request.session.get('selected_taxonomy_id')
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(id=passport_id, taxonomy=Taxonomy.objects.get(id=taxonomy_id), accession_collecting=AccessionCollecting.objects.filter(id=collecting_id, field=Field.objects.get(id=field_id))))
-					else:
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(id=passport_id,  accession_collecting=AccessionCollecting.objects.filter(id=collecting_id, field=Field.objects.get(id=field_id))))
-				else:
-					if request.session.get('selected_taxonomy_id', None):
-						taxonomy_id = request.session.get('selected_taxonomy_id')
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(taxonomy=Taxonomy.objects.get(id=taxonomy_id), accession_collecting=AccessionCollecting.objects.filter(id=collecting_id, field=Field.objects.get(id=field_id))))
-					else:
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter( accession_collecting=AccessionCollecting.objects.filter(id=collecting_id, field=Field.objects.get(id=field_id))))
-			else:
-				if request.session.get('selected_passport_id', None):
-					passport_id = request.session.get('selected_passport_id')
-					if request.session.get('selected_taxonomy_id', None):
-						taxonomy_id = request.session.get('selected_taxonomy_id')
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(id=passport_id, taxonomy=Taxonomy.objects.get(id=taxonomy_id), accession_collecting=AccessionCollecting.objects.filter(field=Field.objects.get(id=field_id))))
-					else:
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(id=passport_id,  accession_collecting=AccessionCollecting.objects.filter(field=Field.objects.get(id=field_id))))
-				else:
-					if request.session.get('selected_taxonomy_id', None):
-						taxonomy_id = request.session.get('selected_taxonomy_id')
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(taxonomy=Taxonomy.objects.get(id=taxonomy_id), accession_collecting=AccessionCollecting.objects.filter(field=Field.objects.get(id=field_id))))
-					else:
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter( accession_collecting=AccessionCollecting.objects.filter(field=Field.objects.get(id=field_id))))
+		if request.session.get('checkbox_pedigree', None):
+			checkbox_pedigree_list = request.session.get('checkbox_pedigree')
+			for pedigree in checkbox_pedigree_list:
+				stocks = StockPacket.objects.filter(stock__pedigree=pedigree)
+				selected_stocks = list(chain(selected_stocks, stocks))[:1000]
 		else:
-			if request.session.get('selected_collecting_id', None):
-				collecting_id = request.session.get('selected_collecting_id')
-				if request.session.get('selected_passport_id', None):
-					passport_id = request.session.get('selected_passport_id')
-					if request.session.get('selected_taxonomy_id', None):
-						taxonomy_id = request.session.get('selected_taxonomy_id')
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(id=passport_id, taxonomy=Taxonomy.objects.get(id=taxonomy_id), accession_collecting=AccessionCollecting.objects.get(id=collecting_id)))
-					else:
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(id=passport_id,  accession_collecting=AccessionCollecting.objects.get(id=collecting_id)))
-				else:
-					if request.session.get('selected_taxonomy_id', None):
-						taxonomy_id = request.session.get('selected_taxonomy_id')
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(taxonomy=Taxonomy.objects.get(id=taxonomy_id), accession_collecting=AccessionCollecting.objects.get(id=collecting_id)))
-					else:
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter( accession_collecting=AccessionCollecting.objects.get(id=collecting_id)))
-			else:
-				if request.session.get('selected_passport_id', None):
-					passport_id = request.session.get('selected_passport_id')
-					if request.session.get('selected_taxonomy_id', None):
-						taxonomy_id = request.session.get('selected_taxonomy_id')
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(id=passport_id, taxonomy=Taxonomy.objects.get(id=taxonomy_id)))
-					else:
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.get(id=passport_id))
-				else:
-					if request.session.get('selected_taxonomy_id', None):
-						taxonomy_id = request.session.get('selected_taxonomy_id')
-						selected_stocks = Stock.objects.filter(passport=Passport.objects.filter(taxonomy=Taxonomy.objects.get(id=taxonomy_id)))
-					else:
-						selected_stocks = Stock.objects.all()[:1000]
+			selected_stocks = StockPacket.objects.all()[:1000]
 	return selected_stocks
 
-def session_variable_check(request):
+def checkbox_session_variable_check(request):
 	context_dict = {}
-	if request.session.get('selected_passport_id', None):
-		context_dict['selected_passport_name'] = request.session.get('selected_passport_name')
-	if request.session.get('selected_taxonomy_id', None):
-		context_dict['selected_taxonomy_name'] = request.session.get('selected_taxonomy_name')
-	if request.session.get('selected_source_id', None):
-		context_dict['selected_source_name'] = request.session.get('selected_source_name')
-	if request.session.get('selected_collecting_id', None):
-		context_dict['selected_collecting_id'] = request.session.get('selected_collecting_id')
-	if request.session.get('selected_field_id', None):
-		context_dict['selected_field_id'] = request.session.get('selected_field_id')
-	if request.session.get('selected_locality_id', None):
-		context_dict['selected_locality_name'] = request.session.get('selected_locality_name')
+	if request.session.get('checkbox_pedigree', None):
+		context_dict['checkbox_pedigree'] = request.session.get('checkbox_pedigree')
+	if request.session.get('checkbox_taxonomy', None):
+		context_dict['checkbox_taxonomy'] = request.session.get('checkbox_taxonomy')
 	return context_dict
 
 def seed_inventory(request):
 	context = RequestContext(request)
 	context_dict = {}
-	selected_stocks = seed_inventory_sort(request)
-	context_dict = session_variable_check(request)
+	selected_stocks = checkbox_seed_inventory_sort(request)
+	context_dict = checkbox_session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_inventory.html', context_dict, context)
 
-def seed_inventory_select_locality(request,locality_id):
+def suggest_pedigree(request):
 	context = RequestContext(request)
 	context_dict = {}
-	selected_locality = Locality.objects.get(id=locality_id)
-	request.session['selected_locality_name'] = selected_locality.locality_name
-	request.session['selected_locality_id'] = selected_locality.id
-	selected_stocks = seed_inventory_sort(request)
-	context_dict = session_variable_check(request)
+	pedigree_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with = request.GET['suggestion']
+	else:
+		starts_with = request.POST['suggestion']
+	if starts_with:
+		if request.session.get('checkbox_taxonomy', None):
+			checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
+			for taxonomy in checkbox_taxonomy_list:
+				pedigree = Stock.objects.filter(pedigree__contains=starts_with, passport__taxonomy__population=taxonomy).values('pedigree', 'passport__taxonomy__population').distinct()[:1000]
+				pedigree_list = list(chain(pedigree, pedigree_list))
+		else:
+			pedigree_list = Stock.objects.filter(pedigree__contains=starts_with).values('pedigree').distinct()[:1000]
+	else:
+		if request.session.get('checkbox_taxonomy', None):
+			checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
+			for taxonomy in checkbox_taxonomy_list:
+				pedigree = Stock.objects.filter(passport__taxonomy__population=taxonomy).values('pedigree', 'passport__taxonomy__population').distinct()[:1000]
+				pedigree_list = list(chain(pedigree, pedigree_list))
+		else:
+			pedigree_list = Stock.objects.all().values('pedigree').distinct()[:1000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['pedigree_list'] = pedigree_list
+	return render_to_response('lab/pedigree_list.html', context_dict, context)
+
+def suggest_taxonomy(request):
+	context = RequestContext(request)
+	context_dict = {}
+	taxonomy_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with = request.GET['suggestion']
+	else:
+		starts_with = request.POST['suggestion']
+	if starts_with:
+		if request.session.get('checkbox_pedigree', None):
+			checkbox_pedigree_list = request.session.get('checkbox_pedigree')
+			for pedigree in checkbox_pedigree_list:
+				taxonomy = Stock.objects.filter(pedigree=pedigree, passport__taxonomy__population__contains=starts_with).values('pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()[:1000]
+				taxonomy_list = list(chain(taxonomy, taxonomy_list))
+		else:
+			taxonomy_list = Taxonomy.objects.filter(population__contains=starts_with, common_name='Maize')[:1000]
+	else:
+		if request.session.get('checkbox_pedigree', None):
+			checkbox_pedigree_list = request.session.get('checkbox_pedigree')
+			for pedigree in checkbox_pedigree_list:
+				taxonomy = Stock.objects.filter(pedigree=pedigree).values('pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()[:1000]
+				taxonomy_list = list(chain(taxonomy, taxonomy_list))
+		else:
+			taxonomy_list = Taxonomy.objects.filter(common_name='Maize')[:1000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['taxonomy_list'] = taxonomy_list
+	return render_to_response('lab/taxonomy_list.html', context_dict, context)
+
+def select_pedigree(request):
+	context = RequestContext(request)
+	context_dict = {}
+	checkbox_pedigree_list = request.POST.getlist('checkbox_pedigree')
+	request.session['checkbox_pedigree'] = checkbox_pedigree_list
+	selected_stocks = checkbox_seed_inventory_sort(request)
+	context_dict = checkbox_session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_inventory.html', context_dict, context)
 
-def seed_inventory_select_field(request,field_id):
+def select_taxonomy(request):
 	context = RequestContext(request)
 	context_dict = {}
-	selected_field = Field.objects.get(id=field_id)
-	request.session['selected_field_name'] = selected_field.field_name
-	request.session['selected_field_id'] = selected_field.id
-	selected_stocks = seed_inventory_sort(request)
-	context_dict = session_variable_check(request)
+	checkbox_taxonomy_list = request.POST.getlist('checkbox_taxonomy')
+	request.session['checkbox_taxonomy'] = checkbox_taxonomy_list
+	selected_stocks = checkbox_seed_inventory_sort(request)
+	context_dict = checkbox_session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_inventory.html', context_dict, context)
 
-def seed_inventory_select_collection(request,collecting_id):
+def checkbox_seed_inventory_clear(request, clear_selected):
 	context = RequestContext(request)
 	context_dict = {}
-	selected_collection = AccessionCollecting.objects.get(id=collecting_id)
-	request.session['selected_collecting_name'] = selected_collection.collection_date
-	request.session['selected_collecting_id'] = selected_collection.id
-	selected_stocks = seed_inventory_sort(request)
-	context_dict = session_variable_check(request)
-	context_dict['selected_stocks'] = selected_stocks
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/seed_inventory.html', context_dict, context)
-
-def seed_inventory_select_taxonomy(request,taxonomy_id):
-	context = RequestContext(request)
-	context_dict = {}
-	selected_taxonomy = Taxonomy.objects.get(id=taxonomy_id)
-	request.session['selected_taxonomy_name'] = selected_taxonomy.species
-	request.session['selected_taxonomy_id'] = selected_taxonomy.id
-	selected_stocks = seed_inventory_sort(request)
-	context_dict = session_variable_check(request)
-	context_dict['selected_stocks'] = selected_stocks
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/seed_inventory.html', context_dict, context)
-
-def seed_inventory_select_source(request,source_id):
-	context = RequestContext(request)
-	context_dict = {}
-	selected_source = Source.objects.get(id=source_id)
-	request.session['selected_source_name'] = selected_source.source_name
-	request.session['selected_source_id'] = selected_source.id
-	selected_stocks = seed_inventory_sort(request)
-	context_dict = session_variable_check(request)
-	context_dict['selected_stocks'] = selected_stocks
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/seed_inventory.html', context_dict, context)
-
-def seed_inventory_select_passport(request,passport_id):
-	context = RequestContext(request)
-	context_dict = {}
-	selected_passport = Passport.objects.get(id=passport_id)
-	request.session['selected_passport_name'] = selected_passport.pedigree
-	request.session['selected_passport_id'] = selected_passport.id
-	selected_stocks = seed_inventory_sort(request)
-	context_dict = session_variable_check(request)
-	context_dict['selected_stocks'] = selected_stocks
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/seed_inventory.html', context_dict, context)
-
-def seed_inventory_clear(request, clear_selected):
-	context = RequestContext(request)
-	context_dict = {}
-	clear_selected_name = '{}_name'.format(clear_selected)
-	clear_selected_id = '{}_id'.format(clear_selected)
-	del request.session[clear_selected_name]
-	del request.session[clear_selected_id]
-	selected_stocks = seed_inventory_sort(request)
-	context_dict = session_variable_check(request)
+	del request.session[clear_selected]
+	selected_stocks = checkbox_seed_inventory_sort(request)
+	context_dict = checkbox_session_variable_check(request)
 	context_dict['selected_stocks'] = selected_stocks
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_inventory.html', context_dict, context)

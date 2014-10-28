@@ -78,7 +78,7 @@ def add_dummies():
   l = Location.objects.get_or_create(locality=Locality.objects.get(city='NULL', state='NULL', country='NULL', zipcode='NULL'), location_name='Unknown', box_name='Unknown')
 
 def csv_import_row_01():
-  ifile = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_row_table_t1.1.csv'), dialect='excel')
+  ifile = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_row_test8.csv'), dialect='excel')
   for row in ifile:
     row_row_id = row['row_id'].replace(u'\xa0', u' ')
     row_row_name = row['row_name'].replace(u'\xa0', u' ')
@@ -262,5 +262,5 @@ if __name__ == '__main__':
   #csv_import_people()
   #csv_import_experiment()
   #add_dummies()
-  csv_import_isolate()
+  #csv_import_isolate()
   csv_import_row_01()

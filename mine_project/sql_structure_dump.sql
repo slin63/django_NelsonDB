@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 24, 2014 at 11:22 AM
+-- Generation Time: Oct 24, 2014 at 03:05 PM
 -- Server version: 5.6.16
 -- PHP Version: 5.5.9
 
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `auth_permission` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `content_type_id` (`content_type_id`,`codename`),
   KEY `auth_permission_37ef4eb4` (`content_type_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=115 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=121 ;
 
 -- --------------------------------------------------------
 
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `auth_user` (
   `date_joined` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=73 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS `django_content_type` (
   `model` varchar(100) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `app_label` (`app_label`,`model`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=39 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=41 ;
 
 -- --------------------------------------------------------
 
@@ -199,7 +199,7 @@ CREATE TABLE IF NOT EXISTS `lab_collecting` (
   KEY `lab_collecting_59bde93e` (`obs_selector_id`),
   KEY `lab_collecting_6340c63c` (`user_id`),
   KEY `lab_collecting_aeee0ce4` (`field_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=703 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -213,7 +213,7 @@ CREATE TABLE IF NOT EXISTS `lab_diseaseinfo` (
   `abbrev` varchar(200) COLLATE utf8_bin NOT NULL,
   `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -233,7 +233,7 @@ CREATE TABLE IF NOT EXISTS `lab_experiment` (
   UNIQUE KEY `name` (`name`),
   KEY `lab_experiment_6340c63c` (`user_id`),
   KEY `lab_experiment_aeee0ce4` (`field_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=156 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -249,7 +249,7 @@ CREATE TABLE IF NOT EXISTS `lab_field` (
   `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`),
   KEY `lab_field_0f50bb3a` (`locality_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=40 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -270,7 +270,7 @@ CREATE TABLE IF NOT EXISTS `lab_isolate` (
   KEY `lab_isolate_69d1a3d5` (`passport_id`),
   KEY `lab_isolate_afbb987d` (`location_id`),
   KEY `lab_isolate_1e93574a` (`disease_info_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=309 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -285,7 +285,7 @@ CREATE TABLE IF NOT EXISTS `lab_locality` (
   `country` varchar(200) COLLATE utf8_bin NOT NULL,
   `zipcode` varchar(30) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=27 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -305,7 +305,42 @@ CREATE TABLE IF NOT EXISTS `lab_location` (
   `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`),
   KEY `lab_location_0f50bb3a` (`locality_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=29 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_measurement`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_measurement` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `obs_selector_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `measurement_parameter_id` int(11) NOT NULL,
+  `time_of_measurement` varchar(200) COLLATE utf8_bin NOT NULL,
+  `value` varchar(200) COLLATE utf8_bin NOT NULL,
+  `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `lab_measurement_59bde93e` (`obs_selector_id`),
+  KEY `lab_measurement_6340c63c` (`user_id`),
+  KEY `lab_measurement_595ab89c` (`measurement_parameter_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_measurementparameter`
+--
+
+CREATE TABLE IF NOT EXISTS `lab_measurementparameter` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `parameter` varchar(200) COLLATE utf8_bin NOT NULL,
+  `parameter_type` varchar(200) COLLATE utf8_bin NOT NULL,
+  `protocol` varchar(1000) COLLATE utf8_bin NOT NULL,
+  `trait_id_buckler` varchar(200) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -350,7 +385,7 @@ CREATE TABLE IF NOT EXISTS `lab_obsrow` (
   KEY `lab_obsrow_59bde93e` (`obs_selector_id`),
   KEY `lab_obsrow_aeee0ce4` (`field_id`),
   KEY `lab_obsrow_80945c99` (`stock_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=668 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -363,7 +398,7 @@ CREATE TABLE IF NOT EXISTS `lab_obsselector` (
   `experiment_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `lab_obsselector_3e8130cb` (`experiment_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=670 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -400,7 +435,7 @@ CREATE TABLE IF NOT EXISTS `lab_passport` (
   KEY `lab_passport_4fdd4318` (`collecting_id`),
   KEY `lab_passport_3cff102f` (`people_id`),
   KEY `lab_passport_1b516ba0` (`taxonomy_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=719 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -417,7 +452,7 @@ CREATE TABLE IF NOT EXISTS `lab_people` (
   `email` varchar(200) COLLATE utf8_bin NOT NULL,
   `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -454,7 +489,7 @@ CREATE TABLE IF NOT EXISTS `lab_stock` (
   `comments` varchar(1000) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`),
   KEY `lab_stock_69d1a3d5` (`passport_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=669 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -472,7 +507,7 @@ CREATE TABLE IF NOT EXISTS `lab_stockpacket` (
   PRIMARY KEY (`id`),
   KEY `lab_stockpacket_80945c99` (`stock_id`),
   KEY `lab_stockpacket_afbb987d` (`location_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=364 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -490,7 +525,7 @@ CREATE TABLE IF NOT EXISTS `lab_taxonomy` (
   `race` varchar(200) COLLATE utf8_bin NOT NULL,
   `subtaxa` varchar(200) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=30 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -509,7 +544,7 @@ CREATE TABLE IF NOT EXISTS `lab_userprofile` (
   `job_title` varchar(200) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=73 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -874,37 +909,37 @@ ALTER TABLE `auth_permission`
 -- Constraints for table `auth_user_groups`
 --
 ALTER TABLE `auth_user_groups`
-  ADD CONSTRAINT `user_id_refs_id_40c41112` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`),
-  ADD CONSTRAINT `group_id_refs_id_274b862c` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`);
+  ADD CONSTRAINT `group_id_refs_id_274b862c` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`),
+  ADD CONSTRAINT `user_id_refs_id_40c41112` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
 
 --
 -- Constraints for table `auth_user_user_permissions`
 --
 ALTER TABLE `auth_user_user_permissions`
-  ADD CONSTRAINT `user_id_refs_id_4dc23c39` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`),
-  ADD CONSTRAINT `permission_id_refs_id_35d9ac25` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`);
+  ADD CONSTRAINT `permission_id_refs_id_35d9ac25` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`),
+  ADD CONSTRAINT `user_id_refs_id_4dc23c39` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
 
 --
 -- Constraints for table `django_admin_log`
 --
 ALTER TABLE `django_admin_log`
-  ADD CONSTRAINT `user_id_refs_id_c0d12874` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`),
-  ADD CONSTRAINT `content_type_id_refs_id_93d2d1f8` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`);
+  ADD CONSTRAINT `content_type_id_refs_id_93d2d1f8` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
+  ADD CONSTRAINT `user_id_refs_id_c0d12874` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
 
 --
 -- Constraints for table `lab_collecting`
 --
 ALTER TABLE `lab_collecting`
-  ADD CONSTRAINT `user_id_refs_id_d3b81eae` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`),
   ADD CONSTRAINT `field_id_refs_id_d6182808` FOREIGN KEY (`field_id`) REFERENCES `lab_field` (`id`),
-  ADD CONSTRAINT `obs_selector_id_refs_id_1e1b8ab4` FOREIGN KEY (`obs_selector_id`) REFERENCES `lab_obsselector` (`id`);
+  ADD CONSTRAINT `obs_selector_id_refs_id_1e1b8ab4` FOREIGN KEY (`obs_selector_id`) REFERENCES `lab_obsselector` (`id`),
+  ADD CONSTRAINT `user_id_refs_id_d3b81eae` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
 
 --
 -- Constraints for table `lab_experiment`
 --
 ALTER TABLE `lab_experiment`
-  ADD CONSTRAINT `user_id_refs_id_ad023396` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`),
-  ADD CONSTRAINT `field_id_refs_id_b0352b61` FOREIGN KEY (`field_id`) REFERENCES `lab_field` (`id`);
+  ADD CONSTRAINT `field_id_refs_id_b0352b61` FOREIGN KEY (`field_id`) REFERENCES `lab_field` (`id`),
+  ADD CONSTRAINT `user_id_refs_id_ad023396` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
 
 --
 -- Constraints for table `lab_field`
@@ -916,15 +951,23 @@ ALTER TABLE `lab_field`
 -- Constraints for table `lab_isolate`
 --
 ALTER TABLE `lab_isolate`
-  ADD CONSTRAINT `passport_id_refs_id_fa1ff11a` FOREIGN KEY (`passport_id`) REFERENCES `lab_passport` (`id`),
   ADD CONSTRAINT `disease_info_id_refs_id_5541a93a` FOREIGN KEY (`disease_info_id`) REFERENCES `lab_diseaseinfo` (`id`),
-  ADD CONSTRAINT `location_id_refs_id_83518ed9` FOREIGN KEY (`location_id`) REFERENCES `lab_location` (`id`);
+  ADD CONSTRAINT `location_id_refs_id_83518ed9` FOREIGN KEY (`location_id`) REFERENCES `lab_location` (`id`),
+  ADD CONSTRAINT `passport_id_refs_id_fa1ff11a` FOREIGN KEY (`passport_id`) REFERENCES `lab_passport` (`id`);
 
 --
 -- Constraints for table `lab_location`
 --
 ALTER TABLE `lab_location`
   ADD CONSTRAINT `locality_id_refs_id_598c62cf` FOREIGN KEY (`locality_id`) REFERENCES `lab_locality` (`id`);
+
+--
+-- Constraints for table `lab_measurement`
+--
+ALTER TABLE `lab_measurement`
+  ADD CONSTRAINT `measurement_parameter_id_refs_id_b5b6f116` FOREIGN KEY (`measurement_parameter_id`) REFERENCES `lab_measurementparameter` (`id`),
+  ADD CONSTRAINT `obs_selector_id_refs_id_e6940ef4` FOREIGN KEY (`obs_selector_id`) REFERENCES `lab_obsselector` (`id`),
+  ADD CONSTRAINT `user_id_refs_id_9442e57b` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
 
 --
 -- Constraints for table `lab_obsplant`
@@ -958,9 +1001,9 @@ ALTER TABLE `lab_obstissue`
 -- Constraints for table `lab_passport`
 --
 ALTER TABLE `lab_passport`
-  ADD CONSTRAINT `taxonomy_id_refs_id_cf0e987b` FOREIGN KEY (`taxonomy_id`) REFERENCES `lab_taxonomy` (`id`),
   ADD CONSTRAINT `collecting_id_refs_id_9cafd6c6` FOREIGN KEY (`collecting_id`) REFERENCES `lab_collecting` (`id`),
-  ADD CONSTRAINT `people_id_refs_id_48339a9e` FOREIGN KEY (`people_id`) REFERENCES `lab_people` (`id`);
+  ADD CONSTRAINT `people_id_refs_id_48339a9e` FOREIGN KEY (`people_id`) REFERENCES `lab_people` (`id`),
+  ADD CONSTRAINT `taxonomy_id_refs_id_cf0e987b` FOREIGN KEY (`taxonomy_id`) REFERENCES `lab_taxonomy` (`id`);
 
 --
 -- Constraints for table `lab_publication`
@@ -978,8 +1021,8 @@ ALTER TABLE `lab_stock`
 -- Constraints for table `lab_stockpacket`
 --
 ALTER TABLE `lab_stockpacket`
-  ADD CONSTRAINT `stock_id_refs_id_358085eb` FOREIGN KEY (`stock_id`) REFERENCES `lab_stock` (`id`),
-  ADD CONSTRAINT `location_id_refs_id_744dc085` FOREIGN KEY (`location_id`) REFERENCES `lab_location` (`id`);
+  ADD CONSTRAINT `location_id_refs_id_744dc085` FOREIGN KEY (`location_id`) REFERENCES `lab_location` (`id`),
+  ADD CONSTRAINT `stock_id_refs_id_358085eb` FOREIGN KEY (`stock_id`) REFERENCES `lab_stock` (`id`);
 
 --
 -- Constraints for table `lab_userprofile`

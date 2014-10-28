@@ -164,18 +164,6 @@ class ObsPlant(models.Model):
   def __unicode__(self):
     return self.plant_id
 
-class ObsTissue(models.Model):
-  obs_selector = models.ForeignKey(ObsSelector)
-  obs_row = models.ForeignKey(ObsRow)
-  tissue_type = models.CharField(max_length=200)
-  plant = models.CharField(max_length=200)
-  well = models.CharField(max_length=200)
-  plate_id = models.CharField(max_length=200)
-  comments = models.CharField(max_length=1000)
-
-  def __unicode__(self):
-    return self.well
-
 class Location(models.Model):
   locality = models.ForeignKey(Locality)
   building_name = models.CharField(max_length=200)

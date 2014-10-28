@@ -9,27 +9,11 @@ $(document).ready(function() {
 	});
 });
 
-$('#catsuggestion').keyup(function(){
-        var query;
-        query = $(this).val();
-        $.get('/mine/suggest_category/', {suggestion: query}, function(data){
-			$('#cats').html(data);
-        });
-});
-
-$('#expsuggestion').keyup(function(){
-        var query;
-        query = $(this).val();
-        $.get('/mine/suggest_experiment/', {suggestion: query}, function(data){
-			$('#exps').html(data);
-        });
-});
-
 $('#pedigreesuggestion').keyup(function(){
 				var query;
 				query = $(this).val();
-				$.get('/mine/suggest_pedigree/', {suggestion: query}, function(data){
-			$('#passports').html(data);
+				$.get('/lab/seed_inventory/suggest_pedigree/', {suggestion: query}, function(data){
+			$('#pedigrees').html(data);
 			$('#selected_pedigree').dataTable({
 				"searching": false,
 				"scrollY": "300px",
@@ -39,67 +23,11 @@ $('#pedigreesuggestion').keyup(function(){
 		});
 });
 
-$('#localitysuggestion').keyup(function(){
-				var query;
-				query = $(this).val();
-				$.get('/mine/suggest_locality/', {suggestion: query}, function(data){
-			$('#localitys').html(data);
-			$('#selected_locality').dataTable({
-				"searching": false,
-				"scrollY": "300px",
-				"scrollCollapse": true,
-				"paginate": false
-				});
-		});
-});
-
-$('#fieldsuggestion').keyup(function(){
-				var query;
-				query = $(this).val();
-				$.get('/mine/suggest_field/', {suggestion: query}, function(data){
-			$('#fields').html(data);
-			$('#selected_field').dataTable({
-				"searching": false,
-				"scrollY": "300px",
-				"scrollCollapse": true,
-				"paginate": false
-				});
-		});
-});
-
-$('#collectionsuggestion').keyup(function(){
-				var query;
-				query = $(this).val();
-				$.get('/mine/suggest_collecting/', {suggestion: query}, function(data){
-			$('#collections').html(data);
-			$('#selected_collection').dataTable({
-				"searching": false,
-				"scrollY": "300px",
-				"scrollCollapse": true,
-				"paginate": false
-				});
-		});
-});
-
-$('#sourcesuggestion').keyup(function(){
-				var query;
-				query = $(this).val();
-				$.get('/mine/suggest_source/', {suggestion: query}, function(data){
-			$('#sources').html(data);
-			$('#selected_source').dataTable({
-				"searching": false,
-				"scrollY": "300px",
-				"scrollCollapse": true,
-				"paginate": false
-				});
-		});
-});
-
 $('#taxonomysuggestion').keyup(function(){
 				var query;
 				query = $(this).val();
-				$.get('/mine/suggest_taxonomy/', {suggestion: query}, function(data){
-			$('#taxonomy').html(data);
+				$.get('/lab/seed_inventory/suggest_taxonomy/', {suggestion: query}, function(data){
+			$('#taxonomies').html(data);
 			$('#selected_taxonomy').dataTable({
 				"searching": false,
 				"scrollY": "300px",
