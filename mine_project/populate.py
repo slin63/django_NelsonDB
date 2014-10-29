@@ -82,7 +82,7 @@ def add_dummies():
   s = Stock.objects.get_or_create(seed_id=0, seed_name='No Seed', cross_type='No Seed', pedigree='No Seed', stock_status='No Seed', stock_date='No Seed', comments='No Seed', passport=Passport.objects.get(collecting=Collecting.objects.get(obs_selector=ObsSelector.objects.get(experiment=Experiment.objects.get(user=User.objects.get(username='unknown'), field=Field.objects.get(locality=Locality.objects.get(city='NULL', state='NULL', country='NULL'), field_name='No Field'), name='No Experiment')), field=Field.objects.get(locality=Locality.objects.get(city='NULL', state='NULL', country='NULL'), field_name='No Field'), user=User.objects.get(username='unknown_person'), collection_date='No Date', collection_method='No Collection', comments='No Collection'), people=People.objects.get(organization='No Source'), taxonomy=Taxonomy.objects.get(genus='No Taxonomy', species='No Taxonomy', population='No Taxonomy', common_name='No Taxonomy', alias='No Taxonomy', race='No Taxonomy', subtaxa='No Taxonomy')))
 
 def csv_import_row_01():
-  ifile = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_row_test8.csv'), dialect='excel')
+  ifile = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_row_test9.csv'), dialect='excel')
   for row in ifile:
     row_row_id = row['row_id'].replace(u'\xa0', u' ')
     row_row_name = row['row_name'].replace(u'\xa0', u' ')
@@ -99,28 +99,33 @@ def csv_import_row_01():
     row_kernel_num = row['kernel_num'].replace(u'\xa0', u' ')
     row_stock_pedigree = row['pedigree'].replace(u'\xa0', u' ')
 
-    try:
-      seed = Legacy_Seed.objects.get(seed_id=row_stock_seed_id)
-      if seed.seed_person_id:
-        seed_person_value = Legacy_People.objects.get(person_id = seed.seed_person_id)
-        person = seed_person_value.person_name
-      else:
-        person = 'unknown_person'
-      if seed.line_num:
-        seed.seed_name = seed.line_num
-      if seed:
-        seed.comments = 'Notes: %s || Lot: %s || Accession: %s' % (seed.notes, seed.lot, seed.accession)
-      if seed.plant_id_origin:
-        try:
-          plant = Legacy_Plant.objects.get(plant_id=seed.plant_id_origin)
-        except Legacy_Plant.DoesNotExist:
-          plant = None
-    except (Legacy_Seed.DoesNotExist, IndexError):
-      seed = None
     exp = Legacy_Experiment.objects.get(experiment_id=row_experiment_name)
-    try:
-      seedinv = Legacy_Seed_Inventory.objects.filter(seed_id=row_stock_seed_id)[0]
-    except (Legacy_Seed_Inventory.DoesNotExist, IndexError):
+    if row_stock_seed_id != 0:
+      try:
+        seed = Legacy_Seed.objects.get(seed_id=row_stock_seed_id)
+        if seed.seed_person_id:
+          seed_person_value = Legacy_People.objects.get(person_id = seed.seed_person_id)
+          person = seed_person_value.person_name
+        else:
+          person = 'unknown_person'
+        if seed.line_num:
+          seed.seed_name = seed.line_num
+        if seed:
+          seed.comments = 'Notes: %s || Lot: %s || Accession: %s' % (seed.notes, seed.lot, seed.accession)
+        if seed.plant_id_origin:
+          try:
+            plant = Legacy_Plant.objects.get(plant_id=seed.plant_id_origin)
+          except Legacy_Plant.DoesNotExist:
+            plant = None
+      except (Legacy_Seed.DoesNotExist, IndexError):
+        seed = None
+      try:
+        seedinv = Legacy_Seed_Inventory.objects.filter(seed_id=row_stock_seed_id)[0]
+      except (Legacy_Seed_Inventory.DoesNotExist, IndexError):
+        seedinv = None
+    else:
+      seed = None
+      plant = None
       seedinv = None
 
     add_row_taxonomy(row_population)
@@ -129,14 +134,18 @@ def csv_import_row_01():
       add_row_collecting(person, exp.harvest_date)
       add_row_people(seed.program_origin)
       add_row_passport(person, exp.harvest_date, row_population, seed.program_origin)
-      add_row_stock(row_stock_pedigree, seed.seed_id, seed.seed_name, seed.cross_type, seed.comments, seedinv.inventory_date, person, exp.harvest_date, row_population, seed.program_origin)
-      add_row_row(row_stock_pedigree, seed.seed_id, row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_comments, row_kernel_num, row_experiment_name, exp.harvest_date, exp.planting_date)
+      if seedinv:
+        add_row_stock(row_stock_pedigree, seed.seed_id, seed.seed_name, seed.cross_type, seed.comments, seedinv.inventory_date, person, exp.harvest_date, row_population, seed.program_origin)
+        add_row_row(row_stock_pedigree, seed.seed_id, seed.seed_name, seed.cross_type, seed.comments, seedinv.inventory_date, person, exp.harvest_date, row_population, seed.program_origin, row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_comments, row_kernel_num, row_experiment_name, exp.harvest_date, exp.planting_date)
+      else:
+        add_row_stock(row_stock_pedigree, seed.seed_id, seed.seed_name, seed.cross_type, seed.comments, 'Not Inventoried', person, exp.harvest_date, row_population, seed.program_origin)
+        add_row_row(row_stock_pedigree, seed.seed_id, seed.seed_name, seed.cross_type, seed.comments, 'Not Inventoried', person, exp.harvest_date, row_population, seed.program_origin, row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_comments, row_kernel_num, row_experiment_name, exp.harvest_date, exp.planting_date)
       if seed.plant_id_origin:
         if plant:
           add_row_obs_selector(row_experiment_name)
           add_row_plant(row_stock_pedigree, seed.seed_id, row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_comments, row_kernel_num, row_experiment_name, exp.harvest_date, exp.planting_date, plant.plant_id, plant.plant_name, plant.notes)
     else:
-      add_row_row('No Seed', 0, row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_comments, row_kernel_num, row_experiment_name, exp.harvest_date, exp.planting_date)
+      add_row_row_nostock('No Seed', 0, row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_comments, row_kernel_num, row_experiment_name, exp.harvest_date, exp.planting_date)
     if seedinv:
       add_row_location(seedinv.location, seedinv.notes)
       if seed:
@@ -166,7 +175,11 @@ def add_row_stock(pedigree, seed_id, seed_name, cross_type, comments, stock_date
   s = Stock.objects.get_or_create(passport=Passport.objects.get(collecting=Collecting.objects.get(obs_selector=ObsSelector.objects.all().order_by("-id")[0], user=User.objects.get(username=person), collection_date=collection_date),  taxonomy=Taxonomy.objects.get(population=population), people=People.objects.get(organization=organization)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, stock_date=stock_date, pedigree=pedigree, stock_status='In Legacy Data', comments=comments)
   print(s)
 
-def add_row_row(pedigree, seed_id, row_id, row_name, row_range, row_plot, row_block, row_rep, row_comments, row_kernel_num, exp_name, harvest_date, planting_date):
+def add_row_row(pedigree, seed_id, seed_name, cross_type, comments, stock_date, person, collection_date, population, organization, row_id, row_name, row_range, row_plot, row_block, row_rep, row_comments, row_kernel_num, exp_name, harvest_date, planting_date):
+  r = ObsRow.objects.get_or_create(obs_selector=ObsSelector.objects.all().order_by("-id")[0], field=Field.objects.get(experiment__name=exp_name), stock=Stock.objects.get(passport=Passport.objects.get(collecting=Collecting.objects.get(obs_selector=ObsSelector.objects.all().order_by("-id")[0], user=User.objects.get(username=person), collection_date=collection_date),  taxonomy=Taxonomy.objects.get(population=population), people=People.objects.get(organization=organization)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, stock_date=stock_date, pedigree=pedigree, stock_status='In Legacy Data', comments=comments), row_id=row_id, row_name=row_name, range_num=row_range, plot=row_plot, block=row_block, rep=row_rep, kernel_num=row_kernel_num, comments=row_comments, planting_date=planting_date, harvest_date=harvest_date)
+  print(r)
+
+def add_row_row_nostock(pedigree, seed_id, row_id, row_name, row_range, row_plot, row_block, row_rep, row_comments, row_kernel_num, exp_name, harvest_date, planting_date):
   r = ObsRow.objects.get_or_create(obs_selector=ObsSelector.objects.all().order_by("-id")[0], field=Field.objects.get(experiment__name=exp_name), stock=Stock.objects.get(seed_id=seed_id, pedigree=pedigree), row_id=row_id, row_name=row_name, range_num=row_range, plot=row_plot, block=row_block, rep=row_rep, kernel_num=row_kernel_num, comments=row_comments, planting_date=planting_date, harvest_date=harvest_date)
   print(r)
 
@@ -270,6 +283,6 @@ if __name__ == '__main__':
   from legacy.models import Legacy_Seed, Legacy_People, Legacy_Experiment, Legacy_Seed_Inventory, Legacy_Plant, Legacy_Tissue
   #csv_import_people()
   #csv_import_experiment()
-  add_dummies()
+  #add_dummies()
   #csv_import_isolate()
   csv_import_row_01()
