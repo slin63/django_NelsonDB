@@ -81,8 +81,27 @@ def add_dummies():
   p = Passport.objects.get_or_create(collecting=Collecting.objects.get(obs_selector=ObsSelector.objects.get(experiment=Experiment.objects.get(user=User.objects.get(username='unknown'), field=Field.objects.get(locality=Locality.objects.get(city='NULL', state='NULL', country='NULL'), field_name='No Field'), name='No Experiment')), field=Field.objects.get(locality=Locality.objects.get(city='NULL', state='NULL', country='NULL'), field_name='No Field'), user=User.objects.get(username='unknown_person'), collection_date='No Date', collection_method='No Collection', comments='No Collection'), people=People.objects.get(organization='No Source'), taxonomy=Taxonomy.objects.get(genus='No Taxonomy', species='No Taxonomy', population='No Taxonomy', common_name='No Taxonomy', alias='No Taxonomy', race='No Taxonomy', subtaxa='No Taxonomy'))
   s = Stock.objects.get_or_create(seed_id=0, seed_name='No Seed', cross_type='No Seed', pedigree='No Seed', stock_status='No Seed', stock_date='No Seed', comments='No Seed', passport=Passport.objects.get(collecting=Collecting.objects.get(obs_selector=ObsSelector.objects.get(experiment=Experiment.objects.get(user=User.objects.get(username='unknown'), field=Field.objects.get(locality=Locality.objects.get(city='NULL', state='NULL', country='NULL'), field_name='No Field'), name='No Experiment')), field=Field.objects.get(locality=Locality.objects.get(city='NULL', state='NULL', country='NULL'), field_name='No Field'), user=User.objects.get(username='unknown_person'), collection_date='No Date', collection_method='No Collection', comments='No Collection'), people=People.objects.get(organization='No Source'), taxonomy=Taxonomy.objects.get(genus='No Taxonomy', species='No Taxonomy', population='No Taxonomy', common_name='No Taxonomy', alias='No Taxonomy', race='No Taxonomy', subtaxa='No Taxonomy')))
 
+def row_loader():
+  ifile = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_row_table_t1.1.csv'), dialect='excel')
+  for row in ifile:
+    row_row_id = row['row_id'].replace(u'\xa0', u' ')
+    row_row_name = row['row_name'].replace(u'\xa0', u' ')
+    row_experiment_name = row['experiment_id'].replace(u'\xa0', u' ')
+    row_stock_seed_id = row['source_seed_id'].replace(u'\xa0', u' ')
+    row_range = row['range'].replace(u'\xa0', u' ')
+    row_plot = row['plot'].replace(u'\xa0', u' ')
+    row_block = row['block'].replace(u'\xa0', u' ')
+    row_rep = row['rep'].replace(u'\xa0', u' ')
+    row_population = row['pop'].replace(u'\xa0', u' ')
+    row_purpose = row['purpose'].replace(u'\xa0', u' ')
+    row_notes = row['notes'].replace(u'\xa0', u' ')
+    row_comments = "Purpose: %s || Notes: %s" % (row_purpose, row_notes)
+    row_kernel_num = row['kernel_num'].replace(u'\xa0', u' ')
+    row_stock_pedigree = row['pedigree'].replace(u'\xa0', u' ')
+    print(row_row_id)
+
 def csv_import_row_01():
-  ifile = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_row_test9.csv'), dialect='excel')
+  ifile = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_row_table_t1.1.csv'), dialect='excel')
   for row in ifile:
     row_row_id = row['row_id'].replace(u'\xa0', u' ')
     row_row_name = row['row_name'].replace(u'\xa0', u' ')
@@ -281,8 +300,9 @@ if __name__ == '__main__':
   os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mine_project.settings')
   from lab.models import Experiment, User, UserProfile, Taxonomy, Locality, Field, Passport, Collecting, People, Stock, Location, ObsRow, ObsPlant, ObsSelector, StockPacket, Location, Isolate, DiseaseInfo
   from legacy.models import Legacy_Seed, Legacy_People, Legacy_Experiment, Legacy_Seed_Inventory, Legacy_Plant, Legacy_Tissue
-  #csv_import_people()
-  #csv_import_experiment()
-  #add_dummies()
-  #csv_import_isolate()
+  csv_import_people()
+  csv_import_experiment()
+  add_dummies()
+  csv_import_isolate()
+  #row_loader()
   csv_import_row_01()
