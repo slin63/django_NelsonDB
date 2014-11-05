@@ -1,0 +1,127 @@
+{% extends 'lab/base.html' %}
+{% block title %}View Passport{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>View Passport</h1>
+</div>
+{% if passport %}
+  {% if collecting_field %}
+  <hr>
+  <h3>Collected From Field</h3>
+    <table id="passport_collecting_field" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <thead>
+      <tr>
+        <th>Field Name</th>
+        <th>Locality</th>
+        <th>Date Collected</th>
+        <th>Collector</th>
+        <th>Collection Method</th>
+        <th>Comments</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>{{ passport.collecting.field.field_name }}</td>
+        <td>{{ passport.collecting.field.locality.city }}</td>
+        <td>{{ passport.collecting.collection_date }}</td>
+        <td><a href='/lab/profile/{{ passport.collecting.user.username }}/'>{{ passport.collecting.user.username }}</a></td>
+        <td>{{ passport.collecting.collection_method }}</td>
+        <td>{{ passport.collecting.comments }}</td>
+      </tr>
+      </tbody>
+    </table>
+  <br/>
+    {% else %}
+    <hr>
+    <h3>Collection Info</h3>
+      <table id="passport_collecting_info" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+          <th>Collector</th>
+          <th>Date Collected</th>
+          <th>Collection Method</th>
+          <th>Comments</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td><a href='/lab/profile/{{ passport.collecting.user.username }}/'>{{ passport.collecting.user.username }}</a></td>
+          <td>{{ passport.collecting.collection_date }}</td>
+          <td>{{ passport.collecting.collection_method }}</td>
+          <td>{{ passport.collecting.comments }}</td>
+        </tr>
+        </tbody>
+      </table>
+    <br/>
+  {% endif %}
+  {% if collecting_row %}
+  <h3>Collected From Row</h3>
+    <table id="passport_obsselector" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <thead>
+      <tr>
+        <th>Row ID</th>
+        <th>Experiment</th>
+        <th>Field</th>
+        <th>Locality</th>
+        <th>Source Seed</th>
+        <th>Range</th>
+        <th>Plot</th>
+        <th>Block</th>
+        <th>Rep</th>
+        <th>Planting Date</th>
+        <th>Harvest Date</th>
+        <th>Comments</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>{{collecting_row.row_id}}</td>
+        <td><a href='/lab/experiment/{{collecting_row.obs_selector.experiment.name}}/'>{{collecting_row.obs_selector.experiment.name}}</a></td>
+        <td>{{collecting_row.field.field_name}}</td>
+        <td>{{collecting_row.field.locality.city}}</td>
+        <td>{{collecting_row.stock.seed_id}}</td>
+        <td>{{collecting_row.range_num}}</td>
+        <td>{{collecting_row.plot}}</td>
+        <td>{{collecting_row.block}}</td>
+        <td>{{collecting_row.rep}}</td>
+        <td>{{collecting_row.planting_date}}</td>
+        <td>{{collecting_row.harvest_date}}</td>
+        <td>{{collecting_row.comments}}</td>
+      </tr>
+      </tbody>
+    </table>
+    {% else %}
+      <hr>
+      <h3>Not Collected From Row or Information Incomplete</h3>
+      <hr>
+  {% endif %}
+  {% if collecting_source %}
+    <h3>Collected From Source</h3>
+      <table id="passport_people" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+          <th>Organization</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Comments</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>{{collecting_row.people.organization}}</td>
+          <td>{{collecting_row.people.first_name}}</td>
+          <td>{{collecting_row.people.last_name}}</td>
+          <td>{{collecting_row.people.phone}}</td>
+          <td>{{collecting_row.people.email}}</td>
+          <td>{{collecting_row.people.comments}}</td>
+        </tr>
+        </tbody>
+      </table>
+  {% endif %}
+  {% else %}
+    <hr>
+    <h2>The Passport Does Not Exist</h2><br/>
+{% endif %}
+{% endblock %}

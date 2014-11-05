@@ -1,0 +1,21 @@
+{% extends "lab/base.html" %}
+
+{% block title %}Disease Info{% endblock %}
+
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Disease Info<h1>
+{% if disease_info %}
+  <br/>
+  <h2>{{ disease_info.common_name }}</h2>
+
+  <p>Abrreviation: {{disease_info.abbrev}}</p>
+  <p>Comments: {{disease_info.comments}}</p>
+
+{% else %}
+  <br/>
+  <h2>Disease Does Not Exist</h2>
+{% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,48 @@
+{% if selected_isolates %}
+<hr>
+<h2>Isolates</h2><br/>
+
+<form id="select_stocks_form" method="post" action="/lab/isolate_inventory/select_isolates/">
+  {% csrf_token %}
+  <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+      <th>Select</th>
+      <th>Isolate ID</th>
+      <th>Isolate Name</th>
+      <th>Disease</th>
+      <th>Plant Organ</th>
+      <th>Genus</th>
+      <th>Alias</th>
+      <th>Race</th>
+      <th>Subtaxa</th>
+      <th>Source</th>
+      <th>Comments</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for isolate in selected_isolates %}
+    <tr>
+      <td><input type="checkbox" name="checkbox_isolates" value="{{ isolate.id }}"></td>
+      <td>{{ isolate.isolate_id }}</td>
+      <td>{{ isolate.isolate_name }}</td>
+      <td><a href='/lab/disease_info/{{isolate.disease_info.id}}/'>{{ isolate.disease_info.common_name }}</a></td>
+      <td>{{ isolate.plant_organ }}</td>
+      <td>{{ isolate.passport.taxonomy.genus }}</td>
+      <td>{{ isolate.passport.taxonomy.alias }}</td>
+      <td>{{ isolate.passport.taxonomy.race }}</td>
+      <td>{{ isolate.passport.taxonomy.subtaxa }}</td>
+      <td><a href='/lab/inventory/passport/{{ isolate.passport.id }}/'>{{ isolate.passport.id }}</a></td>
+      <td>{{ isolate.comments }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <br/>
+  <input class="btn btn-primary" type="submit" name="submit" value="Search Inventory for Selected Isolates"/>
+</form>
+  {% else %}
+    <hr>
+    <h2>No Isolates Found</h2>
+    <hr>
+{% endif %}

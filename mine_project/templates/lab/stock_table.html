@@ -1,6 +1,6 @@
 {% if selected_stocks %}
 <hr>
-<h2>Stock Packets in Inventory</h2><br/>
+<h2>Seed Stocks</h2><br/>
 
 <form id="select_stocks_form" method="post" action="/lab/seed_inventory/select_stocks/">
   {% csrf_token %}
@@ -13,24 +13,32 @@
       <th>Pedigree</th>
       <th>Population</th>
       <th>Status</th>
-      <th>Weight(g)</th>
+      <th>Source</th>
+      <th>Collector</th>
+      <th>Comments</th>
     </tr>
     </thead>
     <tbody>
-    {% for stockpacket in selected_stocks %}
+    {% for stock in selected_stocks %}
     <tr>
-      <td><input type="checkbox" name="checkbox_stock" value="{{ stockpacket.id }}"></td>
-      <td>{{ stockpacket.stock.seed_id }}</td>
-      <td>{{ stockpacket.stock.cross_type }}</td>
-      <td>{{ stockpacket.stock.pedigree }}</td>
-      <td>{{ stockpacket.stock.passport.taxonomy.population }}</td>
-      <td>{{ stockpacket.stock.stock_status }}</td>
-      <td>{{ stockpacket.weight }}</td>
+      <td><input type="checkbox" name="checkbox_stock" value="{{ stock.id }}"></td>
+      <td>{{ stock.seed_id }}</td>
+      <td>{{ stock.cross_type }}</td>
+      <td>{{ stock.pedigree }}</td>
+      <td>{{ stock.passport.taxonomy.population }}</td>
+      <td>{{ stock.stock_status }}</td>
+      <td><a href='/lab/inventory/passport/{{ stock.passport.id }}/'>{{ stock.passport.id }}</a></td>
+      <td><a href='/lab/profile/{{ stock.passport.collecting.user.username }}/'>{{ stock.passport.collecting.user.username }}</a></td>
+      <td>{{ stock.comments }}</td>
     </tr>
     {% endfor %}
     </tbody>
   </table>
   <br/>
-  <input class="btn btn-primary" type="submit" name="submit" value="Select Stocks"/>
+  <input class="btn btn-primary" type="submit" name="submit" value="Search Inventory for Selected Stocks"/>
 </form>
+  {% else %}
+    <hr>
+    <h2>No Seed Stocks Found</h2>
+    <hr>
 {% endif %}

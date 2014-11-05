@@ -37,9 +37,11 @@
 						   {% endif %}
 					   </ul>
 					   <ul class="nav">
-						   {% if user.is_authenticated %}
+						  {% if user.is_authenticated %}
+							{% if logged_in_user %}
 							<li><a href="">Submit Content</a></li>
-						   {% endif %}
+						  {% endif %}
+						  {% endif %}
 					   </ul>
 				   </div>
 				   <!--/.nav-collapse -->
@@ -60,17 +62,19 @@
 							</ul>
 							<br/>
 							<ul class="nav nav-list">
-								<li class="nav-header"><h4>Germplasm</h4></li>
-								<li class="nav-list"><a href='/legacy/legacy_seed_inventory/'>Current Data-Structure</a></li>
-								<li class="nav-list"><a href='/lab/seed_inventory/'>New Data-Structure</a></li>
+								<li class="nav-header"><h4>Inventories</h4></li>
+								<li class="nav-list"><a href='/legacy/legacy_seed_inventory/'>Legacy Seed</a></li>
+								<li class="nav-list"><a href='/lab/seed_inventory/'>Seed</a></li>
+								<li class="nav-list"><a href='/lab/isolate_inventory/'>Isolates</a></li>
 							</ul>
 							<br/>
 							<ul class="nav nav-list">
 								<li class="nav-header"><h4>Experimental Data</h4></li>
 								<li class="nav-list"><a href='/lab/experiment/search/'>Find an Experiment</a></li>
-								<li class="nav-list"><a href=''>Browse Analyses</a></li>
-								<li class="nav-list"><a href=''>Phenotypic Data</a></li>
-								<li class="nav-list"><a href=''>Genotypic Data</a></li>
+								<li class="nav-list"><a href='/lab/data/row/'>Browse Row Data</a></li>
+								<li class="nav-list"><a href='/lab/data/plant/'>Browse Plant Data</a></li>
+								<li class="nav-list"><a href='/lab/data/phenotype/'>Phenotypic Data</a></li>
+								<li class="nav-list"><a href='/lab/data/genotype/'>Genotypic Data</a></li>
 							</ul>
 							<br/>
 							<ul class="nav nav-list">

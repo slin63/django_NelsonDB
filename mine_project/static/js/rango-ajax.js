@@ -37,6 +37,34 @@ $('#taxonomysuggestion').keyup(function(){
 		});
 });
 
+$('#isolate_taxonomysuggestion').keyup(function(){
+				var query;
+				query = $(this).val();
+				$.get('/lab/isolate_inventory/suggest_isolate_taxonomy/', {suggestion: query}, function(data){
+			$('#isolate_taxonomies').html(data);
+			$('#selected_isolate_taxonomy').dataTable({
+				"searching": false,
+				"scrollY": "300px",
+				"scrollCollapse": true,
+				"paginate": false
+				});
+		});
+});
+
+$('#isolate_diseasesuggestion').keyup(function(){
+				var query;
+				query = $(this).val();
+				$.get('/lab/isolate_inventory/suggest_isolate_disease/', {suggestion: query}, function(data){
+			$('#isolate_disease').html(data);
+			$('#selected_isolate_disease').dataTable({
+				"searching": false,
+				"scrollY": "300px",
+				"scrollCollapse": true,
+				"paginate": false
+				});
+		});
+});
+
 $('#legacypedigreesuggestion').keyup(function(){
 				var query;
 				query = $(this).val();

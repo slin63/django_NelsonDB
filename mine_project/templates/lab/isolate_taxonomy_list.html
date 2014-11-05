@@ -1,0 +1,65 @@
+{% if isolate_taxonomy_list %}
+  {% if checkbox_isolate_disease %}
+    <form id="select_isolate_taxonomy_form" method="post" action="/lab/isolate_inventory/select_isolate_taxonomy/">
+      {% csrf_token %}
+      <table id="selected_isolate_taxonomy" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+          <th>Select</th>
+          <th>Genus</th>
+          <th>Species</th>
+          <th>Alias</th>
+          <th>Race</th>
+          <th>Subtaxa</th>
+          <th>Disease</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for taxonomy in isolate_taxonomy_list %}
+        <tr>
+          <td><input type="checkbox" name="checkbox_isolate_taxonomy" value="{{ taxonomy.passport__taxonomy__genus }}"></td>
+          <td>{{ taxonomy.passport__taxonomy__genus }}</td>
+          <td>{{ taxonomy.passport__taxonomy__species }}</td>
+          <td>{{ taxonomy.passport__taxonomy__alias }}</td>
+          <td>{{ taxonomy.passport__taxonomy__race }}</td>
+          <td>{{ taxonomy.passport__taxonomy__subtaxa }}</td>
+          <td>{{ taxonomy.disease_info__common_name }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <br/>
+      <input class="btn btn-primary" type="submit" name="submit" value="Select Taxonomies"/>
+    </form>
+  {% else %}
+    <form id="select_isolate_taxonomy_form" method="post" action="/lab/isolate_inventory/select_isolate_taxonomy/">
+      {% csrf_token %}
+      <table id="selected_isolate_taxonomy" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+          <th>Select</th>
+          <th>Genus</th>
+          <th>Species</th>
+          <th>Alias</th>
+          <th>Race</th>
+          <th>Subtaxa</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for taxonomy in isolate_taxonomy_list %}
+        <tr>
+          <td><input type="checkbox" name="checkbox_isolate_taxonomy" value="{{ taxonomy.genus }}"></td>
+          <td>{{ taxonomy.genus }}</td>
+          <td>{{ taxonomy.species }}</td>
+          <td>{{ taxonomy.alias }}</td>
+          <td>{{ taxonomy.race }}</td>
+          <td>{{ taxonomy.subtaxa }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <br/>
+      <input class="btn btn-primary" type="submit" name="submit" value="Select Taxonomies"/>
+    </form>
+  {% endif %}
+{% endif %}

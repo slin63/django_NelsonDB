@@ -292,6 +292,42 @@ def add_isolate_4c(isolate_id, isolate_name, plant_organ, comments, date, userna
   i = Isolate.objects.get_or_create(passport=Passport.objects.get(collecting=Collecting.objects.get(obs_selector=ObsSelector.objects.get(experiment=Experiment.objects.get(user=User.objects.get(username='unknown'), field=Field.objects.get(field_name='No Field'))), user=User.objects.get(username=username), field=Field.objects.get(locality=Locality.objects.get(city=city, state=state, country=country), field_name=field_name), collection_date=date), people=People.objects.get(organization='No Source'), taxonomy=Taxonomy.objects.get(genus=genus, alias=alias, race=race, subtaxa=subtaxa)), location=Location.objects.get(locality=Locality.objects.get(city='Ithaca', state='NY', country='USA'), location_name='Freezer 4c', box_name=box_name), disease_info=DiseaseInfo.objects.get(common_name=common_name), isolate_id=isolate_id, isolate_name=isolate_name, plant_organ=plant_organ, comments=comments)
   print(i)
 
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+def post_stock_status_change():
+  i = 1
+  go = True
+  while go is True:
+    try:
+      stockpacket = StockPacket.objects.get(id=i)
+      stock = stockpacket.stock
+      stock.stock_status = 'Legacy Inventory'
+      stock.save()
+      i = i + 1
+      print(i)
+    except (StockPacket.DoesNotExist, IndexError):
+      go = False
+      print('Done')
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+def post_isolate_taxonomy_change():
+  i = 1
+  go = True
+  while go is True:
+    try:
+      isolate = Isolate.objects.get(id=i)
+      taxonomy = isolate.passport.taxonomy
+      taxonomy.common_name = 'Isolate'
+      taxonomy.save()
+      i = i + 1
+      print(i)
+    except (Isolate.DoesNotExist, IndexError):
+      go = False
+      print('Done')
+
 #-------------------------------------------------------------------------
 # Start execution here!
 #-------------------------------------------------------------------------
@@ -300,9 +336,11 @@ if __name__ == '__main__':
   os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mine_project.settings')
   from lab.models import Experiment, User, UserProfile, Taxonomy, Locality, Field, Passport, Collecting, People, Stock, Location, ObsRow, ObsPlant, ObsSelector, StockPacket, Location, Isolate, DiseaseInfo
   from legacy.models import Legacy_Seed, Legacy_People, Legacy_Experiment, Legacy_Seed_Inventory, Legacy_Plant, Legacy_Tissue
-  csv_import_people()
-  csv_import_experiment()
-  add_dummies()
-  csv_import_isolate()
+  #csv_import_people()
+  #csv_import_experiment()
+  #add_dummies()
+  #csv_import_isolate()
   #row_loader()
-  csv_import_row_01()
+  #csv_import_row_01()
+  #post_stock_status_change()
+  post_isolate_taxonomy_change()
