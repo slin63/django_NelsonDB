@@ -21,7 +21,7 @@
       </thead>
       <tbody>
       <tr>
-        <td>{{ passport.collecting.field.field_name }}</td>
+        <td><a href='/lab/field/{{passport.collecting.field.id}}/'>{{ passport.collecting.field.field_name }}</a></td>
         <td>{{ passport.collecting.field.locality.city }}</td>
         <td>{{ passport.collecting.collection_date }}</td>
         <td><a href='/lab/profile/{{ passport.collecting.user.username }}/'>{{ passport.collecting.user.username }}</a></td>
@@ -63,7 +63,7 @@
         <th>Experiment</th>
         <th>Field</th>
         <th>Locality</th>
-        <th>Source Seed</th>
+        <th>Source Stock</th>
         <th>Range</th>
         <th>Plot</th>
         <th>Block</th>
@@ -79,7 +79,7 @@
         <td><a href='/lab/experiment/{{collecting_row.obs_selector.experiment.name}}/'>{{collecting_row.obs_selector.experiment.name}}</a></td>
         <td>{{collecting_row.field.field_name}}</td>
         <td>{{collecting_row.field.locality.city}}</td>
-        <td>{{collecting_row.stock.seed_id}}</td>
+        <td><a href='/lab/stock/{{collecting_row.stock.id}}/'>{{collecting_row.stock.seed_id}}</a></td>
         <td>{{collecting_row.range_num}}</td>
         <td>{{collecting_row.plot}}</td>
         <td>{{collecting_row.block}}</td>
@@ -110,12 +110,12 @@
         </thead>
         <tbody>
         <tr>
-          <td>{{collecting_row.people.organization}}</td>
-          <td>{{collecting_row.people.first_name}}</td>
-          <td>{{collecting_row.people.last_name}}</td>
-          <td>{{collecting_row.people.phone}}</td>
-          <td>{{collecting_row.people.email}}</td>
-          <td>{{collecting_row.people.comments}}</td>
+          <td>{{passport.people.organization}}</td>
+          <td>{{passport.people.first_name}}</td>
+          <td>{{passport.people.last_name}}</td>
+          <td>{{passport.people.phone}}</td>
+          <td>{{passport.people.email}}</td>
+          <td>{{passport.people.comments}}</td>
         </tr>
         </tbody>
       </table>

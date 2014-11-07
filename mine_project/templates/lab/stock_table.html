@@ -13,7 +13,7 @@
       <th>Pedigree</th>
       <th>Population</th>
       <th>Status</th>
-      <th>Source</th>
+      <th>Passport</th>
       <th>Collector</th>
       <th>Comments</th>
     </tr>
@@ -22,7 +22,7 @@
     {% for stock in selected_stocks %}
     <tr>
       <td><input type="checkbox" name="checkbox_stock" value="{{ stock.id }}"></td>
-      <td>{{ stock.seed_id }}</td>
+      <td><a href='/lab/stock/{{stock.id}}/'>{{ stock.seed_id }}</a></td>
       <td>{{ stock.cross_type }}</td>
       <td>{{ stock.pedigree }}</td>
       <td>{{ stock.passport.taxonomy.population }}</td>

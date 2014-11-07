@@ -295,6 +295,45 @@ def add_isolate_4c(isolate_id, isolate_name, plant_organ, comments, date, userna
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 
+def phenotype_loader():
+  ifile = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_phenotype_table.csv'), dialect='excel')
+  for row in ifile:
+    phenotype_id = row['phenotype_id'].replace(u'\xa0', u' ')
+    row_id = row['entity_id'].replace(u'\xa0', u' ')
+    entity_type = row['entity_type'].replace(u'\xa0', u' ')
+    plant_id = row['entity_name'].replace(u'\xa0', u' ')
+    experiment_name = row['experiment_id'].replace(u'\xa0', u' ')
+    parameter = row['trait_id'].replace(u'\xa0', u' ')
+    value = row['phenotype_value'].replace(u'\xa0', u' ')
+    time = row['phenotype_date'].replace(u'\xa0', u' ')
+    plate_id = row['plate_id'].replace(u'\xa0', u' ')
+    person_id = row['phenotype_person_id'].replace(u'\xa0', u' ')
+    scoring_order = row['scoring_order'].replace(u'\xa0', u' ')
+    comments = row['notes'].replace(u'\xa0', u' ')
+    print(phenotype_id)
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+def csv_import_phenotype():
+  ifile = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_phenotype_table.csv'), dialect='excel')
+  for row in ifile:
+    phenotype_id = row['phenotype_id']
+    row_id = row['entity_id']
+    entity_type = row['entity_type']
+    plant_id = row['entity_name']
+    experiment_name = row['experiment_id']
+    parameter = row['trait_id']
+    value = row['phenotype_value']
+    time = row['phenotype_date']
+    plate_id = row['plate_id']
+    person_id = row['phenotype_person_id']
+    scoring_order = row['scoring_order']
+    comments = row['notes']
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
 def post_stock_status_change():
   i = 1
   go = True
@@ -328,6 +367,27 @@ def post_isolate_taxonomy_change():
       go = False
       print('Done')
 
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+
+def post_isolate_passport_fix():
+  ifile = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_isolate_table.csv'), dialect='excel')
+  for row in ifile:
+    isolate_id = row['isolate_id']
+    isolate_name = row['isolate_name']
+    isolate_plant_organ = row['plant_organ']
+    people_organization = row['provider']
+    isolate_comments = row['notes']
+
+    try:
+      isolate = Isolate.objects.get(isolate_id=isolate_id, isolate_name=isolate_name, plant_organ=isolate_plant_organ, comments=isolate_comments)
+      people = isolate.passport.people
+      people.organization = people_organization
+      people.save()
+      print(people_organization)
+    except (Isolate.DoesNotExist, IndexError):
+      print('X')
+
 #-------------------------------------------------------------------------
 # Start execution here!
 #-------------------------------------------------------------------------
@@ -343,4 +403,5 @@ if __name__ == '__main__':
   #row_loader()
   #csv_import_row_01()
   #post_stock_status_change()
-  post_isolate_taxonomy_change()
+  #post_isolate_taxonomy_change()
+  post_isolate_passport_fix()

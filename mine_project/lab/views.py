@@ -423,7 +423,7 @@ def passport(request, passport_id):
 		collecting_field = True
 	else:
 		collecting_field = None
-	if passport.people.organization != 'No Source' and passport.people.organization != '':
+	if passport.people.organization != 'No Source' and passport.people.organization != '' and passport.people.organization != 'NULL':
 		collecting_source = True
 	else:
 		collecting_source = None
@@ -583,3 +583,14 @@ def disease_info(request, disease_id):
 	context_dict['disease_info'] = disease_info
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/disease_info.html', context_dict, context)
+
+def field_info(request, field_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		field_info = Field.objects.get(id=field_id)
+	except DiseaseInfo.DoesNotExist:
+		field_info = None
+	context_dict['field_info'] = field_info
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/field.html', context_dict, context)

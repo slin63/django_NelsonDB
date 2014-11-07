@@ -33,4 +33,5 @@ urlpatterns = patterns('',
     url(r'^isolate_inventory/select_isolates/$', views.select_isolates, name='select_isolates'),
     url(r'^data/row/experiment/(?P<experiment_name>\w+)/$', views.row_data_from_experiment, name='row_data_from_experiment'),
     url(r'^disease_info/(?P<disease_id>\d+)/$', views.disease_info, name='disease_info'),
+    url(r'^field/(?P<field_id>\d+)/$', views.field_info, name='field_info'),
     )
