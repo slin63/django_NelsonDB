@@ -1,0 +1,26 @@
+
+{% extends 'lab/base.html' %}
+{% block title %}People{{ experiment_name }}{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+<h1>People</h1>
+</div>
+
+<div class="container-fluid">
+  <hr>
+  <div id="people_list">
+    {% if users %}
+      {% for user, profile in users %}
+        <div class="row-fluid">
+          <div class="span2"><img src="{{ profile.picture.url }}"/></div>
+          <div class="span2"><h5><a href='/lab/profile/{{user.username}}/'>{{user.username}}</a></h5></div>
+          <div class="span2"><p>{{user.first_name}} {{user.last_name}}</p></div>
+          <div class="span2"><p>{{user.email}}</p></div>
+          <div class="span2"><p>{{profile.organization}}</p></div>
+        </div>
+        <hr>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

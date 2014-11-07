@@ -1,9 +1,0 @@
-<ul class="nav nav-list">
-    {% if exp_list %}
-        {% for exp in exp_list %}
-            <li><a href="/mine/experiment/{{ exp.url }}">{{ exp.name }}</a></li>
-        {% endfor %}
-    {% else %}
-        <li>No experiments at present.</li>
-   {% endif %}
-</ul>

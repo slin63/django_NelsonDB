@@ -1,0 +1,44 @@
+{% extends "lab/base.html" %}
+
+{% block title %}Profile: {{ user.username }}{% endblock %}
+
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Profile<h1>
+  {% if checked_user %}
+    <hr>
+    <h4><a href='/lab/edit_profile/'>Edit Profile</a></h4>
+    <h4><a href='/lab/change_password/'>Change Password</a></h4>
+    <hr>
+  {% endif %}
+  <h2>{{ user.username }}</h2>
+	{% if user.first_name %}
+    <p>{{ user.first_name }} {{ user.last_name }}</p>
+  {% endif %}
+  {% if user.email %}
+    <p>Email: {{ user.email }}</p>
+  {% endif %}
+  {% if userprofile %}
+		{% if userprofile.phone %}
+			<p>Phone: {{ userprofile.phone }}</p>
+		{% endif %}
+		{% if userprofile.job_title %}
+			<p>Title: {{ userprofile.job_title }}</p>
+		{% endif %}
+		{% if userprofile.organization %}
+			<p>Organization: {{ userprofile.organization }}</p>
+		{% endif %}
+		{% if userprofile.notes %}
+			<p>Notes: {{ userprofile.notes }}</p>
+		{% endif %}
+		{% if userprofile.website %}
+			<p>Website: <a href="{{ userprofile.website }}">{{ userprofile.website }}</a></p>
+		{% endif %}
+    <br/>
+    {% if userprofile.picture %}
+      <img src="{{ userprofile.picture.url }}"  />
+    {% endif %}
+  {% endif %}
+</div>
+
+{% endblock %}

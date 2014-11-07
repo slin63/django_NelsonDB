@@ -30,3 +30,21 @@ application = get_wsgi_application()
 # Apply WSGI middleware here.
 # from helloworld.wsgi import HelloWorldApplication
 # application = HelloWorldApplication(application)
+
+# +++++++++++ DJANGO +++++++++++
+# To use your own django app use code like this:
+
+# activate_this = '/home/nmorales3142/.virtualenvs/nelsondb/bin/activate_this.py'
+# execfile(activate_this, dict(__file__=activate_this))
+
+# import os
+# import sys
+
+# path = '/home/nmorales3142/django_NelsonDB/mine_project'
+# if path not in sys.path:
+#     sys.path.append(path)
+
+# os.environ['DJANGO_SETTINGS_MODULE'] = 'mine_project.settings'
+
+# import django.core.handlers.wsgi
+# application = django.core.handlers.wsgi.WSGIHandler()

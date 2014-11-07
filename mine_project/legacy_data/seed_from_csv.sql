@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS `legacy_seed`;
+DROP TABLE IF EXISTS `legacy_legacy_seed`;
 
-CREATE TABLE `legacy_seed` (
+CREATE TABLE `legacy_legacy_seed` (
   `seed_id` varchar(100) DEFAULT NULL,
   `plant_id_origin` varchar(100) DEFAULT NULL,
   `row_id_origin` varchar(100) DEFAULT NULL,
@@ -21,9 +21,9 @@ CREATE TABLE `legacy_seed` (
   `lot` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB;
 
-load data local infile 'C://Users/Nick/Documents/GitHub/mineproject/mine_project/legacy_data/nelson_lab_seed_table.csv' 
-into table legacy_seed fields terminated by ','
+load data local infile 'C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/legacy_data/nelson_lab_seed_table_c1.2.csv' 
+into table legacy_legacy_seed fields terminated by ','
 enclosed by '"'
 lines terminated by '\n'
-(seed_id, plant_id_origin, row_id_origin, experiment_id_origin, plant_name, row_name, seed_name, cross_type, male_parent_id, male_parent_name, program_origin,
+(seed_id, plant_id_origin, row_id_origin, experiment_id_origin_id, plant_name, row_name, seed_name, cross_type, male_parent_id, male_parent_name, program_origin,
  seed_pedigree, line_num, seed_person_id, disease_info, notes, accession, lot)

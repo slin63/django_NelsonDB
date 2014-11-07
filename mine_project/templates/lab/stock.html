@@ -1,0 +1,40 @@
+{% extends 'lab/base.html' %}
+{% block title %}Find a Stock{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Find a Stock</h1>
+</div>
+{% if selected_packets %}
+  <hr>
+  <h2>Stock Packets in Inventory</h2><br/>
+      <table id="selected_packets" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+          <th>Seed ID</th>
+          <th>Seed Name</th>
+          <th>Weight (g)</th>
+          <th>Number of Seeds</th>
+          <th>Storage Building</th>
+          <th>Box Name</th>
+          <th>Comments</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for packet in selected_packets %}
+        <tr>
+          <td>{{ packet.stock.seed_id }}</td>
+          <td>{{ packet.stock.seed_name }}</td>
+          <td>{{ packet.weight }}</td>
+          <td>{{ packet.num_seeds }}</td>
+          <td>{{ packet.location.building_name }}</td>
+          <td>{{ packet.location.box_name }}</td>
+          <td>{{ packet.comments }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+  {% else %}
+    <hr>
+    <h2>The Stocks You Selected Are Not Inventoried</h2><br/>
+{% endif %}
+{% endblock %}

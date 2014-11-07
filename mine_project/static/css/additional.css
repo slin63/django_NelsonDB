@@ -1,0 +1,15 @@
+.showme{
+  display: none;
+}
+
+.showhim:hover .showme{
+  display : block;
+}
+
+.showhim:hover h4{
+  opacity: 0.5;
+  filter: alpha(opacity=50); /* For IE8 and earlier */
+}
+
+.bg-danger{background-color:#f2dede}a.bg-danger:hover{background-color:#e4b9b9}
+.bg-success{background-color:#dff0d8}a.bg-success:hover{background-color:#c1e2b3}

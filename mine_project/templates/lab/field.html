@@ -1,0 +1,25 @@
+{% extends "lab/base.html" %}
+
+{% block title %}Field Info{% endblock %}
+
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Field Info<h1>
+{% if field_info %}
+  <br/>
+  <h2>{{ field_info.field_name }}</h2>
+
+  <p>Field Number: {{field_info.field_num}}</p>
+  <p>Comments: {{field_info.comments}}</p>
+  <p>City: {{field_info.locality.city}}</p>
+  <p>State: {{field_info.locality.state}}</p>
+  <p>Country: {{field_info.locality.country}}</p>
+  <p>Zipcode: {{field_info.locality.zipcode}}</p>
+
+{% else %}
+  <br/>
+  <h2>Field Does Not Exist</h2>
+{% endif %}
+</div>
+
+{% endblock %}

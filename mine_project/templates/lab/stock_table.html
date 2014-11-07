@@ -1,0 +1,44 @@
+{% if selected_stocks %}
+<hr>
+<h2>Seed Stocks</h2><br/>
+
+<form id="select_stocks_form" method="post" action="/lab/seed_inventory/select_stocks/">
+  {% csrf_token %}
+  <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+      <th>Select</th>
+      <th>Seed ID</th>
+      <th>Cross Type</th>
+      <th>Pedigree</th>
+      <th>Population</th>
+      <th>Status</th>
+      <th>Passport</th>
+      <th>Collector</th>
+      <th>Comments</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for stock in selected_stocks %}
+    <tr>
+      <td><input type="checkbox" name="checkbox_stock" value="{{ stock.id }}"></td>
+      <td><a href='/lab/stock/{{stock.id}}/'>{{ stock.seed_id }}</a></td>
+      <td>{{ stock.cross_type }}</td>
+      <td>{{ stock.pedigree }}</td>
+      <td>{{ stock.passport.taxonomy.population }}</td>
+      <td>{{ stock.stock_status }}</td>
+      <td><a href='/lab/inventory/passport/{{ stock.passport.id }}/'>{{ stock.passport.id }}</a></td>
+      <td><a href='/lab/profile/{{ stock.passport.collecting.user.username }}/'>{{ stock.passport.collecting.user.username }}</a></td>
+      <td>{{ stock.comments }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <br/>
+  <input class="btn btn-primary" type="submit" name="submit" value="Search Inventory for Selected Stocks"/>
+</form>
+  {% else %}
+    <hr>
+    <h2>No Seed Stocks Found</h2>
+    <hr>
+{% endif %}

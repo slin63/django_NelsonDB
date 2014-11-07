@@ -1,0 +1,30 @@
+1,1,Southern Corn Leaf Blight,SCLB,SCLB,NULL
+2,2,Gray Leaf Spot,GLS,GLS,NULL
+3,3,Southern Rust,Srust,Srust,NULL
+4,4,Common Rust,Crrust,Crust,NULL
+5,5,Sorghum downy mildew,SDM,DM,NULL
+6,6,Sorghum downy mildew,NULL,DM,NULL
+,,Rajasthan downy mildew,,,
+,,Java downy mildew,,,
+,,P. zeae,,,
+,,P. philippinensis,,,
+7,7,Common Smut,CS,Smut,NULL
+8,8,Ear Rot,ER,Rot,NULL
+9,9,Stalk Rot,SR,Rot,NULL
+10,10,Anthracnose Stalk Rot,ASR,Rot,NULL
+11,11,Aflatoxin Accumulation,AA,Alfatoxin,NULL
+12,12,Stewarts Wilt,Swilt,Swilt,NULL
+13,13,MSV,MSV,Viral,NULL
+14,14,SMV,SMV,Viral,NULL
+15,15,MMV,MMV,Viral,NULL
+16,16,MCDF,MCDF,Viral,NULL
+17,17,WSMV,WSMV,Viral,NULL
+18,18,HPV,HPV,Viral,NULL
+19,19,WSMV and HPV,WSMV and HPV,Viral,NULL
+20,20,WSMV resistance,WSMVR,Viral,NULL
+21,21,MDMV,MDMV,Viral,NULL
+22,22,RGA,RGA,RGA,NULL
+23,23,Days to Anthesis,NULL,FT,NULL
+24,24,Days to Anthesis and Silk,NULL,FT,NULL
+25,25,Days to Silking,NULL,FT,NULL
+NULL,NULL,NULL,NULL,NULL,NULL
