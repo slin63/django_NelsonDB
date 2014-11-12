@@ -8,9 +8,11 @@ def migrate():
   start = time.clock()
   #--- Using row_test.csv table (538 tuples) took 38.6s
   #--- Extrapolating, the complete row.csv (65000 tuples) would take 78 minutes
+  #--- Actually takes 218 minutes to run this through, on my computer.
+  #--- The old populate.py script takes ~20 hours, on my computer.
 
 #-----------------------------------------------
-#-Define output dictionaries
+#- Define output dictionaries
 #-----------------------------------------------
   experiment_table = OrderedDict({})
   locality_table = OrderedDict({})
@@ -29,11 +31,100 @@ def migrate():
   disease_info_table = OrderedDict({})
 
 #-------------------------------------------------
-#-Define intermediary dictionaries. These make the script easier.
+#- Define intermediary dictionaries and legacy data dictionaries
 #-------------------------------------------------
   experiment_name_table = OrderedDict({})
   experiment_field_table = OrderedDict({})
   obs_row_intermed_table = OrderedDict({})
+
+  legacy_experiment_table = OrderedDict({})
+  legacy_seed_table = OrderedDict({})
+  legacy_people_table = OrderedDict({})
+  legacy_plant_table = OrderedDict({})
+  legacy_seedinv_table = OrderedDict({})
+
+#-------------------------------------------------------------------
+#- Load Legacy Data into dictionaries
+#-------------------------------------------------------------------
+  legacy_exp_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/legacy_experiment_table.csv'), dialect='excel')
+  for row in legacy_exp_file:
+    legacy_exp_id = row["experiment_id"]
+    legacy_exp_location = row["location"]
+    legacy_exp_planting_date = row["planting_date"]
+    legacy_exp_tissue_collection = row["tissue_collection"]
+    legacy_exp_inoculations = row["inoculations"]
+    legacy_exp_inoculation_date1 = row["inoculation_date1"]
+    legacy_exp_inoculation_date2 = row["inoculation_date2"]
+    legacy_exp_inoculation_date3 = row["inoculation_date3"]
+    legacy_exp_pathogen_isolate = row["pathogen_isolate"]
+    legacy_exp_harvest_date = row["harvest_date"]
+    legacy_exp_description = row["description"]
+    legacy_exp_notes = row["notes"]
+
+    legacy_experiment_table[(legacy_exp_id)] = (legacy_exp_id, legacy_exp_location, legacy_exp_planting_date, legacy_exp_tissue_collection, legacy_exp_inoculations, legacy_exp_inoculation_date1, legacy_exp_inoculation_date2, legacy_exp_inoculation_date3, legacy_exp_pathogen_isolate, legacy_exp_harvest_date, legacy_exp_description, legacy_exp_notes)
+
+  legacy_seed_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/legacy_seed_table.csv'), dialect='excel')
+  for row in legacy_seed_file:
+    legacy_seed_id = row["seed_id"]
+    legacy_plant_id_origin = row["plant_id_origin"]
+    legacy_row_id_origin = row["row_id_origin"]
+    legacy_experiment_id_origin = row["experiment_id_origin_id"]
+    legacy_plant_name = row["plant_name"]
+    legacy_row_name = row["row_name"]
+    legacy_seed_name = row["seed_name"]
+    legacy_cross_type = row["cross_type"]
+    legacy_male_parent_id = row["male_parent_id"]
+    legacy_male_parent_name = row["male_parent_name"]
+    legacy_program_origin = row["program_origin"]
+    legacy_seed_pedigree = row["seed_pedigree"]
+    legacy_line_num = row["line_num"]
+    legacy_seed_person_id = row["seed_person_id"]
+    legacy_seed_disease_info = row["disease_info"]
+    legacy_seed_notes = row["notes"]
+    legacy_seed_accession = row["accession"]
+    legacy_seed_lot = row["lot"]
+
+    legacy_seed_table[(legacy_seed_id)] = (legacy_seed_id, legacy_plant_id_origin, legacy_row_id_origin, legacy_experiment_id_origin, legacy_plant_name, legacy_row_name, legacy_seed_name, legacy_cross_type, legacy_male_parent_id, legacy_male_parent_name, legacy_program_origin, legacy_seed_pedigree, legacy_line_num, legacy_seed_person_id, legacy_seed_disease_info, legacy_seed_notes, legacy_seed_accession, legacy_seed_lot)
+
+  legacy_people_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/legacy_people_table.csv'), dialect='excel')
+  for row in legacy_people_file:
+    legacy_person_id = row["person_id"]
+    legacy_person_name = row["person_name"]
+    legacy_first_name = row["first_name"]
+    legacy_last_name = row["last_name"]
+    legacy_title = row["title"]
+    legacy_address = row["address"]
+    legacy_phone = row["phone"]
+    legacy_fax = row["fax"]
+    legacy_email = row["email"]
+    legacy_URL = row["URL"]
+    legacy_person_notes = row["notes"]
+    legacy_peopleorg_id = row["peopleorg_id"]
+
+    legacy_people_table[(legacy_person_id)] = (legacy_person_id, legacy_person_name, legacy_first_name, legacy_last_name, legacy_title, legacy_address, legacy_phone, legacy_fax, legacy_email, legacy_URL, legacy_person_notes, legacy_peopleorg_id)
+
+  legacy_plant_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/legacy_plant_table.csv'), dialect='excel')
+  for row in legacy_plant_file:
+    legacy_plant_id = row["plant_id"]
+    legacy_plant_row_id = row["row_id"]
+    legacy_plant_name = row["plant_name"]
+    legacy_plant_notes = row["notes"]
+
+    legacy_plant_table[(legacy_plant_id)] = (legacy_plant_id, legacy_plant_row_id, legacy_plant_name, legacy_plant_notes)
+
+  legacy_seedinv_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/legacy_seedinv_table.csv'), dialect='excel')
+  for row in legacy_seedinv_file:
+    legacy_seedinv_id = row["ID"]
+    legacy_seedinv_seed_id = row["seed_id"]
+    legacy_seedinv_seed_name = row["seed_name"]
+    legacy_seedinv_date = row["inventory_date"]
+    legacy_seedinv_person = row["inventory_person"]
+    legacy_seedinv_person_id = row["seed_person_id"]
+    legacy_seedinv_location = row["location"]
+    legacy_seedinv_notes = row["notes"]
+    legacy_seedinv_weight = row["weight_g"]
+
+    legacy_seedinv_table[(legacy_seedinv_seed_id)] = (legacy_seedinv_id, legacy_seedinv_seed_id, legacy_seedinv_seed_name, legacy_seedinv_date, legacy_seedinv_person, legacy_seedinv_person_id, legacy_seedinv_location, legacy_seedinv_notes, legacy_seedinv_weight)
 
 #-------------------------------------------------------------------
 #-This user_table is simply stored in memory and is not written to csv or the database.
@@ -43,8 +134,8 @@ def migrate():
   user_table = {}
   user_id = 1
 
-  ifile = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/person.csv'), dialect='excel')
-  for row in ifile:
+  user_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/person.csv'), dialect='excel')
+  for row in user_file:
     username = row["user"]
 
     if (username) in user_table:
@@ -76,8 +167,8 @@ def migrate():
   locality_id = locality_table.values()[-1] + 1
   field_id = field_table.values()[-1] + 1
 
-  ifile = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/experiments.csv'), dialect='excel')
-  for row in ifile:
+  experiment_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/experiments.csv'), dialect='excel')
+  for row in experiment_file:
     experiment_name = row['name']
     experiment_field_locality_city = row['city']
     experiment_field_locality_state = row['state']
@@ -130,8 +221,8 @@ def migrate():
   obs_plant_id = 1
   stock_packet_id = 1
 
-  ifile = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_row_table_test.csv'), dialect='excel')
-  for row in ifile:
+  row_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_row_table_t1.1.csv'), dialect='excel')
+  for row in row_file:
     row_row_id = row['row_id']
     row_row_name = row['row_name']
     row_experiment_name = row['experiment_id']
@@ -147,34 +238,34 @@ def migrate():
     row_kernel_num = row['kernel_num']
     row_stock_pedigree = row['pedigree']
 
-    exp = Legacy_Experiment.objects.get(experiment_id=row_experiment_name)
     if row_stock_seed_id != 0:
-      try:
-        seed = Legacy_Seed.objects.get(seed_id=row_stock_seed_id)
-        if seed.seed_person_id:
-          seed_person_value = Legacy_People.objects.get(person_id = seed.seed_person_id)
-          person = seed_person_value.person_name
+      if (row_stock_seed_id) in legacy_seed_table:
+        seed = True
+        if (legacy_seed_table[(row_stock_seed_id)][13]) in legacy_people_table:
+          person = legacy_people_table[(legacy_seed_table[(row_stock_seed_id)][13])][1]
         else:
           person = 'unknown_person'
-        if seed.line_num:
-          seed.seed_name = seed.line_num
         if seed:
-          seed.comments = 'Notes: %s || Lot: %s || Accession: %s' % (seed.notes, seed.lot, seed.accession)
-        if seed.plant_id_origin:
-          try:
-            plant = Legacy_Plant.objects.get(plant_id=seed.plant_id_origin)
-          except Legacy_Plant.DoesNotExist:
-            plant = None
-      except (Legacy_Seed.DoesNotExist, IndexError):
-        seed = None
-      try:
-        seedinv = Legacy_Seed_Inventory.objects.filter(seed_id=row_stock_seed_id)[0]
-      except (Legacy_Seed_Inventory.DoesNotExist, IndexError):
-        seedinv = None
+          seed_comments = 'Notes: %s || Lot: %s || Accession: %s' % (legacy_seed_table[(row_stock_seed_id)][15], legacy_seed_table[(row_stock_seed_id)][17], legacy_seed_table[(row_stock_seed_id)][16])
+        if legacy_seed_table[(row_stock_seed_id)][1] != 'NULL' and legacy_seed_table[(row_stock_seed_id)][1] != '':
+          plant = True
+        else:
+          plant = False
+        if (row_stock_seed_id) in legacy_seedinv_table:
+          seedinv = True
+        else:
+          seedinv = False
+      else:
+        seed = False
+        plant = False
+        seedinv = False
+        #----------------- Add function here to print to txt the seed_ids that are in seed_inv, but not seed -----
+
     else:
-      seed = None
-      plant = None
-      seedinv = None
+      seed = False
+      plant = False
+      seedinv = False
+
 
     if ('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa') in taxonomy_table:
       pass
@@ -188,60 +279,60 @@ def migrate():
     obs_selector_id = obs_selector_id + 1
 
     if seed:
-      collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')] = collecting_id
+      collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')] = collecting_id
       print("Collecting_id: %d" % (collecting_id))
       collecting_id = collecting_id + 1
 
-      if (seed.program_origin) in people_table:
+      if (legacy_seed_table[(row_stock_seed_id)][10]) in people_table:
         pass
       else:
-        people_table[(seed.program_origin)] = people_id
+        people_table[(legacy_seed_table[(row_stock_seed_id)][10])] = people_id
 
-      if (collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')], people_table[(seed.program_origin)], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')]) in passport_table:
+      if (collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')]) in passport_table:
         pass
       else:
-        passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')], people_table[(seed.program_origin)], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])] = passport_id
+        passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])] = passport_id
         print("Passport_id: %d" % (passport_id))
         passport_id = passport_id + 1
 
       if seedinv:
-        if (passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')], people_table[(seed.program_origin)], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], seed.seed_id, seed.seed_name, seed.cross_type, seed.seed_pedigree, 'Legacy Inventoried', seedinv.inventory_date, seed.comments) in stock_table:
+        if (passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], legacy_seed_table[(row_stock_seed_id)][0], legacy_seed_table[(row_stock_seed_id)][6], legacy_seed_table[(row_stock_seed_id)][7], legacy_seed_table[(row_stock_seed_id)][11], 'Legacy Inventoried', legacy_seedinv_table[(row_stock_seed_id)][3], seed_comments) in stock_table:
           pass
         else:
-          stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')], people_table[(seed.program_origin)], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], seed.seed_id, seed.seed_name, seed.cross_type, seed.seed_pedigree, 'Legacy Inventoried', seedinv.inventory_date, seed.comments)] = stock_id
+          stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], legacy_seed_table[(row_stock_seed_id)][0], legacy_seed_table[(row_stock_seed_id)][6], legacy_seed_table[(row_stock_seed_id)][7], legacy_seed_table[(row_stock_seed_id)][11], 'Legacy Inventoried', legacy_seedinv_table[(row_stock_seed_id)][3], seed_comments)] = stock_id
           print("Stock_id: %d" % (stock_id))
           stock_id = stock_id + 1
 
-        obs_row_table[(obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')], people_table[(seed.program_origin)], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], seed.seed_id, seed.seed_name, seed.cross_type, seed.seed_pedigree, 'Legacy Inventoried', seedinv.inventory_date, seed.comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, exp.planting_date, exp.harvest_date, row_comments)] = obs_row_id
-        obs_row_intermed_table[(experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')], people_table[(seed.program_origin)], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], seed.seed_id, seed.seed_name, seed.cross_type, seed.seed_pedigree, 'Legacy Inventoried', seedinv.inventory_date, seed.comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, exp.planting_date, exp.harvest_date, row_comments)] = obs_row_id
+        obs_row_table[(obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], legacy_seed_table[(row_stock_seed_id)][0], legacy_seed_table[(row_stock_seed_id)][6], legacy_seed_table[(row_stock_seed_id)][7], legacy_seed_table[(row_stock_seed_id)][11], 'Legacy Inventoried', legacy_seedinv_table[(row_stock_seed_id)][3], seed_comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)] = obs_row_id
+        obs_row_intermed_table[(row_row_id, row_row_name)] = (obs_row_id, obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], legacy_seed_table[(row_stock_seed_id)][0], legacy_seed_table[(row_stock_seed_id)][6], legacy_seed_table[(row_stock_seed_id)][7], legacy_seed_table[(row_stock_seed_id)][11], 'Legacy Inventoried', legacy_seedinv_table[(row_stock_seed_id)][3], seed_comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)
         print("ObsRow_id: %d" % obs_row_id)
         obs_row_id = obs_row_id + 1
 
-        if (locality_table[('Ithaca', 'NY', 'USA', 'NULL')], seedinv.location, 'Cold Storage', 'Unknown') in location_table:
+        if (locality_table[('Ithaca', 'NY', 'USA', 'NULL')], legacy_seedinv_table[(row_stock_seed_id)][6], 'Cold Storage', 'Unknown') in location_table:
           pass
         else:
-          location_table[(locality_table[('Ithaca', 'NY', 'USA', 'NULL')], seedinv.location, 'Cold Storage', 'Unknown')] = location_id
+          location_table[(locality_table[('Ithaca', 'NY', 'USA', 'NULL')], legacy_seedinv_table[(row_stock_seed_id)][6], 'Cold Storage', 'Unknown')] = location_id
           print("Location_id: %d" % (location_id))
           location_id = location_id + 1
 
-        if (stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')], people_table[(seed.program_origin)], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], seed.seed_id, seed.seed_name, seed.cross_type, seed.seed_pedigree, 'Legacy Inventoried', seedinv.inventory_date, seed.comments)], location_table[(locality_table[('Ithaca', 'NY', 'USA', 'NULL')], seedinv.location, 'Cold Storage', 'Unknown')], seedinv.weight_g, seedinv.notes) in stock_packet_table:
+        if (stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], legacy_seed_table[(row_stock_seed_id)][0], legacy_seed_table[(row_stock_seed_id)][6], legacy_seed_table[(row_stock_seed_id)][7], legacy_seed_table[(row_stock_seed_id)][11], 'Legacy Inventoried', legacy_seedinv_table[(row_stock_seed_id)][3], seed_comments)], location_table[(locality_table[('Ithaca', 'NY', 'USA', 'NULL')], legacy_seedinv_table[(row_stock_seed_id)][6], 'Cold Storage', 'Unknown')], legacy_seedinv_table[(row_stock_seed_id)][8], legacy_seedinv_table[(row_stock_seed_id)][7]) in stock_packet_table:
           pass
         else:
-          stock_packet_table[(stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')], people_table[(seed.program_origin)], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], seed.seed_id, seed.seed_name, seed.cross_type, seed.seed_pedigree, 'Legacy Inventoried', seedinv.inventory_date, seed.comments)], location_table[(locality_table[('Ithaca', 'NY', 'USA', 'NULL')], seedinv.location, 'Cold Storage', 'Unknown')], seedinv.weight_g, seedinv.notes)] = stock_packet_id
+          stock_packet_table[(stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], legacy_seed_table[(row_stock_seed_id)][0], legacy_seed_table[(row_stock_seed_id)][6], legacy_seed_table[(row_stock_seed_id)][7], legacy_seed_table[(row_stock_seed_id)][11], 'Legacy Inventoried', legacy_seedinv_table[(row_stock_seed_id)][3], seed_comments)], location_table[(locality_table[('Ithaca', 'NY', 'USA', 'NULL')], legacy_seedinv_table[(row_stock_seed_id)][6], 'Cold Storage', 'Unknown')], legacy_seedinv_table[(row_stock_seed_id)][8], legacy_seedinv_table[(row_stock_seed_id)][7])] = stock_packet_id
           print("Stockpacket_id: %d" % (stock_packet_id))
           stock_packet_id = stock_packet_id + 1
 
       #--------- No Seedinv --------------------------------
       else:
-        if (passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')], people_table[(seed.program_origin)], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], seed.seed_id, seed.seed_name, seed.cross_type, seed.seed_pedigree, 'Not Inventoried', 'Not Inventoried', seed.comments) in stock_table:
+        if (passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], legacy_seed_table[(row_stock_seed_id)][0], legacy_seed_table[(row_stock_seed_id)][6], legacy_seed_table[(row_stock_seed_id)][7], legacy_seed_table[(row_stock_seed_id)][11], 'Not Inventoried', 'Not Inventoried', seed_comments) in stock_table:
           pass
         else:
-          stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')], people_table[(seed.program_origin)], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], seed.seed_id, seed.seed_name, seed.cross_type, seed.seed_pedigree, 'Not Inventoried', 'Not Inventoried', seed.comments)] = stock_id
+          stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], legacy_seed_table[(row_stock_seed_id)][0], legacy_seed_table[(row_stock_seed_id)][6], legacy_seed_table[(row_stock_seed_id)][7], legacy_seed_table[(row_stock_seed_id)][11], 'Not Inventoried', 'Not Inventoried', seed_comments)] = stock_id
           print("Stock_id: %d" % (stock_id))
           stock_id = stock_id + 1
 
-        obs_row_table[(obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')], people_table[(seed.program_origin)], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], seed.seed_id, seed.seed_name, seed.cross_type, seed.seed_pedigree, 'Not Inventoried', 'Not Inventoried', seed.comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, exp.planting_date, exp.harvest_date, row_comments)] = obs_row_id
-        obs_row_intermed_table[(experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')], people_table[(seed.program_origin)], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], seed.seed_id, seed.seed_name, seed.cross_type, seed.seed_pedigree, 'Not Inventoried', 'Not Inventoried', seed.comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, exp.planting_date, exp.harvest_date, row_comments)] = obs_row_id
+        obs_row_table[(obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], legacy_seed_table[(row_stock_seed_id)][0], legacy_seed_table[(row_stock_seed_id)][6], legacy_seed_table[(row_stock_seed_id)][7], legacy_seed_table[(row_stock_seed_id)][11], 'Not Inventoried', 'Not Inventoried', seed_comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)] = obs_row_id
+        obs_row_intermed_table[(row_row_id, row_row_name)] = (obs_row_id, obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], legacy_seed_table[(row_stock_seed_id)][0], legacy_seed_table[(row_stock_seed_id)][6], legacy_seed_table[(row_stock_seed_id)][7], legacy_seed_table[(row_stock_seed_id)][11], 'Not Inventoried', 'Not Inventoried', seed_comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)
         print("ObsRow_id: %d" % obs_row_id)
         obs_row_id = obs_row_id + 1
 
@@ -268,34 +359,35 @@ def migrate():
         print("Stock_id: %d" % stock_id)
         stock_id = stock_id + 1
 
-      obs_row_table[(obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table[(1,1)], user_table['unknown'], 1, 'No Collecting', 'No Collecting', 'No Collecting')], people_table[('No Source')], taxonomy_table[('No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy')])], 0, 'No Seed', 'No Seed', 'No Seed', 'Not Inventoried', 'Not Inventoried', 'No Seed')], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, exp.planting_date, exp.harvest_date, row_comments)] = obs_row_id
-      obs_row_intermed_table[(experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table[(1,1)], user_table['unknown'], 1, 'No Collecting', 'No Collecting', 'No Collecting')], people_table[('No Source')], taxonomy_table[('No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy')])], 0, 'No Seed', 'No Seed', 'No Seed', 'Not Inventoried', 'Not Inventoried', 'No Seed')], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, exp.planting_date, exp.harvest_date, row_comments)] = obs_row_id
+      obs_row_table[(obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table[(1,1)], user_table['unknown'], 1, 'No Collecting', 'No Collecting', 'No Collecting')], people_table[('No Source')], taxonomy_table[('No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy')])], 0, 'No Seed', 'No Seed', 'No Seed', 'Not Inventoried', 'Not Inventoried', 'No Seed')], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)] = obs_row_id
+      obs_row_intermed_table[(row_row_id, row_row_name)] = (obs_row_id, obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table[(1,1)], user_table['unknown'], 1, 'No Collecting', 'No Collecting', 'No Collecting')], people_table[('No Source')], taxonomy_table[('No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy')])], 0, 'No Seed', 'No Seed', 'No Seed', 'Not Inventoried', 'Not Inventoried', 'No Seed')], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)
       print("ObsRow_id: %d" % obs_row_id)
       obs_row_id = obs_row_id + 1
 
     #---------- If there is plant info in the Legacy Plant table -----------------
     if seed:
-      if seed.plant_id_origin:
-        if plant:
+      if plant:
+        if (legacy_seed_table[(row_stock_seed_id)][1]) in legacy_plant_table:
 
           obs_selector_table[(obs_selector_id, experiment_name_table[row_experiment_name][0])] = obs_selector_id
           print("ObsSelector: %d" % (obs_selector_id))
           obs_selector_id = obs_selector_id + 1
 
           if seedinv:
-            if (obs_selector_table.values()[-1], obs_row_intermed_table[(experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')], people_table[(seed.program_origin)], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], seed.seed_id, seed.seed_name, seed.cross_type, seed.seed_pedigree, 'Legacy Inventoried', seedinv.inventory_date, seed.comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, exp.planting_date, exp.harvest_date, row_comments)], plant.plant_id, plant.plant_name, plant.notes) in obs_plant_table:
+
+            if (obs_selector_table.values()[-1], obs_row_intermed_table[(row_row_id, row_row_name)][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][2], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][3]) in obs_plant_table:
               pass
             else:
-              obs_plant_table[(obs_selector_table.values()[-1], obs_row_intermed_table[(experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')], people_table[(seed.program_origin)], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], seed.seed_id, seed.seed_name, seed.cross_type, seed.seed_pedigree, 'Legacy Inventoried', seedinv.inventory_date, seed.comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, exp.planting_date, exp.harvest_date, row_comments)], plant.plant_id, plant.plant_name, plant.notes)] = obs_plant_id
+              obs_plant_table[(obs_selector_table.values()[-1], obs_row_intermed_table[(row_row_id, row_row_name)][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][2], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][3])] = obs_plant_id
               print("ObsPlant_id: %d" % (obs_plant_id))
               obs_plant_id = obs_plant_id + 1
 
           #-------- No Seedinv -----------------
           else:
-            if (obs_selector_table.values()[-1], obs_row_intermed_table[(experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')], people_table[(seed.program_origin)], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], seed.seed_id, seed.seed_name, seed.cross_type, seed.seed_pedigree, 'Not Inventoried', 'Not Inventoried', seed.comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, exp.planting_date, exp.harvest_date, row_comments)], plant.plant_id, plant.plant_name, plant.notes) in obs_plant_table:
+            if (obs_selector_table.values()[-1], obs_row_intermed_table[(row_row_id, row_row_name)][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][2], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][3]) in obs_plant_table:
               pass
             else:
-              obs_plant_table[(obs_selector_table.values()[-1], obs_row_intermed_table[(experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, exp.harvest_date, 'Field Harvest', 'No comments')], people_table[(seed.program_origin)], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], seed.seed_id, seed.seed_name, seed.cross_type, seed.seed_pedigree, 'Not Inventoried', 'Not Inventoried', seed.comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, exp.planting_date, exp.harvest_date, row_comments)], plant.plant_id, plant.plant_name, plant.notes)] = obs_plant_id
+              obs_plant_table[(obs_selector_table.values()[-1], obs_row_intermed_table[(row_row_id, row_row_name)][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][2], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][3])] = obs_plant_id
               print("ObsPlant_id: %d" % (obs_plant_id))
               obs_plant_id = obs_plant_id + 1
 
@@ -306,8 +398,8 @@ def migrate():
   isolate_table_id = 1
   disease_info_id = 1
 
-  ifile = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_isolate_table.csv'), dialect='excel')
-  for row in ifile:
+  isolate_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_isolate_table.csv'), dialect='excel')
+  for row in isolate_file:
     isolate_id = row['isolate_id']
     isolate_name = row['isolate_name']
     isolate_taxonomy_genus = row['scientific_name']
