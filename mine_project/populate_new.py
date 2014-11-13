@@ -6,7 +6,6 @@ import time
 
 def migrate():
   start = time.clock()
-  #--- Extrapolating, the complete row.csv (65000 tuples) would take 78 minutes
   #--- Actually takes 218 minutes to run this through, on my computer.
   #--- Using row_test.csv takes 4.5 minutes.
   #--- The old populate.py script takes ~20 hours, on my computer.
@@ -77,7 +76,7 @@ def migrate():
   #--- Value = (field_id)
   obs_row_intermed_table = OrderedDict({})
   #--- Key = (row_id)
-  #--- Value = (obs_selector_id, field_id, stock_id, row_id, row_name, range_num, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
+  #--- Value = (id, obs_selector_id, field_id, stock_id, row_id, row_name, range_num, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
   user_table = {}
   #--- Key = (username)
   #--- Value = (user_id)
@@ -492,7 +491,8 @@ def migrate():
       print("Passport_id: %d" % (passport_id))
       passport_id = passport_id + 1
 
-    if location_n80c_boxname:
+    #------------------- If location is in n80c freezer ----------------------
+    if location_n80c_boxname != 'NULL' and location_n80c_boxname != '':
       if (locality_table[(isolate_city, isolate_state, isolate_country)], 'Plant Science', 'Freezer -80C', location_n80c_boxname) in location_table:
         pass
       else:
@@ -504,6 +504,38 @@ def migrate():
         pass
       else:
         isolate_table[(passport_table[(collecting_table[(obs_selector_table[(1,1)], user_table[(isolate_collection_user)], field_table[(locality_table[(isolate_city, isolate_state, isolate_country)], isolate_field_name)], isolate_collection_date, 'Unknown', 'No Comments')], people_table[('No Source')], taxonomy_table[(isolate_taxonomy_genus, 'Unknown', 'Unknown', 'Isolate', isolate_taxonomy_alias, isolate_taxonomy_race, isolate_subtaxa)])], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Plant Science', 'Freezer -80C', location_n80c_boxname)], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments)] = isolate_table_id
+        print("Isolate_table_id: %d" % (isolate_table_id))
+        isolate_table_id = isolate_table_id + 1
+
+    #-------------- If location is in 4c freezer -----------------------------------
+    elif location_4c_boxname != 'NULL' and location_4c_boxname != '':
+      if (locality_table[(isolate_city, isolate_state, isolate_country)], 'Plant Science', 'Freezer 4C', location_4c_boxname) in location_table:
+        pass
+      else:
+        location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Plant Science', 'Freezer 4C', location_4c_boxname)] = location_id
+        print("Location_id: %d" % (location_id))
+        location_id = location_id + 1
+
+      if (passport_table[(collecting_table[(obs_selector_table[(1,1)], user_table[(isolate_collection_user)], field_table[(locality_table[(isolate_city, isolate_state, isolate_country)], isolate_field_name)], isolate_collection_date, 'Unknown', 'No Comments')], people_table[('No Source')], taxonomy_table[(isolate_taxonomy_genus, 'Unknown', 'Unknown', 'Isolate', isolate_taxonomy_alias, isolate_taxonomy_race, isolate_subtaxa)])], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Plant Science', 'Freezer 4C', location_4c_boxname)], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments) in isolate_table:
+        pass
+      else:
+        isolate_table[(passport_table[(collecting_table[(obs_selector_table[(1,1)], user_table[(isolate_collection_user)], field_table[(locality_table[(isolate_city, isolate_state, isolate_country)], isolate_field_name)], isolate_collection_date, 'Unknown', 'No Comments')], people_table[('No Source')], taxonomy_table[(isolate_taxonomy_genus, 'Unknown', 'Unknown', 'Isolate', isolate_taxonomy_alias, isolate_taxonomy_race, isolate_subtaxa)])], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Plant Science', 'Freezer 4C', location_4c_boxname)], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments)] = isolate_table_id
+        print("Isolate_table_id: %d" % (isolate_table_id))
+        isolate_table_id = isolate_table_id + 1
+
+    #-------------------- location not in -80c or 4c freezer ----------------------
+    else:
+      if (locality_table[(isolate_city, isolate_state, isolate_country)], 'Unknown', 'Unknown', 'Unknown') in location_table:
+        pass
+      else:
+        location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Unknown', 'Unknown', 'Unknown')] = location_id
+        print("Location_id: %d" % (location_id))
+        location_id = location_id + 1
+
+      if (passport_table[(collecting_table[(obs_selector_table[(1,1)], user_table[(isolate_collection_user)], field_table[(locality_table[(isolate_city, isolate_state, isolate_country)], isolate_field_name)], isolate_collection_date, 'Unknown', 'No Comments')], people_table[('No Source')], taxonomy_table[(isolate_taxonomy_genus, 'Unknown', 'Unknown', 'Isolate', isolate_taxonomy_alias, isolate_taxonomy_race, isolate_subtaxa)])], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Unknown', 'Unknown', 'Unknown')], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments) in isolate_table:
+        pass
+      else:
+        isolate_table[(passport_table[(collecting_table[(obs_selector_table[(1,1)], user_table[(isolate_collection_user)], field_table[(locality_table[(isolate_city, isolate_state, isolate_country)], isolate_field_name)], isolate_collection_date, 'Unknown', 'No Comments')], people_table[('No Source')], taxonomy_table[(isolate_taxonomy_genus, 'Unknown', 'Unknown', 'Isolate', isolate_taxonomy_alias, isolate_taxonomy_race, isolate_subtaxa)])], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Unknown', 'Unknown', 'Unknown')], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments)] = isolate_table_id
         print("Isolate_table_id: %d" % (isolate_table_id))
         isolate_table_id = isolate_table_id + 1
 
@@ -533,6 +565,7 @@ def migrate():
 
     phenotype_comments = 'Notes: %s || Scoreing Order: %s || Technical Rep: %s || Biological Rep: %s' % (phenotype_notes, phenotype_scoring_order, phenotype_technical_rep, phenotype_biological_rep)
 
+    #---- Translate person_id to person_name, so that user_table[(person_name)] works -------
     if phenotype_person_id != '':
       phenotype_user = legacy_people_table[(phenotype_person_id)][1]
     else:
