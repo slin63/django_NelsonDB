@@ -15,29 +15,72 @@ def migrate():
 #- Define output dictionaries
 #-----------------------------------------------
   experiment_table = OrderedDict({})
+  #--- Key = (user_id, field_if, name, start_date, purpose, comments)
+  #--- Value = (experiment_id)
   locality_table = OrderedDict({})
+  #--- Key = (city, state, country, zipcode)
+  #--- Value = (locality_id)
   field_table = OrderedDict({})
+  #--- Key = (locality_id, field_name)
+  #--- Value = (field_id)
   people_table = OrderedDict({})
+  #--- Key = (organization)
+  #--- Value = (people_id)
   location_table = OrderedDict({})
+  #--- Key = (locality_id, building_name, location_name, box_name)
+  #--- Value = (location_id)
   obs_selector_table = OrderedDict({})
+  #--- Key = (obs_selector_id, experiment_id)
+  #--- Value = (obs_selector_id)
   obs_row_table = OrderedDict({})
+  #--- Key = (obs_selector_id, field_id, stock_id, row_id, row_name, range_num, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
+  #--- Value = (obs_row_id)
   obs_plant_table = OrderedDict({})
+  #--- Key = (obs_selector_id, obs_row_id, plant_id, plant_num, comments)
+  #--- Value = (obs_plant_id)
   taxonomy_table = OrderedDict({})
+  #--- Key = (genus, species, population, common_name, alias, race, subtaxa)
+  #--- Value = (taxonomy_id)
   collecting_table = OrderedDict({})
+  #--- Key = (obs_selector_id, user_id, field_id, collection_date, collection_method, comments)
+  #--- Value = (collecting_id)
   passport_table = OrderedDict({})
+  #--- Key = (collecting_id, people_id, taxonomy_id)
+  #--- Value = (passport_id)
   stock_table = OrderedDict({})
+  #--- Key = (passport_id, seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, comments)
+  #--- Value = (stock_id)
   stock_packet_table = OrderedDict({})
+  #--- Key = (stock_id, location_id, weight, comments)
+  #--- Value = (stock_packet_id)
   isolate_table = OrderedDict({})
+  #--- Key = (passport_id, location_id, disease_info_id, isolate_id, isolate_name, plant_organ, comments)
+  #--- Value = (isolate_id)
   disease_info_table = OrderedDict({})
+  #--- Key = (common_name)
+  #--- Value = (disease_info_id)
   measurement_table = OrderedDict({})
+  #--- Key = (obs_selector_id, user_id, measurement_param_id, time_of_measurement, value, comments)
+  #--- Value = (measurement_id)
   measurement_param_table = OrderedDict({})
+  #--- Key = (parameter, trait_id_buckler)
+  #--- Value = (measurement_param_id)
 
 #-------------------------------------------------
 #- Define intermediary dictionaries and legacy data dictionaries
 #-------------------------------------------------
   experiment_name_table = OrderedDict({})
+  #--- Key = (name)
+  #--- Value = (id, user_id, field_id, name, start_date, purpose, comments)
   experiment_field_table = OrderedDict({})
+  #--- Key = (name)
+  #--- Value = (field_id)
   obs_row_intermed_table = OrderedDict({})
+  #--- Key = (row_id)
+  #--- Value = (obs_selector_id, field_id, stock_id, row_id, row_name, range_num, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
+  user_table = {}
+  #--- Key = (username)
+  #--- Value = (user_id)
 
   legacy_experiment_table = OrderedDict({})
   legacy_seed_table = OrderedDict({})
@@ -133,7 +176,6 @@ def migrate():
 #-Given that person.csv is the same file used to write people to the database, the user_ids in this user_table should match the user_ids in the database.
 #-Users are added in a separate, direct to database, function because of the django auth set_password() command.
 #-------------------------------------------------------------------
-  user_table = {}
   user_id = 1
 
   user_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/person.csv'), dialect='excel')
