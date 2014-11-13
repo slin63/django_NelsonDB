@@ -6,9 +6,9 @@ import time
 
 def migrate():
   start = time.clock()
-  #--- Using row_test.csv table (538 tuples) took 38.6s
   #--- Extrapolating, the complete row.csv (65000 tuples) would take 78 minutes
   #--- Actually takes 218 minutes to run this through, on my computer.
+  #--- Using row_test.csv takes 4.5 minutes.
   #--- The old populate.py script takes ~20 hours, on my computer.
 
 #-----------------------------------------------
@@ -29,6 +29,8 @@ def migrate():
   stock_packet_table = OrderedDict({})
   isolate_table = OrderedDict({})
   disease_info_table = OrderedDict({})
+  measurement_table = OrderedDict({})
+  measurement_param_table = OrderedDict({})
 
 #-------------------------------------------------
 #- Define intermediary dictionaries and legacy data dictionaries
@@ -221,7 +223,7 @@ def migrate():
   obs_plant_id = 1
   stock_packet_id = 1
 
-  row_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_row_table_t1.1.csv'), dialect='excel')
+  row_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_row_table_test.csv'), dialect='excel')
   for row in row_file:
     row_row_id = row['row_id']
     row_row_name = row['row_name']
@@ -255,17 +257,15 @@ def migrate():
           seedinv = True
         else:
           seedinv = False
+          #----------------- Add function here to print to txt the seed_ids that are in seed, but not seedinv -----
       else:
         seed = False
         plant = False
         seedinv = False
-        #----------------- Add function here to print to txt the seed_ids that are in seed_inv, but not seed -----
-
     else:
       seed = False
       plant = False
       seedinv = False
-
 
     if ('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa') in taxonomy_table:
       pass
@@ -304,7 +304,7 @@ def migrate():
           stock_id = stock_id + 1
 
         obs_row_table[(obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], legacy_seed_table[(row_stock_seed_id)][0], legacy_seed_table[(row_stock_seed_id)][6], legacy_seed_table[(row_stock_seed_id)][7], legacy_seed_table[(row_stock_seed_id)][11], 'Legacy Inventoried', legacy_seedinv_table[(row_stock_seed_id)][3], seed_comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)] = obs_row_id
-        obs_row_intermed_table[(row_row_id, row_row_name)] = (obs_row_id, obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], legacy_seed_table[(row_stock_seed_id)][0], legacy_seed_table[(row_stock_seed_id)][6], legacy_seed_table[(row_stock_seed_id)][7], legacy_seed_table[(row_stock_seed_id)][11], 'Legacy Inventoried', legacy_seedinv_table[(row_stock_seed_id)][3], seed_comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)
+        obs_row_intermed_table[(row_row_id)] = (obs_row_id, obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], legacy_seed_table[(row_stock_seed_id)][0], legacy_seed_table[(row_stock_seed_id)][6], legacy_seed_table[(row_stock_seed_id)][7], legacy_seed_table[(row_stock_seed_id)][11], 'Legacy Inventoried', legacy_seedinv_table[(row_stock_seed_id)][3], seed_comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)
         print("ObsRow_id: %d" % obs_row_id)
         obs_row_id = obs_row_id + 1
 
@@ -332,7 +332,7 @@ def migrate():
           stock_id = stock_id + 1
 
         obs_row_table[(obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], legacy_seed_table[(row_stock_seed_id)][0], legacy_seed_table[(row_stock_seed_id)][6], legacy_seed_table[(row_stock_seed_id)][7], legacy_seed_table[(row_stock_seed_id)][11], 'Not Inventoried', 'Not Inventoried', seed_comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)] = obs_row_id
-        obs_row_intermed_table[(row_row_id, row_row_name)] = (obs_row_id, obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], legacy_seed_table[(row_stock_seed_id)][0], legacy_seed_table[(row_stock_seed_id)][6], legacy_seed_table[(row_stock_seed_id)][7], legacy_seed_table[(row_stock_seed_id)][11], 'Not Inventoried', 'Not Inventoried', seed_comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)
+        obs_row_intermed_table[(row_row_id)] = (obs_row_id, obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table.values()[-1], user_table[person], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments')], people_table[(legacy_seed_table[(row_stock_seed_id)][10])], taxonomy_table[('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa')])], legacy_seed_table[(row_stock_seed_id)][0], legacy_seed_table[(row_stock_seed_id)][6], legacy_seed_table[(row_stock_seed_id)][7], legacy_seed_table[(row_stock_seed_id)][11], 'Not Inventoried', 'Not Inventoried', seed_comments)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)
         print("ObsRow_id: %d" % obs_row_id)
         obs_row_id = obs_row_id + 1
 
@@ -360,7 +360,7 @@ def migrate():
         stock_id = stock_id + 1
 
       obs_row_table[(obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table[(1,1)], user_table['unknown'], 1, 'No Collecting', 'No Collecting', 'No Collecting')], people_table[('No Source')], taxonomy_table[('No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy')])], 0, 'No Seed', 'No Seed', 'No Seed', 'Not Inventoried', 'Not Inventoried', 'No Seed')], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)] = obs_row_id
-      obs_row_intermed_table[(row_row_id, row_row_name)] = (obs_row_id, obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table[(1,1)], user_table['unknown'], 1, 'No Collecting', 'No Collecting', 'No Collecting')], people_table[('No Source')], taxonomy_table[('No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy')])], 0, 'No Seed', 'No Seed', 'No Seed', 'Not Inventoried', 'Not Inventoried', 'No Seed')], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)
+      obs_row_intermed_table[(row_row_id)] = (obs_row_id, obs_selector_table.values()[-1], experiment_field_table[(row_experiment_name)], stock_table[(passport_table[(collecting_table[(obs_selector_table[(1,1)], user_table['unknown'], 1, 'No Collecting', 'No Collecting', 'No Collecting')], people_table[('No Source')], taxonomy_table[('No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy')])], 0, 'No Seed', 'No Seed', 'No Seed', 'Not Inventoried', 'Not Inventoried', 'No Seed')], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)
       print("ObsRow_id: %d" % obs_row_id)
       obs_row_id = obs_row_id + 1
 
@@ -373,23 +373,12 @@ def migrate():
           print("ObsSelector: %d" % (obs_selector_id))
           obs_selector_id = obs_selector_id + 1
 
-          if seedinv:
-
-            if (obs_selector_table.values()[-1], obs_row_intermed_table[(row_row_id, row_row_name)][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][2], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][3]) in obs_plant_table:
-              pass
-            else:
-              obs_plant_table[(obs_selector_table.values()[-1], obs_row_intermed_table[(row_row_id, row_row_name)][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][2], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][3])] = obs_plant_id
-              print("ObsPlant_id: %d" % (obs_plant_id))
-              obs_plant_id = obs_plant_id + 1
-
-          #-------- No Seedinv -----------------
+          if (obs_selector_table.values()[-1], obs_row_intermed_table[(row_row_id)][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][2], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][3]) in obs_plant_table:
+            pass
           else:
-            if (obs_selector_table.values()[-1], obs_row_intermed_table[(row_row_id, row_row_name)][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][2], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][3]) in obs_plant_table:
-              pass
-            else:
-              obs_plant_table[(obs_selector_table.values()[-1], obs_row_intermed_table[(row_row_id, row_row_name)][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][2], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][3])] = obs_plant_id
-              print("ObsPlant_id: %d" % (obs_plant_id))
-              obs_plant_id = obs_plant_id + 1
+            obs_plant_table[(obs_selector_table.values()[-1], obs_row_intermed_table[(row_row_id)][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][0], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][2], legacy_plant_table[(legacy_seed_table[(row_stock_seed_id)][1])][3])] = obs_plant_id
+            print("ObsPlant_id: %d" % (obs_plant_id))
+            obs_plant_id = obs_plant_id + 1
 
 #---------------------------------------------------------------------------
 #- Info from isolate.csv is extracted and saved to disease_info, taxonomy, locality, field, collecting, passport, location, and isolate dictionaries.
@@ -476,6 +465,52 @@ def migrate():
         print("Isolate_table_id: %d" % (isolate_table_id))
         isolate_table_id = isolate_table_id + 1
 
+
+#------------------------------------------------------------------------
+#- Import phenotype.csv for row data and save data to measurement amd measurementparameter dictionaries
+#------------------------------------------------------------------------
+
+  measurement_param_id = 1
+  measurement_id = 1
+
+  phenotype_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_phenotype_row_table.csv'), dialect='excel')
+  for row in phenotype_file:
+    phenotype_row_id = row['entity_id']
+    phenotype_experiment_name = row['experiment_id']
+    phenotype_trait_id = row['trait_id']
+    phenotype_value = row['phenotype_value']
+    phenotype_date = row['phenotype_date']
+    phenotype_plate_id = row['plate_id']
+    phenotype_person_id = row['phenotype_person_id']
+    phenotype_scoring_order = row['scoring_order']
+    phenotype_notes = row['notes']
+    phenotype_changed = row['changed']
+    phenotype_technical_rep = row['technical_rep']
+    phenotype_biological_rep = row['biological_rep']
+    phenotype_trait_id_buckler = row['trait_id_buckler']
+
+    phenotype_comments = 'Notes: %s || Scoreing Order: %s || Technical Rep: %s || Biological Rep: %s' % (phenotype_notes, phenotype_scoring_order, phenotype_technical_rep, phenotype_biological_rep)
+
+    if phenotype_person_id != '':
+      phenotype_user = legacy_people_table[(phenotype_person_id)][1]
+    else:
+      phenotype_user = 'unknown_person'
+
+    if (phenotype_trait_id, phenotype_trait_id_buckler) in measurement_param_table:
+      pass
+    else:
+      measurement_param_table[(phenotype_trait_id, phenotype_trait_id_buckler)] = measurement_param_id
+      print("Measurement_param: %d" % (measurement_param_id))
+      measurement_param_id = measurement_param_id + 1
+
+    if (phenotype_row_id) in obs_row_intermed_table:
+      if (obs_row_intermed_table[(phenotype_row_id)][1], user_table[(phenotype_user)], measurement_param_table[(phenotype_trait_id, phenotype_trait_id_buckler)], phenotype_date, phenotype_value, phenotype_comments) in measurement_table:
+        pass
+      else:
+        measurement_table[(obs_row_intermed_table[(phenotype_row_id)][1], user_table[(phenotype_user)], measurement_param_table[(phenotype_trait_id, phenotype_trait_id_buckler)], phenotype_date, phenotype_value, phenotype_comments)] = measurement_id
+        print("Measurement: %d" % (measurement_id))
+        measurement_id = measurement_id + 1
+
 #------------------------------------------------------------------------
 #-The output dictionaries are written to csv files.
 #------------------------------------------------------------------------
@@ -540,6 +575,14 @@ def migrate():
   for key, value in disease_info_table.items():
     writer.writerow([value, key])
   print('DiseaseInfo Done')
+  writer = csv.writer(open('csv_from_script/measurement_parameter.csv', 'wb'))
+  for key, value in measurement_param_table.items():
+    writer.writerow([value, key])
+  print('MeasurementParam Done')
+  writer = csv.writer(open('csv_from_script/measurement.csv', 'wb'))
+  for key, value in measurement_table.items():
+    writer.writerow([value, key])
+  print('Measurement Done')
 
   #---- Computing-time testing -------------------------
   end = time.clock()
@@ -550,9 +593,4 @@ def migrate():
 #------------------------------------------------------------------------
 
 if __name__ == '__main__':
-  os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mine_project.settings')
-  import django
-  django.setup()
-  from lab.models import Experiment, User, UserProfile, Taxonomy, Locality, Field, Passport, Collecting, People, Stock, Location, ObsRow, ObsPlant, ObsSelector, StockPacket, Location, Isolate, DiseaseInfo
-  from legacy.models import Legacy_Seed, Legacy_People, Legacy_Experiment, Legacy_Seed_Inventory, Legacy_Plant, Legacy_Tissue
   migrate()
