@@ -100,9 +100,15 @@ def migrate():
   obs_selector_hash_table = OrderedDict({})
   #--- Key = (hash(obs_selector_id, experiment_id))
   #--- Value = (obs_selector_id)
-  user_hash_table = {}
+  user_hash_table = OrderedDict({})
   #--- Key = (hash(username))
   #--- Value = (user_id)
+  measurement_hash_table = OrderedDict({})
+  #--- Key = (hash(obs_selector_id, user_id, measurement_param_hash_id, time_of_measurement, value, comments))
+  #--- Value = (measurement_id)
+  measurement_param_hash_table = OrderedDict({})
+  #--- Key = (hash(parameter, trait_id_buckler))
+  #--- Value = (measurement_param_id)
 
   legacy_experiment_table = OrderedDict({})
   #--- Key = (legacy_exp_id)
@@ -271,7 +277,58 @@ def migrate():
     experiment_user_username = row['person']
     experiment_startdate = row['date']
     experiment_purpose = row['desc']
-    experiment_comments = "Tissue Collection: %s || Inoculations: %s || Pathogen: %s || Notes: %s" % (row['tissue_collection'], row['inoculations'], row['pathogen'], row['notes'])
+    experiment_inoc = row['inoculations']
+    experiment_tissue_coll = row['tissue_collection']
+    experiment_pathogen = row['pathogen']
+    experiment_notes = row['notes']
+
+    #---Complete comment ----
+    if experiment_tissue_coll != 'NULL' and experiment_tissue_coll != '' and experiment_inoc != 'NULL' and experiment_inoc != '' and experiment_pathogen != 'NULL' and experiment_pathogen != '' and experiment_notes != 'NULL' and experiment_notes != '':
+      experiment_comments = "Tissue Collection: %s || Inoculations: %s || Pathogen: %s || Notes: %s" % (experiment_tissue_coll, experiment_inoc, experiment_pathogen, experiment_notes)
+    #---No notes ----
+    elif experiment_tissue_coll != 'NULL' and experiment_tissue_coll != '' and experiment_inoc != 'NULL' and experiment_inoc != '' and experiment_pathogen != 'NULL' and experiment_pathogen != '':
+      experiment_comments = "Tissue Collection: %s || Inoculations: %s || Pathogen: %s" % (experiment_tissue_coll, experiment_inoc, experiment_pathogen)
+    #---No pathogen ----
+    elif experiment_tissue_coll != 'NULL' and experiment_tissue_coll != '' and experiment_inoc != 'NULL' and experiment_inoc != '' and experiment_notes != 'NULL' and experiment_notes != '':
+      experiment_comments = "Tissue Collection: %s || Inoculations: %s || Notes: %s" % (experiment_tissue_coll, experiment_inoc, experiment_notes)
+    #---No inoc ----
+    elif experiment_tissue_coll != 'NULL' and experiment_tissue_coll != '' and experiment_pathogen != 'NULL' and experiment_pathogen != '' and experiment_notes != 'NULL' and experiment_notes != '':
+      experiment_comments = "Tissue Collection: %s || Pathogen: %s || Notes: %s" % (experiment_tissue_coll, experiment_pathogen, experiment_notes)
+    #---No tissue collection ----
+    elif experiment_inoc != 'NULL' and experiment_inoc != '' and experiment_pathogen != 'NULL' and experiment_pathogen != '' and experiment_notes != 'NULL' and experiment_notes != '':
+      experiment_comments = "Inoculations: %s || Pathogen: %s || Notes: %s" % (experiment_inoc, experiment_pathogen, experiment_notes)
+    #---No notes, pathogen ----
+    elif experiment_tissue_coll != 'NULL' and experiment_tissue_coll != '' and experiment_inoc != 'NULL' and experiment_inoc != '':
+      experiment_comments = "Tissue Collection: %s || Inoculations: %s" % (experiment_tissue_coll, experiment_inoc)
+    #---No inoc, pathogen ----
+    elif experiment_tissue_coll != 'NULL' and experiment_tissue_coll != '' and experiment_notes != 'NULL' and experiment_notes != '':
+      experiment_comments = "Tissue Collection: %s || Notes: %s" % (experiment_tissue_coll, experiment_notes)
+    #---No tissue col, inoculation ----
+    elif experiment_pathogen != 'NULL' and experiment_pathogen != '' and experiment_notes != 'NULL' and experiment_notes != '':
+      experiment_comments = "Pathogen: %s || Notes: %s" % (experiment_pathogen, experiment_notes)
+    #---No inoc, notes ----
+    elif experiment_tissue_coll != 'NULL' and experiment_tissue_coll != '' and experiment_pathogen != 'NULL' and experiment_pathogen != '':
+      experiment_comments = "Tissue Collection: %s || Pathogen: %s" % (experiment_tissue_coll, experiment_pathogen)
+    #---No tissue coll, pathogen ----
+    elif experiment_inoc != 'NULL' and experiment_inoc != '' and experiment_pathogen != 'NULL' and experiment_pathogen != '' and experiment_notes != 'NULL' and experiment_notes != '':
+      experiment_comments = "Inoculations: %s || Notes: %s" % (experiment_inoc, experiment_notes)
+    #---No inoc, pathogen ----
+    elif experiment_tissue_coll != 'NULL' and experiment_tissue_coll != '' and experiment_notes != 'NULL' and experiment_notes != '':
+      experiment_comments = "Tissue Collection: %s || Notes: %s" % (experiment_tissue_coll, experiment_notes)
+    #---No inoc, pathogen, notes ----
+    elif experiment_tissue_coll != 'NULL' and experiment_tissue_coll != '':
+      experiment_comments = "Tissue Collection: %s" % (experiment_tissue_coll)
+    #---No tissue col, inoc, pathogen ----
+    elif experiment_notes != 'NULL' and experiment_notes != '':
+      experiment_comments = "Notes: %s" % (experiment_notes)
+    #---No tissue coll, pathogen, notes ----
+    elif experiment_inoc != 'NULL' and experiment_inoc != '':
+      experiment_comments = "Inoculations: %s" % (experiment_inoc)
+    #---No tissue coll, inoc, notes ----
+    elif experiment_pathogen != 'NULL' and experiment_pathogen != '':
+      experiment_comments = "Pathogen: %s" % (experiment_pathogen)
+    else:
+      experiment_comments = 'No Comments'
 
     if (experiment_field_locality_city, experiment_field_locality_state, experiment_field_locality_country, 'NULL') in locality_table:
       pass
@@ -341,7 +398,32 @@ def migrate():
         else:
           person = 'unknown_person'
         if seed:
-          seed_comments = 'Notes: %s || Lot: %s || Accession: %s' % (legacy_seed_table[(row_seed_id_hash)][15], legacy_seed_table[(row_seed_id_hash)][17], legacy_seed_table[(row_seed_id_hash)][16])
+          legacy_seed_notes = legacy_seed_table[(row_seed_id_hash)][15]
+          legacy_seed_lot = legacy_seed_table[(row_seed_id_hash)][17]
+          legacy_seed_accession = legacy_seed_table[(row_seed_id_hash)][16]
+          #---Complete comment---
+          if legacy_seed_notes != 'NULL' and legacy_seed_notes != '' and legacy_seed_lot != 'NULL' and legacy_seed_lot != '' and legacy_seed_accession != 'NULL' and legacy_seed_accession != '':
+            seed_comments = 'Notes: %s || Lot: %s || Accession: %s' % (legacy_seed_notes, legacy_seed_lot, legacy_seed_accession)
+          #---No accession---
+          elif legacy_seed_notes != 'NULL' and legacy_seed_notes != '' and legacy_seed_lot != 'NULL' and legacy_seed_lot != '':
+            seed_comments = 'Notes: %s || Lot: %s' % (legacy_seed_notes, legacy_seed_lot)
+          #---No lot---
+          elif legacy_seed_notes != 'NULL' and legacy_seed_notes != '' and legacy_seed_accession != 'NULL' and legacy_seed_accession != '':
+            seed_comments = 'Notes: %s || Accession: %s' % (legacy_seed_notes, legacy_seed_accession)
+          #---No notes---
+          elif legacy_seed_lot != 'NULL' and legacy_seed_lot != '' and legacy_seed_accession != 'NULL' and legacy_seed_accession != '':
+            seed_comments = 'Lot: %s || Accession: %s' % (legacy_seed_lot, legacy_seed_accession)
+          #---No lot, accession---
+          elif legacy_seed_notes != 'NULL' and legacy_seed_notes != '':
+            seed_comments = 'Notes: %s' % (legacy_seed_notes)
+          #---No notes, lot---
+          elif legacy_seed_accession != 'NULL' and legacy_seed_accession != '':
+            seed_comments = 'Accession: %s' % (legacy_seed_accession)
+          #---No notes, accession---
+          elif legacy_seed_lot != 'NULL' and legacy_seed_lot != '':
+            seed_comments = 'Lot: %s' % (legacy_seed_lot)
+          else:
+            seed_comments = 'No Comments'
         if legacy_seed_table[(row_seed_id_hash)][1] != 'NULL' and legacy_seed_table[(row_seed_id_hash)][1] != '':
           plant = True
         else:
@@ -534,9 +616,11 @@ def migrate():
       print("Disease_info_id: %d" % (disease_info_id))
       disease_info_id = disease_info_id + 1
 
-    if (isolate_taxonomy_genus, 'Unknown', 'Unknown', 'Isolate', isolate_taxonomy_alias, isolate_taxonomy_race, isolate_subtaxa) in taxonomy_table:
+    taxonomy_isolate_hash = hash((isolate_taxonomy_genus, 'Unknown', 'Unknown', 'Isolate', isolate_taxonomy_alias, isolate_taxonomy_race, isolate_subtaxa))
+    if (taxonomy_isolate_hash) in taxonomy_hash_table:
       pass
     else:
+      taxonomy_hash_table[(taxonomy_isolate_hash)] = taxonomy_id
       taxonomy_table[(isolate_taxonomy_genus, 'Unknown', 'Unknown', 'Isolate', isolate_taxonomy_alias, isolate_taxonomy_race, isolate_subtaxa)] = taxonomy_id
       print("Taxonomy_id: %d" % (taxonomy_id))
       taxonomy_id = taxonomy_id + 1
@@ -555,17 +639,21 @@ def migrate():
       print("Field_id: %d" % (field_id))
       field_id = field_id + 1
 
-    if (obs_selector_table[(1,1)], user_hash_table[(hash(isolate_collection_user))], field_table[(locality_table[(isolate_city, isolate_state, isolate_country)], isolate_field_name)], isolate_collection_date, 'Unknown', 'No Comments') in collecting_table:
+    collecting_isolate_hash = hash((obs_selector_table[(1,1)], user_hash_table[(hash(isolate_collection_user))], field_table[(locality_table[(isolate_city, isolate_state, isolate_country)], isolate_field_name)], isolate_collection_date, 'Unknown', 'No Comments'))
+    if (collecting_isolate_hash) in collecting_hash_table:
       pass
     else:
+      collecting_hash_table[(collecting_isolate_hash)] = collecting_id
       collecting_table[(obs_selector_table[(1,1)], user_hash_table[(hash(isolate_collection_user))], field_table[(locality_table[(isolate_city, isolate_state, isolate_country)], isolate_field_name)], isolate_collection_date, 'Unknown', 'No Comments')] = collecting_id
       print("Collecting_id: %d" % (collecting_id))
       collecting_id = collecting_id + 1
 
-    if (collecting_table[(obs_selector_table[(1,1)], user_hash_table[(hash(isolate_collection_user))], field_table[(locality_table[(isolate_city, isolate_state, isolate_country)], isolate_field_name)], isolate_collection_date, 'Unknown', 'No Comments')], people_table[('No Source')], taxonomy_table[(isolate_taxonomy_genus, 'Unknown', 'Unknown', 'Isolate', isolate_taxonomy_alias, isolate_taxonomy_race, isolate_subtaxa)]) in passport_table:
+    passport_isolate_hash = hash((collecting_hash_table[(collecting_isolate_hash)], people_table[('No Source')], taxonomy_hash_table[(taxonomy_isolate_hash)]))
+    if (passport_isolate_hash) in passport_hash_table:
       pass
     else:
-      passport_table[(collecting_table[(obs_selector_table[(1,1)], user_hash_table[(hash(isolate_collection_user))], field_table[(locality_table[(isolate_city, isolate_state, isolate_country)], isolate_field_name)], isolate_collection_date, 'Unknown', 'No Comments')], people_table[('No Source')], taxonomy_table[(isolate_taxonomy_genus, 'Unknown', 'Unknown', 'Isolate', isolate_taxonomy_alias, isolate_taxonomy_race, isolate_subtaxa)])] = passport_id
+      passport_hash_table[(passport_isolate_hash)] = passport_id
+      passport_table[(collecting_hash_table[(collecting_isolate_hash)], people_table[('No Source')], taxonomy_hash_table[(taxonomy_isolate_hash)])] = passport_id
       print("Passport_id: %d" % (passport_id))
       passport_id = passport_id + 1
 
@@ -578,10 +666,10 @@ def migrate():
         print("Location_id: %d" % (location_id))
         location_id = location_id + 1
 
-      if (passport_table[(collecting_table[(obs_selector_table[(1,1)], user_hash_table[(hash(isolate_collection_user))], field_table[(locality_table[(isolate_city, isolate_state, isolate_country)], isolate_field_name)], isolate_collection_date, 'Unknown', 'No Comments')], people_table[('No Source')], taxonomy_table[(isolate_taxonomy_genus, 'Unknown', 'Unknown', 'Isolate', isolate_taxonomy_alias, isolate_taxonomy_race, isolate_subtaxa)])], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Plant Science', 'Freezer -80C', location_n80c_boxname)], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments) in isolate_table:
+      if (passport_hash_table[(passport_isolate_hash)], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Plant Science', 'Freezer -80C', location_n80c_boxname)], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments) in isolate_table:
         pass
       else:
-        isolate_table[(passport_table[(collecting_table[(obs_selector_table[(1,1)], user_hash_table[(hash(isolate_collection_user))], field_table[(locality_table[(isolate_city, isolate_state, isolate_country)], isolate_field_name)], isolate_collection_date, 'Unknown', 'No Comments')], people_table[('No Source')], taxonomy_table[(isolate_taxonomy_genus, 'Unknown', 'Unknown', 'Isolate', isolate_taxonomy_alias, isolate_taxonomy_race, isolate_subtaxa)])], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Plant Science', 'Freezer -80C', location_n80c_boxname)], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments)] = isolate_table_id
+        isolate_table[(passport_hash_table[(passport_isolate_hash)], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Plant Science', 'Freezer -80C', location_n80c_boxname)], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments)] = isolate_table_id
         print("Isolate_table_id: %d" % (isolate_table_id))
         isolate_table_id = isolate_table_id + 1
 
@@ -594,10 +682,10 @@ def migrate():
         print("Location_id: %d" % (location_id))
         location_id = location_id + 1
 
-      if (passport_table[(collecting_table[(obs_selector_table[(1,1)], user_hash_table[(hash(isolate_collection_user))], field_table[(locality_table[(isolate_city, isolate_state, isolate_country)], isolate_field_name)], isolate_collection_date, 'Unknown', 'No Comments')], people_table[('No Source')], taxonomy_table[(isolate_taxonomy_genus, 'Unknown', 'Unknown', 'Isolate', isolate_taxonomy_alias, isolate_taxonomy_race, isolate_subtaxa)])], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Plant Science', 'Freezer 4C', location_4c_boxname)], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments) in isolate_table:
+      if (passport_hash_table[(passport_isolate_hash)], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Plant Science', 'Freezer 4C', location_4c_boxname)], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments) in isolate_table:
         pass
       else:
-        isolate_table[(passport_table[(collecting_table[(obs_selector_table[(1,1)], user_hash_table[(hash(isolate_collection_user))], field_table[(locality_table[(isolate_city, isolate_state, isolate_country)], isolate_field_name)], isolate_collection_date, 'Unknown', 'No Comments')], people_table[('No Source')], taxonomy_table[(isolate_taxonomy_genus, 'Unknown', 'Unknown', 'Isolate', isolate_taxonomy_alias, isolate_taxonomy_race, isolate_subtaxa)])], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Plant Science', 'Freezer 4C', location_4c_boxname)], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments)] = isolate_table_id
+        isolate_table[(passport_hash_table[(passport_isolate_hash)], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Plant Science', 'Freezer 4C', location_4c_boxname)], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments)] = isolate_table_id
         print("Isolate_table_id: %d" % (isolate_table_id))
         isolate_table_id = isolate_table_id + 1
 
@@ -610,10 +698,10 @@ def migrate():
         print("Location_id: %d" % (location_id))
         location_id = location_id + 1
 
-      if (passport_table[(collecting_table[(obs_selector_table[(1,1)], user_hash_table[(hash(isolate_collection_user))], field_table[(locality_table[(isolate_city, isolate_state, isolate_country)], isolate_field_name)], isolate_collection_date, 'Unknown', 'No Comments')], people_table[('No Source')], taxonomy_table[(isolate_taxonomy_genus, 'Unknown', 'Unknown', 'Isolate', isolate_taxonomy_alias, isolate_taxonomy_race, isolate_subtaxa)])], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Unknown', 'Unknown', 'Unknown')], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments) in isolate_table:
+      if (passport_hash_table[(passport_isolate_hash)], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Unknown', 'Unknown', 'Unknown')], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments) in isolate_table:
         pass
       else:
-        isolate_table[(passport_table[(collecting_table[(obs_selector_table[(1,1)], user_hash_table[(hash(isolate_collection_user))], field_table[(locality_table[(isolate_city, isolate_state, isolate_country)], isolate_field_name)], isolate_collection_date, 'Unknown', 'No Comments')], people_table[('No Source')], taxonomy_table[(isolate_taxonomy_genus, 'Unknown', 'Unknown', 'Isolate', isolate_taxonomy_alias, isolate_taxonomy_race, isolate_subtaxa)])], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Unknown', 'Unknown', 'Unknown')], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments)] = isolate_table_id
+        isolate_table[(passport_hash_table[(passport_isolate_hash)], location_table[(locality_table[(isolate_city, isolate_state, isolate_country)], 'Unknown', 'Unknown', 'Unknown')], disease_info_table[(disease_info_common_name)], isolate_id, isolate_name, isolate_comments)] = isolate_table_id
         print("Isolate_table_id: %d" % (isolate_table_id))
         isolate_table_id = isolate_table_id + 1
 
@@ -641,26 +729,77 @@ def migrate():
     phenotype_biological_rep = row['biological_rep']
     phenotype_trait_id_buckler = row['trait_id_buckler']
 
-    phenotype_comments = 'Notes: %s || Scoreing Order: %s || Technical Rep: %s || Biological Rep: %s' % (phenotype_notes, phenotype_scoring_order, phenotype_technical_rep, phenotype_biological_rep)
+    #---Complete comment----
+    if phenotype_notes != 'NULL' and phenotype_notes != '' and phenotype_scoring_order != 'NULL' and phenotype_scoring_order != '' and phenotype_technical_rep != 'NULL' and phenotype_technical_rep != '' and phenotype_biological_rep != 'NULL' and phenotype_biological_rep != '':
+      phenotype_comments = 'Notes: %s || Scoreing Order: %s || Technical Rep: %s || Biological Rep: %s' % (phenotype_notes, phenotype_scoring_order, phenotype_technical_rep, phenotype_biological_rep)
+    #---No scoring order----
+    elif phenotype_notes != 'NULL' and phenotype_notes != '' and phenotype_technical_rep != 'NULL' and phenotype_technical_rep != '' and phenotype_biological_rep != 'NULL' and phenotype_biological_rep != '':
+      phenotype_comments = 'Notes: %s || Technical Rep: %s || Biological Rep: %s' % (phenotype_notes, phenotype_technical_rep, phenotype_biological_rep)
+    #---No notes-----
+    elif phenotype_scoring_order != 'NULL' and phenotype_scoring_order != '' and phenotype_technical_rep != 'NULL' and phenotype_technical_rep != '' and phenotype_biological_rep != 'NULL' and phenotype_biological_rep != '':
+      phenotype_comments = 'Scoreing Order: %s || Technical Rep: %s || Biological Rep: %s' % (phenotype_scoring_order, phenotype_technical_rep, phenotype_biological_rep)
+    #---No technical rep----
+    elif phenotype_notes != 'NULL' and phenotype_notes != '' and phenotype_scoring_order != 'NULL' and phenotype_scoring_order != '' and phenotype_biological_rep != 'NULL' and phenotype_biological_rep != '':
+      phenotype_comments = 'Notes: %s || Scoreing Order: %s || Biological Rep: %s' % (phenotype_notes, phenotype_scoring_order, phenotype_biological_rep)
+    #---No biological rep----
+    elif phenotype_notes != 'NULL' and phenotype_notes != '' and phenotype_scoring_order != 'NULL' and phenotype_scoring_order != '' and phenotype_technical_rep != 'NULL' and phenotype_technical_rep != '':
+      phenotype_comments = 'Notes: %s || Scoreing Order: %s || Technical Rep: %s' % (phenotype_notes, phenotype_scoring_order, phenotype_technical_rep)
+    #---No notes, scoring order---
+    elif phenotype_technical_rep != 'NULL' and phenotype_technical_rep != '' and phenotype_biological_rep != 'NULL' and phenotype_biological_rep != '':
+      phenotype_comments = 'Technical Rep: %s || Biological Rep: %s' % (phenotype_technical_rep, phenotype_biological_rep)
+    #---No notes, technical rep----
+    elif phenotype_scoring_order != 'NULL' and phenotype_scoring_order != '' and phenotype_biological_rep != 'NULL' and phenotype_biological_rep != '':
+      phenotype_comments = 'Scoreing Order: %s || Biological Rep: %s' % (phenotype_scoring_order, phenotype_biological_rep)
+    #---No notes, biological rep-----
+    elif phenotype_scoring_order != 'NULL' and phenotype_scoring_order != '' and phenotype_technical_rep != 'NULL' and phenotype_technical_rep != '':
+      phenotype_comments = 'Scoreing Order: %s || Technical Rep: %s' % (phenotype_scoring_order, phenotype_technical_rep)
+    #---No technical rep, biological rep ----
+    elif phenotype_notes != 'NULL' and phenotype_notes != '' and phenotype_scoring_order != 'NULL' and phenotype_scoring_order != '':
+      phenotype_comments = 'Notes: %s || Scoreing Order: %s' % (phenotype_notes, phenotype_scoring_order)
+    #---No scoring order, technical rep----
+    elif phenotype_notes != 'NULL' and phenotype_notes != '' and phenotype_biological_rep != 'NULL' and phenotype_biological_rep != '':
+      phenotype_comments = 'Notes: %s || Biological Rep: %s' % (phenotype_notes, phenotype_biological_rep)
+    #---No scoring order, biological rep----
+    elif phenotype_notes != 'NULL' and phenotype_notes != '' and phenotype_technical_rep != 'NULL' and phenotype_technical_rep != '':
+      phenotype_comments = 'Notes: %s || Technical Rep: %s' % (phenotype_notes, phenotype_technical_rep)
+    #---No notes, scoring order, technical rep----
+    elif phenotype_biological_rep != 'NULL' and phenotype_biological_rep != '':
+      phenotype_comments = 'Biological Rep: %s' % (phenotype_biological_rep)
+    #---No notes, scoring order, biological rep---
+    elif phenotype_technical_rep != 'NULL' and phenotype_technical_rep != '':
+      phenotype_comments = 'Technical Rep: %s' % (phenotype_technical_rep)
+    #---No scoring order, technical rep, biological rep----
+    elif phenotype_notes != 'NULL' and phenotype_notes != '':
+      phenotype_comments = 'Notes: %s' % (phenotype_notes)
+    #---No notes, technical rep, biological rep----
+    elif phenotype_scoring_order != 'NULL' and phenotype_scoring_order != '':
+      phenotype_comments = 'Scoreing Order: %s' % (phenotype_scoring_order)
+    else:
+      phenotype_comments = 'No Comments'
 
-    #---- Translate person_id to person_name, so that user_table[(person_name)] works -------
+
+    #---- Translate person_id to person_name, so that user_hash_table[(person_name)] works -------
     if phenotype_person_id != '':
       phenotype_user = legacy_people_table[(phenotype_person_id)][1]
     else:
       phenotype_user = 'unknown_person'
 
-    if (phenotype_trait_id, phenotype_trait_id_buckler) in measurement_param_table:
+    measurement_param_hash = hash((phenotype_trait_id, phenotype_trait_id_buckler))
+    if (measurement_param_hash) in measurement_param_hash_table:
       pass
     else:
+      measurement_param_hash_table[(measurement_param_hash)] = measurement_param_id
       measurement_param_table[(phenotype_trait_id, phenotype_trait_id_buckler)] = measurement_param_id
       print("Measurement_param: %d" % (measurement_param_id))
       measurement_param_id = measurement_param_id + 1
 
     if (phenotype_row_id) in obs_row_intermed_table:
-      if (obs_row_intermed_table[(phenotype_row_id)][1], user_hash_table[(hash(phenotype_user))], measurement_param_table[(phenotype_trait_id, phenotype_trait_id_buckler)], phenotype_date, phenotype_value, phenotype_comments) in measurement_table:
+      measurement_hash = hash((obs_row_intermed_table[(phenotype_row_id)][1], user_hash_table[(hash(phenotype_user))], measurement_param_hash_table[(measurement_param_hash)], phenotype_date, phenotype_value, phenotype_comments))
+      if (measurement_hash) in measurement_hash_table:
         pass
       else:
-        measurement_table[(obs_row_intermed_table[(phenotype_row_id)][1], user_hash_table[(hash(phenotype_user))], measurement_param_table[(phenotype_trait_id, phenotype_trait_id_buckler)], phenotype_date, phenotype_value, phenotype_comments)] = measurement_id
+        measurement_hash_table[(measurement_hash)] = measurement_id
+        measurement_table[(obs_row_intermed_table[(phenotype_row_id)][1], user_hash_table[(hash(phenotype_user))], measurement_param_hash_table[(measurement_param_hash)], phenotype_date, phenotype_value, phenotype_comments)] = measurement_id
         print("Measurement: %d" % (measurement_id))
         measurement_id = measurement_id + 1
 
