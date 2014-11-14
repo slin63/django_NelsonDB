@@ -64,6 +64,19 @@ def migrate():
   #--- Key = (parameter, trait_id_buckler)
   #--- Value = (measurement_param_id)
 
+  stock_not_inventoried = OrderedDict({})
+  #--- Key = (legacy_seed_id)
+  #--- Value = (legacy values)
+  row_source_seed_not_in_seed = OrderedDict({})
+  #--- Key = (count)
+  #--- Value = (legacy values)
+  row_no_source_seed = OrderedDict({})
+  #--- Key = (count)
+  #--- Value = (legacy values)
+  phenotype_row_not_in_row = OrderedDict({})
+  #--- Key = (count)
+  #--- Value = (legacy values)
+
 #-------------------------------------------------
 #- Define intermediary dictionaries and legacy data dictionaries
 #-------------------------------------------------
@@ -146,7 +159,7 @@ def migrate():
 
     legacy_experiment_table[(legacy_exp_id)] = (legacy_exp_id, legacy_exp_location, legacy_exp_planting_date, legacy_exp_tissue_collection, legacy_exp_inoculations, legacy_exp_inoculation_date1, legacy_exp_inoculation_date2, legacy_exp_inoculation_date3, legacy_exp_pathogen_isolate, legacy_exp_harvest_date, legacy_exp_description, legacy_exp_notes)
 
-  legacy_seed_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/legacy_seed_table.csv'), dialect='excel')
+  legacy_seed_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_seed_table_t1.2.csv'), dialect='excel')
   for row in legacy_seed_file:
     legacy_seed_id = row["seed_id"]
     legacy_plant_id_origin = row["plant_id_origin"]
@@ -330,6 +343,7 @@ def migrate():
     else:
       experiment_comments = 'No Comments'
 
+    #--- Check/add locality ----
     if (experiment_field_locality_city, experiment_field_locality_state, experiment_field_locality_country, 'NULL') in locality_table:
       pass
     else:
@@ -337,14 +351,16 @@ def migrate():
       print("Locality_id: %d" % (locality_id))
       locality_id = locality_id + 1
 
+    #--- Check/add field---
     field_locality_id = locality_table[(experiment_field_locality_city, experiment_field_locality_state, experiment_field_locality_country, 'NULL')]
-    if (field_locality_id, experiment_field_name) in field_table:
+    if (locality_table[(experiment_field_locality_city, experiment_field_locality_state, experiment_field_locality_country, 'NULL')], experiment_field_name) in field_table:
       pass
     else:
       field_table[(field_locality_id, experiment_field_name)] = field_id
       print("Field_id: %d" % (field_id))
       field_id = field_id + 1
 
+    #--- Check/add experiment ---
     experiment_field_id = field_table[(field_locality_id, experiment_field_name)]
     experiment_user = user_hash_table[(hash(experiment_user_username))]
     if (experiment_user, experiment_field_id, experiment_name, experiment_startdate, experiment_purpose, experiment_comments) in experiment_table:
@@ -371,6 +387,9 @@ def migrate():
   obs_row_id = 1
   obs_plant_id = 1
   stock_packet_id = 1
+  count_seed_not_in_seedinv = 1
+  count_source_seed_not_in_seed = 1
+  count_no_source_seed = 1
 
   row_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_row_table_t1.1.csv'), dialect='excel')
   for row in row_file:
@@ -385,9 +404,20 @@ def migrate():
     row_population = row['pop']
     row_purpose = row['purpose']
     row_notes = row['notes']
-    row_comments = "Purpose: %s || Notes: %s" % (row_purpose, row_notes)
     row_kernel_num = row['kernel_num']
     row_stock_pedigree = row['pedigree']
+
+    #--- Complete comment-----
+    if row_purpose != 'NULL' and row_purpose != '' and row_notes != 'NULL' and row_notes != '':
+      row_comments = "Purpose: %s || Notes: %s" % (row_purpose, row_notes)
+    #--- No purpose----
+    elif row_notes != 'NULL' and row_notes != '':
+      row_comments = "Notes: %s" % (row_notes)
+    #--- No notes-----
+    elif row_purpose != 'NULL' and row_purpose != '':
+      row_comments = "Purpose: %s" % (row_notes)
+    else:
+      row_comments = 'No Comments'
 
     if row_stock_seed_id != 0 and row_stock_seed_id !='':
       row_seed_id_hash = hash(row_stock_seed_id)
@@ -432,16 +462,25 @@ def migrate():
           seedinv = True
         else:
           seedinv = False
-          #----------------- Add function here to print to txt the seed_ids that are in seed, but not seedinv -----
+          #--- Save to dictionary the seed_ids that are in seed, but not seedinv -----
+          stock_not_inventoried[(count_seed_not_in_seedinv)] = (legacy_seed_table[(row_seed_id_hash)][0], legacy_seed_table[(row_seed_id_hash)][1], legacy_seed_table[(row_seed_id_hash)][2], legacy_seed_table[(row_seed_id_hash)][3], legacy_seed_table[(row_seed_id_hash)][4], legacy_seed_table[(row_seed_id_hash)][5], legacy_seed_table[(row_seed_id_hash)][6], legacy_seed_table[(row_seed_id_hash)][7], legacy_seed_table[(row_seed_id_hash)][8], legacy_seed_table[(row_seed_id_hash)][9], legacy_seed_table[(row_seed_id_hash)][10], legacy_seed_table[(row_seed_id_hash)][11], legacy_seed_table[(row_seed_id_hash)][12], legacy_seed_table[(row_seed_id_hash)][13], legacy_seed_table[(row_seed_id_hash)][14], legacy_seed_table[(row_seed_id_hash)][15], legacy_seed_table[(row_seed_id_hash)][16], legacy_seed_table[(row_seed_id_hash)][17])
+          count_seed_not_in_seedinv = count_seed_not_in_seedinv + 1
       else:
         seed = False
         plant = False
         seedinv = False
+        #--- Save to dictionary the rows with seed_ids which are not in legacy_seed ----
+        row_source_seed_not_in_seed[(count_source_seed_not_in_seed)] = (row_row_id, row_row_name, row_experiment_name, row_stock_seed_id, row_range, row_plot, row_block, row_rep, row_population, row_purpose, row_notes, row_comments, row_kernel_num, row_stock_pedigree)
+        count_source_seed_not_in_seed = count_source_seed_not_in_seed + 1
     else:
       seed = False
       plant = False
       seedinv = False
+      #---- Save to dictinonary the rows with no source_seed ----
+      row_no_source_seed[(count_no_source_seed)] = (row_row_id, row_row_name, row_experiment_name, row_stock_seed_id, row_range, row_plot, row_block, row_rep, row_population, row_purpose, row_notes, row_comments, row_kernel_num, row_stock_pedigree)
+      count_no_source_seed = count_no_source_seed + 1
 
+    #---- Check/add taxonomy to taxonomy_table ----
     taxonomy_row_hash = hash(('Zea', 'Zea mays', row_population, 'Maize', 'No Alias', 'No Race', 'No Subtaxa'))
     if (taxonomy_row_hash) in taxonomy_hash_table:
       pass
@@ -712,6 +751,7 @@ def migrate():
 
   measurement_param_id = 1
   measurement_id = 1
+  measurement_not_in_row_count = 1
 
   phenotype_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_phenotype_row_table.csv'), dialect='excel')
   for row in phenotype_file:
@@ -802,6 +842,8 @@ def migrate():
         measurement_table[(obs_row_intermed_table[(phenotype_row_id)][1], user_hash_table[(hash(phenotype_user))], measurement_param_hash_table[(measurement_param_hash)], phenotype_date, phenotype_value, phenotype_comments)] = measurement_id
         print("Measurement: %d" % (measurement_id))
         measurement_id = measurement_id + 1
+    else:
+      phenotype_row_not_in_row[(measurement_not_in_row_count)] = (phenotype_row_id, phenotype_experiment_name, phenotype_trait_id, phenotype_value, phenotype_date, phenotype_plate_id, phenotype_person_id, phenotype_scoring_order, phenotype_notes, phenotype_changed, phenotype_technical_rep, phenotype_biological_rep, phenotype_trait_id_buckler)
 
 #------------------------------------------------------------------------
 #-The output dictionaries are written to csv files.
@@ -810,71 +852,65 @@ def migrate():
   writer = csv.writer(open('csv_from_script/locality.csv', 'wb'))
   for key, value in locality_table.items():
     writer.writerow([value, key])
-  print('Locality Done')
   writer = csv.writer(open('csv_from_script/field.csv', 'wb'))
   for key, value in field_table.items():
     writer.writerow([value, key])
-  print('Field Done')
   writer = csv.writer(open('csv_from_script/experiment.csv', 'wb'))
   for key, value in experiment_table.items():
     writer.writerow([value, key])
-  print('Experiment Done')
   writer = csv.writer(open('csv_from_script/obs_selector.csv', 'wb'))
   for key, value in obs_selector_table.items():
     writer.writerow([value, key])
-  print('ObsSelector Done')
   writer = csv.writer(open('csv_from_script/taxonomy.csv', 'wb'))
   for key, value in taxonomy_table.items():
     writer.writerow([value, key])
-  print('Taxonomy Done')
   writer = csv.writer(open('csv_from_script/people.csv', 'wb'))
   for key, value in people_table.items():
     writer.writerow([value, key])
-  print('People Done')
   writer = csv.writer(open('csv_from_script/collecting.csv', 'wb'))
   for key, value in collecting_table.items():
     writer.writerow([value, key])
-  print('Colleting Done')
   writer = csv.writer(open('csv_from_script/passport.csv', 'wb'))
   for key, value in passport_table.items():
     writer.writerow([value, key])
-  print('Passport Done')
   writer = csv.writer(open('csv_from_script/stock.csv', 'wb'))
   for key, value in stock_table.items():
     writer.writerow([value, key])
-  print('Stock Done')
   writer = csv.writer(open('csv_from_script/stock_packet.csv', 'wb'))
   for key, value in stock_packet_table.items():
     writer.writerow([value, key])
-  print('Stock Packet Done')
   writer = csv.writer(open('csv_from_script/obs_row.csv', 'wb'))
   for key, value in obs_row_table.items():
     writer.writerow([value, key])
-  print('ObsRow Done')
   writer = csv.writer(open('csv_from_script/obs_plant.csv', 'wb'))
   for key, value in obs_plant_table.items():
     writer.writerow([value, key])
-  print('ObsPlant Done')
   writer = csv.writer(open('csv_from_script/location.csv', 'wb'))
   for key, value in location_table.items():
     writer.writerow([value, key])
-  print('Location Done')
   writer = csv.writer(open('csv_from_script/isolate.csv', 'wb'))
   for key, value in isolate_table.items():
     writer.writerow([value, key])
-  print('Isolate Done')
   writer = csv.writer(open('csv_from_script/disease_info.csv', 'wb'))
   for key, value in disease_info_table.items():
     writer.writerow([value, key])
-  print('DiseaseInfo Done')
   writer = csv.writer(open('csv_from_script/measurement_parameter.csv', 'wb'))
   for key, value in measurement_param_table.items():
     writer.writerow([value, key])
-  print('MeasurementParam Done')
-  writer = csv.writer(open('csv_from_script/measurement.csv', 'wb'))
-  for key, value in measurement_table.items():
-    writer.writerow([value, key])
-  print('Measurement Done')
+  writer = csv.writer(open('csv_from_script/row_source_seed_not_in_seed.csv', 'wb'))
+  for key, value in row_source_seed_not_in_seed.items():
+    writer.writerow([value])
+  writer = csv.writer(open('csv_from_script/row_no_source_seed.csv', 'wb'))
+  for key, value in row_no_source_seed.items():
+    writer.writerow([value])
+  writer = csv.writer(open('csv_from_script/stock_not_inventoried.csv', 'wb'))
+  for key, value in stock_not_inventoried.items():
+    writer.writerow([value])
+  writer = csv.writer(open('csv_from_script/phenotype_row_not_in_row.csv', 'wb'))
+  for key, value in phenotype_row_not_in_row.items():
+    writer.writerow([value])
+
+  print('Done')
 
   #---- Computing-time testing -------------------------
   end = time.clock()
