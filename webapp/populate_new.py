@@ -76,6 +76,12 @@ def migrate():
   phenotype_row_not_in_row = OrderedDict({})
   #--- Key = (count)
   #--- Value = (legacy values)
+  legacy_seed_not_in_stock = OrderedDict({})
+  #--- Key = (count)
+  #--- Value = (legacy_values)
+  legacy_seedinv_not_in_stock = OrderedDict({})
+  #--- Key = (count)
+  #--- Value = (legacy_values)
 
 #-------------------------------------------------
 #- Define intermediary dictionaries and legacy data dictionaries
@@ -89,6 +95,9 @@ def migrate():
   obs_row_intermed_table = OrderedDict({})
   #--- Key = (row_id)
   #--- Value = (id, obs_selector_id, field_id, stock_id, row_id, row_name, range_num, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
+  stock_seed_id_table = OrderedDict({})
+  #--- Key = (seed_id)
+  #--- Value = (stock_id)
   collecting_hash_table = OrderedDict({})
   #--- Key = (hash(obs_selector_id, user_id, field_id, collection_date, collection_method, comments))
   #--- Value = (collecting_id)
@@ -157,7 +166,7 @@ def migrate():
 #-------------------------------------------------------------------
 #- Load Legacy Data into dictionaries
 #-------------------------------------------------------------------
-  legacy_exp_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/legacy_experiment_table.csv'), dialect='excel')
+  legacy_exp_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_experiment_table.csv'), dialect='excel')
   for row in legacy_exp_file:
     legacy_exp_id = row["experiment_id"]
     legacy_exp_location = row["location"]
@@ -174,7 +183,7 @@ def migrate():
 
     legacy_experiment_table[(legacy_exp_id)] = (legacy_exp_id, legacy_exp_location, legacy_exp_planting_date, legacy_exp_tissue_collection, legacy_exp_inoculations, legacy_exp_inoculation_date1, legacy_exp_inoculation_date2, legacy_exp_inoculation_date3, legacy_exp_pathogen_isolate, legacy_exp_harvest_date, legacy_exp_description, legacy_exp_notes)
 
-  legacy_seed_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/legacy_seed_table.csv'), dialect='excel')
+  legacy_seed_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_seed_table.csv'), dialect='excel')
   for row in legacy_seed_file:
     legacy_seed_id = row["seed_id"]
     legacy_plant_id_origin = row["plant_id_origin"]
@@ -198,7 +207,7 @@ def migrate():
     seed_id_hash = hash(legacy_seed_id)
     legacy_seed_table[(seed_id_hash)] = (legacy_seed_id, legacy_plant_id_origin, legacy_row_id_origin, legacy_experiment_id_origin, legacy_plant_name, legacy_row_name, legacy_seed_name, legacy_cross_type, legacy_male_parent_id, legacy_male_parent_name, legacy_program_origin, legacy_seed_pedigree, legacy_line_num, legacy_seed_person_id, legacy_seed_disease_info, legacy_seed_notes, legacy_seed_accession, legacy_seed_lot)
 
-  legacy_people_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/legacy_people_table.csv'), dialect='excel')
+  legacy_people_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_people_table.csv'), dialect='excel')
   for row in legacy_people_file:
     legacy_person_id = row["person_id"]
     legacy_person_name = row["person_name"]
@@ -215,7 +224,7 @@ def migrate():
 
     legacy_people_table[(legacy_person_id)] = (legacy_person_id, legacy_person_name, legacy_first_name, legacy_last_name, legacy_title, legacy_address, legacy_phone, legacy_fax, legacy_email, legacy_URL, legacy_person_notes, legacy_peopleorg_id)
 
-  legacy_plant_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/legacy_plant_table.csv'), dialect='excel')
+  legacy_plant_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_plant_table.csv'), dialect='excel')
   for row in legacy_plant_file:
     legacy_plant_id = row["plant_id"]
     legacy_plant_row_id = row["row_id"]
@@ -224,7 +233,7 @@ def migrate():
 
     legacy_plant_table[(legacy_plant_id)] = (legacy_plant_id, legacy_plant_row_id, legacy_plant_name, legacy_plant_notes)
 
-  legacy_seedinv_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/legacy_seedinv_table.csv'), dialect='excel')
+  legacy_seedinv_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_seedinv_table.csv'), dialect='excel')
   for row in legacy_seedinv_file:
     legacy_seedinv_id = row["ID"]
     legacy_seedinv_seed_id = row["seed_id"]
@@ -246,7 +255,7 @@ def migrate():
 #-------------------------------------------------------------------
   user_id = 1
 
-  user_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/person.csv'), dialect='excel')
+  user_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/person.csv'), dialect='excel')
   for row in user_file:
     username = row["user"]
 
@@ -301,7 +310,7 @@ def migrate():
   locality_id = locality_table.values()[-1] + 1
   field_id = field_table.values()[-1] + 1
 
-  experiment_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/experiments.csv'), dialect='excel')
+  experiment_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/experiments.csv'), dialect='excel')
   for row in experiment_file:
     experiment_name = row['name']
     experiment_field_locality_city = row['city']
@@ -415,7 +424,7 @@ def migrate():
   count_source_seed_not_in_seed = 1
   count_no_source_seed = 1
 
-  row_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_row_table_t1.1.csv'), dialect='excel')
+  row_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/nelson_lab_row_table_t1.1.csv'), dialect='excel')
   for row in row_file:
     row_row_id = row['row_id']
     row_row_name = row['row_name']
@@ -552,6 +561,7 @@ def migrate():
         else:
           stock_hash_table[(stock_row_hash)] = stock_id
           stock_table[(stock_id, passport_hash_table[(passport_row_hash)], legacy_seed_table[(row_seed_id_hash)][0], legacy_seed_table[(row_seed_id_hash)][6], legacy_seed_table[(row_seed_id_hash)][7], legacy_seed_table[(row_seed_id_hash)][11], 'Legacy Inventoried', legacy_seedinv_table[(row_seed_id_hash)][3], seed_comments)] = stock_id
+          stock_seed_id_table[(legacy_seed_table[(row_seed_id_hash)][0])] = (stock_id)
           print("Stock_id: %d" % (stock_id))
           stock_id = stock_id + 1
 
@@ -595,6 +605,7 @@ def migrate():
         else:
           stock_hash_table[(stock_row_hash)] = stock_id
           stock_table[(stock_id, passport_hash_table[(passport_row_hash)], legacy_seed_table[(row_seed_id_hash)][0], legacy_seed_table[(row_seed_id_hash)][6], legacy_seed_table[(row_seed_id_hash)][7], legacy_seed_table[(row_seed_id_hash)][11], 'Not Inventoried', 'Not Inventoried', seed_comments)] = stock_id
+          stock_seed_id_table[(legacy_seed_table[(row_seed_id_hash)][0])] = (stock_id)
           print("Stock_id: %d" % (stock_id))
           stock_id = stock_id + 1
 
@@ -660,7 +671,7 @@ def migrate():
   isolate_table_id = 1
   disease_info_id = 1
 
-  isolate_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_isolate_table.csv'), dialect='excel')
+  isolate_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/nelson_lab_isolate_table.csv'), dialect='excel')
   for row in isolate_file:
     isolate_id = row['isolate_id']
     isolate_name = row['isolate_name']
@@ -804,7 +815,7 @@ def migrate():
   measurement_id = 1
   measurement_not_in_row_count = 1
 
-  phenotype_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/mine_project/mine_data/nelson_lab_phenotype_row_table.csv'), dialect='excel')
+  phenotype_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/nelson_lab_phenotype_row_table.csv'), dialect='excel')
   for row in phenotype_file:
     phenotype_row_id = row['entity_id']
     phenotype_experiment_name = row['experiment_id']
@@ -897,68 +908,303 @@ def migrate():
       phenotype_row_not_in_row[(measurement_not_in_row_count)] = (phenotype_row_id, phenotype_experiment_name, phenotype_trait_id, phenotype_value, phenotype_date, phenotype_plate_id, phenotype_person_id, phenotype_scoring_order, phenotype_notes, phenotype_changed, phenotype_technical_rep, phenotype_biological_rep, phenotype_trait_id_buckler)
 
 #------------------------------------------------------------------------
+#--- Check which seed_ids are in legacy_seed but not in stock_table ----
+#------------------------------------------------------------------------
+  legacy_seed_not_in_stock_count = 1
+
+  legacy_seed_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_seed_table.csv'), dialect='excel')
+  for row in legacy_seed_file:
+    legacy_seed_id = row["seed_id"]
+    legacy_plant_id_origin = row["plant_id_origin"]
+    legacy_row_id_origin = row["row_id_origin"]
+    legacy_experiment_id_origin = row["experiment_id_origin_id"]
+    legacy_plant_name = row["plant_name"]
+    legacy_row_name = row["row_name"]
+    legacy_seed_name = row["seed_name"]
+    legacy_cross_type = row["cross_type"]
+    legacy_male_parent_id = row["male_parent_id"]
+    legacy_male_parent_name = row["male_parent_name"]
+    legacy_program_origin = row["program_origin"]
+    legacy_seed_pedigree = row["seed_pedigree"]
+    legacy_line_num = row["line_num"]
+    legacy_seed_person_id = row["seed_person_id"]
+    legacy_seed_disease_info = row["disease_info"]
+    legacy_seed_notes = row["notes"]
+    legacy_seed_accession = row["accession"]
+    legacy_seed_lot = row["lot"]
+
+    if (legacy_seed_id) in stock_table:
+      pass
+    else:
+      #---Complete comment---
+      if legacy_seed_notes != 'NULL' and legacy_seed_notes != '' and legacy_seed_lot != 'NULL' and legacy_seed_lot != '' and legacy_seed_accession != 'NULL' and legacy_seed_accession != '':
+        seed_comments = 'Notes: %s || Lot: %s || Accession: %s' % (legacy_seed_notes, legacy_seed_lot, legacy_seed_accession)
+      #---No accession---
+      elif legacy_seed_notes != 'NULL' and legacy_seed_notes != '' and legacy_seed_lot != 'NULL' and legacy_seed_lot != '':
+        seed_comments = 'Notes: %s || Lot: %s' % (legacy_seed_notes, legacy_seed_lot)
+      #---No lot---
+      elif legacy_seed_notes != 'NULL' and legacy_seed_notes != '' and legacy_seed_accession != 'NULL' and legacy_seed_accession != '':
+        seed_comments = 'Notes: %s || Accession: %s' % (legacy_seed_notes, legacy_seed_accession)
+      #---No notes---
+      elif legacy_seed_lot != 'NULL' and legacy_seed_lot != '' and legacy_seed_accession != 'NULL' and legacy_seed_accession != '':
+        seed_comments = 'Lot: %s || Accession: %s' % (legacy_seed_lot, legacy_seed_accession)
+      #---No lot, accession---
+      elif legacy_seed_notes != 'NULL' and legacy_seed_notes != '':
+        seed_comments = 'Notes: %s' % (legacy_seed_notes)
+      #---No notes, lot---
+      elif legacy_seed_accession != 'NULL' and legacy_seed_accession != '':
+        seed_comments = 'Accession: %s' % (legacy_seed_accession)
+      #---No notes, accession---
+      elif legacy_seed_lot != 'NULL' and legacy_seed_lot != '':
+        seed_comments = 'Lot: %s' % (legacy_seed_lot)
+      else:
+        seed_comments = 'No Comments'
+
+      legacy_seed_not_in_stock[(legacy_seed_not_in_stock_count)] = (legacy_seed_id, legacy_plant_id_origin, legacy_row_id_origin, legacy_experiment_id_origin, legacy_plant_name, legacy_row_name, legacy_seed_name, legacy_cross_type, legacy_male_parent_id, legacy_male_parent_name, legacy_program_origin, legacy_seed_pedigree, legacy_line_num, legacy_seed_person_id, legacy_seed_disease_info, legacy_seed_notes, legacy_seed_accession, legacy_seed_lot)
+      legacy_seed_not_in_stock_count = legacy_seed_not_in_stock_count + 1
+
+      #-------------If an obs_row entry is found for row_id ---------------------
+      if (legacy_row_id_origin) in obs_row_intermed_table:
+
+        legacy_seed_collecting_hash = hash((obs_row_intermed_table[(legacy_row_id_origin)][1], legacy_people_table[(legacy_seed_person_id)][1], legacy_experiment_table[(legacy_experiment_id_origin)][1], legacy_experiment_table[(legacy_experiment_id_origin)][9], 'Field Harvest', 'No Comments'))
+        if (legacy_seed_collecting_hash) in collecting_hash_table:
+          pass
+        else:
+          collecting_hash_table[(legacy_seed_collecting_hash)] = collecting_id
+          collecting_table[(collecting_id, obs_row_intermed_table[(legacy_row_id_origin)][1], legacy_people_table[(legacy_seed_person_id)][1], legacy_experiment_table[(legacy_experiment_id_origin)][1], legacy_experiment_table[(legacy_experiment_id_origin)][9], 'Field Harvest', 'No Comments')] = collecting_id
+          collecting_id = collecting_id + 1
+
+        taxonomy_hash = hash(('No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy'))
+        legacy_seed_people_hash = hash((legacy_program_origin))
+        if (legacy_seed_people_hash) in people_hash_table:
+          pass
+        else:
+          people_hash_table[(legacy_seed_people_hash)] = people_id
+          people_table[(people_id, legacy_program_origin)] = people_id
+          people_id = people_id + 1
+
+        legacy_seed_passport_hash = hash((collecting_hash_table[(legacy_seed_collecting_hash)], people_hash_table[(legacy_seed_people_hash)], taxonomy_hash_table[(taxonomy_hash)]))
+        if (legacy_seed_passport_hash) in passport_hash_table:
+          pass
+        else:
+          passport_hash_table[(legacy_seed_passport_hash)] = passport_id
+          passport_table[(passport_id, collecting_hash_table[(legacy_seed_collecting_hash)], people_hash_table[(legacy_seed_people_hash)], taxonomy_hash_table[(taxonomy_hash)])] = passport_id
+          passport_id = passport_id + 1
+
+        #------------ If in seedinv --------------------
+        if (hash((legacy_seed_id))) in legacy_seedinv_table:
+
+          legacy_seed_stock_hash = hash((passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Inventoried', legacy_seedinv_table[(hash((legacy_seed_id)))][3], seed_comments))
+          if (legacy_seed_stock_hash) in stock_hash_table:
+            pass
+          else:
+            stock_hash_table[(legacy_seed_stock_hash)] = stock_id
+            stock_table[(stock_id, passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Inventoried', legacy_seedinv_table[(hash((legacy_seed_id)))][3], seed_comments)] = stock_id
+            stock_id = stock_id + 1
+
+          legacy_seed_locality_hash = hash(('Ithaca', 'NY', 'USA', 'NULL'))
+          if (legacy_seed_locality_hash) in locality_hash_table:
+            pass
+          else:
+            locality_hash_table[(legacy_seed_locality_hash)] = locality_id
+            locality_table[(locality_id, 'Ithaca', 'NY', 'USA', 'NULL')] = locality_id
+            locality_id = locality_id + 1
+
+          legacy_seed_location_hash = hash((locality_hash_table[(legacy_seed_locality_hash)], legacy_seedinv_table[(hash((legacy_seed_id)))][6], 'Cold Storage', 'Unknown'))
+          if (legacy_seed_location_hash) in location_hash_table:
+            pass
+          else:
+            location_hash_table[(legacy_seed_location_hash)] = location_id
+            location_table[(location_id, locality_hash_table[(legacy_seed_locality_hash)], legacy_seedinv_table[(hash((legacy_seed_id)))][6], 'Cold Storage', 'Unknown')] = location_id
+            location_id = location_id + 1
+
+          legacy_seed_stock_packet_hash = hash((stock_hash_table[(legacy_seed_stock_hash)], location_hash_table[(legacy_seed_location_hash)], legacy_seedinv_table[(hash((legacy_seed_id)))][8], legacy_seedinv_table[(hash((legacy_seed_id)))][7]))
+          if (legacy_seed_stock_packet_hash) in stock_packet_hash_table:
+            pass
+          else:
+            stock_packet_hash_table[(legacy_seed_stock_packet_hash)] = stock_packet_id
+            stock_packet_table[(stock_packet_id, stock_hash_table[(legacy_seed_stock_hash)], location_hash_table[(legacy_seed_location_hash)], legacy_seedinv_table[(hash((legacy_seed_id)))][8], legacy_seedinv_table[(hash((legacy_seed_id)))][7])] = stock_packet_id
+            stock_packet_id = stock_packet_id + 1
+
+        #-------- Not in seedinv --------------
+        else:
+          legacy_seed_stock_hash = hash((passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Not Inventoried', 'Not Invetoried', seed_comments))
+          if (legacy_seed_stock_hash) in stock_hash_table:
+            pass
+          else:
+            stock_hash_table[(legacy_seed_stock_hash)] = stock_id
+            stock_table[(stock_id, passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Not Inventoried', 'Not Invetoried', seed_comments)] = stock_id
+            stock_id = stock_id + 1
+
+      #----------- No obs_row entry found for row_id -----------
+      else:
+        legacy_seed_collecting_hash = hash((1, legacy_people_table[(legacy_seed_person_id)][1], legacy_experiment_table[(legacy_experiment_id_origin)][1], legacy_experiment_table[(legacy_experiment_id_origin)][9], 'Field Harvest', 'No Comments'))
+        if (legacy_seed_collecting_hash) in collecting_hash_table:
+          pass
+        else:
+          collecting_hash_table[(legacy_seed_collecting_hash)] = collecting_id
+          collecting_table[(collecting_id, 1, legacy_people_table[(legacy_seed_person_id)][1], legacy_experiment_table[(legacy_experiment_id_origin)][1], legacy_experiment_table[(legacy_experiment_id_origin)][9], 'Field Harvest', 'No Comments')] = collecting_id
+          collecting_id = collecting_id + 1
+
+        taxonomy_hash = hash(('No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy'))
+        legacy_seed_people_hash = hash((legacy_program_origin))
+        if (legacy_seed_people_hash) in people_hash_table:
+          pass
+        else:
+          people_hash_table[(legacy_seed_people_hash)] = people_id
+          people_table[(people_id, legacy_program_origin)] = people_id
+          people_id = people_id + 1
+
+        legacy_seed_passport_hash = hash((collecting_hash_table[(legacy_seed_collecting_hash)], people_hash_table[(legacy_seed_people_hash)], taxonomy_hash_table[(taxonomy_hash)]))
+        if (legacy_seed_passport_hash) in passport_hash_table:
+          pass
+        else:
+          passport_hash_table[(legacy_seed_passport_hash)] = passport_id
+          passport_table[(passport_id, collecting_hash_table[(legacy_seed_collecting_hash)], people_hash_table[(legacy_seed_people_hash)], taxonomy_hash_table[(taxonomy_hash)])] = passport_id
+          passport_id = passport_id + 1
+
+        #------------ If in seedinv --------------------
+        if (hash((legacy_seed_id))) in legacy_seedinv_table:
+
+          legacy_seed_stock_hash = hash((passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Inventoried', legacy_seedinv_table[(hash((legacy_seed_id)))][3], seed_comments))
+          if (legacy_seed_stock_hash) in stock_hash_table:
+            pass
+          else:
+            stock_hash_table[(legacy_seed_stock_hash)] = stock_id
+            stock_table[(stock_id, passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Inventoried', legacy_seedinv_table[(hash((legacy_seed_id)))][3], seed_comments)] = stock_id
+            stock_id = stock_id + 1
+
+          legacy_seed_locality_hash = hash(('Ithaca', 'NY', 'USA', 'NULL'))
+          if (legacy_seed_locality_hash) in locality_hash_table:
+            pass
+          else:
+            locality_hash_table[(legacy_seed_locality_hash)] = locality_id
+            locality_table[(locality_id, 'Ithaca', 'NY', 'USA', 'NULL')] = locality_id
+            locality_id = locality_id + 1
+
+          legacy_seed_location_hash = hash((locality_hash_table[(legacy_seed_locality_hash)], legacy_seedinv_table[(hash((legacy_seed_id)))][6], 'Cold Storage', 'Unknown'))
+          if (legacy_seed_location_hash) in location_hash_table:
+            pass
+          else:
+            location_hash_table[(legacy_seed_location_hash)] = location_id
+            location_table[(location_id, locality_hash_table[(legacy_seed_locality_hash)], legacy_seedinv_table[(hash((legacy_seed_id)))][6], 'Cold Storage', 'Unknown')] = location_id
+            location_id = location_id + 1
+
+          legacy_seed_stock_packet_hash = hash((stock_hash_table[(legacy_seed_stock_hash)], location_hash_table[(legacy_seed_location_hash)], legacy_seedinv_table[(hash((legacy_seed_id)))][8], legacy_seedinv_table[(hash((legacy_seed_id)))][7]))
+          if (legacy_seed_stock_packet_hash) in stock_packet_hash_table:
+            pass
+          else:
+            stock_packet_hash_table[(legacy_seed_stock_packet_hash)] = stock_packet_id
+            stock_packet_table[(stock_packet_id, stock_hash_table[(legacy_seed_stock_hash)], location_hash_table[(legacy_seed_location_hash)], legacy_seedinv_table[(hash((legacy_seed_id)))][8], legacy_seedinv_table[(hash((legacy_seed_id)))][7])] = stock_packet_id
+            stock_packet_id = stock_packet_id + 1
+
+        #-------- Not in seedinv --------------
+        else:
+          legacy_seed_stock_hash = hash((passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Not Inventoried', 'Not Invetoried', seed_comments))
+          if (legacy_seed_stock_hash) in stock_hash_table:
+            pass
+          else:
+            stock_hash_table[(legacy_seed_stock_hash)] = stock_id
+            stock_table[(stock_id, passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Not Inventoried', 'Not Invetoried', seed_comments)] = stock_id
+            stock_id = stock_id + 1
+
+
+
+
+#------------------------------------------------------------------------
+#--- Check which seed_ids are in legacy_seedinv but not in stock_table ----
+#------------------------------------------------------------------------
+  legacy_seedinv_not_in_stock_count = 1
+
+  legacy_seedinv_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_seedinv_table.csv'), dialect='excel')
+  for row in legacy_seedinv_file:
+    legacy_seedinv_id = row["ID"]
+    legacy_seedinv_seed_id = row["seed_id"]
+    legacy_seedinv_seed_name = row["seed_name"]
+    legacy_seedinv_date = row["inventory_date"]
+    legacy_seedinv_person = row["inventory_person"]
+    legacy_seedinv_person_id = row["seed_person_id"]
+    legacy_seedinv_location = row["location"]
+    legacy_seedinv_notes = row["notes"]
+    legacy_seedinv_weight = row["weight_g"]
+
+    if (legacy_seedinv_seed_id) in stock_seed_id_table:
+      pass
+    else:
+      legacy_seedinv_not_in_stock[(legacy_seedinv_not_in_stock_count)] = (legacy_seedinv_seed_id, legacy_seedinv_seed_name, legacy_seedinv_date, legacy_seedinv_person, legacy_seedinv_person_id, legacy_seedinv_location, legacy_seedinv_notes, legacy_seedinv_weight)
+      legacy_seedinv_not_in_stock_count = legacy_seedinv_not_in_stock_count + 1
+
+
+#------------------------------------------------------------------------
 #-The output dictionaries are written to csv files.
 #------------------------------------------------------------------------
 
-  writer = csv.writer(open('csv_from_script/locality.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/locality.csv', 'wb'))
   for key in locality_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('csv_from_script/field.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/field.csv', 'wb'))
   for key in field_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('csv_from_script/experiment.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/experiment.csv', 'wb'))
   for key in experiment_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('csv_from_script/obs_selector.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/obs_selector.csv', 'wb'))
   for key in obs_selector_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('csv_from_script/taxonomy.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/taxonomy.csv', 'wb'))
   for key in taxonomy_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('csv_from_script/people.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/people.csv', 'wb'))
   for key in people_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('csv_from_script/collecting.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/collecting.csv', 'wb'))
   for key in collecting_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('csv_from_script/passport.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/passport.csv', 'wb'))
   for key in passport_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('csv_from_script/stock.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/stock.csv', 'wb'))
   for key in stock_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('csv_from_script/stock_packet.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/stock_packet.csv', 'wb'))
   for key in stock_packet_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('csv_from_script/obs_row.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/obs_row.csv', 'wb'))
   for key in obs_row_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('csv_from_script/obs_plant.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/obs_plant.csv', 'wb'))
   for key in obs_plant_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('csv_from_script/location.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/location.csv', 'wb'))
   for key in location_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('csv_from_script/isolate.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/isolate.csv', 'wb'))
   for key in isolate_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('csv_from_script/disease_info.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/disease_info.csv', 'wb'))
   for key in disease_info_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('csv_from_script/measurement_parameter.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/measurement_parameter.csv', 'wb'))
   for key in measurement_param_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('csv_from_script/row_source_seed_not_in_seed.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/row_source_seed_not_in_seed.csv', 'wb'))
+
   for key, value in row_source_seed_not_in_seed.items():
     writer.writerow([value])
-  writer = csv.writer(open('csv_from_script/row_no_source_seed.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/checks/row_no_source_seed.csv', 'wb'))
   for key, value in row_no_source_seed.items():
     writer.writerow([value])
-  writer = csv.writer(open('csv_from_script/stock_not_inventoried.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/checks/stock_not_inventoried.csv', 'wb'))
   for key, value in stock_not_inventoried.items():
     writer.writerow([value])
-  writer = csv.writer(open('csv_from_script/phenotype_row_not_in_row.csv', 'wb'))
+  writer = csv.writer(open('data/csv_from_script/checks/phenotype_row_not_in_row.csv', 'wb'))
   for key, value in phenotype_row_not_in_row.items():
+    writer.writerow([value])
+  writer = csv.writer(open('data/csv_from_script/checks/legacy_seed_not_in_stock.csv', 'wb'))
+  for key, value in legacy_seed_not_in_stock.items():
+    writer.writerow([value])
+  writer = csv.writer(open('data/csv_from_script/checks/legacy_seedinv_not_in_stock.csv', 'wb'))
+  for key, value in legacy_seedinv_not_in_stock.items():
     writer.writerow([value])
 
   print('Done')
