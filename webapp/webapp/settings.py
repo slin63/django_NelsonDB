@@ -16,8 +16,15 @@ PROJECT_PATH = os.path.abspath(PROJECT_PATH)
 
 DATABASE_PATH = os.path.join(PROJECT_PATH, 'mine.db')
 TEMPLATE_PATH = os.path.join(PROJECT_PATH, 'templates')
+
+#In prod comments out STATIC_PATH
 STATIC_PATH = os.path.join(PROJECT_PATH,'static')
+
 MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
+
+#-------------------PROD SETTINGS ------------------
+# STATIC_ROOT = os.path.join(PROJECT_PATH,'static')
+#--------------------------------------------------
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
@@ -116,14 +123,25 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
+# In prod comment out this------------
 TEMPLATE_DIRS = (
 	TEMPLATE_PATH,
 )
 
+#--------------PROD SETTINGS ---------------------------
+# STATICFILES_DIRS = (
+# )
+#--------------------------------------------------------
+
+#--Comment out in prod------------
 STATICFILES_DIRS = (
-	STATIC_PATH,
+  STATIC_PATH,
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 1209600
+
+#---------------PROD SETTINGS ---------------
+# CSRF_COOKIE_SECURE = TRUE
+# SESSION_COOKIE_SECURE = TRUE
