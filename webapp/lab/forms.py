@@ -1,6 +1,6 @@
 from django import forms
 
-from lab.models import UserProfile
+from lab.models import UserProfile, Experiment, Field
 from django.contrib.auth.models import User
 from django.core.validators import EmailValidator
 
@@ -57,3 +57,11 @@ class EditUserProfileForm(forms.ModelForm):
 	class Meta:
 		model = UserProfile
 		fields = ['phone', 'organization', 'job_title', 'notes', 'website', 'picture']
+
+class NewExperimentForm(forms.Form):
+	user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Username ---", help_text="Select the primary user:")
+	field = forms.ModelChoiceField(queryset=Field.objects.all(), empty_label="--- Field Name ---", help_text="Select a field or select 'No Field':")
+	name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Experiment Name'}), help_text="Assign an experiment name (e.g. 15XY):")
+	start_date = forms.DateField(widget=forms.DateInput(attrs={'placeholder':'Start Date'}), help_text="Give a start date:")
+	purpose = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Purpose'}), help_text="Description of purpose:")
+	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments', 'rows': '5', 'cols': '20'}), help_text="Any additional comments:")

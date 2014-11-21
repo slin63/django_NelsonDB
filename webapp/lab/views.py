@@ -3,13 +3,14 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsSelector, Isolate, DiseaseInfo
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm
+from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from itertools import chain
+from django.forms.models import inlineformset_factory
 
 """Used to handle data from URL, to ensure blank spaces don't mess things up"""
 def encode_url(str):
@@ -594,3 +595,44 @@ def field_info(request, field_id):
 	context_dict['field_info'] = field_info
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/field.html', context_dict, context)
+
+def new_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	if request.method == 'POST':
+		new_experiment_form = NewExperimentForm(data=request.POST)
+		if new_experiment_form.is_valid():
+			new_experiment_name = new_experiment_form.cleaned_data['name']
+			try:
+				name_check = Experiment.objects.get(name=new_experiment_name)
+				name_check_fail = True
+				experiment_added = False
+			except (Experiment.DoesNotExist, IndexError):
+				name_check_fail = False
+				new_experiment_user = new_experiment_form.cleaned_data['user']
+				new_experiment_field = new_experiment_form.cleaned_data['field']
+				new_experiment_start_date = new_experiment_form.cleaned_data['start_date']
+				new_experiment_purpose = new_experiment_form.cleaned_data['purpose']
+				new_experiment_comments = new_experiment_form.cleaned_data['comments']
+				experiment = Experiment.objects.create(user=new_experiment_user, field=new_experiment_field, name=new_experiment_name,  start_date=new_experiment_start_date, purpose=new_experiment_purpose, comments=new_experiment_comments)
+				experiment_added = True
+		else:
+			print(new_experiment_form.errors)
+			name_check_fail = False
+			experiment_added = False
+	else:
+		new_experiment_form = NewExperimentForm()
+		name_check_fail = False
+		experiment_added = False
+	context_dict['new_experiment_form'] = new_experiment_form
+	context_dict['name_check_fail'] = name_check_fail
+	context_dict['experiment_added'] = experiment_added
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/new_experiment.html', context_dict, context)
+
+def log_data_select_obs(request):
+	context = RequestContext(request)
+	context_dict = {}
+
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/new_experiment.html', context_dict, context)

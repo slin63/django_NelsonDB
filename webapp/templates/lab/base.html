@@ -38,9 +38,10 @@
 					   </ul>
 					   <ul class="nav">
 						  {% if user.is_authenticated %}
-							{% if logged_in_user %}
-							<li><a href="">Submit Content</a></li>
-						  {% endif %}
+								{% if logged_in_user %}
+									<li><a href="/lab/new_experiment/">New Experiment</a></li>
+									<li><a href="/lab/log_data/select_obs/">Log Data</a></li>
+						  	{% endif %}
 						  {% endif %}
 					   </ul>
 				   </div>
