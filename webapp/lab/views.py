@@ -630,9 +630,19 @@ def new_experiment(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/new_experiment.html', context_dict, context)
 
+@login_required
 def log_data_select_obs(request):
 	context = RequestContext(request)
 	context_dict = {}
 
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/new_experiment.html', context_dict, context)
+	return render_to_response('lab/log_data.html', context_dict, context)
+
+@login_required
+def serve_data_template_file(request, filename):
+	path = 'media/%s.xlsx' % (filename)
+	with open(path, "rb") as excel:
+		data = excel.read()
+		response = HttpResponse(data,content_type='application/vnd.ms-excel')
+		response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
+		return response

@@ -164,6 +164,19 @@ class ObsPlant(models.Model):
   def __unicode__(self):
     return self.plant_id
 
+class ObsSample(models.Model):
+	obs_selector = models.ForeignKey(ObsSelector)
+	obs_row = models.ForeignKey(ObsRow)
+	obs_plant = models.ForeignKey(ObsPlant)
+	sample_id = models.CharField(max_length=200)
+	sample_type = models.CharField(max_length=200)
+	weight = models.CharField(max_length=200)
+	kernel_num = models.CharField(max_length=200)
+	comments = models.CharField(max_length=1000)
+
+	def __unicode__(self):
+		return self.sample_id
+
 class Location(models.Model):
   locality = models.ForeignKey(Locality)
   building_name = models.CharField(max_length=200)
