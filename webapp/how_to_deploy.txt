@@ -1,33 +1,32 @@
-setup webapp/virtualenv:
--use python2.7 and django1.6
-	$ source virtualenvwrapper.sh
-	$ mkvirtualenv name
--pip install apps
--configure wsgi
-	
-clone repo:
+------------------------------------
+--- How To Deploy
+------------------------------------
 
-git clone -b my-branch git@github.com:user/myproject.git
 
-clone database:
+---------------------------------------------------------------------------
+--- Setting Up Apache
+---------------------------------------------------------------------------
 
-Assuming that you have phpMyAdmin as I had. To backup your MySQL database using PHPMyAdmin just follow a couple of steps:
 
-Open phpMyAdmin.
-Select your database by clicking the database name in the list on the left of the screen.
-Click the Export link. This should bring up a new screen that says View dump of database (or something similar).
-In the Export area, click the Select All link to choose all of the tables in your database.
-In the SQL options area, click the right options.
-Click on the Save as file option and the corresponding compression option and then click the 'Go' button. A dialog box should appear prompting you to save the file locally
-Use the .sql extension
-Upload the database backup to your files using the Files tab on the dashboard
-Open a database console in the Databases tab on the console and type:
+---------------------------------------------------------------------------
+--- File Structure
+---------------------------------------------------------------------------
 
-use yourusername$yourdatabasename;
-source yourbackupname.sql;
-Then to view your newly imported tables
 
-show tables;
-* Then execute sql as normal
+---------------------------------------------------------------------------
+--- Preparing Django
+---------------------------------------------------------------------------
 
-select * from yourtablename;
+
+---------------------------------------------------------------------------
+--- Mod_wsgi and Apache Conf
+---------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------
+--- Moving Webapp Project and Data onto VM
+---------------------------------------------------------------------------
+1. Copy webapp project onto VM in the directory /srv/nelsondb/app/
+2. Change settings.py to production settings
+3. Run user_loader.py
+4. Use data_loader.sql to load legacy and lab data
