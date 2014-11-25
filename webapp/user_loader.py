@@ -17,6 +17,17 @@ def csv_import_people():
       title = row["title"]
       notes_file = row["notes"]
       web = row["web"]
+      staff = row["staff"]
+      active = row["active"]
+
+      if staff == '1':
+        staff = True
+      else:
+        staff = False
+      if active == '1':
+        active = True
+      else:
+        active = False
 
       #--- Complete Comment ---
       if location != 'NULL' and location != '' and notes_file != 'NULL' and notes_file != '':
@@ -30,12 +41,12 @@ def csv_import_people():
       else:
         notes = 'No Notes'
 
-      add_user(user, email, first_name, last_name)
+      add_user(user, email, first_name, last_name, staff, active)
       add_userpass(user)
       add_userp(user, phone, location, 'profile_images/underwater.jpg', title, web, notes)
 
-def add_user(username, email, fname, lname):
-  u = User.objects.get_or_create(username=username, email=email, first_name=fname, last_name=lname)[0]
+def add_user(username, email, fname, lname, staff, active):
+  u = User.objects.get_or_create(username=username, email=email, first_name=fname, last_name=lname, is_staff=staff, is_active=active)[0]
   print(u)
 
 def add_userpass(user):

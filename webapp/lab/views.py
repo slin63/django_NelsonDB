@@ -49,10 +49,45 @@ def index(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/index.html', context_dict, context)
 
-def about_people(request):
+def about_people(request, people_selection):
 	context = RequestContext(request)
 	context_dict = {}
-	context_dict['users'] = zip(User.objects.all(), UserProfile.objects.all())
+	if people_selection == 'all':
+		people_all_button = True
+		people_staff_button = None
+		people_active_button = None
+		users = User.objects.all().exclude(username='NULL').exclude(username='unknown_person').exclude(username='unknown')
+		for user in users:
+			user_profile = UserProfile.objects.get(user=user)
+			user.job_title = user_profile.job_title
+			user.picture = user_profile.picture
+	elif people_selection == 'staff':
+		people_all_button = None
+		people_staff_button = True
+		people_active_button = None
+		users = User.objects.filter(is_staff='1').exclude(username='NULL').exclude(username='unknown_person').exclude(username='unknown')
+		for user in users:
+			user_profile = UserProfile.objects.get(user=user)
+			user.job_title = user_profile.job_title
+			user.picture = user_profile.picture
+	elif people_selection == 'active':
+		people_all_button = None
+		people_staff_button = None
+		people_active_button = True
+		users = User.objects.filter(is_active='1').exclude(username='NULL').exclude(username='unknown_person').exclude(username='unknown')
+		for user in users:
+			user_profile = UserProfile.objects.get(user=user)
+			user.job_title = user_profile.job_title
+			user.picture = user_profile.picture
+	else:
+		people_all_button = None
+		people_staff_button = None
+		people_active_button = None
+		users = None
+	context_dict['people_all_button'] = people_all_button
+	context_dict['people_staff_button'] = people_staff_button
+	context_dict['people_active_button'] = people_active_button
+	context_dict['users'] = users
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/people.html', context_dict, context)
 
@@ -71,6 +106,8 @@ def about_goals(request):
 def about_collaborators(request):
 	context = RequestContext(request)
 	context_dict = {}
+	collaborators = People.objects.all()
+	context_dict['collaborators'] = collaborators
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/collaborators.html', context_dict, context)
 

@@ -36,7 +36,7 @@ load data local infile 'C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/d
 into table lab_people fields terminated by ','
 enclosed by '"'
 lines terminated by '\n'
-(id, first_name, last_name, organization, phone, email, comments);
+(id, organization);
 
 load data local infile 'C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/csv_from_script/obs_selector.csv' 
 into table lab_obsselector fields terminated by ','

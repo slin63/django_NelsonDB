@@ -123,7 +123,6 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
-# In prod comment out this------------
 TEMPLATE_DIRS = (
 	TEMPLATE_PATH,
 )
