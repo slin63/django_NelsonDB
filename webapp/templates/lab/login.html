@@ -6,7 +6,7 @@
 
     <div class="container-fluid">
     <form class="form-signin span9" id="login_form" method="post" action="/lab/login/">
-        <h2 class="form-signin-heading">Please sign in</h2><br/>
+        <h2 class="form-signin-heading">Please sign in or <a href="/lab/register/">Register</a>:</h2><br/>
         {% csrf_token %}
 
         {% if bad_details %}

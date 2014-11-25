@@ -1187,8 +1187,8 @@ def migrate():
   writer = csv.writer(open('data/csv_from_script/measurement_parameter.csv', 'wb'))
   for key in measurement_param_table.iterkeys():
     writer.writerow(key)
-  writer = csv.writer(open('data/csv_from_script/row_source_seed_not_in_seed.csv', 'wb'))
 
+  writer = csv.writer(open('data/csv_from_script/checks/row_source_seed_not_in_seed.csv', 'wb'))
   for key, value in row_source_seed_not_in_seed.items():
     writer.writerow([value])
   writer = csv.writer(open('data/csv_from_script/checks/row_no_source_seed.csv', 'wb'))
