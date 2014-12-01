@@ -151,8 +151,8 @@
 151,Agrobacterium tumefaciens,Unknown,Unknown,Isolate,NULL,strain AGL1,NULL
 152,Aspergillus parasiticus,Unknown,Unknown,Isolate,NULL,NULL,NULL
 153,Cochliobolus carbonum,Unknown,Unknown,Isolate,Bipolaris zeicola (Helminthosporium carbonum),NULL,NULL
-154,Cochliobolus heterostrophus,Unknown,Unknown,Isolate,Bipolaris maydis (Helminthosporium maydis),"""race O, tox-, MAT 1-1""",NULL
-155,Cochliobolus heterostrophus,Unknown,Unknown,Isolate,Bipolaris maydis (Helminthosporium maydis),"""race T, tox+, MAT 1-2""",NULL
+154,Cochliobolus heterostrophus,Unknown,Unknown,Isolate,Bipolaris maydis (Helminthosporium maydis),race O tox- MAT 1-1,NULL
+155,Cochliobolus heterostrophus,Unknown,Unknown,Isolate,Bipolaris maydis (Helminthosporium maydis),race T tox+ MAT 1-2,NULL
 156,Cercospora zeae-maydis,Unknown,Unknown,Isolate,Mycosphaerella/?,group I,NULL
 157,Cercospora zeae-maydis,Unknown,Unknown,Isolate,Mycosphaerella /?,group I,NULL
 158,Cercospora zeae-maydis,Unknown,Unknown,Isolate,Mycosphaerella /?,group II,NULL

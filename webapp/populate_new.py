@@ -137,6 +137,9 @@ def migrate():
   field_hash_table = OrderedDict({})
   #--- Key = (hash(locality_id, field_name))
   #--- Value = (field_id)
+  field_name_table = OrderedDict({})
+  #--- Key = (field_name)
+  #--- Value = (id)
   experiment_hash_table = OrderedDict({})
   #--- Key = (hash(user_id, field_id, name, start_date, purpose, comments))
   #--- Value = (experiment_id)
@@ -233,7 +236,7 @@ def migrate():
 
     legacy_plant_table[(legacy_plant_id)] = (legacy_plant_id, legacy_plant_row_id, legacy_plant_name, legacy_plant_notes)
 
-  legacy_seedinv_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_seedinv_table.csv'), dialect='excel')
+  legacy_seedinv_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/seedinv_clean.csv'), dialect='excel')
   for row in legacy_seedinv_file:
     legacy_seedinv_id = row["ID"]
     legacy_seedinv_seed_id = row["seed_id"]
@@ -300,6 +303,7 @@ def migrate():
   locality_hash_table[(locality_hash)] = 1
   field_hash = hash((1,'No Field'))
   field_hash_table[(field_hash)] = 1
+  field_name_table[('No Field')] = 1
   experiment_hash = hash((user_hash_table[(hash('unknown'))],1,'No Experiment','No Experiment','No Experiment','No Experiment'))
   experiment_hash_table[(experiment_hash)] = 1
 
@@ -389,6 +393,7 @@ def migrate():
       pass
     else:
       field_hash_table[(field_experiment_hash)] = field_id
+      field_name_table[(experiment_field_name)] = field_id
       field_table[(field_id, locality_hash_table[(locality_experiment_hash)], experiment_field_name)] = field_id
       print("Field_id: %d" % (field_id))
       field_id = field_id + 1
@@ -724,6 +729,7 @@ def migrate():
       pass
     else:
       field_hash_table[(field_isolate_hash)] = field_id
+      field_name_table[(isolate_field_name)] = field_id
       field_table[(field_id, locality_hash_table[(locality_isolate_hash)], isolate_field_name)] = field_id
       print("Field_id: %d" % (field_id))
       field_id = field_id + 1
@@ -966,12 +972,12 @@ def migrate():
       #-------------If an obs_row entry is found for row_id ---------------------
       if (legacy_row_id_origin) in obs_row_intermed_table:
 
-        legacy_seed_collecting_hash = hash((obs_row_intermed_table[(legacy_row_id_origin)][1], legacy_people_table[(legacy_seed_person_id)][1], legacy_experiment_table[(legacy_experiment_id_origin)][1], legacy_experiment_table[(legacy_experiment_id_origin)][9], 'Field Harvest', 'No Comments'))
+        legacy_seed_collecting_hash = hash((obs_row_intermed_table[(legacy_row_id_origin)][1], user_hash_table[(hash(legacy_people_table[(legacy_seed_person_id)][1]))], field_name_table[(legacy_experiment_table[(legacy_experiment_id_origin)][1])], legacy_experiment_table[(legacy_experiment_id_origin)][9], 'Field Harvest', 'No Comments'))
         if (legacy_seed_collecting_hash) in collecting_hash_table:
           pass
         else:
           collecting_hash_table[(legacy_seed_collecting_hash)] = collecting_id
-          collecting_table[(collecting_id, obs_row_intermed_table[(legacy_row_id_origin)][1], legacy_people_table[(legacy_seed_person_id)][1], legacy_experiment_table[(legacy_experiment_id_origin)][1], legacy_experiment_table[(legacy_experiment_id_origin)][9], 'Field Harvest', 'No Comments')] = collecting_id
+          collecting_table[(collecting_id, obs_row_intermed_table[(legacy_row_id_origin)][1], user_hash_table[(hash(legacy_people_table[(legacy_seed_person_id)][1]))], field_name_table[(legacy_experiment_table[(legacy_experiment_id_origin)][1])], legacy_experiment_table[(legacy_experiment_id_origin)][9], 'Field Harvest', 'No Comments')] = collecting_id
           collecting_id = collecting_id + 1
 
         taxonomy_hash = hash(('No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy'))
@@ -1038,12 +1044,12 @@ def migrate():
 
       #----------- No obs_row entry found for row_id -----------
       else:
-        legacy_seed_collecting_hash = hash((1, legacy_people_table[(legacy_seed_person_id)][1], legacy_experiment_table[(legacy_experiment_id_origin)][1], legacy_experiment_table[(legacy_experiment_id_origin)][9], 'Field Harvest', 'No Comments'))
+        legacy_seed_collecting_hash = hash((1, user_hash_table[(hash(legacy_people_table[(legacy_seed_person_id)][1]))], field_name_table[(legacy_experiment_table[(legacy_experiment_id_origin)][1])], legacy_experiment_table[(legacy_experiment_id_origin)][9], 'Field Harvest', 'No Comments'))
         if (legacy_seed_collecting_hash) in collecting_hash_table:
           pass
         else:
           collecting_hash_table[(legacy_seed_collecting_hash)] = collecting_id
-          collecting_table[(collecting_id, 1, legacy_people_table[(legacy_seed_person_id)][1], legacy_experiment_table[(legacy_experiment_id_origin)][1], legacy_experiment_table[(legacy_experiment_id_origin)][9], 'Field Harvest', 'No Comments')] = collecting_id
+          collecting_table[(collecting_id, 1, user_hash_table[(hash(legacy_people_table[(legacy_seed_person_id)][1]))], field_name_table[(legacy_experiment_table[(legacy_experiment_id_origin)][1])], legacy_experiment_table[(legacy_experiment_id_origin)][9], 'Field Harvest', 'No Comments')] = collecting_id
           collecting_id = collecting_id + 1
 
         taxonomy_hash = hash(('No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy'))
@@ -1116,7 +1122,7 @@ def migrate():
 #------------------------------------------------------------------------
   legacy_seedinv_not_in_stock_count = 1
 
-  legacy_seedinv_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_seedinv_table.csv'), dialect='excel')
+  legacy_seedinv_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/seedinv_clean.csv'), dialect='excel')
   for row in legacy_seedinv_file:
     legacy_seedinv_id = row["ID"]
     legacy_seedinv_seed_id = row["seed_id"]
@@ -1186,6 +1192,9 @@ def migrate():
     writer.writerow(key)
   writer = csv.writer(open('data/csv_from_script/measurement_parameter.csv', 'wb'))
   for key in measurement_param_table.iterkeys():
+    writer.writerow(key)
+  writer = csv.writer(open('data/csv_from_script/measurement.csv', 'wb'))
+  for key in measurement_table.iterkeys():
     writer.writerow(key)
 
   writer = csv.writer(open('data/csv_from_script/checks/row_source_seed_not_in_seed.csv', 'wb'))

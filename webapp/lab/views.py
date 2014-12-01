@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from itertools import chain
 from django.forms.models import inlineformset_factory
+from django.conf import settings
 
 """Used to handle data from URL, to ensure blank spaces don't mess things up"""
 def encode_url(str):
@@ -677,7 +678,7 @@ def log_data_select_obs(request):
 
 @login_required
 def serve_data_template_file(request, filename):
-	path = 'media/%s.xlsx' % (filename)
+	path = '%s/%s.xlsx' % (settings.MEDIA_ROOT,filename)
 	with open(path, "rb") as excel:
 		data = excel.read()
 		response = HttpResponse(data,content_type='application/vnd.ms-excel')

@@ -15,8 +15,8 @@
 15,32717,20,3,Cc0002i,BzNY002 (labelled: new isolate 1),NULL
 16,32717,20,3,Cc0003i,BzNY003 (labelled: new isolate 2),NULL
 17,32718,21,3,Cc0004i,BzNY004,NULL
-18,32719,22,4,Ch0001i,Ch001,"""one colony per plate, otherwise white mycelium coming out"""
-19,32720,22,4,Ch0002i,Ch002,"""one colony per plate, otherwise white mycelium coming out"""
+18,32719,22,4,Ch0001i,Ch001,One colony per plate; otherwise white mycelium coming out
+19,32720,22,4,Ch0002i,Ch002,One colony per plate; otherwise white mycelium coming out
 20,32721,23,5,Cz0001i,NULL,NULL
 21,32722,24,5,Cz0002i,NULL,NULL
 22,32723,25,5,Cz0003i,NULL,NULL
@@ -26,12 +26,12 @@
 26,32727,25,5,Cz0007i,NULL,NULL
 27,32728,23,5,Cz0008i,NULL,NULL
 28,32729,29,6,Gf0001i,NULL,Genera and species assigned based on morphological characters only
-29,32730,30,7,Gg0001i,Gg001,sporulation: Gary's lab suggested not to seal plates with parafilm. But contamination might happen without sealing. I sealed and still got enough sporulation (Chialin).
+29,32730,30,7,Gg0001i,Gg001,Sporulation: Gary's lab suggested not to seal plates with parafilm. But contamination might happen without sealing. I sealed and still got enough sporulation (Chialin).
 30,32731,29,6,Gz0001i,NULL,Genera and species assigned based on morphological characters only
 31,32732,29,8,Pe0001i,NULL,Genera and species assigned based on morphological characters only
-32,32733,31,9,Ps0001i,PaNY001,May NOT be P. stewartii - different color of the colony. Caused wilted plant
+32,32733,31,9,Ps0001i,PaNY001,May NOT be P. stewartii - different color of the colony. Caused wilted plant but no typical symptoms on leaves. (this strain might not be the right pathogen)
 33,32734,32,9,Ps0002i,PsNY002,NULL
-34,32734,32,9,Ps0003i,PsNY003,used on NILs
+34,32734,32,9,Ps0003i,PsNY003,Used on NILs
 35,32735,33,9,Ps0004i,Pa94-114,Path test by Dave Kalb; Chia-Lin Chung (30 Nov 2007)
 36,32736,34,10,St0001i,EtNY001,NULL
 37,32737,35,10,St0002i,EtNY002,NULL
@@ -45,29 +45,29 @@
 45,32744,41,10,St0010i,EtNY010,NULL
 46,32744,41,10,St0011i,EtNY011,NULL
 47,32745,42,10,St0012i,Et3A,NULL
-48,32746,42,10,St0013i,Et28A,"sequenced isolate, selected diverse isoloates for the QTL study"
+48,32746,42,10,St0013i,Et28A,Sequenced isolate Selected diverse isoloates for the QTL study
 49,32745,42,10,St0014i,Et45A,NULL
 50,32747,42,10,St0015i,Et46B,NULL
 51,32745,42,10,St0016i,Et52B,NULL
-52,32748,43,10,St0017i,Et63A,"""DO NOT use it. (When just isolated from infected leaf, Et63A grows much faster than Et86A, but it turns to be all white mycellium when grows from glycerol stock.)"""
+52,32748,43,10,St0017i,Et63A,DO NOT use it. (When just isolated from infected leaf Et63A grows much faster than Et86A but it turns to be all white mycellium when grows from glycerol stock.)
 53,32749,43,10,St0018i,Et86A,NULL
-54,32750,44,10,St0019i,Et10a,low growth rate (~1/3)
+54,32750,44,10,St0019i,Et10a,Low growth rate (~1/3)
 55,32750,42,10,St0020i,Et150A_22505,NULL
 56,32751,44,10,St0021i,Et100-1A_22505,A3 (extremely low growth rate); A4 (normal growth rate)
 57,32751,45,10,St0022i,Et174A_22505,NULL
 58,32752,45,10,St0023i,Et229A_21705,NULL
 59,32753,1,10,St0024i,Et127A_22505,NULL
 60,32750,1,10,St0025i,Et152A_21705,NULL
-61,32753,46,10,St0026i,St26A,selected diverse isoloates for the QTL study
-62,32753,46,10,St0027i,St32A,selected diverse isoloates for the QTL study
-63,32745,46,10,St0028i,St34A,selected diverse isoloates for the QTL study
-64,32753,46,10,St0029i,St37A,selected diverse isoloates for the QTL study
-65,32750,46,10,St0030i,St38B,selected diverse isoloates for the QTL study
-66,32750,46,10,St0031i,St39A,selected diverse isoloates for the QTL study
-67,32750,46,10,St0032i,St40A,selected diverse isoloates for the QTL study
-68,32753,46,10,St0033i,St54A,selected diverse isoloates for the QTL study
-69,32745,46,10,St0034i,St62A,selected diverse isoloates for the QTL study
-70,32745,46,10,St0035i,St63A,selected diverse isoloates for the QTL study
+61,32753,46,10,St0026i,St26A,Selected diverse isoloates for the QTL study
+62,32753,46,10,St0027i,St32A,Selected diverse isoloates for the QTL study
+63,32745,46,10,St0028i,St34A,Selected diverse isoloates for the QTL study
+64,32753,46,10,St0029i,St37A,Selected diverse isoloates for the QTL study
+65,32750,46,10,St0030i,St38B,Selected diverse isoloates for the QTL study
+66,32750,46,10,St0031i,St39A,Selected diverse isoloates for the QTL study
+67,32750,46,10,St0032i,St40A,Selected diverse isoloates for the QTL study
+68,32753,46,10,St0033i,St54A,Selected diverse isoloates for the QTL study
+69,32745,46,10,St0034i,St62A,Selected diverse isoloates for the QTL study
+70,32745,46,10,St0035i,St63A,Selected diverse isoloates for the QTL study
 71,32754,47,10,St1001x,St1001x,St1x = F1 from StNY001 x St52B
 72,32754,47,10,St1002x,St1002x,St1x = F1 from StNY001 x St52B
 73,32754,47,10,St1003x,St1003x,St1x = F1 from StNY001 x St52B
@@ -290,10 +290,10 @@
 290,32754,49,10,St1220x,St1220x,St1x = F1 from StNY001 x St52B
 291,32754,49,10,St1221x,St1221x,St1x = F1 from StNY001 x St52B
 292,32755,1,6,test,test,NULL
-293,32756,50,11,Um0001i,UmNY001,strange colony type
-294,32756,51,11,Um0002i,UmNY002,strange colony type
-295,32756,51,11,Um0003i,UmNY003,strange colony type
-296,32756,51,11,Um0004i,UmNY004,strange colony type
+293,32756,50,11,Um0001i,UmNY001,Strange colony type
+294,32756,51,11,Um0002i,UmNY002,Strange colony type
+295,32756,51,11,Um0003i,UmNY003,Strange colony type
+296,32756,51,11,Um0004i,UmNY004,Strange colony type
 297,32756,51,11,Um0005i,UmNY005,UmNY005 and UmNY006 are compatible.
 298,32756,51,11,Um0006i,UmNY006,UmNY005 and UmNY006 are compatible. UmNY006 amd UmNY007 are compatible.
 299,32756,50,11,Um0007i,UmNY007,UmNY006 and UmNY007 are compatible. UmNY006 and UmNY008 are partially compatible.
