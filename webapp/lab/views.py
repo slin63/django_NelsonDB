@@ -2,7 +2,7 @@
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsSelector, Isolate, DiseaseInfo
+from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsSelector, Isolate, DiseaseInfo, Measurement, MeasurementParameter
 from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -325,6 +325,8 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_isolate_disease'] = request.session.get('checkbox_isolate_disease')
 	if request.session.get('checkbox_isolate_taxonomy', None):
 		context_dict['checkbox_isolate_taxonomy'] = request.session.get('checkbox_isolate_taxonomy')
+	if request.session.get('checkbox_row_experiment', None):
+		context_dict['checkbox_row_experiment'] = request.session.get('checkbox_row_experiment')
 	return context_dict
 
 def seed_inventory(request):
@@ -448,7 +450,7 @@ def row_data_from_experiment(request, experiment_name):
 	context_dict['row_data'] = row_data
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/row.html', context_dict, context)
+	return render_to_response('lab/row_experiment_data.html', context_dict, context)
 
 def passport(request, passport_id):
 	context = RequestContext(request)
@@ -550,7 +552,7 @@ def suggest_isolate_disease(request):
 		if request.session.get('checkbox_isolate_taxonomy', None):
 			checkbox_isolate_taxonomy = request.session.get('checkbox_isolate_taxonomy')
 			for genus in checkbox_isolate_taxonomy:
-				disease = Isolate.objects.filter(disease_info__common_name=starts_with, passport__taxonomy__genus=genus).values('disease_info__common_name', 'passport__taxonomy__genus').distinct()[:1000]
+				disease = Isolate.objects.filter(disease_info__common_name__contains=starts_with, passport__taxonomy__genus=genus).values('disease_info__common_name', 'passport__taxonomy__genus').distinct()[:1000]
 				isolate_disease_list = list(chain(disease, isolate_disease_list))
 		else:
 			isolate_disease_list = DiseaseInfo.objects.filter(common_name__contains=starts_with)[:1000]
@@ -684,3 +686,116 @@ def serve_data_template_file(request, filename):
 		response = HttpResponse(data,content_type='application/vnd.ms-excel')
 		response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
 		return response
+
+def row_data_browse(request):
+	context = RequestContext(request)
+	context_dict = {}
+	row_data = sort_row_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['row_data'] = row_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/row_data.html', context_dict, context)
+
+def sort_row_data(request):
+	row_data = {}
+	if request.session.get('checkbox_row_experiment_id_list', None):
+		checkbox_row_experiment_id_list = request.session.get('checkbox_row_experiment_id_list')
+		for row_experiment in checkbox_row_experiment_id_list:
+			rows = ObsRow.objects.filter(obs_selector__experiment__id=row_experiment)
+			row_data = list(chain(rows, row_data))[:1000]
+	else:
+		row_data = ObsRow.objects.all()[:1000]
+	return row_data
+
+def suggest_row_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	pedigree_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with = request.GET['suggestion']
+	else:
+		starts_with = request.POST['suggestion']
+	if starts_with:
+		row_experiment_list = ObsRow.objects.filter(obs_selector__experiment__name__contains=starts_with).values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+	else:
+		row_experiment_list = ObsRow.objects.all().values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['row_experiment_list'] = row_experiment_list
+	return render_to_response('lab/row_experiment_list.html', context_dict, context)
+
+def select_row_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	row_data = []
+	checkbox_row_experiment_name_list = []
+	checkbox_row_experiment_list = request.POST.getlist('checkbox_row_experiment')
+	for row_experiment in checkbox_row_experiment_list:
+		rows = ObsRow.objects.filter(obs_selector__experiment__id=row_experiment)
+		row_data = list(chain(rows, row_data))
+	for experiment_id in checkbox_row_experiment_list:
+		experiment_name = Experiment.objects.filter(id=experiment_id).values('name')
+		checkbox_row_experiment_name_list = list(chain(experiment_name, checkbox_row_experiment_name_list))
+	request.session['checkbox_row_experiment'] = checkbox_row_experiment_name_list
+	request.session['checkbox_row_experiment_id_list'] = checkbox_row_experiment_list
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['row_data'] = row_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/row_data.html', context_dict, context)
+
+def checkbox_row_data_clear(request):
+	context = RequestContext(request)
+	context_dict = {}
+	del request.session['checkbox_row_experiment']
+	del request.session['checkbox_row_experiment_id_list']
+	row_data = sort_row_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['row_data'] = row_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/row_data.html', context_dict, context)
+
+def samples_data_browse(request):
+	context = RequestContext(request)
+	context_dict = {}
+
+	context_dict = checkbox_session_variable_check(request)
+
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/index.html', context_dict, context)
+
+def plant_data_browse(request):
+	context = RequestContext(request)
+	context_dict = {}
+
+	context_dict = checkbox_session_variable_check(request)
+
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/index.html', context_dict, context)
+
+def phenotype_data_browse(request):
+	context = RequestContext(request)
+	context_dict = {}
+
+	context_dict = checkbox_session_variable_check(request)
+
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/index.html', context_dict, context)
+
+def phenotype_data_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	context_dict = checkbox_session_variable_check(request)
+	phenotype_data = Measurement.objects.filter(obs_selector__experiment__name=experiment_name)
+	context_dict['phenotype_data'] = phenotype_data
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/phenotype_experiment_data.html', context_dict, context)
+
+def genotype_data_browse(request):
+	context = RequestContext(request)
+	context_dict = {}
+
+	context_dict = checkbox_session_variable_check(request)
+
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/index.html', context_dict, context)

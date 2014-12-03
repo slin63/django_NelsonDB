@@ -6,7 +6,7 @@ import csv
 #---------------------------------------------------
 
 def csv_import_people():
-    ifile = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/person.csv'), dialect='excel')
+    ifile = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/person.csv'), dialect='excel')
     for row in ifile:
       user = row["user"]
       email = row["email"]

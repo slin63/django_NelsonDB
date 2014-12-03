@@ -215,6 +215,7 @@ class StockPacket(models.Model):
 class MeasurementParameter(models.Model):
 	parameter = models.CharField(max_length=200)
 	parameter_type = models.CharField(max_length=200)
+	unit_of_measure = models.CharField(max_length=200, default='No Units')
 	protocol = models.CharField(max_length=1000)
 	trait_id_buckler = models.CharField(max_length=200)
 

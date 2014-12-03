@@ -65,6 +65,20 @@ $('#isolate_diseasesuggestion').keyup(function(){
 		});
 });
 
+$('#row_experimentsuggestion').keyup(function(){
+	var query;
+	query = $(this).val();
+	$.get('/lab/data/row/suggest_row_experiment/', {suggestion: query}, function(data){
+		$('#row_experiment').html(data);
+		$('#selected_row_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
 $('#legacypedigreesuggestion').keyup(function(){
 				var query;
 				query = $(this).val();

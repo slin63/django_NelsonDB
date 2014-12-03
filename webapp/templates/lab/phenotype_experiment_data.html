@@ -1,0 +1,54 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Row Data{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Phenotype Data</h1>
+</div>
+  <br />
+  <div class="container-fluid">
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      {% if experiment_name %}
+      <h2>Phenotype Data from <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h2><br/>
+      <form id="select_phenotype_from_experiment_form" method="post" action="/lab/">
+        {% csrf_token %}
+        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+          <tr>
+            <th>ObsSelectorID</th>
+            <th>User</th>
+            <th>Time</th>
+            <th>Parameter Type</th>
+            <th>Parameter</th>
+            <th>Value</th>
+            <th>Units</th>
+            <th>TraitID Buckler</th>
+            <th>Comments</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for data in phenotype_data %}
+          <tr>
+            <td><a href='/lab/obs_selector/{{data.obs_selector.id}}/'>{{data.obs_selector.id}}</a></td>
+            <td><a href='/lab/profile/{{data.user}}/'>{{data.user}}</a></td>
+            <td>{{data.time_of_measurement}}</td>
+            <td>{{data.measurement_parameter.parameter_type}}</td>
+            <td><a href='/lab/measurement_parameter/{{data.measurement_parameter.id}}/'>{{data.measurement_parameter.parameter}}</a></td>
+            <td>{{data.value}}</td>
+            <td>{{data.measurement_parameter.unit_of_measure}}</td>
+            <td>{{data.measurement_parameter.trait_id_buckler}}</td>
+            <td>{{data.comments}}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <br/>
+        <input class="btn btn-primary" type="submit" name="submit" value="Select Stocks"/>
+      </form>
+      {% endif %}
+
+    </div><br/><br/>
+  </div>
+
+
+{% endblock %}
