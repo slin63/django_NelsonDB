@@ -1,0 +1,24 @@
+{% extends "lab/base.html" %}
+
+{% block title %}Measurement Parameter{% endblock %}
+
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Measurement Parameter<h1>
+{% if parameter_info %}
+  <br/>
+  <h2>{{ parameter_info.parameter }}</h2>
+
+  <p>Type: {{parameter_info.parameter_type}}</p>
+  <p>Protocol: {{parameter_info.protocol}}</p>
+  <p>Units: {{parameter_info.unit_of_measure}}</p>
+  <p>TraitID Buckler: {{parameter_info.trait_id_buckler}}</p>
+
+
+{% else %}
+  <br/>
+  <h2>Parameter Does Not Exist</h2>
+{% endif %}
+</div>
+
+{% endblock %}

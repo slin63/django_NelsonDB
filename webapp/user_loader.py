@@ -5,8 +5,14 @@ import csv
 # Adds users to User and UserProfile models. Also sets password to 123123 for all users
 #---------------------------------------------------
 
+# /data/home/nm529/webapp/data/mine_data/person.csv
+
 def csv_import_people():
+    #---- Production Directory
+    #ifile = csv.DictReader(open('/data/home/nm529/webapp/data/mine_data/person.csv'), dialect='excel')
+
     ifile = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/person.csv'), dialect='excel')
+
     for row in ifile:
       user = row["user"]
       email = row["email"]

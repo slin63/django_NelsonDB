@@ -61,7 +61,7 @@ def migrate():
   #--- Key = (measurement_id, obs_selector_id, user_id, measurement_param_id, time_of_measurement, value, comments)
   #--- Value = (measurement_id)
   measurement_param_table = OrderedDict({})
-  #--- Key = (measurement_param_id, parameter, trait_id_buckler)
+  #--- Key = (measurement_param_id, parameter, parameter_type, unit, protocol, trait_id_buckler)
   #--- Value = (measurement_param_id)
 
   stock_not_inventoried = OrderedDict({})
@@ -166,10 +166,14 @@ def migrate():
   #--- Key = (hash(legacy_seedinv_seed_id))
   #--- Value = (legacy_seedinv_id, legacy_seedinv_seed_id, legacy_seedinv_seed_name, legacy_seedinv_date, legacy_seedinv_person, legacy_seedinv_person_id, legacy_seedinv_location, legacy_seedinv_notes, legacy_seedinv_weight)
 
+  measurement_parameter_info_table = OrderedDict({})
+  #--- Key = (trait_id)
+  #--- Value = (trait_id, trait, unit, description)
+
 #-------------------------------------------------------------------
 #- Load Legacy Data into dictionaries
 #-------------------------------------------------------------------
-  legacy_exp_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_experiment_table.csv'), dialect='excel')
+  legacy_exp_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_experiment_table.csv'), dialect='excel')
   for row in legacy_exp_file:
     legacy_exp_id = row["experiment_id"]
     legacy_exp_location = row["location"]
@@ -186,7 +190,7 @@ def migrate():
 
     legacy_experiment_table[(legacy_exp_id)] = (legacy_exp_id, legacy_exp_location, legacy_exp_planting_date, legacy_exp_tissue_collection, legacy_exp_inoculations, legacy_exp_inoculation_date1, legacy_exp_inoculation_date2, legacy_exp_inoculation_date3, legacy_exp_pathogen_isolate, legacy_exp_harvest_date, legacy_exp_description, legacy_exp_notes)
 
-  legacy_seed_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_seed_table.csv'), dialect='excel')
+  legacy_seed_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_seed_table.csv'), dialect='excel')
   for row in legacy_seed_file:
     legacy_seed_id = row["seed_id"]
     legacy_plant_id_origin = row["plant_id_origin"]
@@ -210,7 +214,7 @@ def migrate():
     seed_id_hash = hash(legacy_seed_id)
     legacy_seed_table[(seed_id_hash)] = (legacy_seed_id, legacy_plant_id_origin, legacy_row_id_origin, legacy_experiment_id_origin, legacy_plant_name, legacy_row_name, legacy_seed_name, legacy_cross_type, legacy_male_parent_id, legacy_male_parent_name, legacy_program_origin, legacy_seed_pedigree, legacy_line_num, legacy_seed_person_id, legacy_seed_disease_info, legacy_seed_notes, legacy_seed_accession, legacy_seed_lot)
 
-  legacy_people_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_people_table.csv'), dialect='excel')
+  legacy_people_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_people_table.csv'), dialect='excel')
   for row in legacy_people_file:
     legacy_person_id = row["person_id"]
     legacy_person_name = row["person_name"]
@@ -227,7 +231,7 @@ def migrate():
 
     legacy_people_table[(legacy_person_id)] = (legacy_person_id, legacy_person_name, legacy_first_name, legacy_last_name, legacy_title, legacy_address, legacy_phone, legacy_fax, legacy_email, legacy_URL, legacy_person_notes, legacy_peopleorg_id)
 
-  legacy_plant_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_plant_table.csv'), dialect='excel')
+  legacy_plant_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_plant_table.csv'), dialect='excel')
   for row in legacy_plant_file:
     legacy_plant_id = row["plant_id"]
     legacy_plant_row_id = row["row_id"]
@@ -236,7 +240,7 @@ def migrate():
 
     legacy_plant_table[(legacy_plant_id)] = (legacy_plant_id, legacy_plant_row_id, legacy_plant_name, legacy_plant_notes)
 
-  legacy_seedinv_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/seedinv_clean.csv'), dialect='excel')
+  legacy_seedinv_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/seedinv_clean.csv'), dialect='excel')
   for row in legacy_seedinv_file:
     legacy_seedinv_id = row["ID"]
     legacy_seedinv_seed_id = row["seed_id"]
@@ -258,7 +262,7 @@ def migrate():
 #-------------------------------------------------------------------
   user_id = 1
 
-  user_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/person.csv'), dialect='excel')
+  user_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/person.csv'), dialect='excel')
   for row in user_file:
     username = row["user"]
 
@@ -314,7 +318,7 @@ def migrate():
   locality_id = locality_table.values()[-1] + 1
   field_id = field_table.values()[-1] + 1
 
-  experiment_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/experiments.csv'), dialect='excel')
+  experiment_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/experiments.csv'), dialect='excel')
   for row in experiment_file:
     experiment_name = row['name']
     experiment_field_locality_city = row['city']
@@ -429,7 +433,7 @@ def migrate():
   count_source_seed_not_in_seed = 1
   count_no_source_seed = 1
 
-  row_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/nelson_lab_row_table_t1.1.csv'), dialect='excel')
+  row_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/nelson_lab_row_table_t1.1.csv'), dialect='excel')
   for row in row_file:
     row_row_id = row['row_id']
     row_row_name = row['row_name']
@@ -676,7 +680,7 @@ def migrate():
   isolate_table_id = 1
   disease_info_id = 1
 
-  isolate_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/nelson_lab_isolate_table.csv'), dialect='excel')
+  isolate_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/nelson_lab_isolate_table.csv'), dialect='excel')
   for row in isolate_file:
     isolate_id = row['isolate_id']
     isolate_name = row['isolate_name']
@@ -814,6 +818,20 @@ def migrate():
 
 
 #------------------------------------------------------------------------
+#--- Load measurement param info into memory----
+#------------------------------------------------------------------------
+
+    param_info_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/measurement_parameter_info.csv'), dialect='excel')
+    for row in param_info_file:
+      param_info_parameter = row['trait_id']
+      param_info_parameter_type = row['trait']
+      param_info_unit = row['unit']
+      param_info_protocol = row['description']
+
+      measurement_parameter_info_table[(param_info_parameter)] = (param_info_parameter, param_info_parameter_type, param_info_unit, param_info_protocol)
+
+
+#------------------------------------------------------------------------
 #- Import phenotype.csv for row data and save data to measurement amd measurementparameter dictionaries
 #------------------------------------------------------------------------
 
@@ -821,7 +839,7 @@ def migrate():
   measurement_id = 1
   measurement_not_in_row_count = 1
 
-  phenotype_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/nelson_lab_phenotype_row_table.csv'), dialect='excel')
+  phenotype_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/nelson_lab_phenotype_row_table.csv'), dialect='excel')
   for row in phenotype_file:
     phenotype_row_id = row['entity_id']
     phenotype_experiment_name = row['experiment_id']
@@ -892,14 +910,24 @@ def migrate():
     else:
       phenotype_user = 'unknown_person'
 
-    measurement_param_hash = hash((phenotype_trait_id, phenotype_trait_id_buckler))
-    if (measurement_param_hash) in measurement_param_hash_table:
-      pass
+    if (phenotype_trait_id) in measurement_parameter_info_table:
+        measurement_param_hash = hash((phenotype_trait_id, measurement_parameter_info_table[(phenotype_trait_id)][1], measurement_parameter_info_table[(phenotype_trait_id)][2], measurement_parameter_info_table[(phenotype_trait_id)][3], phenotype_trait_id_buckler))
+        if (measurement_param_hash) in measurement_param_hash_table:
+          pass
+        else:
+          measurement_param_hash_table[(measurement_param_hash)] = measurement_param_id
+          measurement_param_table[(measurement_param_id, phenotype_trait_id, measurement_parameter_info_table[(phenotype_trait_id)][1], measurement_parameter_info_table[(phenotype_trait_id)][2], measurement_parameter_info_table[(phenotype_trait_id)][3], phenotype_trait_id_buckler)] = measurement_param_id
+          print("Measurement_param: %d" % (measurement_param_id))
+          measurement_param_id = measurement_param_id + 1
     else:
-      measurement_param_hash_table[(measurement_param_hash)] = measurement_param_id
-      measurement_param_table[(measurement_param_id, phenotype_trait_id, phenotype_trait_id_buckler)] = measurement_param_id
-      print("Measurement_param: %d" % (measurement_param_id))
-      measurement_param_id = measurement_param_id + 1
+        measurement_param_hash = hash((phenotype_trait_id, 'Unknown', 'Unknown', 'Unknown', phenotype_trait_id_buckler))
+        if (measurement_param_hash) in measurement_param_hash_table:
+          pass
+        else:
+          measurement_param_hash_table[(measurement_param_hash)] = measurement_param_id
+          measurement_param_table[(measurement_param_id, phenotype_trait_id, 'Unknown', 'Unknown', 'Unknown', phenotype_trait_id_buckler)] = measurement_param_id
+          print("Measurement_param: %d" % (measurement_param_id))
+          measurement_param_id = measurement_param_id + 1
 
     if (phenotype_row_id) in obs_row_intermed_table:
       measurement_hash = hash((obs_row_intermed_table[(phenotype_row_id)][1], user_hash_table[(hash(phenotype_user))], measurement_param_hash_table[(measurement_param_hash)], phenotype_date, phenotype_value, phenotype_comments))
@@ -913,12 +941,13 @@ def migrate():
     else:
       phenotype_row_not_in_row[(measurement_not_in_row_count)] = (phenotype_row_id, phenotype_experiment_name, phenotype_trait_id, phenotype_value, phenotype_date, phenotype_plate_id, phenotype_person_id, phenotype_scoring_order, phenotype_notes, phenotype_changed, phenotype_technical_rep, phenotype_biological_rep, phenotype_trait_id_buckler)
 
+
 #------------------------------------------------------------------------
 #--- Check which seed_ids are in legacy_seed but not in stock_table ----
 #------------------------------------------------------------------------
   legacy_seed_not_in_stock_count = 1
 
-  legacy_seed_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_seed_table.csv'), dialect='excel')
+  legacy_seed_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_seed_table.csv'), dialect='excel')
   for row in legacy_seed_file:
     legacy_seed_id = row["seed_id"]
     legacy_plant_id_origin = row["plant_id_origin"]
@@ -1122,7 +1151,7 @@ def migrate():
 #------------------------------------------------------------------------
   legacy_seedinv_not_in_stock_count = 1
 
-  legacy_seedinv_file = csv.DictReader(open('C://Users/Nick/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/seedinv_clean.csv'), dialect='excel')
+  legacy_seedinv_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/seedinv_clean.csv'), dialect='excel')
   for row in legacy_seedinv_file:
     legacy_seedinv_id = row["ID"]
     legacy_seedinv_seed_id = row["seed_id"]

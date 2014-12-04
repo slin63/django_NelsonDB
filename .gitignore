@@ -46,3 +46,4 @@ mine_project/mine.db
 *.pyc
 *.pyc
 *.pyc
+webapp/data_dump.json

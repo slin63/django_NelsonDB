@@ -279,7 +279,7 @@ def experiment(request, experiment_name_url):
 		try:
 			experiment = Experiment.objects.get(name=experiment_name)
 			context_dict['experiment'] = experiment
-			u = User.objects.get(username=experiment.user)
+			u = User.objects.get(username=experiment.user.username)
 			context_dict['user'] = u
 		except Experiment.DoesNotExist:
 			pass
@@ -635,6 +635,17 @@ def field_info(request, field_id):
 	context_dict['field_info'] = field_info
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/field.html', context_dict, context)
+
+def measurement_parameter(request, parameter_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		parameter_info = MeasurementParameter.objects.get(id=parameter_id)
+	except MeasurementParameter.DoesNotExist:
+		parameter_info = None
+	context_dict['parameter_info'] = parameter_info
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/measurement_parameter.html', context_dict, context)
 
 def new_experiment(request):
 	context = RequestContext(request)

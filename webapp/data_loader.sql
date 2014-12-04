@@ -105,7 +105,7 @@ load data local infile 'C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webap
 into table lab_measurementparameter fields terminated by ','
 enclosed by '"'
 lines terminated by '\n'
-(id, parameter, trait_id_buckler);
+(id, parameter, parameter_type, unit_of_measure, protocol, trait_id_buckler);
 
 load data local infile 'C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/csv_from_script/measurement.csv' 
 into table lab_measurement fields terminated by ','
