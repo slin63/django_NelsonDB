@@ -33,7 +33,7 @@
         <hr>
         <h5>Selected Diseases</h5>
         {% for disease in checkbox_isolate_disease %}
-          <li>{{ disease }}</li>
+          <li>{{ disease.common_name }}</li>
         {% endfor %}
       {% endif %}
     </div><br/>
@@ -64,7 +64,7 @@
         <hr>
         <h5>Selected Genus</h5>
         {% for genus in checkbox_isolate_taxonomy %}
-          <li>{{ genus }}</li>
+          <li>{{ genus.genus }}</li>
         {% endfor %}
       {% endif %}
     </div><br/>

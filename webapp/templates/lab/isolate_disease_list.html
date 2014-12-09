@@ -13,9 +13,9 @@
         <tbody>
         {% for disease in isolate_disease_list %}
         <tr>
-          <td><input type="checkbox" name="checkbox_isolate_disease" value="{{ disease.diseaseinfo.common_name }}"></td>
-          <td>{{ disease.disease_info.common_name }}</td>
-          <td>{{ disease.passport.taxonomy.genus }}</td>
+          <td><input type="checkbox" name="checkbox_isolate_disease_id" value="{{ disease.disease_info__id }}"></td>
+          <td>{{ disease.disease_info__common_name }}</td>
+          <td>{{ disease.passport__taxonomy__genus }}</td>
         </tr>
         {% endfor %}
         </tbody>
@@ -36,7 +36,7 @@
         <tbody>
         {% for disease in isolate_disease_list %}
         <tr>
-          <td><input type="checkbox" name="checkbox_isolate_disease" value="{{ disease.common_name }}"></td>
+          <td><input type="checkbox" name="checkbox_isolate_disease_id" value="{{ disease.id }}"></td>
           <td>{{ disease.common_name }}</td>
         </tr>
         {% endfor %}

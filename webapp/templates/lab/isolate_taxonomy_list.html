@@ -17,7 +17,7 @@
         <tbody>
         {% for taxonomy in isolate_taxonomy_list %}
         <tr>
-          <td><input type="checkbox" name="checkbox_isolate_taxonomy" value="{{ taxonomy.passport__taxonomy__genus }}"></td>
+          <td><input type="checkbox" name="checkbox_isolate_taxonomy_id" value="{{ taxonomy.passport__taxonomy__id }}"></td>
           <td>{{ taxonomy.passport__taxonomy__genus }}</td>
           <td>{{ taxonomy.passport__taxonomy__species }}</td>
           <td>{{ taxonomy.passport__taxonomy__alias }}</td>
@@ -48,7 +48,7 @@
         <tbody>
         {% for taxonomy in isolate_taxonomy_list %}
         <tr>
-          <td><input type="checkbox" name="checkbox_isolate_taxonomy" value="{{ taxonomy.genus }}"></td>
+          <td><input type="checkbox" name="checkbox_isolate_taxonomy_id" value="{{ taxonomy.id }}"></td>
           <td>{{ taxonomy.genus }}</td>
           <td>{{ taxonomy.species }}</td>
           <td>{{ taxonomy.alias }}</td>
