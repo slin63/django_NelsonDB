@@ -338,6 +338,36 @@ def seed_inventory(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_inventory.html', context_dict, context)
 
+def show_all_seedinv_taxonomy(request):
+	context = RequestContext(request)
+	context_dict = {}
+	taxonomy_list = []
+	if request.session.get('checkbox_pedigree', None):
+		checkbox_pedigree_list = request.session.get('checkbox_pedigree')
+		for pedigree in checkbox_pedigree_list:
+			taxonomy = Stock.objects.filter(pedigree=pedigree).values('pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()[:1000]
+			taxonomy_list = list(chain(taxonomy, taxonomy_list))
+	else:
+		taxonomy_list = Taxonomy.objects.filter(common_name='Maize')[:1000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['taxonomy_list'] = taxonomy_list
+	return render_to_response('lab/seed_taxonomy_list.html', context_dict, context)
+
+def show_all_seedinv_pedigree(request):
+	context = RequestContext(request)
+	context_dict = {}
+	pedigree_list = []
+	if request.session.get('checkbox_taxonomy', None):
+		checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
+		for taxonomy in checkbox_taxonomy_list:
+			pedigree = Stock.objects.filter(passport__taxonomy__population=taxonomy).values('pedigree', 'passport__taxonomy__population').distinct()[:1000]
+			pedigree_list = list(chain(pedigree, pedigree_list))
+	else:
+		pedigree_list = Stock.objects.all().values('pedigree').distinct()[:1000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['pedigree_list'] = pedigree_list
+	return render_to_response('lab/seed_pedigree_list.html', context_dict, context)
+
 def suggest_pedigree(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -509,6 +539,36 @@ def checkbox_isolate_sort(request):
 		else:
 			selected_isolates = Isolate.objects.all()[:1000]
 	return selected_isolates
+
+def show_all_isolate_taxonomy(request):
+	context = RequestContext(request)
+	context_dict = {}
+	isolate_taxonomy_list = []
+	if request.session.get('checkbox_isolate_disease', None):
+		checkbox_isolate_disease = request.session.get('checkbox_isolate_disease_id')
+		for disease_id in checkbox_isolate_disease:
+			taxonomy = Isolate.objects.filter(disease_info__id=disease_id).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__genus', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa', 'passport__taxonomy__species').distinct()[:1000]
+			isolate_taxonomy_list = list(chain(taxonomy, isolate_taxonomy_list))
+	else:
+		isolate_taxonomy_list = Taxonomy.objects.filter(common_name='Isolate')[:1000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['isolate_taxonomy_list'] = isolate_taxonomy_list
+	return render_to_response('lab/isolate_taxonomy_list.html', context_dict, context)
+
+def show_all_isolate_disease(request):
+	context = RequestContext(request)
+	context_dict = {}
+	isolate_disease_list = []
+	if request.session.get('checkbox_isolate_taxonomy', None):
+		checkbox_isolate_taxonomy = request.session.get('checkbox_isolate_taxonomy_id')
+		for taxonomy_id in checkbox_isolate_taxonomy:
+			disease = Isolate.objects.filter(passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()[:1000]
+			isolate_disease_list = list(chain(disease, isolate_disease_list))
+	else:
+		isolate_disease_list = DiseaseInfo.objects.all()[:1000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['isolate_disease_list'] = isolate_disease_list
+	return render_to_response('lab/isolate_disease_list.html', context_dict, context)
 
 def suggest_isolate_taxonomy(request):
 	context = RequestContext(request)

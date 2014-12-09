@@ -17,11 +17,14 @@
 						</form>
 					</ul>
 				</div>
+				<div class="span3">
+					<button class="btn btn-info" id="show_all_seedinv_taxonomy" name="show_all_seedinv_taxonomy" type="submit">Show All Populations</button>
+				</div>
 				{% if checkbox_taxonomy %}
-				<div class="span2 offset7">
+				<div class="span2 offset4">
 					<form id="clear_taxonomy" method="post" action="/lab/seed_inventory/checkbox_clear/checkbox_taxonomy/">
 						{% csrf_token %}
-						<button class="btn btn-primary" type="submit">Clear Taxonomies</button>
+						<button class="btn btn-warning" type="submit">Clear Taxonomies</button>
 					</form>
 				</div>
 				{% endif %}
@@ -48,11 +51,14 @@
 						</form>
 					</ul>
 				</div>
+				<div class="span3">
+					<button class="btn btn-info" id="show_all_seedinv_pedigree" name="show_all_seedinv_pedigree" type="submit">Show All Pedigrees</button>
+				</div>
 				{% if checkbox_pedigree %}
-				<div class="span2 offset7">
+				<div class="span2 offset4">
 					<form id="checkbox_pedigree" method="post" action="/lab/seed_inventory/checkbox_clear/checkbox_pedigree/">
 						{% csrf_token %}
-						<button class="btn btn-primary" type="submit">Clear Pedigrees</button>
+						<button class="btn btn-warning" type="submit">Clear Pedigrees</button>
 					</form>
 				</div>
 				{% endif %}

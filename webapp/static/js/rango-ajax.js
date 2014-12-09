@@ -9,6 +9,30 @@ $(document).ready(function() {
 	});
 });
 
+$('#show_all_seedinv_taxonomy').click(function(){
+	$.get('/lab/seed_inventory/show_all_taxonomy/', {}, function(data){
+		$('#taxonomies').html(data);
+		$('#selected_taxonomy').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
+$('#show_all_seedinv_pedigree').click(function(){
+	$.get('/lab/seed_inventory/show_all_pedigree/', {}, function(data){
+		$('#pedigrees').html(data);
+		$('#selected_pedigree').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
 $('#pedigreesuggestion').keyup(function(){
 				var query;
 				query = $(this).val();
@@ -35,6 +59,30 @@ $('#taxonomysuggestion').keyup(function(){
 				"paginate": false
 				});
 		});
+});
+
+$('#show_all_isolate_taxonomy').click(function(){
+	$.get('/lab/isolate_inventory/show_all_taxonomy/', {}, function(data){
+		$('#isolate_taxonomies').html(data);
+		$('#selected_isolate_taxonomy').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
+$('#show_all_isolate_disease').click(function(){
+	$.get('/lab/isolate_inventory/show_all_disease/', {}, function(data){
+		$('#isolate_disease').html(data);
+		$('#selected_isolate_disease').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
 });
 
 $('#isolate_taxonomysuggestion').keyup(function(){

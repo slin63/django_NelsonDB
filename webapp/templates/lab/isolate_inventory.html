@@ -17,11 +17,14 @@
             </form>
           </ul>
         </div>
+        <div class="span3">
+          <button class="btn btn-info" id="show_all_isolate_disease" name="show_all_isolate_disease" type="submit">Show All Diseases</button>
+        </div>
         {% if checkbox_isolate_disease %}
-        <div class="span2 offset7">
+        <div class="span2 offset4">
           <form id="clear_isolate_disease" method="post" action="/lab/isolate_inventory/checkbox_clear/checkbox_isolate_disease/">
             {% csrf_token %}
-            <button class="btn btn-primary" type="submit">Clear Disease</button>
+            <button class="btn btn-warning" type="submit">Clear Diseases</button>
           </form>
         </div>
         {% endif %}
@@ -48,11 +51,14 @@
             </form>
           </ul>
         </div>
+        <div class="span3">
+          <button class="btn btn-info" id="show_all_isolate_taxonomy" name="show_all_isolate_taxonomy" type="submit">Show All Taxonomies</button>
+        </div>
         {% if checkbox_isolate_taxonomy %}
-        <div class="span2 offset7">
+        <div class="span2 offset4">
           <form id="clear_isolate_taxonomy" method="post" action="/lab/isolate_inventory/checkbox_clear/checkbox_isolate_taxonomy/">
             {% csrf_token %}
-            <button class="btn btn-primary" type="submit">Clear Taxonomies</button>
+            <button class="btn btn-warning" type="submit">Clear Taxonomies</button>
           </form>
         </div>
         {% endif %}
