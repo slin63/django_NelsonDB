@@ -1,0 +1,92 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Seed Inventory{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Experiment: <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h1>
+</div>
+
+{% if seedinv_from_row_experiment %}
+  <hr>
+  <h2>Seed Stocks Used For Rows</h2><br/>
+
+  <form id="select_stocks_form" method="post" action="/lab/seed_inventory/select_stocks/">
+    {% csrf_token %}
+    <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <thead>
+      <tr>
+        <th>Select</th>
+        <th>Seed ID</th>
+        <th>Cross Type</th>
+        <th>Pedigree</th>
+        <th>Population</th>
+        <th>Status</th>
+        <th>Passport</th>
+        <th>Collector</th>
+        <th>Comments</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for row in seedinv_from_row_experiment %}
+      <tr>
+        <td><input type="checkbox" name="checkbox_stock" value="{{ row.stock.id }}"></td>
+        <td><a href='/lab/stock/{{row.stock.id}}/'>{{ row.stock.seed_id }}</a></td>
+        <td>{{ row.stock.cross_type }}</td>
+        <td>{{ row.stock.pedigree }}</td>
+        <td>{{ row.stock.passport.taxonomy.population }}</td>
+        <td>{{ row.stock.stock_status }}</td>
+        <td><a href='/lab/inventory/passport/{{ row.stock.passport.id }}/'>{{ row.stock.passport.id }}</a></td>
+        <td><a href='/lab/profile/{{ row.stock.passport.collecting.user.username }}/'>{{ row.stock.passport.collecting.user.username }}</a></td>
+        <td>{{ row.stock.comments }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <br/>
+    <input class="btn btn-primary" type="submit" name="submit" value="Search Inventory for Selected Stocks"/>
+  </form>
+
+{% endif %}
+
+{% if seedinv_from_sample_experiment %}
+  <hr>
+  <h2>Seed Stocks Used For Samples</h2><br/>
+
+  <form id="select_stocks_form" method="post" action="/lab/seed_inventory/select_stocks/">
+    {% csrf_token %}
+    <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th>Select</th>
+          <th>Seed ID</th>
+          <th>Cross Type</th>
+          <th>Pedigree</th>
+          <th>Population</th>
+          <th>Status</th>
+          <th>Passport</th>
+          <th>Collector</th>
+          <th>Comments</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sample in seedinv_from_sample_experiment %}
+        <tr>
+          <td><input type="checkbox" name="checkbox_stock" value="{{ sample.stock.id }}"></td>
+          <td><a href='/lab/stock/{{sample.stock.id}}/'>{{ sample.stock.seed_id }}</a></td>
+          <td>{{ sample.stock.cross_type }}</td>
+          <td>{{ sample.stock.pedigree }}</td>
+          <td>{{ sample.stock.passport.taxonomy.population }}</td>
+          <td>{{ sample.stock.stock_status }}</td>
+          <td><a href='/lab/inventory/passport/{{ sample.stock.passport.id }}/'>{{ sample.stock.passport.id }}</a></td>
+          <td><a href='/lab/profile/{{ sample.stock.passport.collecting.user.username }}/'>{{ sample.stock.passport.collecting.user.username }}</a></td>
+          <td>{{ sample.stock.comments }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <br/>
+    <input class="btn btn-primary" type="submit" name="submit" value="Search Inventory for Selected Stocks"/>
+  </form>
+
+{% endif %}
+{% endblock %}

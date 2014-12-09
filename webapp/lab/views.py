@@ -2,7 +2,7 @@
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsSelector, Isolate, DiseaseInfo, Measurement, MeasurementParameter
+from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsSelector, Isolate, DiseaseInfo, Measurement, MeasurementParameter
 from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -882,3 +882,21 @@ def genotype_data_browse(request):
 
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/index.html', context_dict, context)
+
+def seedinv_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	context_dict = checkbox_session_variable_check(request)
+	try:
+		seedinv_from_row_experiment = ObsRow.objects.filter(obs_selector__experiment__name=experiment_name)
+	except ObsRow.DoesNotExist:
+		seedinv_from_row_experiment = None
+	try:
+		seedinv_from_sample_experiment = ObsSample.objects.filter(obs_selector__experiment__name=experiment_name)
+	except ObsSample.DoesNotExist:
+		seedinv_from_sample_experiment = None
+	context_dict['seedinv_from_row_experiment'] = seedinv_from_row_experiment
+	context_dict['seedinv_from_sample_experiment'] = seedinv_from_sample_experiment
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/seed_from_experiment.html', context_dict, context)
