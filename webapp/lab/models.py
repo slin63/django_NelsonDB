@@ -177,6 +177,17 @@ class ObsSample(models.Model):
 	def __unicode__(self):
 		return self.sample_id
 
+class ObsEnv(models.Model):
+	obs_selector = models.ForeignKey(ObsSelector)
+	field = models.ForeignKey(Field)
+	environment_id = models.CharField(max_length=200)
+	longitude = models.CharField(max_length=200)
+	latitude = models.CharField(max_length=200)
+	comments = models.CharField(max_length=1000)
+
+	def __unicode__(self):
+		return self.environment_id
+
 class Location(models.Model):
   locality = models.ForeignKey(Locality)
   building_name = models.CharField(max_length=200)
@@ -232,3 +243,13 @@ class Measurement(models.Model):
 
 	def __unicode__(self):
 		return self.value
+
+class Treatment(models.Model):
+	obs_selector = models.ForeignKey(ObsSelector)
+	treatment_id = models.CharField(max_length=200)
+	treatment_type = models.CharField(max_length=200)
+	date = models.CharField(max_length=200)
+	comments = models.CharField(max_length=1000)
+
+	def __unicode__(self):
+		return self.treatment_type
