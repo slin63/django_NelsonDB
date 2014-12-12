@@ -245,11 +245,11 @@ class Measurement(models.Model):
 		return self.value
 
 class Treatment(models.Model):
-	obs_selector = models.ForeignKey(ObsSelector)
+	experiment = models.ForeignKey(Experiment)
 	treatment_id = models.CharField(max_length=200)
 	treatment_type = models.CharField(max_length=200)
 	date = models.CharField(max_length=200)
 	comments = models.CharField(max_length=1000)
 
 	def __unicode__(self):
-		return self.treatment_type
+		return self.treatment_id

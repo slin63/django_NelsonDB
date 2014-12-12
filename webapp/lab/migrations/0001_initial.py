@@ -123,8 +123,23 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('parameter', models.CharField(max_length=200)),
                 ('parameter_type', models.CharField(max_length=200)),
+                ('unit_of_measure', models.CharField(default=b'No Units', max_length=200)),
                 ('protocol', models.CharField(max_length=1000)),
                 ('trait_id_buckler', models.CharField(max_length=200)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ObsEnv',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('environment_id', models.CharField(max_length=200)),
+                ('longitude', models.CharField(max_length=200)),
+                ('latitude', models.CharField(max_length=200)),
+                ('comments', models.CharField(max_length=1000)),
+                ('field', models.ForeignKey(to='lab.Field')),
             ],
             options={
             },
@@ -275,6 +290,20 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
+            name='Treatment',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('treatment_id', models.CharField(max_length=200)),
+                ('treatment_type', models.CharField(max_length=200)),
+                ('date', models.CharField(max_length=200)),
+                ('comments', models.CharField(max_length=1000)),
+                ('experiment', models.ForeignKey(to='lab.Experiment')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='UserProfile',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -328,6 +357,12 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='obsplant',
+            name='obs_selector',
+            field=models.ForeignKey(to='lab.ObsSelector'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='obsenv',
             name='obs_selector',
             field=models.ForeignKey(to='lab.ObsSelector'),
             preserve_default=True,

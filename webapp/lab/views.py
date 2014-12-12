@@ -900,3 +900,35 @@ def seedinv_from_experiment(request, experiment_name):
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_from_experiment.html', context_dict, context)
+
+def single_stock_info(request, stock_id):
+	context = RequestContext(request)
+	context_dict = {}
+	context_dict = checkbox_session_variable_check(request)
+
+	try:
+		context_dict['stock_info'] = Stock.objects.get(id=stock_id)
+	except Stock.DoesNotExist:
+		context_dict['stock_info'] = None
+
+	obs_row_stock_0 = ObsRow.objects.filter(stock_id=stock_id)
+	context_dict['obs_row_stock_0'] = obs_row_stock_0
+
+	"""step = 1
+	iterate = True
+	while iterate == True:
+		obs_row_stock_prev = 'obs_row_stock_%d' % (step-1)
+		for row_stock in context_dict[obs_row_stock_prev]:
+			obs_row_stock_index = 'obs_row_stock_%d' % (step)
+			try:
+				obs_row_stock_info = ObsRow.objects.get(obs_selector=row_stock.stock.passport.collecting.obs_selector_id)
+				if obs_row_stock_info:
+					context_dict[obs_row_stock_index] = obs_row_stock_info
+					step = step + 1
+				else:
+					iterate = False
+			except ObsRow.DoesNotExist:
+				iterate = False"""
+
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/stock_info.html', context_dict, context)
