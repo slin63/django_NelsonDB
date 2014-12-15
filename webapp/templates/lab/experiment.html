@@ -2,9 +2,15 @@
 {% extends 'lab/base.html' %}
 {% block title %}Experiment: {{ experiment_name }}{% endblock %}
 {% block body_block %}
-<div class="hero-unit">
-<h1>Experiment: <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h1>
-</div>
+{% if experiment_name != 'search' %}
+	<div class="hero-unit">
+	<h1>Experiment: <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h1>
+	</div>
+{% else %}
+	<div class="hero-unit">
+		<h1>Search Experiments</a></h1>
+	</div>
+{% endif %}
 
 <div class="container-fluid">
 	{% if experiment %}

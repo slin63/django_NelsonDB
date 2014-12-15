@@ -12,6 +12,7 @@ delete from lab_measurementparameter;
 delete from lab_obsplant;
 delete from lab_obsrow;
 delete from lab_obssample;
+delete from lab_obsenv;
 delete from lab_obsselector;
 delete from lab_passport;
 delete from lab_people;
@@ -19,6 +20,7 @@ delete from lab_publication;
 delete from lab_stock;
 delete from lab_stockpacket;
 delete from lab_taxonomy;
+delete from lab_treatment;
 
 delete from legacy_legacy_diseaseinfo;
 delete from legacy_legacy_experiment;

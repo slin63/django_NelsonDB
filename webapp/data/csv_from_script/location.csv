@@ -9,44 +9,28 @@
 9,8,seed storage (cold room),Cold Storage,Unknown
 10,8,Dimmock,Cold Storage,Unknown
 11,8,seed_storage,Cold Storage,Unknown
-12,14,Plant Science,Freezer -80C,A. flavus #1 SM
-13,15,Plant Science,Freezer -80C,A. flavus #1 SM
-14,8,Plant Science,Freezer -80C,A. flavus #1 SM
-15,3,Plant Science,Freezer -80C,A. flavus #1 SM
-16,1,Plant Science,Freezer -80C,A. flavus #1 SM
-17,16,Plant Science,Freezer -80C,A. flavus #1 SM
-18,1,Plant Science,Freezer -80C,C1/ 2006.6.21
-19,1,Plant Science,Freezer -80C,B1/ 2004.6.7
-20,17,Plant Science,Freezer -80C,B1/ 2004.6.7
-21,18,Plant Science,Freezer -80C,B1/ 2004.6.7
-22,1,Plant Science,Freezer -80C,C1/ 2006.5.12
-23,19,Unknown,Unknown,Unknown
-24,20,Unknown,Unknown,Unknown
-25,21,Unknown,Unknown,Unknown
-26,16,Unknown,Unknown,Unknown
-27,5,Unknown,Unknown,Unknown
-28,22,Unknown,Unknown,Unknown
-29,3,Plant Science,Freezer -80C,Other ear rots SM
-30,1,Plant Science,Freezer -80C,C1/ 2006.5.12 2006.10.09 2010.07.13
-31,23,Plant Science,Freezer -80C,D1/ 2007.10.31
-32,24,Plant Science,Freezer -80C,D1/ 2007.12.11
-33,1,Plant Science,Freezer -80C,D1/ 2007.10.31
-34,25,Plant Science,Freezer -80C,A1/ 2004.7.6 2006.04.25 2007.04.17 2007.12.11 2010.03.29 2010.04.26
-35,1,Plant Science,Freezer -80C,A1/ 2004.7.6
-36,17,Plant Science,Freezer -80C,A2/ 2004.7.15
-37,18,Plant Science,Freezer -80C,A2/ 2004.7.15
-38,26,Plant Science,Freezer -80C,A2/ 2004.7.15
-39,8,Plant Science,Freezer -80C,A2/ 2005.6.13
-40,3,Plant Science,Freezer -80C,A2/ 2006.04.25
-41,3,Plant Science,Freezer -80C,A3/ 2007.02.06
-42,1,Plant Science,Freezer -80C,A3/ 2007.02.06
-43,1,Plant Science,Freezer -80C,A4/ 2008.01.28
-44,1,Plant Science,Freezer -80C,A3/ 2007.02.06; A4/ 2007.12.11
-45,1,Plant Science,Freezer -80C,PBK/ 2005.3.21
-46,1,Plant Science,Freezer -80C,A4/ 2010.05.11
-47,1,Plant Science,Freezer -80C,St1x (1)
-48,1,Plant Science,Freezer -80C,St1x (2)
-49,1,Plant Science,Freezer -80C,St1x (3)
-50,3,Plant Science,Freezer -80C,D1/ 2007.10.06
-51,3,Plant Science,Freezer -80C,D1/ 2007.10.06; C1/ 2008.08.16
-52,8,Cold Storage Shelf 7,Cold Storage,Unknown
+12,8,Plant Science,Freezer -80C,A. flavus #1 SM
+13,8,Plant Science,Freezer -80C,C1/ 2006.6.21
+14,8,Plant Science,Freezer -80C,B1/ 2004.6.7
+15,8,Plant Science,Freezer -80C,C1/ 2006.5.12
+16,8,Unknown,Unknown,Unknown
+17,8,Plant Science,Freezer -80C,Other ear rots SM
+18,8,Plant Science,Freezer -80C,C1/ 2006.5.12 2006.10.09 2010.07.13
+19,8,Plant Science,Freezer -80C,D1/ 2007.10.31
+20,8,Plant Science,Freezer -80C,D1/ 2007.12.11
+21,8,Plant Science,Freezer -80C,A1/ 2004.7.6 2006.04.25 2007.04.17 2007.12.11 2010.03.29 2010.04.26
+22,8,Plant Science,Freezer -80C,A1/ 2004.7.6
+23,8,Plant Science,Freezer -80C,A2/ 2004.7.15
+24,8,Plant Science,Freezer -80C,A2/ 2005.6.13
+25,8,Plant Science,Freezer -80C,A2/ 2006.04.25
+26,8,Plant Science,Freezer -80C,A3/ 2007.02.06
+27,8,Plant Science,Freezer -80C,A4/ 2008.01.28
+28,8,Plant Science,Freezer -80C,A3/ 2007.02.06; A4/ 2007.12.11
+29,8,Plant Science,Freezer -80C,PBK/ 2005.3.21
+30,8,Plant Science,Freezer -80C,A4/ 2010.05.11
+31,8,Plant Science,Freezer -80C,St1x (1)
+32,8,Plant Science,Freezer -80C,St1x (2)
+33,8,Plant Science,Freezer -80C,St1x (3)
+34,8,Plant Science,Freezer -80C,D1/ 2007.10.06
+35,8,Plant Science,Freezer -80C,D1/ 2007.10.06; C1/ 2008.08.16
+36,8,Cold Storage Shelf 7,Cold Storage,Unknown

@@ -64,7 +64,7 @@ def migrate():
     #--- Key = (measurement_param_id, parameter, parameter_type, unit, protocol, trait_id_buckler)
     #--- Value = (measurement_param_id)
     treatment_table = OrderedDict({})
-    #--- Key = (treatment_id, obs_selector_id, treatment_id, treatment_type, date, comments)
+    #--- Key = (treatment_id, experiment_id, treatment_id, treatment_type, date, comments)
     #--- Value = (treatment_id)
 
     stock_not_inventoried = OrderedDict({})
@@ -468,6 +468,7 @@ def migrate():
         row_row_name = row['row_name']
         row_experiment_name = row['experiment_id']
         row_stock_seed_id = row['source_seed_id']
+        row_stock_seed_name = row['source_seed_name']
         row_range = row['range']
         row_plot = row['plot']
         row_block = row['block']
@@ -672,12 +673,12 @@ def migrate():
                 print("Passport_id: %d" % passport_id)
                 passport_id = passport_id + 1
 
-            stock_row_hash = hash((passport_hash_table[(passport_row_hash)], 0, 'No Seed', 'No Seed', 'No Seed', 'Not Inventoried', 'Not Inventoried', 'No Seed'))
+            stock_row_hash = hash((passport_hash_table[(passport_row_hash)], row_stock_seed_id, row_stock_seed_name, 'NULL', row_stock_pedigree, 'Not Inventoried', 'Not Inventoried', 'No Legacy Seed'))
             if (stock_row_hash) in stock_hash_table:
                 pass
             else:
                 stock_hash_table[(stock_row_hash)] = stock_id
-                stock_table[(stock_id, passport_hash_table[(passport_row_hash)], 0, 'No Seed', 'No Seed', 'No Seed', 'Not Inventoried', 'Not Inventoried', 'No Seed')] = stock_id
+                stock_table[(stock_id, passport_hash_table[(passport_row_hash)], row_stock_seed_id, row_stock_seed_name, 'NULL', row_stock_pedigree, 'Not Inventoried', 'Not Inventoried', 'No Legacy Seed')] = stock_id
                 print("Stock_id: %d" % stock_id)
                 stock_id = stock_id + 1
 
@@ -785,14 +786,22 @@ def migrate():
             print("Passport_id: %d" % (passport_id))
             passport_id = passport_id + 1
 
+        locality_iso_storage_hash = hash(('Ithaca', 'NY', 'USA', 'NULL'))
+        if (locality_iso_storage_hash) in locality_hash_table:
+            pass
+        else:
+            locality_hash_table[(locality_iso_storage_hash)] = locality_id
+            locality_table[('Ithaca', 'NY', 'USA', 'NULL')] = locality_id
+            locality_id = locality_id + 1
+
         #------------------- If location is in n80c freezer ----------------------
         if location_n80c_boxname != 'NULL' and location_n80c_boxname != '':
-            location_isolate_hash = hash((locality_hash_table[(locality_isolate_hash)], 'Plant Science', 'Freezer -80C', location_n80c_boxname))
+            location_isolate_hash = hash((locality_hash_table[(locality_iso_storage_hash)], 'Plant Science', 'Freezer -80C', location_n80c_boxname))
             if (location_isolate_hash) in location_hash_table:
                 pass
             else:
                 location_hash_table[(location_isolate_hash)] = location_id
-                location_table[(location_id, locality_hash_table[(locality_isolate_hash)], 'Plant Science', 'Freezer -80C', location_n80c_boxname)] = location_id
+                location_table[(location_id, locality_hash_table[(locality_iso_storage_hash)], 'Plant Science', 'Freezer -80C', location_n80c_boxname)] = location_id
                 print("Location_id: %d" % (location_id))
                 location_id = location_id + 1
 
@@ -807,12 +816,12 @@ def migrate():
 
         #-------------- If location is in 4c freezer -----------------------------------
         elif location_4c_boxname != 'NULL' and location_4c_boxname != '':
-            location_isolate_hash = hash((locality_hash_table[(locality_isolate_hash)], 'Plant Science', 'Freezer 4C', location_4c_boxname))
+            location_isolate_hash = hash((locality_hash_table[(locality_iso_storage_hash)], 'Plant Science', 'Freezer 4C', location_4c_boxname))
             if (location_isolate_hash) in location_hash_table:
                 pass
             else:
                 location_hash_table[(location_isolate_hash)] = location_id
-                location_table[(location_id, locality_hash_table[(locality_isolate_hash)], 'Plant Science', 'Freezer 4C', location_4c_boxname)] = location_id
+                location_table[(location_id, locality_hash_table[(locality_iso_storage_hash)], 'Plant Science', 'Freezer 4C', location_4c_boxname)] = location_id
                 print("Location_id: %d" % (location_id))
                 location_id = location_id + 1
 
@@ -827,12 +836,12 @@ def migrate():
 
         #-------------------- location not in -80c or 4c freezer ----------------------
         else:
-            location_isolate_hash = hash((locality_hash_table[(locality_isolate_hash)], 'Unknown', 'Unknown', 'Unknown'))
+            location_isolate_hash = hash((locality_hash_table[(locality_iso_storage_hash)], 'Unknown', 'Unknown', 'Unknown'))
             if (location_isolate_hash) in location_hash_table:
                 pass
             else:
                 location_hash_table[(location_isolate_hash)] = location_id
-                location_table[(location_id, locality_hash_table[(locality_isolate_hash)], 'Unknown', 'Unknown', 'Unknown')] = location_id
+                location_table[(location_id, locality_hash_table[(locality_iso_storage_hash)], 'Unknown', 'Unknown', 'Unknown')] = location_id
                 print("Location_id: %d" % (location_id))
                 location_id = location_id + 1
 

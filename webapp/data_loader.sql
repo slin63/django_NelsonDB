@@ -113,6 +113,12 @@ enclosed by '"'
 lines terminated by '\n'
 (id, obs_selector_id, user_id, measurement_parameter_id, time_of_measurement, value, comments);
 
+load data local infile 'C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/csv_from_script/treatment.csv' 
+into table lab_treatment fields terminated by ','
+enclosed by '"'
+lines terminated by '\n'
+(id, experiment_id, treatment_id, treatment_type, date, comments);
+
 --
 -- Load Legacy Data
 --
