@@ -312,7 +312,7 @@ def checkbox_seed_inventory_sort(request):
 				stocks = Stock.objects.filter(pedigree=pedigree)
 				selected_stocks = list(chain(selected_stocks, stocks))[:1000]
 		else:
-			selected_stocks = Stock.objects.all()[:1000]
+			selected_stocks = Stock.objects.exclude(seed_id='0')[:1000]
 	return selected_stocks
 
 def checkbox_session_variable_check(request):
