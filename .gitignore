@@ -48,3 +48,5 @@ mine_project/mine.db
 *.pyc
 webapp/data_dump.json
 webapp/nelson_db.sql
+webapp/nelson_db.sql
+webapp/nelson_db.sql
