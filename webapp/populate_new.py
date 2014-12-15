@@ -540,7 +540,11 @@ def migrate():
             else:
                 seed = False
                 plant = False
-                seedinv = False
+                if (row_seed_id_hash) in legacy_seedinv_table:
+                    seedinv = True
+                else:
+                    seedinv = False
+
                 #--- Save to dictionary the rows with seed_ids which are not in legacy_seed ----
                 row_source_seed_not_in_seed[(count_source_seed_not_in_seed)] = (row_row_id, row_row_name, row_experiment_name, row_stock_seed_id, row_range, row_plot, row_block, row_rep, row_population, row_purpose, row_notes, row_comments, row_kernel_num, row_stock_pedigree)
                 count_source_seed_not_in_seed = count_source_seed_not_in_seed + 1
@@ -568,6 +572,7 @@ def migrate():
         print("ObsSelector: %d" % (obs_selector_id))
         obs_selector_id = obs_selector_id + 1
 
+        #--- If seed_id found in Legacy Seed ---
         if seed:
             collecting_row_hash = hash((obs_selector_hash_table[(obs_selector_hash)], user_hash_table[(hash(person))], 1, legacy_experiment_table[(row_experiment_name)][9], 'Field Harvest', 'No comments'))
             collecting_hash_table[(collecting_row_hash)] = collecting_id
@@ -593,6 +598,7 @@ def migrate():
                 print("Passport_id: %d" % (passport_id))
                 passport_id = passport_id + 1
 
+            #--- If seed_d found in Legacy_Seed and Legacy_Seedinv ---
             if seedinv:
                 stock_row_hash = hash((passport_hash_table[(passport_row_hash)], legacy_seed_table[(row_seed_id_hash)][0], legacy_seed_table[(row_seed_id_hash)][6], legacy_seed_table[(row_seed_id_hash)][7], legacy_seed_table[(row_seed_id_hash)][11], 'Legacy Inventoried', legacy_seedinv_table[(row_seed_id_hash)][3], seed_comments))
                 if (stock_row_hash) in stock_hash_table:
@@ -636,7 +642,7 @@ def migrate():
                     print("Stockpacket_id: %d" % (stock_packet_id))
                     stock_packet_id = stock_packet_id + 1
 
-            #--------- No Seedinv --------------------------------
+            #--------- If seed_id found in Legacy_Seed but not Legacy_Seedinv --------------------------------
             else:
                 stock_row_hash = hash((passport_hash_table[(passport_row_hash)], legacy_seed_table[(row_seed_id_hash)][0], legacy_seed_table[(row_seed_id_hash)][6], legacy_seed_table[(row_seed_id_hash)][7], legacy_seed_table[(row_seed_id_hash)][11], 'Not Inventoried', 'Not Inventoried', seed_comments))
                 if (stock_row_hash) in stock_hash_table:
@@ -653,7 +659,7 @@ def migrate():
                 print("ObsRow_id: %d" % obs_row_id)
                 obs_row_id = obs_row_id + 1
 
-        #-------- No Legacy Seed info ----------------
+        #-------- If seed_id not found in Legacy_Seed ----------------
         else:
             collecting_row_hash = hash((obs_selector_table[(1,1)], user_hash_table[(hash('unknown'))], 1, 'No Collecting', 'No Collecting', 'No Collecting'))
             if (collecting_row_hash) in collecting_hash_table:
@@ -673,19 +679,64 @@ def migrate():
                 print("Passport_id: %d" % passport_id)
                 passport_id = passport_id + 1
 
-            stock_row_hash = hash((passport_hash_table[(passport_row_hash)], row_stock_seed_id, row_stock_seed_name, 'NULL', row_stock_pedigree, 'Not Inventoried', 'Not Inventoried', 'No Legacy Seed'))
-            if (stock_row_hash) in stock_hash_table:
-                pass
-            else:
-                stock_hash_table[(stock_row_hash)] = stock_id
-                stock_table[(stock_id, passport_hash_table[(passport_row_hash)], row_stock_seed_id, row_stock_seed_name, 'NULL', row_stock_pedigree, 'Not Inventoried', 'Not Inventoried', 'No Legacy Seed')] = stock_id
-                print("Stock_id: %d" % stock_id)
-                stock_id = stock_id + 1
+            #--- If seed_id not found in Legacy_Seed, but was found in Legacy_Seedinv ---
+            if seedinv:
+                stock_row_hash = hash((passport_hash_table[(passport_row_hash)], row_stock_seed_id, row_stock_seed_name, 'NULL', row_stock_pedigree, 'Legacy Inventoried', 'Legacy Inventoried', 'No Legacy Seed'))
+                if (stock_row_hash) in stock_hash_table:
+                    pass
+                else:
+                    stock_hash_table[(stock_row_hash)] = stock_id
+                    stock_table[(stock_id, passport_hash_table[(passport_row_hash)], row_stock_seed_id, row_stock_seed_name, 'NULL', row_stock_pedigree, 'Legacy Inventoried', 'Legacy Inventoried', 'No Legacy Seed')] = stock_id
+                    print("Stock_id: %d" % stock_id)
+                    stock_id = stock_id + 1
 
-            obs_row_table[(obs_row_id, obs_selector_hash_table[(obs_selector_hash)], experiment_field_table[(row_experiment_name)], stock_hash_table[(stock_row_hash)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)] = obs_row_id
-            obs_row_intermed_table[(row_row_id)] = (obs_row_id, obs_selector_hash_table[(obs_selector_hash)], experiment_field_table[(row_experiment_name)], stock_hash_table[(stock_row_hash)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)
-            print("ObsRow_id: %d" % obs_row_id)
-            obs_row_id = obs_row_id + 1
+                obs_row_table[(obs_row_id, obs_selector_hash_table[(obs_selector_hash)], experiment_field_table[(row_experiment_name)], stock_hash_table[(stock_row_hash)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)] = obs_row_id
+                obs_row_intermed_table[(row_row_id)] = (obs_row_id, obs_selector_hash_table[(obs_selector_hash)], experiment_field_table[(row_experiment_name)], stock_hash_table[(stock_row_hash)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)
+                print("ObsRow_id: %d" % obs_row_id)
+                obs_row_id = obs_row_id + 1
+
+                locality_stockpacket_hash = hash(('Ithaca', 'NY', 'USA', 'NULL'))
+                if (locality_stockpacket_hash) in locality_hash_table:
+                    pass
+                else:
+                    locality_hash_table[(locality_stockpacket_hash)] = locality_id
+                    locality_table[(locality_id, 'Ithaca', 'NY', 'USA', 'NULL')] = locality_id
+                    print("Locality_id: %d" % (locality_id))
+                    locality_id = locality_id + 1
+
+                location_row_hash = hash((locality_hash_table[(locality_stockpacket_hash)], legacy_seedinv_table[(row_seed_id_hash)][6], 'Cold Storage', 'Unknown'))
+                if (location_row_hash) in location_hash_table:
+                    pass
+                else:
+                    location_hash_table[(location_row_hash)] = location_id
+                    location_table[(location_id, locality_hash_table[(locality_stockpacket_hash)], legacy_seedinv_table[(row_seed_id_hash)][6], 'Cold Storage', 'Unknown')] = location_id
+                    print("Location_id: %d" % (location_id))
+                    location_id = location_id + 1
+
+                stock_packet_hash = hash((stock_hash_table[(stock_row_hash)], location_hash_table[(location_row_hash)], legacy_seedinv_table[(row_seed_id_hash)][8], legacy_seedinv_table[(row_seed_id_hash)][7]))
+                if (stock_packet_hash) in stock_packet_hash_table:
+                    pass
+                else:
+                    stock_packet_hash_table[(stock_packet_hash)] = stock_packet_id
+                    stock_packet_table[(stock_packet_id, stock_hash_table[(stock_row_hash)], location_hash_table[(location_row_hash)], legacy_seedinv_table[(row_seed_id_hash)][8], legacy_seedinv_table[(row_seed_id_hash)][7])] = stock_packet_id
+                    print("Stockpacket_id: %d" % (stock_packet_id))
+                    stock_packet_id = stock_packet_id + 1
+
+            #--- If seed_id not found in Legacy_Seed nor Legacy_Seedinv ---
+            else:
+                stock_row_hash = hash((passport_hash_table[(passport_row_hash)], row_stock_seed_id, row_stock_seed_name, 'NULL', row_stock_pedigree, 'Not Inventoried', 'Not Inventoried', 'No Legacy Seed'))
+                if (stock_row_hash) in stock_hash_table:
+                    pass
+                else:
+                    stock_hash_table[(stock_row_hash)] = stock_id
+                    stock_table[(stock_id, passport_hash_table[(passport_row_hash)], row_stock_seed_id, row_stock_seed_name, 'NULL', row_stock_pedigree, 'Not Inventoried', 'Not Inventoried', 'No Legacy Seed')] = stock_id
+                    print("Stock_id: %d" % stock_id)
+                    stock_id = stock_id + 1
+
+                obs_row_table[(obs_row_id, obs_selector_hash_table[(obs_selector_hash)], experiment_field_table[(row_experiment_name)], stock_hash_table[(stock_row_hash)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)] = obs_row_id
+                obs_row_intermed_table[(row_row_id)] = (obs_row_id, obs_selector_hash_table[(obs_selector_hash)], experiment_field_table[(row_experiment_name)], stock_hash_table[(stock_row_hash)], row_row_id, row_row_name, row_range, row_plot, row_block, row_rep, row_kernel_num, legacy_experiment_table[(row_experiment_name)][2], legacy_experiment_table[(row_experiment_name)][9], row_comments)
+                print("ObsRow_id: %d" % obs_row_id)
+                obs_row_id = obs_row_id + 1
 
         #---------- If there is plant info in the Legacy Plant table -----------------
         if seed:

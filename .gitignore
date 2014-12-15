@@ -47,3 +47,4 @@ mine_project/mine.db
 *.pyc
 *.pyc
 webapp/data_dump.json
+webapp/nelson_db.sql
