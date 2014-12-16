@@ -123,6 +123,7 @@ class Stock(models.Model):
   pedigree = models.CharField(max_length=200)
   stock_status = models.CharField(max_length=200)
   stock_date = models.CharField(max_length=200)
+  inoculated = models.BooleanField(default=False)
   comments = models.CharField(max_length=1000)
 
   def __unicode__(self):
@@ -168,6 +169,8 @@ class ObsSample(models.Model):
 	obs_selector = models.ForeignKey(ObsSelector)
 	obs_row = models.ForeignKey(ObsRow)
 	obs_plant = models.ForeignKey(ObsPlant)
+	stock = models.ForeignKey(Stock)
+	source_sample = models.ForeignKey("self")
 	sample_id = models.CharField(max_length=200)
 	sample_type = models.CharField(max_length=200)
 	weight = models.CharField(max_length=200)

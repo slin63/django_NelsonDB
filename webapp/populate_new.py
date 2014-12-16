@@ -46,7 +46,7 @@ def migrate():
     #--- Key = (passport_id, collecting_id, people_id, taxonomy_id)
     #--- Value = (passport_id)
     stock_table = OrderedDict({})
-    #--- Key = (stock_id, passport_id, seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, comments)
+    #--- Key = (stock_id, passport_id, seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, comments)
     #--- Value = (stock_id)
     stock_packet_table = OrderedDict({})
     #--- Key = (stock_packet_id, stock_id, location_id, weight, comments)
@@ -108,7 +108,7 @@ def migrate():
     #--- Key = (hash(collecting_hash_id, people_hash_id, taxonomy_hash_id))
     #--- Value = (passport_id)
     stock_hash_table = OrderedDict({})
-    #--- Key = (hash(passport_hash_id, seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, comments))
+    #--- Key = (hash(passport_hash_id, seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, comments))
     #--- Value = (stock_id)
     taxonomy_hash_table = OrderedDict({})
     #--- Key = (hash(genus, species, population, common_name, alias, race, subtaxa))
@@ -293,7 +293,7 @@ def migrate():
     taxonomy_table[(1, 'No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy')] = 1
     collecting_table[(1,1,user_hash_table[(hash('unknown'))],1,'No Collection','No Collection','No Collection')] = 1
     passport_table[(1,1,1,1)] = 1
-    stock_table[(1,1,'0','No Seed','No Seed','No Seed','No Seed','No Seed','No Seed')] = 1
+    stock_table[(1,1,'0','No Seed','No Seed','No Seed','No Seed','No Seed',0,'No Seed')] = 1
 
     taxonomy_hash = hash(('No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy'))
     taxonomy_hash_table[(taxonomy_hash)] = 1
@@ -301,7 +301,7 @@ def migrate():
     collecting_hash_table[(collecting_hash)] = 1
     passport_hash = hash((1,1,1))
     passport_hash_table[(passport_hash)] = 1
-    stock_hash = hash((1,'0','No Seed','No Seed','No Seed','No Seed','No Seed','No Seed'))
+    stock_hash = hash((1,'0','No Seed','No Seed','No Seed','No Seed','No Seed',0,'No Seed'))
     stock_hash_table[(stock_hash)] = 1
     people_hash = hash(('No Source'))
     people_hash_table[(people_hash)] = 1
@@ -491,6 +491,11 @@ def migrate():
         else:
             row_comments = 'No Comments'
 
+        if legacy_experiment_table[(row_experiment_name)][4] != '0':
+            stock_inoculated = 1
+        else:
+            stock_inoculated = 0
+
         if row_stock_seed_id != 0 and row_stock_seed_id !='':
             row_seed_id_hash = hash(row_stock_seed_id)
             if (row_seed_id_hash) in legacy_seed_table:
@@ -600,12 +605,12 @@ def migrate():
 
             #--- If seed_d found in Legacy_Seed and Legacy_Seedinv ---
             if seedinv:
-                stock_row_hash = hash((passport_hash_table[(passport_row_hash)], legacy_seed_table[(row_seed_id_hash)][0], legacy_seed_table[(row_seed_id_hash)][6], legacy_seed_table[(row_seed_id_hash)][7], legacy_seed_table[(row_seed_id_hash)][11], 'Legacy Inventoried', legacy_seedinv_table[(row_seed_id_hash)][3], seed_comments))
+                stock_row_hash = hash((passport_hash_table[(passport_row_hash)], legacy_seed_table[(row_seed_id_hash)][0], legacy_seed_table[(row_seed_id_hash)][6], legacy_seed_table[(row_seed_id_hash)][7], legacy_seed_table[(row_seed_id_hash)][11], 'Legacy Inventoried', legacy_seedinv_table[(row_seed_id_hash)][3], stock_inoculated, seed_comments))
                 if (stock_row_hash) in stock_hash_table:
                     pass
                 else:
                     stock_hash_table[(stock_row_hash)] = stock_id
-                    stock_table[(stock_id, passport_hash_table[(passport_row_hash)], legacy_seed_table[(row_seed_id_hash)][0], legacy_seed_table[(row_seed_id_hash)][6], legacy_seed_table[(row_seed_id_hash)][7], legacy_seed_table[(row_seed_id_hash)][11], 'Legacy Inventoried', legacy_seedinv_table[(row_seed_id_hash)][3], seed_comments)] = stock_id
+                    stock_table[(stock_id, passport_hash_table[(passport_row_hash)], legacy_seed_table[(row_seed_id_hash)][0], legacy_seed_table[(row_seed_id_hash)][6], legacy_seed_table[(row_seed_id_hash)][7], legacy_seed_table[(row_seed_id_hash)][11], 'Legacy Inventoried', legacy_seedinv_table[(row_seed_id_hash)][3], stock_inoculated, seed_comments)] = stock_id
                     stock_seed_id_table[(legacy_seed_table[(row_seed_id_hash)][0])] = (stock_id)
                     print("Stock_id: %d" % (stock_id))
                     stock_id = stock_id + 1
@@ -644,12 +649,12 @@ def migrate():
 
             #--------- If seed_id found in Legacy_Seed but not Legacy_Seedinv --------------------------------
             else:
-                stock_row_hash = hash((passport_hash_table[(passport_row_hash)], legacy_seed_table[(row_seed_id_hash)][0], legacy_seed_table[(row_seed_id_hash)][6], legacy_seed_table[(row_seed_id_hash)][7], legacy_seed_table[(row_seed_id_hash)][11], 'Not Inventoried', 'Not Inventoried', seed_comments))
+                stock_row_hash = hash((passport_hash_table[(passport_row_hash)], legacy_seed_table[(row_seed_id_hash)][0], legacy_seed_table[(row_seed_id_hash)][6], legacy_seed_table[(row_seed_id_hash)][7], legacy_seed_table[(row_seed_id_hash)][11], 'Not Inventoried', 'Not Inventoried', stock_inoculated, seed_comments))
                 if (stock_row_hash) in stock_hash_table:
                     pass
                 else:
                     stock_hash_table[(stock_row_hash)] = stock_id
-                    stock_table[(stock_id, passport_hash_table[(passport_row_hash)], legacy_seed_table[(row_seed_id_hash)][0], legacy_seed_table[(row_seed_id_hash)][6], legacy_seed_table[(row_seed_id_hash)][7], legacy_seed_table[(row_seed_id_hash)][11], 'Not Inventoried', 'Not Inventoried', seed_comments)] = stock_id
+                    stock_table[(stock_id, passport_hash_table[(passport_row_hash)], legacy_seed_table[(row_seed_id_hash)][0], legacy_seed_table[(row_seed_id_hash)][6], legacy_seed_table[(row_seed_id_hash)][7], legacy_seed_table[(row_seed_id_hash)][11], 'Not Inventoried', 'Not Inventoried', stock_inoculated, seed_comments)] = stock_id
                     stock_seed_id_table[(legacy_seed_table[(row_seed_id_hash)][0])] = (stock_id)
                     print("Stock_id: %d" % (stock_id))
                     stock_id = stock_id + 1
@@ -681,12 +686,12 @@ def migrate():
 
             #--- If seed_id not found in Legacy_Seed, but was found in Legacy_Seedinv ---
             if seedinv:
-                stock_row_hash = hash((passport_hash_table[(passport_row_hash)], row_stock_seed_id, row_stock_seed_name, 'NULL', row_stock_pedigree, 'Legacy Inventoried', 'Legacy Inventoried', 'No Legacy Seed'))
+                stock_row_hash = hash((passport_hash_table[(passport_row_hash)], row_stock_seed_id, row_stock_seed_name, 'NULL', row_stock_pedigree, 'Legacy Inventoried', 'Legacy Inventoried', stock_inoculated, 'No Legacy Seed'))
                 if (stock_row_hash) in stock_hash_table:
                     pass
                 else:
                     stock_hash_table[(stock_row_hash)] = stock_id
-                    stock_table[(stock_id, passport_hash_table[(passport_row_hash)], row_stock_seed_id, row_stock_seed_name, 'NULL', row_stock_pedigree, 'Legacy Inventoried', 'Legacy Inventoried', 'No Legacy Seed')] = stock_id
+                    stock_table[(stock_id, passport_hash_table[(passport_row_hash)], row_stock_seed_id, row_stock_seed_name, 'NULL', row_stock_pedigree, 'Legacy Inventoried', 'Legacy Inventoried', stock_inoculated, 'No Legacy Seed')] = stock_id
                     print("Stock_id: %d" % stock_id)
                     stock_id = stock_id + 1
 
@@ -724,12 +729,12 @@ def migrate():
 
             #--- If seed_id not found in Legacy_Seed nor Legacy_Seedinv ---
             else:
-                stock_row_hash = hash((passport_hash_table[(passport_row_hash)], row_stock_seed_id, row_stock_seed_name, 'NULL', row_stock_pedigree, 'Not Inventoried', 'Not Inventoried', 'No Legacy Seed'))
+                stock_row_hash = hash((passport_hash_table[(passport_row_hash)], row_stock_seed_id, row_stock_seed_name, 'NULL', row_stock_pedigree, 'Not Inventoried', 'Not Inventoried', stock_inoculated, 'No Legacy Seed'))
                 if (stock_row_hash) in stock_hash_table:
                     pass
                 else:
                     stock_hash_table[(stock_row_hash)] = stock_id
-                    stock_table[(stock_id, passport_hash_table[(passport_row_hash)], row_stock_seed_id, row_stock_seed_name, 'NULL', row_stock_pedigree, 'Not Inventoried', 'Not Inventoried', 'No Legacy Seed')] = stock_id
+                    stock_table[(stock_id, passport_hash_table[(passport_row_hash)], row_stock_seed_id, row_stock_seed_name, 'NULL', row_stock_pedigree, 'Not Inventoried', 'Not Inventoried', stock_inoculated, 'No Legacy Seed')] = stock_id
                     print("Stock_id: %d" % stock_id)
                     stock_id = stock_id + 1
 
@@ -1084,6 +1089,11 @@ def migrate():
             else:
                 seed_comments = 'No Comments'
 
+            if legacy_experiment_table[(row_experiment_name)][4] != '0':
+                stock_inoculated = 1
+            else:
+                stock_inoculated = 0
+
             legacy_seed_not_in_stock[(legacy_seed_not_in_stock_count)] = (legacy_seed_id, legacy_plant_id_origin, legacy_row_id_origin, legacy_experiment_id_origin, legacy_plant_name, legacy_row_name, legacy_seed_name, legacy_cross_type, legacy_male_parent_id, legacy_male_parent_name, legacy_program_origin, legacy_seed_pedigree, legacy_line_num, legacy_seed_person_id, legacy_seed_disease_info, legacy_seed_notes, legacy_seed_accession, legacy_seed_lot)
             legacy_seed_not_in_stock_count = legacy_seed_not_in_stock_count + 1
 
@@ -1118,12 +1128,12 @@ def migrate():
                 #------------ If in seedinv --------------------
                 if (hash((legacy_seed_id))) in legacy_seedinv_table:
 
-                    legacy_seed_stock_hash = hash((passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Inventoried', legacy_seedinv_table[(hash((legacy_seed_id)))][3], seed_comments))
+                    legacy_seed_stock_hash = hash((passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Inventoried', legacy_seedinv_table[(hash((legacy_seed_id)))][3], stock_inoculated, seed_comments))
                     if (legacy_seed_stock_hash) in stock_hash_table:
                         pass
                     else:
                         stock_hash_table[(legacy_seed_stock_hash)] = stock_id
-                        stock_table[(stock_id, passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Inventoried', legacy_seedinv_table[(hash((legacy_seed_id)))][3], seed_comments)] = stock_id
+                        stock_table[(stock_id, passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Inventoried', legacy_seedinv_table[(hash((legacy_seed_id)))][3], stock_inoculated, seed_comments)] = stock_id
                         stock_id = stock_id + 1
 
                     legacy_seed_locality_hash = hash(('Ithaca', 'NY', 'USA', 'NULL'))
@@ -1152,12 +1162,12 @@ def migrate():
 
                 #-------- Not in seedinv --------------
                 else:
-                    legacy_seed_stock_hash = hash((passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Not Inventoried', 'Not Invetoried', seed_comments))
+                    legacy_seed_stock_hash = hash((passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Not Inventoried', 'Not Invetoried', stock_inoculated, seed_comments))
                     if (legacy_seed_stock_hash) in stock_hash_table:
                         pass
                     else:
                         stock_hash_table[(legacy_seed_stock_hash)] = stock_id
-                        stock_table[(stock_id, passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Not Inventoried', 'Not Invetoried', seed_comments)] = stock_id
+                        stock_table[(stock_id, passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Not Inventoried', 'Not Invetoried', stock_inoculated, seed_comments)] = stock_id
                         stock_id = stock_id + 1
 
             #----------- No obs_row entry found for row_id -----------
@@ -1190,12 +1200,12 @@ def migrate():
                 #------------ If in seedinv --------------------
                 if (hash((legacy_seed_id))) in legacy_seedinv_table:
 
-                    legacy_seed_stock_hash = hash((passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Inventoried', legacy_seedinv_table[(hash((legacy_seed_id)))][3], seed_comments))
+                    legacy_seed_stock_hash = hash((passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Inventoried', legacy_seedinv_table[(hash((legacy_seed_id)))][3], stock_inoculated, seed_comments))
                     if (legacy_seed_stock_hash) in stock_hash_table:
                         pass
                     else:
                         stock_hash_table[(legacy_seed_stock_hash)] = stock_id
-                        stock_table[(stock_id, passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Inventoried', legacy_seedinv_table[(hash((legacy_seed_id)))][3], seed_comments)] = stock_id
+                        stock_table[(stock_id, passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Inventoried', legacy_seedinv_table[(hash((legacy_seed_id)))][3], stock_inoculated, seed_comments)] = stock_id
                         stock_id = stock_id + 1
 
                     legacy_seed_locality_hash = hash(('Ithaca', 'NY', 'USA', 'NULL'))
@@ -1224,12 +1234,12 @@ def migrate():
 
                 #-------- Not in seedinv --------------
                 else:
-                    legacy_seed_stock_hash = hash((passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Not Inventoried', 'Not Invetoried', seed_comments))
+                    legacy_seed_stock_hash = hash((passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Not Inventoried', 'Not Invetoried', stock_inoculated, seed_comments))
                     if (legacy_seed_stock_hash) in stock_hash_table:
                         pass
                     else:
                         stock_hash_table[(legacy_seed_stock_hash)] = stock_id
-                        stock_table[(stock_id, passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Not Inventoried', 'Not Invetoried', seed_comments)] = stock_id
+                        stock_table[(stock_id, passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Not Inventoried', 'Not Invetoried', stock_inoculated, seed_comments)] = stock_id
                         stock_id = stock_id + 1
 
 

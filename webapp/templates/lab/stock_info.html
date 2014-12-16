@@ -38,7 +38,7 @@
     <thead>
       <tr>
         <th>Experiment</th>
-        <th>ObsID</th>
+        <th>Row ID</th>
         <th>Collector</th>
         <th>Field Name</th>
         <th>Collection Date</th>
@@ -49,7 +49,7 @@
     <tbody>
       <tr>
         <td><a href='/lab/experiment/{{stock_info.passport.collecting.obs_selector.experiment.name}}/'>{{ stock_info.passport.collecting.obs_selector.experiment.name }}</a></td>
-        <td><a href='/lab/obs_selector/{{stock_info.passport.collecting.obs_selector_id}}/'>{{ stock_info.passport.collecting.obs_selector_id }}</a></td>
+        <td><a href='/lab/row/{{stock_info.obs_row_id}}/'>{{ stock_info.row_id }}</a></td>
         <td><a href='/lab/profile/{{ stock_info.passport.collecting.user.username }}/'>{{ stock_info.passport.collecting.user.username }}</a></td>
         <td><a href='/lab/field/{{stock_info.passport.collecting.field.id}}/'>{{ stock_info.passport.collecting.field.field_name }}</a></td>
         <td>{{ stock_info.passport.collecting.collection_date }}</td>

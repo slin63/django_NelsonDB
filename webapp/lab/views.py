@@ -897,7 +897,6 @@ def phenotype_data_browse(request):
 def phenotype_data_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
-	context_dict = checkbox_session_variable_check(request)
 	phenotype_data = Measurement.objects.filter(obs_selector__experiment__name=experiment_name)
 	context_dict['phenotype_data'] = phenotype_data
 	context_dict['experiment_name'] = experiment_name
@@ -908,15 +907,12 @@ def genotype_data_browse(request):
 	context = RequestContext(request)
 	context_dict = {}
 
-	context_dict = checkbox_session_variable_check(request)
-
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/index.html', context_dict, context)
 
 def seedinv_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
-	context_dict = checkbox_session_variable_check(request)
 	try:
 		seedinv_from_row_experiment = ObsRow.objects.filter(obs_selector__experiment__name=experiment_name)
 	except ObsRow.DoesNotExist:
@@ -934,12 +930,19 @@ def seedinv_from_experiment(request, experiment_name):
 def single_stock_info(request, stock_id):
 	context = RequestContext(request)
 	context_dict = {}
-	context_dict = checkbox_session_variable_check(request)
-
 	try:
-		context_dict['stock_info'] = Stock.objects.get(id=stock_id)
+		stock_info = Stock.objects.get(id=stock_id)
 	except Stock.DoesNotExist:
-		context_dict['stock_info'] = None
+		stock_info = None
+
+	if stock_info is not None:
+		try:
+			obs_row = ObsRow.objects.get(obs_selector_id=stock_info.passport.collecting.obs_selector_id)
+			stock_info.obs_row_id = obs_row.id
+			stock_info.row_id = obs_row.row_id
+		except ObsRow.DoesNotExist:
+			obs_row = None
+		context_dict['stock_info'] = stock_info
 
 	obs_row_stock_0 = ObsRow.objects.filter(stock_id=stock_id)
 	context_dict['obs_row_stock_0'] = obs_row_stock_0
@@ -962,3 +965,12 @@ def single_stock_info(request, stock_id):
 
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/stock_info.html', context_dict, context)
+
+def single_row_info(request, obs_row_id):
+	context = RequestContext(request)
+	context_dict = {}
+	row_info = ObsRow.objects.get(id=obs_row_id)
+
+	context_dict['row_info'] = row_info
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/row_info.html', context_dict, context)
