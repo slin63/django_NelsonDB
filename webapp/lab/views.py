@@ -2,7 +2,7 @@
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsSelector, Isolate, DiseaseInfo, Measurement, MeasurementParameter
+from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsSelector, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment
 from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -281,6 +281,36 @@ def experiment(request, experiment_name_url):
 			context_dict['experiment'] = experiment
 			u = User.objects.get(username=experiment.user.username)
 			context_dict['user'] = u
+			try:
+				treatment_data = Treatment.objects.filter(experiment=experiment)
+			except Treatment.DoesNotExist:
+				treatment_data = None
+			try:
+				row_data = ObsRow.objects.filter(obs_selector__experiment__name=experiment_name)
+			except ObsRow.DoesNotExist:
+				row_data = None
+			try:
+				plant_data = ObsPlant.objects.filter(obs_selector__experiment__name=experiment_name)
+			except ObsPlant.DoesNotExist:
+				plant_data = None
+			try:
+				samples_data = ObsSample.objects.filter(obs_selector__experiment__name=experiment_name)
+			except ObsSample.DoesNotExist:
+				samples_data = None
+			try:
+				stock_row_data = ObsRow.objects.filter(obs_selector__experiment__name=experiment_name)
+			except ObsRow.DoesNotExist:
+				stock_row_data = None
+			try:
+				measurement_data = Measurement.objects.filter(obs_selector__experiment__name=experiment_name)
+			except Measurement.DoesNotExist:
+				measurement_data = None
+			context_dict['treatment_data'] = treatment_data
+			context_dict['row_data'] = row_data
+			context_dict['plant_data'] = plant_data
+			context_dict['samples_data'] = samples_data
+			context_dict['stock_row_data'] = stock_row_data
+			context_dict['measurement_data'] = measurement_data
 		except Experiment.DoesNotExist:
 			pass
 	if experiment_name == 'search':
