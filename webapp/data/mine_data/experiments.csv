@@ -153,3 +153,5 @@ name,field_name,city,state,country,date,tissue_collection,inoculations,inoculati
 13TR,Aurora NY,Aurora,NY,USA,5/16/2013,n,1,NULL,NULL,NULL,07rust,NULL,2013 rust- pan mutants,NULL,unknown
 13TS,Aurora NY,Aurora,NY,USA,5/16/2013,n,1,NULL,NULL,NULL,PsNY003,NULL,2013 Stewart's wilt- mutants,NULL,unknown
 14TN,Aurora NY,Aurora,NY,USA,1/1/1900,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+09CL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
+10CL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,unknown
