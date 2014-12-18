@@ -311,7 +311,7 @@ def migrate():
     obs_row_table[(1,'No Row','No Row','No Row','No Row','No Row','No Row','No Row','No Row','No Row')] = 1
     disease_info_table[(1,'No Disease')] = 1
     measurement_param_table[(1,'No Parameter','No Parameter','No Parameter','No Parameter','No Parameter')] = 1
-    obs_plant_table[(1,1,1,'No Plant','No Plant','No Plant')] = 1
+    obs_plant_table[(1,1,1,1,'No Plant','No Plant','No Plant')] = 1
     obs_sample_table[(1,1,1,1,1,1,'No Sample','No Sample','No Sample','No Sample','No Sample')] = 1
 
     taxonomy_hash_table[(hash(('No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy')))] = 1
@@ -328,7 +328,7 @@ def migrate():
     obs_row_hash_table[(hash(('No Row','No Row','No Row','No Row','No Row','No Row','No Row','No Row','No Row')))] = 1
     disease_info_hash_table[(hash(('No Disease')))] = 1
     measurement_param_hash_table[(hash(('No Parameter','No Parameter','No Parameter','No Parameter','No Parameter')))] = 1
-    obs_plant_hash_table[(hash((1,1,'No Plant','No Plant','No Plant')))] = 1
+    obs_plant_hash_table[(hash((1,1,1,'No Plant','No Plant','No Plant')))] = 1
     obs_sample_hash_table[(hash((1,1,1,1,1,'No Sample','No Sample','No Sample','No Sample','No Sample')))] = 1
 
 #---------------------------------------------------------------------
@@ -1060,7 +1060,7 @@ def migrate():
         legacy_seed_accession = row["accession"]
         legacy_seed_lot = row["lot"]
 
-        if (legacy_seed_id) in stock_table:
+        if (legacy_seed_id) in stock_seed_id_table:
             pass
         else:
             #---Complete comment---
@@ -1169,6 +1169,7 @@ def migrate():
                         stock_id = stock_id + 1
 
             #----------- No obs_row entry found for row_id -----------
+            #--- Add obs_plant_collecting ----
             else:
                 legacy_seed_collecting_hash = hash((1, user_hash_table[(hash(legacy_people_table[(legacy_seed_person_id)][1]))], field_name_table[(legacy_experiment_table[(legacy_experiment_id_origin)][1])], legacy_experiment_table[(legacy_experiment_id_origin)][9], 'Field Harvest', 'No Comments'))
                 if (legacy_seed_collecting_hash) in collecting_hash_table:
@@ -1241,78 +1242,139 @@ def migrate():
                         stock_id = stock_id + 1
 
         #--- Obs Plant Check/Add ---
-        if (legacy_seed_id) in stock_seed_id_table:
-            if (legacy_row_id_origin) in obs_row_intermed_table:
-                if (legacy_plant_id_origin) in legacy_plant_table:
+        if legacy_plant_id_origin != 'NULL':
+            if (legacy_seed_id) in stock_seed_id_table:
+                if (legacy_row_id_origin) in obs_row_intermed_table:
+                    if (legacy_plant_id_origin) in legacy_plant_table:
 
-                    obs_selector_hash = hash((obs_selector_id, experiment_name_table[legacy_experiment_id_origin][0]))
-                    obs_selector_hash_table[(obs_selector_hash)] = obs_selector_id
-                    obs_selector_table[(obs_selector_id, experiment_name_table[row_experiment_name][0])] = obs_selector_id
-                    print("ObsSelector: %d" % (obs_selector_id))
-                    obs_selector_id = obs_selector_id + 1
+                        obs_selector_hash = hash((obs_selector_id, experiment_name_table[legacy_experiment_id_origin][0]))
+                        obs_selector_hash_table[(obs_selector_hash)] = obs_selector_id
+                        obs_selector_table[(obs_selector_id, experiment_name_table[row_experiment_name][0])] = obs_selector_id
+                        print("ObsSelector: %d" % (obs_selector_id))
+                        obs_selector_id = obs_selector_id + 1
 
-                    obs_plant_hash = hash((obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_row_id_origin)][0], stock_seed_id_table[(legacy_seed_id)], legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2]))
-                    if (obs_plant_hash) in obs_plant_hash_table:
-                        pass
+                        obs_plant_hash = hash((obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_row_id_origin)][0], stock_seed_id_table[(legacy_seed_id)], legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2]))
+                        if (obs_plant_hash) in obs_plant_hash_table:
+                            pass
+                        else:
+                            obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
+                            obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_row_id_origin)][0], stock_seed_id_table[(legacy_seed_id)], legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2])] = obs_plant_id
+                            obs_plant_id = obs_plant_id + 1
+
                     else:
-                        obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
-                        obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_row_id_origin)][0], stock_seed_id_table[(legacy_seed_id)], legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2])] = obs_plant_id
-                        obs_plant_id = obs_plant_id + 1
+                        obs_selector_hash = hash((obs_selector_id, experiment_name_table[legacy_experiment_id_origin][0]))
+                        obs_selector_hash_table[(obs_selector_hash)] = obs_selector_id
+                        obs_selector_table[(obs_selector_id, experiment_name_table[row_experiment_name][0])] = obs_selector_id
+                        print("ObsSelector: %d" % (obs_selector_id))
+                        obs_selector_id = obs_selector_id + 1
 
-            #--- Plant has no row_id ---
+                        obs_plant_hash = hash((obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_row_id_origin)][0], stock_seed_id_table[(legacy_seed_id)], legacy_plant_id_origin, legacy_plant_name, 'No Comments'))
+                        if (obs_plant_hash) in obs_plant_hash_table:
+                            pass
+                        else:
+                            obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
+                            obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_row_id_origin)][0], stock_seed_id_table[(legacy_seed_id)], legacy_plant_id_origin, legacy_plant_name, 'No Comments')] = obs_plant_id
+                            obs_plant_id = obs_plant_id + 1
+
+                #--- Plant has no row_id ---
+                else:
+                    if (legacy_plant_id_origin) in legacy_plant_table:
+
+                        obs_selector_hash = hash((obs_selector_id, experiment_name_table[legacy_experiment_id_origin][0]))
+                        obs_selector_hash_table[(obs_selector_hash)] = obs_selector_id
+                        obs_selector_table[(obs_selector_id, experiment_name_table[row_experiment_name][0])] = obs_selector_id
+                        print("ObsSelector: %d" % (obs_selector_id))
+                        obs_selector_id = obs_selector_id + 1
+
+                        obs_plant_hash = hash((obs_selector_hash_table[(obs_selector_hash)], 1, stock_seed_id_table[(legacy_seed_id)], legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2]))
+                        if (obs_plant_hash) in obs_plant_hash_table:
+                            pass
+                        else:
+                            obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
+                            obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], 1, stock_seed_id_table[(legacy_seed_id)], legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2])] = obs_plant_id
+                            obs_plant_id = obs_plant_id + 1
+
+                    else:
+                        obs_selector_hash = hash((obs_selector_id, experiment_name_table[legacy_experiment_id_origin][0]))
+                        obs_selector_hash_table[(obs_selector_hash)] = obs_selector_id
+                        obs_selector_table[(obs_selector_id, experiment_name_table[row_experiment_name][0])] = obs_selector_id
+                        print("ObsSelector: %d" % (obs_selector_id))
+                        obs_selector_id = obs_selector_id + 1
+
+                        obs_plant_hash = hash((obs_selector_hash_table[(obs_selector_hash)], 1, stock_seed_id_table[(legacy_seed_id)], legacy_plant_id_origin, legacy_plant_name, 'No Comments'))
+                        if (obs_plant_hash) in obs_plant_hash_table:
+                            pass
+                        else:
+                            obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
+                            obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], 1, stock_seed_id_table[(legacy_seed_id)], legacy_plant_id_origin, legacy_plant_name, 'No Comments')] = obs_plant_id
+                            obs_plant_id = obs_plant_id + 1
+
+            #--- Plant has no seed_id ----
             else:
-                if (legacy_plant_id_origin) in legacy_plant_table:
+                if (legacy_row_id_origin) in obs_row_intermed_table:
+                    if (legacy_plant_id_origin) in legacy_plant_table:
 
-                    obs_selector_hash = hash((obs_selector_id, experiment_name_table[legacy_experiment_id_origin][0]))
-                    obs_selector_hash_table[(obs_selector_hash)] = obs_selector_id
-                    obs_selector_table[(obs_selector_id, experiment_name_table[row_experiment_name][0])] = obs_selector_id
-                    print("ObsSelector: %d" % (obs_selector_id))
-                    obs_selector_id = obs_selector_id + 1
+                        obs_selector_hash = hash((obs_selector_id, experiment_name_table[legacy_experiment_id_origin][0]))
+                        obs_selector_hash_table[(obs_selector_hash)] = obs_selector_id
+                        obs_selector_table[(obs_selector_id, experiment_name_table[row_experiment_name][0])] = obs_selector_id
+                        print("ObsSelector: %d" % (obs_selector_id))
+                        obs_selector_id = obs_selector_id + 1
 
-                    obs_plant_hash = hash((obs_selector_hash_table[(obs_selector_hash)], 1, stock_seed_id_table[(legacy_seed_id)], legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2]))
-                    if (obs_plant_hash) in obs_plant_hash_table:
-                        pass
+                        obs_plant_hash = hash((obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_row_id_origin)][0], 1, legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2]))
+                        if (obs_plant_hash) in obs_plant_hash_table:
+                            pass
+                        else:
+                            obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
+                            obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_row_id_origin)][0], 1, legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2])] = obs_plant_id
+                            obs_plant_id = obs_plant_id + 1
+
                     else:
-                        obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
-                        obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], 1, stock_seed_id_table[(legacy_seed_id)], legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2])] = obs_plant_id
-                        obs_plant_id = obs_plant_id + 1
+                        obs_selector_hash = hash((obs_selector_id, experiment_name_table[legacy_experiment_id_origin][0]))
+                        obs_selector_hash_table[(obs_selector_hash)] = obs_selector_id
+                        obs_selector_table[(obs_selector_id, experiment_name_table[row_experiment_name][0])] = obs_selector_id
+                        print("ObsSelector: %d" % (obs_selector_id))
+                        obs_selector_id = obs_selector_id + 1
 
-        #--- Plant has no seed_id ----
-        else:
-            if (legacy_row_id_origin) in obs_row_intermed_table:
-                if (legacy_plant_id_origin) in legacy_plant_table:
+                        obs_plant_hash = hash((obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_row_id_origin)][0], 1, legacy_plant_id_origin, legacy_plant_name, 'No Comments'))
+                        if (obs_plant_hash) in obs_plant_hash_table:
+                            pass
+                        else:
+                            obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
+                            obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_row_id_origin)][0], 1, legacy_plant_id_origin, legacy_plant_name, 'No Comments')] = obs_plant_id
+                            obs_plant_id = obs_plant_id + 1
 
-                    obs_selector_hash = hash((obs_selector_id, experiment_name_table[legacy_experiment_id_origin][0]))
-                    obs_selector_hash_table[(obs_selector_hash)] = obs_selector_id
-                    obs_selector_table[(obs_selector_id, experiment_name_table[row_experiment_name][0])] = obs_selector_id
-                    print("ObsSelector: %d" % (obs_selector_id))
-                    obs_selector_id = obs_selector_id + 1
+                #--- Plant has no seed_id or row_id ---
+                else:
+                    if (legacy_plant_id_origin) in legacy_plant_table:
 
-                    obs_plant_hash = hash((obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_row_id_origin)][0], 1, legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2]))
-                    if (obs_plant_hash) in obs_plant_hash_table:
-                        pass
+                        obs_selector_hash = hash((obs_selector_id, experiment_name_table[legacy_experiment_id_origin][0]))
+                        obs_selector_hash_table[(obs_selector_hash)] = obs_selector_id
+                        obs_selector_table[(obs_selector_id, experiment_name_table[row_experiment_name][0])] = obs_selector_id
+                        print("ObsSelector: %d" % (obs_selector_id))
+                        obs_selector_id = obs_selector_id + 1
+
+                        obs_plant_hash = hash((obs_selector_hash_table[(obs_selector_hash)], 1, 1, legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2]))
+                        if (obs_plant_hash) in obs_plant_hash_table:
+                            pass
+                        else:
+                            obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
+                            obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], 1, 1, legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2])] = obs_plant_id
+                            obs_plant_id = obs_plant_id + 1
+
                     else:
-                        obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
-                        obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_row_id_origin)][0], 1, legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2])] = obs_plant_id
-                        obs_plant_id = obs_plant_id + 1
+                        obs_selector_hash = hash((obs_selector_id, experiment_name_table[legacy_experiment_id_origin][0]))
+                        obs_selector_hash_table[(obs_selector_hash)] = obs_selector_id
+                        obs_selector_table[(obs_selector_id, experiment_name_table[row_experiment_name][0])] = obs_selector_id
+                        print("ObsSelector: %d" % (obs_selector_id))
+                        obs_selector_id = obs_selector_id + 1
 
-            #--- Plant has no seed_id or row_id ---
-            else:
-                if (legacy_plant_id_origin) in legacy_plant_table:
-
-                    obs_selector_hash = hash((obs_selector_id, experiment_name_table[legacy_experiment_id_origin][0]))
-                    obs_selector_hash_table[(obs_selector_hash)] = obs_selector_id
-                    obs_selector_table[(obs_selector_id, experiment_name_table[row_experiment_name][0])] = obs_selector_id
-                    print("ObsSelector: %d" % (obs_selector_id))
-                    obs_selector_id = obs_selector_id + 1
-
-                    obs_plant_hash = hash((obs_selector_hash_table[(obs_selector_hash)], 1, 1, legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2]))
-                    if (obs_plant_hash) in obs_plant_hash_table:
-                        pass
-                    else:
-                        obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
-                        obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], 1, 1, legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2])] = obs_plant_id
-                        obs_plant_id = obs_plant_id + 1
+                        obs_plant_hash = hash((obs_selector_hash_table[(obs_selector_hash)], 1, 1, legacy_plant_id_origin, legacy_plant_name, 'No Comments'))
+                        if (obs_plant_hash) in obs_plant_hash_table:
+                            pass
+                        else:
+                            obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
+                            obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], 1, 1, legacy_plant_id_origin, legacy_plant_name, 'No Comments')] = obs_plant_id
+                            obs_plant_id = obs_plant_id + 1
 
 
 #------------------------------------------------------------------------
