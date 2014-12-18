@@ -18,12 +18,12 @@ DATABASE_PATH = os.path.join(PROJECT_PATH, 'mine.db')
 TEMPLATE_PATH = os.path.join(PROJECT_PATH, 'templates')
 
 #In prod comments out STATIC_PATH
-STATIC_PATH = os.path.join(PROJECT_PATH,'static')
+#STATIC_PATH = os.path.join(PROJECT_PATH,'static')
 
 MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
 
 #-------------------PROD SETTINGS ------------------
-# STATIC_ROOT = os.path.join(PROJECT_PATH,'static')
+STATIC_ROOT = os.path.join(PROJECT_PATH,'static')
 #--------------------------------------------------
 
 # Quick-start development settings - unsuitable for production
@@ -70,25 +70,25 @@ WSGI_APPLICATION = 'webapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': 'db_test',
-#        'USER': 'web_user',
-#        'PASSWORD': 'django3210',
-#    }
-#}
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'nelson_db',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
+        'NAME': 'db_test',
+        'USER': 'web_user',
+        'PASSWORD': 'django3210',
     }
 }
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'nelson_db',
+#        'USER': 'root',
+#        'PASSWORD': '',
+#        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+#        'PORT': '3306',
+#    }
+#}
 
 LOGIN_URL = '/lab/login/'
 
@@ -128,14 +128,14 @@ TEMPLATE_DIRS = (
 )
 
 #--------------PROD SETTINGS ---------------------------
-# STATICFILES_DIRS = (
-# )
+STATICFILES_DIRS = (
+)
 #--------------------------------------------------------
 
 #--Comment out in prod------------
-STATICFILES_DIRS = (
-  STATIC_PATH,
-)
+#STATICFILES_DIRS = (
+#  STATIC_PATH,
+#)
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
