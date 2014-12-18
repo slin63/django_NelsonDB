@@ -90,6 +90,9 @@ def migrate():
     legacy_seedinv_not_in_stock = OrderedDict({})
     #--- Key = (count)
     #--- Value = (legacy_values)
+    legacy_plant_not_in_obsplant = OrderedDict({})
+    #--- Key = (count)
+    #--- Value = (legacy_values)
 
 #-------------------------------------------------
 #- Define intermediary dictionaries and legacy data dictionaries
@@ -169,6 +172,9 @@ def migrate():
     obs_sample_hash_table = OrderedDict({})
     #--- Key = (hash(obs_selector_id, obs_row_id, obs_plant_id, stock_id, source_sample_id, sample_id, sample_type, weight, kernel_num, comments))
     #--- Value = (obs_sample_id)
+    obs_plant_id_table = OrderedDict({})
+    #--- Key = (plant_id)
+    #--- Value = (obs_plant_id)
 
     legacy_experiment_table = OrderedDict({})
     #--- Key = (legacy_exp_id)
@@ -678,7 +684,7 @@ def migrate():
 
         #-------- If seed_id not found in Legacy_Seed ----------------
         else:
-
+            #--- People is dummy value ---
             #--- Collecting is dummy value ---
 
             passport_row_hash = hash((1, 1, taxonomy_hash_table[(taxonomy_row_hash)]))
@@ -1132,6 +1138,7 @@ def migrate():
                     else:
                         stock_hash_table[(legacy_seed_stock_hash)] = stock_id
                         stock_table[(stock_id, passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Inventoried', legacy_seedinv_table[(hash((legacy_seed_id)))][3], stock_inoculated, seed_comments)] = stock_id
+                        stock_seed_id_table[(legacy_seed_id)] = stock_id
                         stock_id = stock_id + 1
 
                     legacy_seed_locality_hash = hash(('Ithaca', 'NY', 'USA', 'NULL'))
@@ -1166,10 +1173,10 @@ def migrate():
                     else:
                         stock_hash_table[(legacy_seed_stock_hash)] = stock_id
                         stock_table[(stock_id, passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Not Inventoried', 'Not Invetoried', stock_inoculated, seed_comments)] = stock_id
+                        stock_seed_id_table[(legacy_seed_id)] = stock_id
                         stock_id = stock_id + 1
 
             #----------- No obs_row entry found for row_id -----------
-            #--- Add obs_plant_collecting ----
             else:
                 legacy_seed_collecting_hash = hash((1, user_hash_table[(hash(legacy_people_table[(legacy_seed_person_id)][1]))], field_name_table[(legacy_experiment_table[(legacy_experiment_id_origin)][1])], legacy_experiment_table[(legacy_experiment_id_origin)][9], 'Field Harvest', 'No Comments'))
                 if (legacy_seed_collecting_hash) in collecting_hash_table:
@@ -1205,6 +1212,7 @@ def migrate():
                     else:
                         stock_hash_table[(legacy_seed_stock_hash)] = stock_id
                         stock_table[(stock_id, passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Inventoried', legacy_seedinv_table[(hash((legacy_seed_id)))][3], stock_inoculated, seed_comments)] = stock_id
+                        stock_seed_id_table[(legacy_seed_id)] = stock_id
                         stock_id = stock_id + 1
 
                     legacy_seed_locality_hash = hash(('Ithaca', 'NY', 'USA', 'NULL'))
@@ -1239,7 +1247,33 @@ def migrate():
                     else:
                         stock_hash_table[(legacy_seed_stock_hash)] = stock_id
                         stock_table[(stock_id, passport_hash_table[(legacy_seed_passport_hash)], legacy_seed_id, legacy_seed_name, legacy_cross_type, legacy_seed_pedigree, 'Not Inventoried', 'Not Invetoried', stock_inoculated, seed_comments)] = stock_id
+                        stock_seed_id_table[(legacy_seed_id)] = stock_id
                         stock_id = stock_id + 1
+
+#------------------------------------------------------------------------
+#--- Check/Add obs_plant info ----
+#------------------------------------------------------------------------
+
+    legacy_seed_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_seed_table.csv'), dialect='excel')
+    for row in legacy_seed_file:
+        legacy_seed_id = row["seed_id"]
+        legacy_plant_id_origin = row["plant_id_origin"]
+        legacy_row_id_origin = row["row_id_origin"]
+        legacy_experiment_id_origin = row["experiment_id_origin_id"]
+        legacy_plant_name = row["plant_name"]
+        legacy_row_name = row["row_name"]
+        legacy_seed_name = row["seed_name"]
+        legacy_cross_type = row["cross_type"]
+        legacy_male_parent_id = row["male_parent_id"]
+        legacy_male_parent_name = row["male_parent_name"]
+        legacy_program_origin = row["program_origin"]
+        legacy_seed_pedigree = row["seed_pedigree"]
+        legacy_line_num = row["line_num"]
+        legacy_seed_person_id = row["seed_person_id"]
+        legacy_seed_disease_info = row["disease_info"]
+        legacy_seed_notes = row["notes"]
+        legacy_seed_accession = row["accession"]
+        legacy_seed_lot = row["lot"]
 
         #--- Obs Plant Check/Add ---
         if legacy_plant_id_origin != 'NULL':
@@ -1259,6 +1293,7 @@ def migrate():
                         else:
                             obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
                             obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_row_id_origin)][0], stock_seed_id_table[(legacy_seed_id)], legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2])] = obs_plant_id
+                            obs_plant_id_table[(legacy_plant_id_origin)] = obs_plant_id
                             obs_plant_id = obs_plant_id + 1
 
                     else:
@@ -1274,6 +1309,7 @@ def migrate():
                         else:
                             obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
                             obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_row_id_origin)][0], stock_seed_id_table[(legacy_seed_id)], legacy_plant_id_origin, legacy_plant_name, 'No Comments')] = obs_plant_id
+                            obs_plant_id_table[(legacy_plant_id_origin)] = obs_plant_id
                             obs_plant_id = obs_plant_id + 1
 
                 #--- Plant has no row_id ---
@@ -1292,6 +1328,7 @@ def migrate():
                         else:
                             obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
                             obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], 1, stock_seed_id_table[(legacy_seed_id)], legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2])] = obs_plant_id
+                            obs_plant_id_table[(legacy_plant_id_origin)] = obs_plant_id
                             obs_plant_id = obs_plant_id + 1
 
                     else:
@@ -1307,6 +1344,7 @@ def migrate():
                         else:
                             obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
                             obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], 1, stock_seed_id_table[(legacy_seed_id)], legacy_plant_id_origin, legacy_plant_name, 'No Comments')] = obs_plant_id
+                            obs_plant_id_table[(legacy_plant_id_origin)] = obs_plant_id
                             obs_plant_id = obs_plant_id + 1
 
             #--- Plant has no seed_id ----
@@ -1326,6 +1364,7 @@ def migrate():
                         else:
                             obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
                             obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_row_id_origin)][0], 1, legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2])] = obs_plant_id
+                            obs_plant_id_table[(legacy_plant_id_origin)] = obs_plant_id
                             obs_plant_id = obs_plant_id + 1
 
                     else:
@@ -1341,6 +1380,7 @@ def migrate():
                         else:
                             obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
                             obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_row_id_origin)][0], 1, legacy_plant_id_origin, legacy_plant_name, 'No Comments')] = obs_plant_id
+                            obs_plant_id_table[(legacy_plant_id_origin)] = obs_plant_id
                             obs_plant_id = obs_plant_id + 1
 
                 #--- Plant has no seed_id or row_id ---
@@ -1359,6 +1399,7 @@ def migrate():
                         else:
                             obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
                             obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], 1, 1, legacy_plant_table[(legacy_plant_id_origin)][0], legacy_plant_table[(legacy_plant_id_origin)][1], legacy_plant_table[(legacy_plant_id_origin)][2])] = obs_plant_id
+                            obs_plant_id_table[(legacy_plant_id_origin)] = obs_plant_id
                             obs_plant_id = obs_plant_id + 1
 
                     else:
@@ -1374,8 +1415,91 @@ def migrate():
                         else:
                             obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
                             obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], 1, 1, legacy_plant_id_origin, legacy_plant_name, 'No Comments')] = obs_plant_id
+                            obs_plant_id_table[(legacy_plant_id_origin)] = obs_plant_id
                             obs_plant_id = obs_plant_id + 1
 
+#------------------------------------------------------------------------
+#--- Check/Add obs_plant info ----
+#------------------------------------------------------------------------
+
+    legacy_plant_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_plant_table.csv'), dialect='excel')
+    for row in legacy_plant_file:
+        legacy_plant_id = row["plant_id"]
+        legacy_plant_row_id = row["row_id"]
+        legacy_plant_name = row["plant_name"]
+        legacy_plant_notes = row["notes"]
+
+        if (legacy_plant_id) in obs_plant_id_table:
+            pass
+        else:
+            obs_selector_hash = hash((obs_selector_id, experiment_name_table[legacy_experiment_id_origin][0]))
+            obs_selector_hash_table[(obs_selector_hash)] = obs_selector_id
+            obs_selector_table[(obs_selector_id, experiment_name_table[row_experiment_name][0])] = obs_selector_id
+            print("ObsSelector: %d" % (obs_selector_id))
+            obs_selector_id = obs_selector_id + 1
+
+            if (legacy_plant_id) in obs_row_intermed_table:
+                obs_plant_hash = hash((obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_plant_row_id)][0], 1, legacy_plant_id, legacy_plant_name, legacy_plant_notes))
+                if (obs_plant_hash) in obs_plant_hash_table:
+                    pass
+                else:
+                    obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
+                    obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], obs_row_intermed_table[(legacy_plant_row_id)][0], 1, legacy_plant_id, legacy_plant_name, legacy_plant_notes)] = obs_plant_id
+                    obs_plant_id_table[(legacy_plant_id)] = obs_plant_id
+                    obs_plant_id = obs_plant_id + 1
+
+            else:
+                obs_plant_hash = hash((obs_selector_hash_table[(obs_selector_hash)], 1, 1, legacy_plant_id, legacy_plant_name, legacy_plant_notes))
+                if (obs_plant_hash) in obs_plant_hash_table:
+                    pass
+                else:
+                    obs_plant_hash_table[(obs_plant_hash)] = obs_plant_id
+                    obs_plant_table[(obs_plant_id, obs_selector_hash_table[(obs_selector_hash)], 1, 1, legacy_plant_id, legacy_plant_name, legacy_plant_notes)] = obs_plant_id
+                    obs_plant_id_table[(legacy_plant_id)] = obs_plant_id
+                    obs_plant_id = obs_plant_id + 1
+
+#------------------------------------------------------------------------
+#--- Add stock collection from plants ----
+#------------------------------------------------------------------------
+
+    legacy_seed_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_seed_table.csv'), dialect='excel')
+    for row in legacy_seed_file:
+        legacy_seed_id = row["seed_id"]
+        legacy_plant_id_origin = row["plant_id_origin"]
+        legacy_row_id_origin = row["row_id_origin"]
+        legacy_experiment_id_origin = row["experiment_id_origin_id"]
+        legacy_plant_name = row["plant_name"]
+        legacy_row_name = row["row_name"]
+        legacy_seed_name = row["seed_name"]
+        legacy_cross_type = row["cross_type"]
+        legacy_male_parent_id = row["male_parent_id"]
+        legacy_male_parent_name = row["male_parent_name"]
+        legacy_program_origin = row["program_origin"]
+        legacy_seed_pedigree = row["seed_pedigree"]
+        legacy_line_num = row["line_num"]
+        legacy_seed_person_id = row["seed_person_id"]
+        legacy_seed_disease_info = row["disease_info"]
+        legacy_seed_notes = row["notes"]
+        legacy_seed_accession = row["accession"]
+        legacy_seed_lot = row["lot"]
+
+#------------------------------------------------------------------------
+#--- Check which plant_ids are in legacy_plant but not in obs_plant_table ----
+#------------------------------------------------------------------------
+    legacy_plant_not_in_obsplant_count = 1
+
+    legacy_plant_file = csv.DictReader(open('C://Users/Nicolas/Documents/GitHub/django_NelsonDB/webapp/data/mine_data/legacy_plant_table.csv'), dialect='excel')
+    for row in legacy_plant_file:
+        legacy_plant_id = row["plant_id"]
+        legacy_plant_row_id = row["row_id"]
+        legacy_plant_name = row["plant_name"]
+        legacy_plant_notes = row["notes"]
+
+        if (legacy_plant_id) in obs_plant_id_table:
+            pass
+        else:
+            legacy_plant_not_in_obsplant[(legacy_plant_not_in_obsplant_count)] = (legacy_plant_id, legacy_plant_row_id, legacy_plant_name, legacy_plant_notes)
+            legacy_plant_not_in_obsplant_count = legacy_plant_not_in_obsplant_count + 1
 
 #------------------------------------------------------------------------
 #--- Check which seed_ids are in legacy_seedinv but not in stock_table ----
@@ -1477,6 +1601,9 @@ def migrate():
         writer.writerow([value])
     writer = csv.writer(open('data/csv_from_script/checks/legacy_seedinv_not_in_stock.csv', 'wb'))
     for key, value in legacy_seedinv_not_in_stock.items():
+        writer.writerow([value])
+    writer = csv.writer(open('data/csv_from_script/checks/legacy_plant_not_in_obsplant.csv', 'wb'))
+    for key, value in legacy_plant_not_in_obsplant.items():
         writer.writerow([value])
 
     print('Done')
