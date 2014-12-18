@@ -50,3 +50,6 @@ webapp/data_dump.json
 webapp/nelson_db.sql
 webapp/nelson_db.sql
 webapp/nelson_db.sql
+
+# Ignoring settings.py as it is diff for local MySQL DB
+webapp/settings.py
