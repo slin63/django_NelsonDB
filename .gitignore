@@ -35,20 +35,13 @@ Icon
 .Spotlight-V100
 .Trashes
 
-mine_project/mine.db
 *.db
 mine_project/mine.db-journal
 mine_project/mine.db
-*.jpg
+
 *.pyc
-*.pyc
-*.pyc
-*.pyc
-*.pyc
-*.pyc
+
 webapp/data_dump.json
-webapp/nelson_db.sql
-webapp/nelson_db.sql
 webapp/nelson_db.sql
 
 # Ignoring settings.py as it is diff for local MySQL DB
