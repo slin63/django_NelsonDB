@@ -142,24 +142,22 @@ On a local machine:
 --- Moving Webapp Project and Data onto VM
 ---------------------------------------------------------------------------
 
-Method 1:
+Method 1 On VM:
 
-	1. Copy webapp project onto VM in the directory /srv/nelsondb/app/
-	2. Change settings.py to production settings
-	3. sudo python manage.py makemigrations
-	4. sudo python manage.py migrate
-	5. mysql -u web_user -p -D db_test < /data/home/nm529/webapp/data_delete.sql
-	6. mysql -u web_user -p -D db_test < /data/home/nm529/webapp/nelson_db.sql
+	1. git pull app and data
+	2. sudo python manage.py makemigrations
+	3. sudo python manage.py migrate
+	4. mysql -u web_user -p -D db_test < /data/home/nm529/DataDumps/scripts/data_delete.sql
+	5. mysql -u web_user -p -D db_test < /data/home/nm529/DataDumps/NelsonDB_Dump/nelson_db.sql
 
-Method 2 (step 5 is slow b/c data_dump.json ~ 300MB):
+Method 2 On VM (step 5 is slow b/c data_dump.json ~ 300MB):
 
-	1. Copy webapp project onto VM in the directory /srv/nelsondb/app/
-	2. Change settings.py to production settings
-	3. sudo python manage.py makemigrations
+	1. git pull app and data
+	2. sudo python manage.py makemigrations
 		--- makemigrations tracks any changes made to models.py
-	4. sudo python manage.py migrate
+	3. sudo python manage.py migrate
 		--- migrate creates and applies changes to database tables
-	5. sudo python manage.py loaddata /data/home/nm529/webapp/data_dump.json
+	4. sudo python manage.py loaddata /data/home/nm529/webapp/data_dump.json
 		--- loaddata will overwrite all data in the database already
 		--- data_dump.json is created using python manage.py datadump > data_dump.json
 
