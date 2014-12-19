@@ -16,6 +16,7 @@
       <thead>
       <tr>
         <th>Select</th>
+        <th>Row ID</th>
         <th>Seed ID</th>
         <th>Cross Type</th>
         <th>Pedigree</th>
@@ -30,6 +31,7 @@
       {% for row in seedinv_from_row_experiment %}
       <tr>
         <td><input type="checkbox" name="checkbox_stock" value="{{ row.stock.id }}"></td>
+        <td><a href='/lab/row/{{row.id}}/'>{{ row.row_id }}</a></td>
         <td><a href='/lab/stock/{{row.stock.id}}/'>{{ row.stock.seed_id }}</a></td>
         <td>{{ row.stock.cross_type }}</td>
         <td>{{ row.stock.pedigree }}</td>
