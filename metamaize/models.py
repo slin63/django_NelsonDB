@@ -38,17 +38,18 @@ class Culture(models.Model):
         ('Na','NA'),
     )
     culture_id = models.IntegerField(db_column='Culture_ID', primary_key=True)  # Field name made lowercase.
-    row = models.ForeignKey('Temprow', db_column='Row_ID')  # Field name made lowercase.
-    pedigree_label = models.ForeignKey('Temppedigree', db_column='Pedigree_Label')  # Field name made lowercase.
-    person = models.ForeignKey('Person', db_column='Person_ID')  # Field name made lowercase.
-    medium = models.ForeignKey('Medium', db_column='Medium_ID')  # Field name made lowercase.
-    tissue = models.ForeignKey('Tissue', db_column='Tissue_ID')  # Field name made lowercase.
     culture_name = models.CharField(db_column='Culture_Name', max_length=30)  # Field name made lowercase.
     microbe_type_observed = models.CharField(db_column='Microbe_Type_Observed', max_length=8, blank=True, choice=microbe_type_observed_choices)  # Field name made lowercase.
     plating_cycle = models.IntegerField(db_column='Plating_Cycle')  # Field name made lowercase.
     dilution = models.CharField(db_column='Dilution', max_length=10)  # Field name made lowercase.
     image_location = models.CharField(db_column='Image_Location', max_length=100, blank=True)  # Field name made lowercase.
     notes = models.CharField(db_column='Notes', max_length=2000, blank=True)  # Field name made lowercase.
+    row = models.ForeignKey('Temprow', db_column='Row_ID')  # Field name made lowercase.
+
+    pedigree_label = models.ForeignKey('Temppedigree', db_column='Pedigree_Label')  # Field name made lowercase.
+    person = models.ForeignKey('Person', db_column='Person_ID')  # Field name made lowercase.
+    medium = models.ForeignKey('Medium', db_column='Medium_ID')  # Field name made lowercase.
+    tissue = models.ForeignKey('Tissue', db_column='Tissue_ID')  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -58,6 +59,7 @@ class Culture(models.Model):
 class Medium(models.Model):
     medium_id = models.CharField(db_column='Medium_ID', primary_key=True, max_length=10)  # Field name made lowercase.
     notes = models.CharField(db_column='Notes', max_length=2000)  # Field name made lowercase.
+    
     citation = models.ForeignKey(Citation, db_column='Citation_ID')  # Field name made lowercase.
 
     class Meta:
@@ -74,11 +76,12 @@ class Microbe(models.Model):
         ('Unknown','Unknown'),
     )
     microbe_id = models.IntegerField(db_column='Microbe_ID', primary_key=True)  # Field name made lowercase.
+    microbe_type = models.CharField(db_column='Type', max_length=8, blank=True, choices=microbe_type_choices)  # Field name made lowercase.
+    notes = models.CharField(db_column='Notes', max_length=2000, blank=True)  # Field name made lowercase.
+
+    sequence = models.ForeignKey('MicrobeSequence', db_column='Sequence_ID', blank=True, null=True)  # Field name made lowercase.
     source_culture = models.ForeignKey(Culture, db_column='Source_Culture', blank=True, null=True)  # Field name made lowercase.
     source_tissue = models.ForeignKey('Tissue', db_column='Source_Tissue', blank=True, null=True)  # Field name made lowercase.
-    microbe_type = models.CharField(db_column='Type', max_length=8, blank=True, choices=microbe_type_choices)  # Field name made lowercase.
-    sequence = models.ForeignKey('MicrobeSequence', db_column='Sequence_ID', blank=True, null=True)  # Field name made lowercase.
-    notes = models.CharField(db_column='Notes', max_length=2000, blank=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -91,9 +94,10 @@ class MicrobeSequence(models.Model):
     f_primer_id = models.IntegerField(db_column='F_Primer_ID')  # Field name made lowercase.
     r_primer_id = models.IntegerField(db_column='R_Primer_ID')  # Field name made lowercase.
     taxonomy = models.CharField(db_column='Taxonomy', max_length=100, blank=True)  # Field name made lowercase.
+    notes = models.CharField(db_column='Notes', max_length=2000, blank=True)  # Field name made lowercase.
+
     source_tissue = models.ForeignKey('Tissue', db_column='Source_Tissue', blank=True, null=True)  # Field name made lowercase.
     source_culture = models.ForeignKey(Culture, db_column='Source_Culture', blank=True, null=True)  # Field name made lowercase.
-    notes = models.CharField(db_column='Notes', max_length=2000, blank=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -131,6 +135,7 @@ class Primer(models.Model):
     target = models.CharField(db_column='Target', max_length=255, blank=True)  # Field name made lowercase.
     purpose = models.CharField(db_column='Purpose', max_length=255, blank=True)  # Field name made lowercase.
     notes = models.CharField(db_column='Notes', max_length=2000, blank=True)  # Field name made lowercase.
+
     citation = models.ForeignKey(Citation, db_column='Citation_ID')  # Field name made lowercase.
     source = models.ForeignKey('Source', db_column='Source_ID')  # Field name made lowercase.
 
@@ -142,9 +147,10 @@ class Primer(models.Model):
 class Source(models.Model):
     source_id = models.IntegerField(db_column='Source_ID', primary_key=True)  # Field name made lowercase.
     name = models.CharField(db_column='Name', max_length=255)  # Field name made lowercase.
-    order_person = models.ForeignKey(Person, db_column='Order_Person')  # Field name made lowercase.
     date_ordered = models.DateField(db_column='Date_ordered', blank=True, null=True)  # Field name made lowercase.
     date_received = models.DateField(db_column='Date_received', blank=True, null=True)  # Field name made lowercase.
+
+    order_person = models.ForeignKey(Person, db_column='Order_Person')  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -171,6 +177,7 @@ class Tissue(models.Model):
     date_plated = models.DateField(db_column='Date_Plated', blank=True, null=True)  # Field name made lowercase.
     date_harvested = models.DateField(db_column='Date_Harvested', blank=True, null=True)  # Field name made lowercase.
     notes = models.CharField(db_column='Notes', max_length=2000, blank=True)  # Field name made lowercase.
+    
     row = models.ForeignKey('Temprow', db_column='Row_ID')  # Field name made lowercase.
 
     class Meta:
@@ -188,9 +195,10 @@ class Temppedigree(models.Model):
 
 class Temprow(models.Model):
     row_id = models.CharField(db_column='Row_ID', primary_key=True, max_length=10)  # Field name made lowercase.
-    pedigree_label = models.ForeignKey(Temppedigree, db_column='Pedigree_Label')  # Field name made lowercase.
     source = models.CharField(db_column='Source', max_length=5)  # Field name made lowercase.
     location = models.CharField(db_column='Location', max_length=2)  # Field name made lowercase.
+
+    pedigree_label = models.ForeignKey(Temppedigree, db_column='Pedigree_Label')  # Field name made lowercase.
 
     class Meta:
         managed = False
