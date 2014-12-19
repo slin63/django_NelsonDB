@@ -252,6 +252,7 @@ class Migration(migrations.Migration):
                 ('pedigree', models.CharField(max_length=200)),
                 ('stock_status', models.CharField(max_length=200)),
                 ('stock_date', models.CharField(max_length=200)),
+                ('inoculated', models.BooleanField(default=False)),
                 ('comments', models.CharField(max_length=1000)),
                 ('passport', models.ForeignKey(to='lab.Passport')),
             ],
@@ -335,6 +336,18 @@ class Migration(migrations.Migration):
             model_name='obssample',
             name='obs_selector',
             field=models.ForeignKey(to='lab.ObsSelector'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='obssample',
+            name='source_sample',
+            field=models.ForeignKey(to='lab.ObsSample'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='obssample',
+            name='stock',
+            field=models.ForeignKey(to='lab.Stock'),
             preserve_default=True,
         ),
         migrations.AddField(

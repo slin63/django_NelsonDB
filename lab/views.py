@@ -302,6 +302,10 @@ def experiment(request, experiment_name_url):
 			except ObsRow.DoesNotExist:
 				stock_row_data = None
 			try:
+				stock_seed_data = Stock.objects.filter(passport__collecting__obs_selector__experiment__name=experiment_name)
+			except:
+				stock_seed_data = None
+			try:
 				measurement_data = Measurement.objects.filter(obs_selector__experiment__name=experiment_name)
 			except Measurement.DoesNotExist:
 				measurement_data = None
@@ -310,6 +314,7 @@ def experiment(request, experiment_name_url):
 			context_dict['plant_data'] = plant_data
 			context_dict['samples_data'] = samples_data
 			context_dict['stock_row_data'] = stock_row_data
+			context_dict['stock_seed_data'] = stock_seed_data
 			context_dict['measurement_data'] = measurement_data
 		except Experiment.DoesNotExist:
 			pass
@@ -926,6 +931,18 @@ def seedinv_from_experiment(request, experiment_name):
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_from_experiment.html', context_dict, context)
+
+def seedinv_collected_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		seedinv_stock = Stock.objects.filter(passport__collecting__obs_selector__experiment__name=experiment_name)
+	except:
+		seedinv_stock = None
+	context_dict['seedinv_stock'] = seedinv_stock
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/seed_collected_from_experiment.html', context_dict, context)
 
 def single_stock_info(request, stock_id):
 	context = RequestContext(request)
