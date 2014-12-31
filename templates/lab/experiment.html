@@ -52,9 +52,14 @@
 				<hr>
 			{% endif %}
 			{% if stock_row_data %}
-				<h4><a href='/lab/seed_inventory/experiment/{{experiment.name}}'>Seed Inventory for {{experiment.name}}</a></h4>
+				<h4><a href='/lab/seed_inventory/experiment/{{experiment.name}}'>Seed Planted for {{experiment.name}}</a></h4>
 			{% else %}
-				<h4><font color="#777">No Seed Inventory for {{experiment.name}}</font></h4>
+				<h4><font color="#777">No Planted Seed Inventory for {{experiment.name}}</font></h4>
+			{% endif %}
+			{% if stock_seed_data %}
+			<h4><a href='/lab/seed_inventory/experiment/collected/{{experiment.name}}'>Seed Collected for {{experiment.name}}</a></h4>
+			{% else %}
+			<h4><font color="#777">No Collected Seed Inventory for {{experiment.name}}</font></h4>
 			{% endif %}
 			{% if row_data %}
 				<h4><a href='/lab/data/row/experiment/{{experiment.name}}'>Row Data for {{experiment.name}}</a></h4>
