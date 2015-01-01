@@ -7,4 +7,9 @@ from metamaize.models import Citation, Culture, Medium, Microbe, MicrobeSequence
 #UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm
 
 def index(request):
-	return HttpResponse("Metamaize is alive!!")
+	#return HttpResponse("Metamaize is alive!!")
+	context = RequestContext(request)
+	pedigree_model_data = Temppedigree.objects.all()
+	context_dict['pedigrees'] = pedigree_model_data
+	
+	return render_to_response('metamaize/index.html', context_dict, context)
