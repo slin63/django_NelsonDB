@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Meta-Maize pedigrees</title>
+	</head>
+
+	<body>
+	<h1>MetaMaize says...hello world!</h1>
+	<table style="width:30%">
+	<tr>
+		<td><h3>Pedigree_Label</h3></td>
+		<td><h3>Environment</h3></td>
+	</tr>
+
+	{% if pedigrees %}
+		{% for pedigree in pedigrees %}
+			<tr>
+				<td>{{ pedigree.pedigree_label }}</td>
+				<td>{{ pedigree.environment }}</td>
+			</tr>
+		{% endfor %}
+	{% else %}
+		<strong>There are no pedigrees present.</strong>
+	{% endif %}
+
+	<a href="/metamaize/">Home</a>
+	</body>
+</html>
