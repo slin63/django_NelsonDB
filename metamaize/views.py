@@ -28,7 +28,7 @@ def row(request):
 def person(request):
 	context = RequestContext(request)
 	context_dict = {}
-	person_model_data = person.objects.all()
+	person_model_data = Person.objects.all()
 	context_dict['persons'] = person_model_data
 	
 	return render_to_response('metamaize/person.html', context_dict, context)
