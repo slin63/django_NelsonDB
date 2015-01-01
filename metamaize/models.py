@@ -39,7 +39,7 @@ class Culture(models.Model):
     )
     culture_id = models.IntegerField(db_column='Culture_ID', primary_key=True)  # Field name made lowercase.
     culture_name = models.CharField(db_column='Culture_Name', max_length=30)  # Field name made lowercase.
-    microbe_type_observed = models.CharField(db_column='Microbe_Type_Observed', max_length=8, blank=True, choice=microbe_type_observed_choices)  # Field name made lowercase.
+    microbe_type_observed = models.CharField(db_column='Microbe_Type_Observed', max_length=8, blank=True, choices=microbe_type_observed_choices)  # Field name made lowercase.
     plating_cycle = models.IntegerField(db_column='Plating_Cycle')  # Field name made lowercase.
     dilution = models.CharField(db_column='Dilution', max_length=10)  # Field name made lowercase.
     image_location = models.CharField(db_column='Image_Location', max_length=100, blank=True)  # Field name made lowercase.
