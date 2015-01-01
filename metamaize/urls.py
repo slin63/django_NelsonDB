@@ -6,6 +6,6 @@ urlpatterns = patterns('',
 	url(r'^$', views.index, name='index'),
 	url(r'^pedigree/$', views.pedigree, name='pedigree'),
 	url(r'^row/$', views.row, name='row'),
-	url(r'^person/$', views.row, name='person'),
+	url(r'^person/$', views.person, name='person'),
 	)
 
