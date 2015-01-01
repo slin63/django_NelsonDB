@@ -9,6 +9,7 @@ from metamaize.models import Citation, Culture, Medium, Microbe, MicrobeSequence
 def index(request):
 	#return HttpResponse("Metamaize is alive!!")
 	context = RequestContext(request)
+	context_dict = {}
 	pedigree_model_data = Temppedigree.objects.all()
 	context_dict['pedigrees'] = pedigree_model_data
 	
