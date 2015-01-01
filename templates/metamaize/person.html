@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Meta-Maize Folks</title>
+	</head>
+
+	<body>
+	<table style="width:60%">
+	<tr>
+		<td><h3>Person_ID</h3></td>
+		<td><h3>First Name</h3></td>
+		<td><h3>Last Name</h3></td>
+		<td><h3>Phone</h3></td>
+		<td><h3>Email</h3></td>
+		<td><h3>Notes</h3></td>
+	</tr>
+
+	{% if persons %}
+		{% for person in persons %}
+			<tr>
+				<td>{{ person.person_id }}</td>
+				<td>{{ person.fname }}</td>
+				<td>{{ person.lname }}</td>
+				<td>{{ person.phone }}</td>
+				<td>{{ person.email }}</td>
+				<td>{{ person.notes }}</td>
+			</tr>
+		{% endfor %}
+	{% else %}
+		<strong>There are no people present in the DB.</strong>
+	{% endif %}
+
+	</body>
+	<footer>
+	<a href="/metamaize/">Home</a>
+	</footer>
+</html>
