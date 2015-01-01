@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Meta-Maize Rows</title>
+	</head>
+
+	<body>
+	<table style="width:60%">
+	<tr>
+		<td><h3>Row_ID</h3></td>
+		<td><h3>Pedigree_Label</h3></td>
+		<td><h3>Source</h3></td>
+		<td><h3>Location</h3></td>
+	</tr>
+
+	{% if rows %}
+		{% for row in rows %}
+			<tr>
+				<td>{{ row.row_id }}</td>
+				<td>{{ row.pedigree_label }}</td>
+				<td>{{ row.source }}</td>
+				<td>{{ row.location }}</td>
+			</tr>
+		{% endfor %}
+	{% else %}
+		<strong>There are no rows present.</strong>
+	{% endif %}
+
+	</body>
+	<footer>
+	<a href="/metamaize/">Home</a>
+	</footer>
+</html>

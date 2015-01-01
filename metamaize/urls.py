@@ -5,5 +5,6 @@ from metamaize import views
 urlpatterns = patterns('',
 	url(r'^$', views.index, name='index'),
 	url(r'^pedigree/$', views.pedigree, name='pedigree'),
+	url(r'^row/$', views.row, name='row'),
 	)
 
