@@ -9,5 +9,6 @@ urlpatterns = patterns('',
 	url(r'^person/$', views.person, name='person'),
 	url(r'^culture/$', views.culture, name='culture'),
 	url(r'^tissue/$', views.tissue, name='tissue'),
+	url(r'^medium/$', views.medium, name='medium'),
 	)
 

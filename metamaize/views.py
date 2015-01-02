@@ -49,3 +49,11 @@ def tissue(request):
 	
 	return render_to_response('metamaize/tissue.html', context_dict, context)
 
+def medium(request):
+	context = RequestContext(request)
+	context_dict = {}
+	medium_model_data = Medium.objects.all()
+	context_dict['mediums'] = medium_model_data
+	
+	return render_to_response('metamaize/medium.html', context_dict, context)
+
