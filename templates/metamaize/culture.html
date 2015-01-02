@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Meta-Maize cultures</title>
+	</head>
+
+	<body>
+	<table style="width:100%">
+	<tr>
+		<td><h3>Culture_ID</h3></td>
+		<td><h3>Row_ID</h3></td>
+		<td><h3>Pedigree_Label</h3></td>
+		<td><h3>Person_ID</h3></td>
+		<td><h3>Medium_ID</h3></td>
+		<td><h3>Tissue_ID</h3></td>
+		<td><h3>Culture_Name</h3></td>
+		<td><h3>Microbe_Type_Observed</h3></td>
+		<td><h3>Plating_Cycle</h3></td>
+		<td><h3>Dilution</h3></td>
+		<td><h3>Image_Location</h3></td>
+		<td><h3>Notes</h3></td>
+	</tr>
+
+	{% if cultures %}
+		{% for culture in cultures %}
+			<tr>
+				<td>{{ culture.culture_id }}</td>
+				<td>{{ culture.row }}</td>
+				<td>{{ culture.pedigree_label }}</td>
+				<td>{{ culture.person }}</td>
+				<td>{{ culture.medium }}</td>
+				<td>{{ culture.tissue }}</td>
+				<td>{{ culture.culture_name }}</td>
+				<td>{{ culture.microbe_type_observed }}</td>
+				<td>{{ culture.plating_cycle }}</td>
+				<td>{{ culture.dilution }}</td>
+				<td>{{ culture.image_location }}</td>
+				<td>{{ culture.notes }}</td>
+			</tr>
+		{% endfor %}
+	{% else %}
+		<strong>There are no cultures present.</strong>
+	{% endif %}
+
+	<a href="/metamaize/">Home</a>
+	</body>
+</html>
