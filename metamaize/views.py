@@ -32,3 +32,12 @@ def person(request):
 	context_dict['persons'] = person_model_data
 	
 	return render_to_response('metamaize/person.html', context_dict, context)
+
+def culture(request):
+	context = RequestContext(request)
+	context_dict = {}
+	culture_model_data = Culture.objects.all()
+	context_dict['cultures'] = culture_model_data
+	
+	return render_to_response('metamaize/culture.html', context_dict, context)
+
