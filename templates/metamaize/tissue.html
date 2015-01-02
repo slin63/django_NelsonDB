@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Meta-Maize tissues</title>
+	</head>
+
+	<body>
+	<table style="width:60%">
+	<tr>
+		<td><h3>Tissue_ID</h3></td>
+		<td><h3>Type</h3></td>
+		<td><h3>Sample_Name</h3></td>
+		<td><h3>Date_Ground</h3></td>
+		<td><h3>Date_Plated</h3></td>
+		<td><h3>Date_Harvested</h3></td>
+		<td><h3>Notes</h3></td>
+		<td><h3>Row_ID</h3></td>
+	</tr>
+
+	{% if tissues %}
+		{% for tissue in tissues %}
+			<tr>
+				<td>{{ tissue.tissue_id }}</td>
+				<td>{{ tissue.tissue_type }}</td>
+				<td>{{ tissue.sample_name }}</td>
+				<td>{{ tissue.date_ground }}</td>
+				<td>{{ tissue.date_plated }}</td>
+				<td>{{ tissue.date_harvested }}</td>
+				<td>{{ tissue.notes }}</td>
+				<td>{{ tissue.row }}</td>
+			</tr>
+		{% endfor %}
+	{% else %}
+		<strong>There are no tissues present.</strong>
+	{% endif %}
+
+	<a href="/metamaize/">Home</a>
+	</body>
+</html>
