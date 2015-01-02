@@ -41,3 +41,11 @@ def culture(request):
 	
 	return render_to_response('metamaize/culture.html', context_dict, context)
 
+def tissue(request):
+	context = RequestContext(request)
+	context_dict = {}
+	tissue_model_data = Tissue.objects.all()
+	context_dict['tissues'] = tissue_model_data
+	
+	return render_to_response('metamaize/tissue.html', context_dict, context)
+
