@@ -19,6 +19,7 @@ def pedigree(request):
 
 	return render_to_response('metamaize/pedigree.html', context_dict, context)
 
+@login_required
 def row(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -27,6 +28,7 @@ def row(request):
 
 	return render_to_response('metamaize/row.html', context_dict, context)
 
+@login_required
 def person(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -35,6 +37,7 @@ def person(request):
 	
 	return render_to_response('metamaize/person.html', context_dict, context)
 
+@login_required
 def culture(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -43,6 +46,7 @@ def culture(request):
 	
 	return render_to_response('metamaize/culture.html', context_dict, context)
 
+@login_required
 def tissue(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -51,6 +55,7 @@ def tissue(request):
 	
 	return render_to_response('metamaize/tissue.html', context_dict, context)
 
+@login_required
 def medium(request):
 	context = RequestContext(request)
 	context_dict = {}
