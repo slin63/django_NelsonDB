@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
@@ -8,7 +9,8 @@ from metamaize.models import Citation, Culture, Medium, Microbe, MicrobeSequence
 
 def index(request):
 	return HttpResponse("Metamaize is alive!!")
-	
+
+@login_required	
 def pedigree(request):
 	context = RequestContext(request)
 	context_dict = {}
