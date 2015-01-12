@@ -169,6 +169,7 @@ def register(request):
 
 def user_login(request):
 	context = RequestContext(request)
+	next_url = request.GET.get('next', '/lab/')
 	if request.method == 'POST':
 		username = request.POST['username']
 		password = request.POST['password']
@@ -176,13 +177,13 @@ def user_login(request):
 		if user:
 			if user.is_active:
 				login(request, user)
-				return HttpResponseRedirect('/lab/')
+				return HttpResponseRedirect(next_url)
 			else:
-				return render_to_response('lab/login.html', {'disabled_account': 'disabled'}, context)
+				return render_to_response('lab/login.html', {'next_url':next_url, 'disabled_account': 'disabled'}, context)
 		else:
-			return render_to_response('lab/login.html', {'bad_details': 'bad_details'}, context)
+			return render_to_response('lab/login.html', {'next_url':next_url, 'bad_details': 'bad_details'}, context)
 	else:
-		return render_to_response('lab/login.html', {}, context)
+		return render_to_response('lab/login.html', {'next_url':next_url}, context)
 
 @login_required
 def user_logout(request):
@@ -204,6 +205,7 @@ def profile(request, profile_name):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/profile.html', context_dict, context)
 
+@login_required
 def profile_change_password(request):
   context = RequestContext(request)
   context_dict = {}
@@ -229,6 +231,7 @@ def profile_change_password(request):
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('lab/profile_change_password.html', context_dict, context)
 
+@login_required
 def edit_profile(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -271,6 +274,7 @@ def track_url(request):
 				pass
 	return redirect(url)
 
+@login_required
 def experiment(request, experiment_name_url):
 	context = RequestContext(request)
 	experiment_name = decode_url(experiment_name_url)
@@ -364,6 +368,7 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_row_experiment'] = request.session.get('checkbox_row_experiment')
 	return context_dict
 
+@login_required
 def seed_inventory(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -507,6 +512,7 @@ def select_stockpacket_from_stock(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/stock.html', context_dict, context)
 
+@login_required
 def row_data_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
@@ -517,6 +523,7 @@ def row_data_from_experiment(request, experiment_name):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/row_experiment_data.html', context_dict, context)
 
+@login_required
 def passport(request, passport_id):
 	context = RequestContext(request)
 	context_dict = {}
@@ -540,6 +547,7 @@ def passport(request, passport_id):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/passport.html', context_dict, context)
 
+@login_required
 def isolate_inventory(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -721,6 +729,7 @@ def select_isolates(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/isolate.html', context_dict, context)
 
+@login_required
 def disease_info(request, disease_id):
 	context = RequestContext(request)
 	context_dict = {}
@@ -732,6 +741,7 @@ def disease_info(request, disease_id):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/disease_info.html', context_dict, context)
 
+@login_required
 def field_info(request, field_id):
 	context = RequestContext(request)
 	context_dict = {}
@@ -743,6 +753,7 @@ def field_info(request, field_id):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/field.html', context_dict, context)
 
+@login_required
 def measurement_parameter(request, parameter_id):
 	context = RequestContext(request)
 	context_dict = {}
@@ -754,6 +765,7 @@ def measurement_parameter(request, parameter_id):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/measurement_parameter.html', context_dict, context)
 
+@login_required
 def new_experiment(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -805,6 +817,7 @@ def serve_data_template_file(request, filename):
 		response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
 		return response
 
+@login_required
 def row_data_browse(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -872,6 +885,7 @@ def checkbox_row_data_clear(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/row_data.html', context_dict, context)
 
+@login_required
 def samples_data_browse(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -881,6 +895,7 @@ def samples_data_browse(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/index.html', context_dict, context)
 
+@login_required
 def plant_data_browse(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -890,6 +905,7 @@ def plant_data_browse(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/index.html', context_dict, context)
 
+@login_required
 def phenotype_data_browse(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -899,6 +915,7 @@ def phenotype_data_browse(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/index.html', context_dict, context)
 
+@login_required
 def phenotype_data_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
@@ -908,6 +925,7 @@ def phenotype_data_from_experiment(request, experiment_name):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/phenotype_experiment_data.html', context_dict, context)
 
+@login_required
 def genotype_data_browse(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -915,6 +933,7 @@ def genotype_data_browse(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/index.html', context_dict, context)
 
+@login_required
 def seedinv_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
@@ -932,6 +951,7 @@ def seedinv_from_experiment(request, experiment_name):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_from_experiment.html', context_dict, context)
 
+@login_required
 def seedinv_collected_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
@@ -944,6 +964,7 @@ def seedinv_collected_from_experiment(request, experiment_name):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_collected_from_experiment.html', context_dict, context)
 
+@login_required
 def single_stock_info(request, stock_id):
 	context = RequestContext(request)
 	context_dict = {}
@@ -983,6 +1004,7 @@ def single_stock_info(request, stock_id):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/stock_info.html', context_dict, context)
 
+@login_required
 def single_row_info(request, obs_row_id):
 	context = RequestContext(request)
 	context_dict = {}
