@@ -25,11 +25,11 @@
 		{% for culture in cultures %}
 			<tr>
 				<td>{{ culture.culture_id }}</td>
-				<td>{{ culture.row }}</td>
-				<td>{{ culture.pedigree_label }}</td>
-				<td>{{ culture.person }}</td>
-				<td>{{ culture.medium }}</td>
-				<td>{{ culture.tissue }}</td>
+				<td>{{ culture.row.row_id }}</td>
+				<td>{{ culture.pedigree_label.pedigree_label }}</td>
+				<td>{{ culture.person.person_id }}</td>
+				<td>{{ culture.medium.medium_id }}</td>
+				<td>{{ culture.tissue.tissue_id }}</td>
 				<td>{{ culture.culture_name }}</td>
 				<td>{{ culture.microbe_type_observed }}</td>
 				<td>{{ culture.plating_cycle }}</td>
