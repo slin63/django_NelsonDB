@@ -9,7 +9,15 @@
 <div class="container-fluid">
   {% if user.is_authenticated %}
     {% if logged_in_user %}
-      <h3 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Welcome <a href='/lab/profile/{{logged_in_user}}/'>{{logged_in_user}}</a>!<br/>&nbsp;</h3><br/>
+      <div class="bg-success" style="padding:15px">
+        <h3>&nbsp;<br/>&nbsp;&nbsp;&nbsp;Welcome <a href='/lab/profile/{{logged_in_user}}/'>{{logged_in_user}}</a>!</h3>
+        <ul>
+          <li><a href='/lab/new_experiment/'><h5>Start A New Experiment</h5></a></li>
+          <li><a href='/lab/log_data/select_obs/'><h5>Log Data</h5></a></li>
+          <li><a href='/lab/edit_profile/'><h5>Edit Profile</h5></a></li>
+        </ul>
+        &nbsp;<br/>
+      </div>
     {% endif %}
   {% else %}
     <h3 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;<a href="/lab/login/">Login</a> to Access Data and Other  Resources!<br/>&nbsp;</h3><br/>
