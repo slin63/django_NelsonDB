@@ -11,20 +11,6 @@
   <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
   {% csrf_token %}
   <h3 class="form-signin-heading">Start a New Experiment</h3>
-  {% for field in new_experiment_user_form.visible_fields %}
-    <div class="row">
-      <div class="span4 offset1"><font color="247eca">{{ field.help_text }}</font></div>
-      <div class="span3">{{ field }}</div>
-      <div class="span4"><font color="red">{{ field.errors }}</font></div>
-    </div>
-  {% endfor %}
-  {% for field in new_experiment_field_form.visible_fields %}
-    <div class="row">
-      <div class="span4 offset1"><font color="247eca">{{ field.help_text }}</font></div>
-      <div class="span3">{{ field }}</div>
-      <div class="span4"><font color="red">{{ field.errors }}</font></div>
-    </div>
-  {% endfor %}
   {% for field in new_experiment_form.visible_fields %}
     <div class="row">
       <div class="span4 offset1"><font color="247eca">{{ field.help_text }}</font></div>

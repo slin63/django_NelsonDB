@@ -1,0 +1,59 @@
+
+{% extends 'lab/base.html' %}
+{% block title %}Log Data Online{% endblock %}
+{% block body_block %}
+  <div class="hero-unit">
+    <h1>{{data_type_title}}</h1>
+  </div>
+
+  <div class="container-fluid">
+
+    <h5>Seed All Has Same Taxonomy</h5>
+    <h5>Seed All Stocked On Same Day</h5>
+    <h5>Seed All Collected On Same Day</h5>
+    <h5>Seed All Collected By Same User</h5>
+    <h5>Seed All Collected From Same Field</h5>
+    <h5>Seed Collected From Rows</h5>
+    <h5>Seed Collected From Plants</h5>
+    <h5>Seed All Collected Using Same Method</h5>
+    <h5>Seed All Sourced From Elsewhere (Not Collected by User)</h5>
+
+    <br/>
+    <form class="form-signin" id="log_data_online" method="post" action="/lab/log_data/{{data_type}}/">
+      {% csrf_token %}
+      <table id="log_data_online_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th>Seed ID</th>
+            <th>Seed Name</th>
+            <th>Cross Type</th>
+            <th>Pedigree</th>
+            <th>Population</th>
+            <th>Stock Date</th>
+            <th>Inoculated</th>
+            <th>Stock Comments</th>
+            <th>Collection Field</th>
+            <th>Collection Row</th>
+            <th>Collection Plant</th>
+            <th>Collected By</th>
+            <th>Collection Date</th>
+            <th>Collection Method</th>
+            <th>Collection Comments</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{ log_data_online_form_set.management_form }}
+          {% for form in log_data_online_form_set %}
+            <tr>
+              {% for field in form.visible_fields %}
+              <td>{{ field }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <br/>
+      <input class="btn btn-primary" type="submit" name="submit" value="Submit Data"/>
+    </form>
+  </div>
+{% endblock %}

@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsSelector, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm
+from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from itertools import chain
 from django.forms.models import inlineformset_factory
+from django.forms.formsets import formset_factory
 from django.conf import settings
 
 """Used to handle data from URL, to ensure blank spaces don't mess things up"""
@@ -1013,3 +1014,38 @@ def single_row_info(request, obs_row_id):
 	context_dict['row_info'] = row_info
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/row_info.html', context_dict, context)
+
+@login_required
+def log_data_online(request, data_type):
+	context = RequestContext(request)
+	context_dict = {}
+
+	if data_type == 'seed_inventory':
+		data_type_title = 'Log Seed Info'
+		LogDataOnlineFormSet = formset_factory(LogSeedDataOnlineForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				new_seed_id = log_data_online_form_set.cleaned_data['seed_id']
+				new_seed_name = log_data_online_form_set.cleaned_data['seed_name']
+				new_cross_type = log_data_online_form_set.cleaned_data['cross_type']
+				new_pedigree = log_data_online_form_set.cleaned_data['pedigree']
+				new_population = log_data_online_form_set.cleaned_data['population']
+				new_stock_date = log_data_online_form_set.cleaned_data['stock_date']
+				new_inoculated = log_data_online_form_set.cleaned_data['inoculated']
+				new_stock_comments = log_data_online_form_set.cleaned_data['stock_comments']
+				new_collection_user = log_data_online_form_set.cleaned_data['collection_user']
+				new_collection_date = log_data_online_form_set.cleaned_data['collection_date']
+				new_collection_method = log_data_online_form_set.cleaned_data['collection_method']
+				new_collection_comments = log_data_online_form_set.cleaned_data['collection_comments']
+				
+			else:
+				print(log_data_online_form_set.errors)
+		else:
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	context_dict['log_data_online_form_set'] = log_data_online_form_set
+	context_dict['data_type'] = data_type
+	context_dict['data_type_title'] = data_type_title
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/log_data_online.html', context_dict, context)

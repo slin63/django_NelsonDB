@@ -54,5 +54,6 @@ urlpatterns = patterns('',
     url(r'^measurement_parameter/(?P<parameter_id>\d+)/$', views.measurement_parameter, name='measurement_parameter'),
     url(r'^new_experiment/$', views.new_experiment, name='new_experiment'),
     url(r'^log_data/select_obs/$', views.log_data_select_obs, name='log_data_select_obs'),
+    url(r'^log_data/(?P<data_type>\w+)/$', views.log_data_online, name='log_data_online'),
     url(r'^download/template/(?P<filename>\w+)', views.serve_data_template_file, name='serve_data_template_file'),
     )

@@ -65,7 +65,7 @@
           {% for data in row_data %}
           <tr>
             <td><a href='/lab/experiment/{{data.obs_selector.experiment.name}}/'>{{data.obs_selector.experiment.name}}</a></td>
-            <td>{{data.row_id}}</td>
+            <td><a href='/lab/row/{{data.id}}/'>{{data.row_id}}</a></td>
             <td>{{data.row_name}}</td>
             <td><a href='/lab/field/{{data.field.id}}/'>{{data.field.field_name}}</a></td>
             <td><a href='/lab/stock/{{data.stock.id}}/'>{{data.stock.seed_id}}</a></td>

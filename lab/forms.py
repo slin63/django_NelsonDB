@@ -1,6 +1,6 @@
 from django import forms
 
-from lab.models import UserProfile, Experiment, Field
+from lab.models import UserProfile, Experiment, Field, ObsRow, ObsPlant
 from django.contrib.auth.models import User
 from django.core.validators import EmailValidator
 
@@ -59,9 +59,26 @@ class EditUserProfileForm(forms.ModelForm):
 		fields = ['phone', 'organization', 'job_title', 'notes', 'website', 'picture']
 
 class NewExperimentForm(forms.Form):
-	user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Username ---", help_text="Select the primary user:")
-	field = forms.ModelChoiceField(queryset=Field.objects.all(), empty_label="--- Field Name ---", help_text="Select a field or select 'No Field':")
-	name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Experiment Name'}), help_text="Assign an experiment name (e.g. 15XY):")
-	start_date = forms.DateField(widget=forms.DateInput(attrs={'placeholder':'Start Date'}), help_text="Give a start date:")
-	purpose = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Purpose'}), help_text="Description of purpose:")
+	user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Username ---", help_text="Select the primary user:", required=True)
+	field = forms.ModelChoiceField(queryset=Field.objects.all(), empty_label="--- Field Name ---", help_text="Select a field or select 'No Field':", required=True)
+	name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Experiment Name'}), help_text="Assign an experiment name (e.g. 15XY):", required=True)
+	start_date = forms.DateField(widget=forms.DateInput(attrs={'placeholder':'Start Date'}), help_text="Give a start date:", required=True)
+	purpose = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Purpose'}), help_text="Description of purpose:", required=True)
 	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments', 'rows': '5', 'cols': '20'}), help_text="Any additional comments:")
+
+class LogSeedDataOnlineForm(forms.Form):
+	seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Seed ID'}), required=True)
+	seed_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Seed Name'}), required=True)
+	cross_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Cross Type'}), required=True)
+	pedigree = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Pedigree'}), required=True)
+	population = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Population'}), required=True)
+	stock_date = forms.DateField(widget=forms.DateInput(attrs={'placeholder':'Stock Date'}), required=True)
+	inoculated = forms.BooleanField()
+	stock_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), required=False)
+	collection_field = forms.ModelChoiceField(queryset=Field.objects.all(), empty_label="--- Field ---", required=True)
+	collection_row = forms.ModelChoiceField(queryset=ObsRow.objects.all()[:100], empty_label="--- Row ID ---", required=True)
+	collection_plant = forms.ModelChoiceField(queryset=ObsPlant.objects.all()[:100], empty_label="--- Plant ID ---", required=True)
+	collection_user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Collected By ---", required=True)
+	collection_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Collection Date'}), required=False)
+	collection_method = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Collection Method'}), required=False)
+	collection_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Collection Comments'}), required=False)
