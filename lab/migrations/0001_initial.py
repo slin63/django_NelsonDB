@@ -375,6 +375,12 @@ class Migration(migrations.Migration):
             preserve_default=True,
         ),
         migrations.AddField(
+            model_name='obsplant',
+            name='stock',
+            field=models.ForeignKey(default=1, to='lab.Stock'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
             model_name='obsenv',
             name='obs_selector',
             field=models.ForeignKey(to='lab.ObsSelector'),

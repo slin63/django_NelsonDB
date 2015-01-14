@@ -158,6 +158,7 @@ class ObsRow(models.Model):
 class ObsPlant(models.Model):
   obs_selector = models.ForeignKey(ObsSelector)
   obs_row = models.ForeignKey(ObsRow)
+  stock = models.ForeignKey(Stock, default=1)
   plant_id = models.CharField(max_length=200)
   plant_num = models.CharField(max_length=200)
   comments = models.CharField(max_length=1000)

@@ -46,3 +46,5 @@ webapp/nelson_db.sql
 
 # Ignoring settings.py as it is diff for local MySQL DB
 webapp/settings.py
+
+media/profile_images/underwater.jpg
