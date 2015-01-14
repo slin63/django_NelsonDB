@@ -1,8 +1,9 @@
 
+import csv
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsSelector, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment
+from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsSelector, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment
 from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -921,10 +922,62 @@ def phenotype_data_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
 	phenotype_data = Measurement.objects.filter(obs_selector__experiment__name=experiment_name)
+	obs_types = [ObsRow, ObsPlant, ObsSample, ObsEnv]
+	for data in phenotype_data:
+		for obs_type in obs_types:
+			try:
+				obs = obs_type.objects.get(obs_selector=data.obs_selector.id)
+				obs_exists = True
+			except obs_type.DoesNotExist:
+				obs_exists = False
+			if obs_exists == True:
+				if obs_type == ObsRow:
+					data.obs_display = obs.row_id
+					data.obs_url = '/lab/row/%s/' % (obs.id)
+				if obs_type == ObsPlant:
+					data.obs_display = obs.plant_id
+					data.obs_url = '/lab/plant/%s/' % (obs.id)
+				if obs_type == ObsSample:
+					data.obs_display = obs.sample_id
+					data.obs_url = '/lab/sample/%s/' % (obs.id)
+				if obs_type == ObsEnv:
+					data.obs_display = obs.environment_id
+					data.obs_url = '/lab/environment/%s/' % (obs.id)
 	context_dict['phenotype_data'] = phenotype_data
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/phenotype_experiment_data.html', context_dict, context)
+
+def download_phenotype_experiment(request, experiment_name):
+	response = HttpResponse(content_type='test/csv')
+	response['Content-Disposition'] = 'attachment; filename="experiment_measurements.csv"'
+	phenotype_data = Measurement.objects.filter(obs_selector__experiment__name=experiment_name)
+	obs_types = [ObsRow, ObsPlant, ObsSample, ObsEnv]
+	for data in phenotype_data:
+		for obs_type in obs_types:
+			try:
+				obs = obs_type.objects.get(obs_selector=data.obs_selector.id)
+				obs_exists = True
+			except obs_type.DoesNotExist:
+				obs_exists = False
+			if obs_exists == True:
+				if obs_type == ObsRow:
+					data.obs_display = obs.row_id
+					data.obs_url = '/lab/row/%s/' % (obs.id)
+				if obs_type == ObsPlant:
+					data.obs_display = obs.plant_id
+					data.obs_url = '/lab/plant/%s/' % (obs.id)
+				if obs_type == ObsSample:
+					data.obs_display = obs.sample_id
+					data.obs_url = '/lab/sample/%s/' % (obs.id)
+				if obs_type == ObsEnv:
+					data.obs_display = obs.environment_id
+					data.obs_url = '/lab/environment/%s/' % (obs.id)
+	writer = csv.writer(response)
+	writer.writerow(['Obs', 'User', 'Time', 'Parameter Type', 'Parameter', 'Value', 'Units', 'TraitID Buckler', 'Comments'])
+	for row in phenotype_data:
+		writer.writerow([row.obs_display, row.user, row.time_of_measurement, row.measurement_parameter.parameter_type, row.measurement_parameter.parameter, row.value, row.measurement_parameter.unit_of_measure, row.measurement_parameter.trait_id_buckler, row.comments])
+	return response
 
 @login_required
 def genotype_data_browse(request):
@@ -1038,7 +1091,7 @@ def log_data_online(request, data_type):
 				new_collection_date = log_data_online_form_set.cleaned_data['collection_date']
 				new_collection_method = log_data_online_form_set.cleaned_data['collection_method']
 				new_collection_comments = log_data_online_form_set.cleaned_data['collection_comments']
-				
+
 			else:
 				print(log_data_online_form_set.errors)
 		else:
