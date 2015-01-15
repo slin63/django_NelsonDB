@@ -851,6 +851,17 @@ def sort_row_data(request):
 		row_data = ObsRow.objects.all()[:1000]
 	return row_data
 
+@login_required
+def download_row_data(request):
+	response = HttpResponse(content_type='test/csv')
+	response['Content-Disposition'] = 'attachment; filename="selected_experiment_rows.csv"'
+	row_data = sort_row_data(request)
+	writer = csv.writer(response)
+	writer.writerow(['Exp ID', 'Row ID', 'Row Name', 'Field', 'Source Stock', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
+	for row in row_data:
+		writer.writerow([row.obs_selector.experiment, row.row_id, row.row_name, row.field.field_name, row.stock.seed_id, row.range_num, row.plot, row.block, row.rep, row.kernel_num, row.planting_date, row.harvest_date, row.comments])
+	return response
+
 def suggest_row_experiment(request):
 	context = RequestContext(request)
 	context_dict = {}
