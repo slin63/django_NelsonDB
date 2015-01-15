@@ -930,6 +930,26 @@ def plant_data_browse(request):
 	return render_to_response('lab/index.html', context_dict, context)
 
 @login_required
+def plant_data_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	plant_data = ObsPlant.objects.filter(obs_selector__experiment__name=experiment_name)
+	context_dict['plant_data'] = plant_data
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/plant_experiment_data.html', context_dict, context)
+
+def download_plant_experiment(request, experiment_name):
+	response = HttpResponse(content_type='test/csv')
+	response['Content-Disposition'] = 'attachment; filename="experiment_plants.csv"'
+	plant_data = ObsPlant.objects.filter(obs_selector__experiment__name=experiment_name)
+	writer = csv.writer(response)
+	writer.writerow(['Plant ID', 'Plant Num', 'Row ID', 'Stock ID', 'Comments'])
+	for row in plant_data:
+		writer.writerow([row.plant_id, row.plant_num, row.obs_row.row_id, row.stock.seed_id, row.comments])
+	return response
+
+@login_required
 def phenotype_data_browse(request):
 	context = RequestContext(request)
 	context_dict = {}
