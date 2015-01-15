@@ -10,7 +10,7 @@
     <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
       {% if experiment_name %}
       <h2>Row Data from <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h2><br/>
-      <form id="select_stocks_form" method="post" action="/lab/seed_inventory/select_stocks/">
+      <form id="select_stocks_form" method="post" action="/lab/download/row/experiment/{{experiment_name}}/">
         {% csrf_token %}
         <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
@@ -49,7 +49,7 @@
           </tbody>
         </table>
         <br/>
-        <input class="btn btn-primary" type="submit" name="submit" value="Select Data"/>
+        <input class="btn btn-primary" type="submit" name="submit" value="Export Data"/>
       </form>
       {% endif %}
 
