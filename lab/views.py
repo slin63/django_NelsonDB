@@ -526,6 +526,17 @@ def row_data_from_experiment(request, experiment_name):
 	return render_to_response('lab/row_experiment_data.html', context_dict, context)
 
 @login_required
+def download_row_experiment(request, experiment_name):
+	response = HttpResponse(content_type='test/csv')
+	response['Content-Disposition'] = 'attachment; filename="experiment_rows.csv"'
+	row_data = ObsRow.objects.filter(obs_selector__experiment__name=experiment_name)
+	writer = csv.writer(response)
+	writer.writerow(['Row ID', 'Row Name', 'Field', 'Source Stock', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
+	for row in row_data:
+		writer.writerow([row.row_id, row.row_name, row.field.field_name, row.stock.seed_id, row.range_num, row.plot, row.block, row.rep, row.kernel_num, row.planting_date, row.harvest_date, row.comments])
+	return response
+
+@login_required
 def passport(request, passport_id):
 	context = RequestContext(request)
 	context_dict = {}
@@ -840,6 +851,17 @@ def sort_row_data(request):
 		row_data = ObsRow.objects.all()[:1000]
 	return row_data
 
+@login_required
+def download_row_data(request):
+	response = HttpResponse(content_type='test/csv')
+	response['Content-Disposition'] = 'attachment; filename="selected_experiment_rows.csv"'
+	row_data = sort_row_data(request)
+	writer = csv.writer(response)
+	writer.writerow(['Exp ID', 'Row ID', 'Row Name', 'Field', 'Source Stock', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
+	for row in row_data:
+		writer.writerow([row.obs_selector.experiment, row.row_id, row.row_name, row.field.field_name, row.stock.seed_id, row.range_num, row.plot, row.block, row.rep, row.kernel_num, row.planting_date, row.harvest_date, row.comments])
+	return response
+
 def suggest_row_experiment(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -948,6 +970,7 @@ def phenotype_data_from_experiment(request, experiment_name):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/phenotype_experiment_data.html', context_dict, context)
 
+@login_required
 def download_phenotype_experiment(request, experiment_name):
 	response = HttpResponse(content_type='test/csv')
 	response['Content-Disposition'] = 'attachment; filename="experiment_measurements.csv"'

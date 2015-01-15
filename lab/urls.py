@@ -57,4 +57,5 @@ urlpatterns = patterns('',
     url(r'^log_data/(?P<data_type>\w+)/$', views.log_data_online, name='log_data_online'),
     url(r'^download/template/(?P<filename>\w+)', views.serve_data_template_file, name='serve_data_template_file'),
     url(r'^download/phenotype/experiment/(?P<experiment_name>\w+)', views.download_phenotype_experiment, name='download_phenotype_experiment'),
+    url(r'^download/rows/$', views.download_row_data, name='download_row_data'),
     )

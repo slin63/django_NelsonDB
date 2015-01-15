@@ -41,7 +41,7 @@
 
     <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
       <h2>Row Data</h2><br/>
-      <form id="select_stocks_form" method="post" action="/lab/seed_inventory/select_stocks/">
+      <form id="select_stocks_form" method="post" action="/lab/download/rows/">
         {% csrf_token %}
         <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
@@ -82,7 +82,7 @@
           </tbody>
         </table>
         <br/>
-        <input class="btn btn-primary" type="submit" name="submit" value="Select Rows"/>
+        <input class="btn btn-primary" type="submit" name="submit" value="Export Data"/>
       </form>
     </div><br/><br/>
   </div>
