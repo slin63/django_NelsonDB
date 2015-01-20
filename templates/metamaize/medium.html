@@ -1,24 +1,21 @@
 <!DOCTYPE html>
 {% extends 'lab/base.html' %}
-{% block title %}Goals{% endblock %}
+{% block title %}Meta-Maize Mediums{% endblock %}
 {% block body_block %}
 <div class="hero-unit">
-<h1>Goals</h1>
+<h1>Meta-Maize Mediums</h1>
 </div>
 <div class="container-fluid">
-<html>
-	<head>
-		<title>Meta-Maize mediums</title>
-	</head>
 
-	<body>
-	<table style="width:30%">
+	<table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+	<thead>
 	<tr>
-		<td><h3>Medium_ID</h3></td>
-		<td><h3>Notes</h3></td>
-		<td><h3>Citation_ID</h3></td>
+		<th>Medium ID</th>
+		<th>Notes</th>
+		<th>Citation ID</th>
 	</tr>
-
+	</thead>
+	<tbody>
 	{% if mediums %}
 		{% for medium in mediums %}
 			<tr>
@@ -31,8 +28,11 @@
 		<strong>There are no mediums present.</strong>
 	{% endif %}
 
-	<a href="/metamaize/">Home</a>
-	</body>
-</html>
+	</tbody>
+	</table>
+
+	<br/>
+	<a href="/metamaize/">Meta-Maize Home</a>
+
 </div>
 {% endblock %}

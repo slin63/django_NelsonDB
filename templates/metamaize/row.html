@@ -1,25 +1,22 @@
 <!DOCTYPE html>
 {% extends 'lab/base.html' %}
-{% block title %}Goals{% endblock %}
+{% block title %}Meta-Maize Rows{% endblock %}
 {% block body_block %}
 <div class="hero-unit">
-<h1>Goals</h1>
+<h1>Meta-Maize Rows</h1>
 </div>
 <div class="container-fluid">
-<html>
-	<head>
-		<title>Meta-Maize Rows</title>
-	</head>
 
-	<body>
-	<table style="width:60%">
+	<table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+	<thead>
 	<tr>
-		<td><h3>Row_ID</h3></td>
-		<td><h3>Pedigree_Label</h3></td>
-		<td><h3>Source</h3></td>
-		<td><h3>Location</h3></td>
+		<th>Row_ID</th>
+		<th>Pedigree_Label</th>
+		<th>Source</th>
+		<th>Location</th>
 	</tr>
-
+	</thead>
+	<tbody>
 	{% if rows %}
 		{% for row in rows %}
 			<tr>
@@ -33,10 +30,11 @@
 		<strong>There are no rows present.</strong>
 	{% endif %}
 
-	</body>
-	<footer>
-	<a href="/metamaize/">Home</a>
-	</footer>
-</html>
+	</tbody>
+	</table>
+
+	<br/>
+	<a href="/metamaize/">Meta-Maize Home</a>
+
 </div>
 {% endblock %}
