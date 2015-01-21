@@ -11,4 +11,5 @@ urlpatterns = patterns('',
 	url(r'^tissue/$', views.tissue, name='tissue'),
 	url(r'^medium/$', views.medium, name='medium'),
 	url(r'^fixed_queries/$', views.fixed_queries, name='fixed_queries'),
+	url(r'^download/query/$', views.download_queries, name='download_queries'),
 	)
