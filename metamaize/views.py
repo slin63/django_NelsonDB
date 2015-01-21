@@ -116,7 +116,7 @@ def download(request, content):
 		writer = csv.writer(response)
 		writer.writerow(['Tissue ID', 'Type', 'Sample Name', 'Date Ground', 'Date Plated', 'Date Harvested', 'Notes', 'Row ID'])
 		for row in tissue_model_data:
-			writer.writerow([row.tissue_id, row.type, row.sample_name, row.date_ground, row.date_plated, row.date_harvested, row.notes, row.row.row_id])
+			writer.writerow([row.tissue_id, row.tissue_type, row.sample_name, row.date_ground, row.date_plated, row.date_harvested, row.notes, row.row.row_id])
 	if content == 'medium_all':
 		response['Content-Disposition'] = 'attachment; filename="metamaize_medium.csv"'
 		medium_model_data = Medium.objects.all()

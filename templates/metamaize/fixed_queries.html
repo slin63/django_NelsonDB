@@ -8,6 +8,10 @@
 </div>
 <div class="container-fluid">
 
+  <h3>Query 01:</h3>
+  <h5>Display tissue_type, row_id, pedigree, seed_source, microbe_type, culture_name, and notes for cultures which had a microbe type observed.</h5>
+  <br/>
+
   <form id="select_stocks_form" method="post" action="/metamaize/download/query_01/">
     {% csrf_token %}
   <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
