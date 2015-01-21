@@ -81,10 +81,10 @@ def download_queries(request):
 	response['Content-Disposition'] = 'attachment; filename="metamaize_queries.csv"'
 	cultures = Culture.objects.all()
 	writer = csv.writer(response)
-	writer.writerow(['Tissue Type', 'Row ID', 'Pedigree', 'Seed Source', 'Microbe Type', 'Culture Name'])
+	writer.writerow(['Tissue Type', 'Row ID', 'Pedigree', 'Seed Source', 'Microbe Type', 'Culture Name', 'Notes'])
 	for row in cultures:
 		try:
-			writer.writerow([row.tissue.tissue_type, row.row.row_id, row.pedigree_label.pedigree_label, row.row.source, row.microbe_type_observed, row.culture_name])
+			writer.writerow([row.tissue.tissue_type, row.row.row_id, row.pedigree_label.pedigree_label, row.row.source, row.microbe_type_observed, row.culture_name, row.notes])
 		except Tissue.DoesNotExist:
-			writer.writerow(['', row.row.row_id, row.pedigree_label.pedigree_label, row.row.source, row.microbe_type_observed, row.culture_name])
+			writer.writerow(['', row.row.row_id, row.pedigree_label.pedigree_label, row.row.source, row.microbe_type_observed, row.culture_name, row.notes])
 	return response
