@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsSelector, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm
+from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -1122,19 +1122,83 @@ def log_data_online(request, data_type):
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
 			if log_data_online_form_set.is_valid():
-				new_seed_id = log_data_online_form_set.cleaned_data['seed_id']
-				new_seed_name = log_data_online_form_set.cleaned_data['seed_name']
-				new_cross_type = log_data_online_form_set.cleaned_data['cross_type']
-				new_pedigree = log_data_online_form_set.cleaned_data['pedigree']
-				new_population = log_data_online_form_set.cleaned_data['population']
-				new_stock_date = log_data_online_form_set.cleaned_data['stock_date']
-				new_inoculated = log_data_online_form_set.cleaned_data['inoculated']
-				new_stock_comments = log_data_online_form_set.cleaned_data['stock_comments']
-				new_collection_user = log_data_online_form_set.cleaned_data['collection_user']
-				new_collection_date = log_data_online_form_set.cleaned_data['collection_date']
-				new_collection_method = log_data_online_form_set.cleaned_data['collection_method']
-				new_collection_comments = log_data_online_form_set.cleaned_data['collection_comments']
+				for form in log_data_online_form_set:
+					try:
+						seed_id = form.cleaned_data['seed_id']
+						seed_name = form.cleaned_data['seed_name']
+						cross_type = form.cleaned_data['cross_type']
+						pedigree = form.cleaned_data['pedigree']
+						stock_status = form.cleaned_data['stock_status']
+						stock_date = form.cleaned_data['stock_date']
+						inoculated = form.cleaned_data['inoculated']
+						stock_comments = form.cleaned_data['stock_comments']
+						genus = form.cleaned_data['genus']
+						species = form.cleaned_data['species']
+						population = form.cleaned_data['population']
+						population = form.cleaned_data['population']
+						collection_field = form.cleaned_data['collection_field']
+						collection_row = form.cleaned_data['collection_row']
+						collection_plant = form.cleaned_data['collection_plant']
+						collection_user = form.cleaned_data['collection_user']
+						collection_date = form.cleaned_data['collection_date']
+						collection_method = form.cleaned_data['collection_method']
+						collection_comments = form.cleaned_data['collection_comments']
+						source_fname = form.cleaned_data['source_fname']
+						source_lname = form.cleaned_data['source_lname']
+						source_organization = form.cleaned_data['source_organization']
+						source_phone = form.cleaned_data['source_phone']
+						source_email = form.cleaned_data['source_email']
+						source_comments = form.cleaned_data['source_comments']
 
+						new_taxonomy = Taxonomy.objects.get_or_create(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL')
+						new_people = People.objects.get_or_create(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)
+						if collection_row:
+							source = ObsRow.objects.get(row_id=collection_row)
+							new_collecting = Collecting.objects.get_or_create(field=collection_field, user=collection_user, obs_selector=source.obs_selector, collection_date=collection_date, collection_method=collection_method, comments=collection_comments)
+							new_passport = Passport.objects.get_or_create(collecting=Collecting.objects.get(field=collection_field, user=collection_user, obs_selector=source.obs_selector, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments))
+							new_stock = Stock.objects.get_or_create(passport=Passport.objects.get(collecting=Collecting.objects.get(field=collection_field, user=collection_user, obs_selector=source.obs_selector, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments)
+						elif collection_plant:
+							source = ObsRow.objects.get(row_id=collection_row)
+							new_collecting = Collecting.objects.get_or_create(field=collection_field, user=collection_user, obs_selector=source.obs_selector, collection_date=collection_date, collection_method=collection_method, comments=collection_comments)
+							new_passport = Passport.objects.get_or_create(collecting=Collecting.objects.get(field=collection_field, user=collection_user, obs_selector=source.obs_selector, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments))
+							new_stock = Stock.objects.get_or_create(passport=Passport.objects.get(collecting=Collecting.objects.get(field=collection_field, user=collection_user, obs_selector=source.obs_selector, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments)
+						else:
+							new_collecting = Collecting.objects.get_or_create(field=collection_field, user=collection_user, obs_selector_id=1, collection_date=collection_date, collection_method=collection_method, comments=collection_comments)
+							new_passport = Passport.objects.get_or_create(collecting=Collecting.objects.get(field=collection_field, user=collection_user, obs_selector_id=1, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments))
+							new_stock = Stock.objects.get_or_create(passport=Passport.objects.get(collecting=Collecting.objects.get(field=collection_field, user=collection_user, obs_selector_id=1, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments)
+					except KeyError:
+						pass
+			else:
+				print(log_data_online_form_set.errors)
+		else:
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'seed_packet':
+		data_type_title = 'Inventory Seed Packets'
+		LogDataOnlineFormSet = formset_factory(LogStockPacketOnlineForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				for form in log_data_online_form_set:
+					try:
+						seed_id = form.cleaned_data['seed_id']
+						weight = form.cleaned_data['weight']
+						num_seeds = form.cleaned_data['num_seeds']
+						packet_comments = form.cleaned_data['packet_comments']
+						locality = form.cleaned_data['locality']
+						building_name = form.cleaned_data['building_name']
+						location_name = form.cleaned_data['location_name']
+						room = form.cleaned_data['room']
+						shelf = form.cleaned_data['shelf']
+						column = form.cleaned_data['column']
+						box_name = form.cleaned_data['box_name']
+						location_comments = form.cleaned_data['location_comments']
+
+						new_location = Location.objects.get_or_create(locality=locality, building_name=building_name, location_name=location_name, room=room, shelf=shelf, column=column, box_name=box_name, comments=location_comments)
+						new_stock_packet = StockPacket.objects.get_or_create(stock=Stock.objects.get(seed_id=seed_id), location=Location.objects.get(locality=locality, building_name=building_name, location_name=location_name, room=room, shelf=shelf, column=column, box_name=box_name, comments=location_comments), weight=weight, num_seeds=num_seeds, comments=packet_comments)
+
+					except KeyError:
+						pass
 			else:
 				print(log_data_online_form_set.errors)
 		else:
