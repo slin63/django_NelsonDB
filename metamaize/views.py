@@ -70,7 +70,7 @@ def medium(request):
 def fixed_queries(request):
 	context = RequestContext(request)
 	context_dict = {}
-	cultures = Culture.objects.all()
+	cultures = Culture.objects.all().exclude(microbe_type_observed='NA').exclude(microbe_type_observed='0').exclude(microbe_type_observed='')
 	context_dict['cultures'] = cultures
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('metamaize/fixed_queries.html', context_dict, context)
@@ -79,7 +79,7 @@ def fixed_queries(request):
 def download_queries(request):
 	response = HttpResponse(content_type='test/csv')
 	response['Content-Disposition'] = 'attachment; filename="metamaize_queries.csv"'
-	cultures = Culture.objects.all()
+	cultures = Culture.objects.all().exclude(microbe_type_observed='NA').exclude(microbe_type_observed='0').exclude(microbe_type_observed='')
 	writer = csv.writer(response)
 	writer.writerow(['Tissue Type', 'Row ID', 'Pedigree', 'Seed Source', 'Microbe Type', 'Culture Name', 'Notes'])
 	for row in cultures:
