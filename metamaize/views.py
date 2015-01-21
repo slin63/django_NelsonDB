@@ -1,3 +1,4 @@
+import csv
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
@@ -5,6 +6,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from metamaize.models import Citation, Culture, Medium, Microbe, MicrobeSequence, Person, Primer, Source, Tissue, Temppedigree, Temprow
+from jmaize.models import Plate, Well, DNA, Donor
 #UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm
 
 def index(request):
@@ -68,6 +70,21 @@ def medium(request):
 def fixed_queries(request):
 	context = RequestContext(request)
 	context_dict = {}
-
+	cultures = Culture.objects.all()
+	context_dict['cultures'] = cultures
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('metamaize/fixed_queries.html', context_dict, context)
+
+@login_required
+def download_queries(request):
+	response = HttpResponse(content_type='test/csv')
+	response['Content-Disposition'] = 'attachment; filename="metamaize_queries.csv"'
+	cultures = Culture.objects.all()
+	writer = csv.writer(response)
+	writer.writerow(['Tissue Type', 'Row ID', 'Pedigree', 'Seed Source', 'Microbe Type', 'Culture Name'])
+	for row in cultures:
+		try:
+			writer.writerow([row.tissue.tissue_type, row.row.row_id, row.pedigree_label.pedigree_label, row.row.source, row.microbe_type_observed, row.culture_name])
+		except Tissue.DoesNotExist:
+			writer.writerow(['', row.row.row_id, row.pedigree_label.pedigree_label, row.row.source, row.microbe_type_observed, row.culture_name])
+	return response
