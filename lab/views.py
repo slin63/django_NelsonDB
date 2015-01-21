@@ -527,7 +527,7 @@ def row_data_from_experiment(request, experiment_name):
 
 @login_required
 def download_row_experiment(request, experiment_name):
-	response = HttpResponse(content_type='test/csv')
+	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="%s_rows.csv"' % (experiment_name)
 	row_data = ObsRow.objects.filter(obs_selector__experiment__name=experiment_name)
 	writer = csv.writer(response)
@@ -853,7 +853,7 @@ def sort_row_data(request):
 
 @login_required
 def download_row_data(request):
-	response = HttpResponse(content_type='test/csv')
+	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="selected_experiment_rows.csv"'
 	row_data = sort_row_data(request)
 	writer = csv.writer(response)
@@ -940,7 +940,7 @@ def plant_data_from_experiment(request, experiment_name):
 	return render_to_response('lab/plant_experiment_data.html', context_dict, context)
 
 def download_plant_experiment(request, experiment_name):
-	response = HttpResponse(content_type='test/csv')
+	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="%s_plants.csv"' % (experiment_name)
 	plant_data = ObsPlant.objects.filter(obs_selector__experiment__name=experiment_name)
 	writer = csv.writer(response)
@@ -992,7 +992,7 @@ def phenotype_data_from_experiment(request, experiment_name):
 
 @login_required
 def download_phenotype_experiment(request, experiment_name):
-	response = HttpResponse(content_type='test/csv')
+	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="%s_measurements.csv"' % (experiment_name)
 	phenotype_data = Measurement.objects.filter(obs_selector__experiment__name=experiment_name)
 	obs_types = [ObsRow, ObsPlant, ObsSample, ObsEnv]
