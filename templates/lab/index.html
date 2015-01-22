@@ -1,15 +1,18 @@
 {% extends 'lab/base.html' %}
 {% block body_block %}
+
+{% load staticfiles %}
+
 <div class="hero-unit">
+
     <h1>Nelson Lab</h1>
-    <p>Find, Add, Share useful data and resources.</p>
 
 </div>
 
 <div class="container-fluid">
   {% if user.is_authenticated %}
     {% if logged_in_user %}
-      <div class="bg-success" style="padding:15px">
+      <div class="bg-success" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
         <h3>&nbsp;<br/>&nbsp;&nbsp;&nbsp;Welcome <a href='/lab/profile/{{logged_in_user}}/'>{{logged_in_user}}</a>!</h3>
         <ul>
           <li><h5><a href='/lab/new_experiment/'>Start New Experiment</a></h5></li>
@@ -20,9 +23,45 @@
       </div>
     {% endif %}
   {% else %}
-    <h3 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;<a href="/lab/login/">Login</a> to Access Data and Other  Resources!<br/>&nbsp;</h3><br/>
+    <h3 class="bg-success" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">&nbsp;<br/>&nbsp;&nbsp;&nbsp;<a href="/lab/login/">Login</a> to Access Data and Other  Resources!<br/>&nbsp;</h3>
   {% endif %}
-  <h3 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Platform Under Construction!<br/>&nbsp;</h3><br/>
+
+  <br/>
+  <div class="container-fluid">
+    <div class="container-fluid">
+  <div class="row">
+    <div class="span6">
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span7">
+            <h3>New Experiment</h3>
+            <h5><a href="/lab/new_experiment/">Create Experiment</a></h5>
+          </div>
+          <div class="span5">
+            <img src='{% static '/media/site_images/new_experiment.jpg' %}' />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="span6">
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span7">
+            <h3>Log Experimental Data</h3>
+            <h5><a href="/lab/log_data/select_obs/">Add Data</a></h5>
+          </div>
+          <div class="span5">
+            <img src='{% static '/media/site_images/add_to_db.png' %}' />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+  <br/>
+  <h3 class="bg-danger" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Platform Under Construction!<br/>&nbsp;</h3><br/>
 
 </div>
 <!--
