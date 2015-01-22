@@ -8,39 +8,100 @@
 
   <div class="container-fluid">
 
-<!--
-    <h5>Seed All Has Same Taxonomy</h5>
-    <h5>Seed All Stocked On Same Day</h5>
-    <h5>Seed All Collected On Same Day</h5>
-    <h5>Seed All Collected By Same User</h5>
-    <h5>Seed All Collected From Same Field</h5>
-    <h5>Seed Collected From Rows</h5>
-    <h5>Seed Collected From Plants</h5>
-    <h5>Seed All Collected Using Same Method</h5>
-    <h5>Seed All Sourced From Elsewhere (Not Collected by User)</h5>
--->
-
     <br/>
     <form class="form-signin" id="log_data_online" method="post" action="/lab/log_data/{{data_type}}/">
       {% csrf_token %}
       <table id="log_data_online_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
           <tr>
-            <th>Seed ID</th>
-            <th>Seed Name</th>
-            <th>Cross Type</th>
-            <th>Pedigree</th>
-            <th>Population</th>
-            <th>Stock Date</th>
-            <th>Inoculated</th>
-            <th>Stock Comments</th>
-            <th>Collection Field</th>
-            <th>Collection Row</th>
-            <th>Collection Plant</th>
-            <th>Collected By</th>
-            <th>Collection Date</th>
-            <th>Collection Method</th>
-            <th>Collection Comments</th>
+            {% if data_type == 'seed_inventory' %}
+              <th>Seed ID</th>
+              <th>Seed Name</th>
+              <th>Cross Type</th>
+              <th>Pedigree</th>
+              <th>Stock Status</th>
+              <th>Stock Date</th>
+              <th>Inoculated</th>
+              <th>Stock Comments</th>
+              <th>Genus</th>
+              <th>Species</th>
+              <th>Population</th>
+              <th>Collection Field</th>
+              <th>Collection Row</th>
+              <th>Collection Plant</th>
+              <th>Collected By</th>
+              <th>Collection Date</th>
+              <th>Collection Method</th>
+              <th>Collection Comments</th>
+              <th>Source First Name</th>
+              <th>Source Last Name</th>
+              <th>Source Organization</th>
+              <th>Source Phone</th>
+              <th>Source Email</th>
+              <th>Source Comments</th>
+            {% elif data_type == 'seed_packet' %}
+              <th>Seed ID</th>
+              <th>Weight</th>
+              <th>Num Seeds</th>
+              <th>Packet Comments</th>
+              <th>Locality</th>
+              <th>Building Name</th>
+              <th>Location Name</th>
+              <th>Room</th>
+              <th>Shelf</th>
+              <th>Column</th>
+              <th>Box Name</th>
+              <th>Location Comments</th>
+            {% elif data_type == 'plant' %}
+              <th>Experiment</th>
+              <th>Plant ID</th>
+              <th>Plant Num</th>
+              <th>Source Seed ID</th>
+              <th>Source Row ID</th>
+              <th>Comments</th>
+            {% elif data_type == 'row' %}
+              <th>Experiment</th>
+              <th>Row ID</th>
+              <th>Row Name</th>
+              <th>Source Seed ID</th>
+              <th>Field</th>
+              <th>Range Num</th>
+              <th>Plot</th>
+              <th>Block</th>
+              <th>Rep</th>
+              <th>Kernel Num</th>
+              <th>Planting Date</th>
+              <th>Harvest Date</th>
+              <th>Comments</th>
+            {% elif data_type == 'environment' %}
+              <th>Experiment</th>
+              <th>Environment ID</th>
+              <th>Field</th>
+              <th>Longitude</th>
+              <th>Latitude</th>
+              <th>Comments</th>
+            {% elif data_type == 'samples' %}
+              <th>Experiment</th>
+              <th>Sample ID</th>
+              <th>Sample Type</th>
+              <th>Source Seed ID</th>
+              <th>Source Row ID</th>
+              <th>Source Plant ID</th>
+              <th>Source Sample ID</th>
+              <th>Weight</th>
+              <th>Kernel Num</th>
+              <th>Comments</th>
+            {% elif data_type == 'measurement' %}
+              <th>Row ID</th>
+              <th>Plant ID</th>
+              <th>Sample ID</th>
+              <th>Environment ID</th>
+              <th>Parameter</th>
+              <th>Username</th>
+              <th>Time</th>
+              <th>Value</th>
+              <th>Comments</th>
+            {% endif %}
           </tr>
         </thead>
         <tbody>
@@ -48,7 +109,7 @@
           {% for form in log_data_online_form_set %}
             <tr>
               {% for field in form.visible_fields %}
-              <td>{{ field }}</td>
+              <td>{{ field }}<font color="red">{{ field.errors }}</font></td>
               {% endfor %}
             </tr>
           {% endfor %}
@@ -57,5 +118,6 @@
       <br/>
       <input class="btn btn-primary" type="submit" name="submit" value="Submit Data"/>
     </form>
+
   </div>
 {% endblock %}
