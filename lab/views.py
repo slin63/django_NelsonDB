@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsSelector, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm
+from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -14,6 +14,7 @@ from itertools import chain
 from django.forms.models import inlineformset_factory
 from django.forms.formsets import formset_factory
 from django.conf import settings
+from django.db.models import F
 
 """Used to handle data from URL, to ensure blank spaces don't mess things up"""
 def encode_url(str):
@@ -1196,6 +1197,155 @@ def log_data_online(request, data_type):
 
 						new_location = Location.objects.get_or_create(locality=locality, building_name=building_name, location_name=location_name, room=room, shelf=shelf, column=column, box_name=box_name, comments=location_comments)
 						new_stock_packet = StockPacket.objects.get_or_create(stock=Stock.objects.get(seed_id=seed_id), location=Location.objects.get(locality=locality, building_name=building_name, location_name=location_name, room=room, shelf=shelf, column=column, box_name=box_name, comments=location_comments), weight=weight, num_seeds=num_seeds, comments=packet_comments)
+
+					except KeyError:
+						pass
+			else:
+				print(log_data_online_form_set.errors)
+		else:
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'plant':
+		data_type_title = 'Log Plant Info'
+		LogDataOnlineFormSet = formset_factory(LogPlantsOnlineForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				for form in log_data_online_form_set:
+					try:
+						experiment = form.cleaned_data['experiment']
+						plant_id = form.cleaned_data['plant_id']
+						plant_num = form.cleaned_data['plant_num']
+						seed_id = form.cleaned_data['seed_id']
+						row_id = form.cleaned_data['row_id']
+						plant_comments = form.cleaned_data['plant_comments']
+
+						new_obs_selector = ObsSelector.objects.create(experiment=experiment)
+						new_plant = ObsPlant.objects.get_or_create(obs_selector=ObsSelector.objects.order_by('-pk')[0], obs_row=ObsRow.objects.get(row_id=row_id), plant_id=plant_id, plant_num=plant_num, comments=plant_comments)
+
+					except KeyError:
+						pass
+			else:
+				print(log_data_online_form_set.errors)
+		else:
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'row':
+		data_type_title = 'Log Row Info'
+		LogDataOnlineFormSet = formset_factory(LogRowsOnlineForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				for form in log_data_online_form_set:
+					try:
+						experiment = form.cleaned_data['experiment']
+						row_id = form.cleaned_data['row_id']
+						row_name = form.cleaned_data['row_name']
+						seed_id = form.cleaned_data['seed_id']
+						field = form.cleaned_data['field']
+						range_num = form.cleaned_data['range_num']
+						plot = form.cleaned_data['plot']
+						block = form.cleaned_data['block']
+						rep = form.cleaned_data['rep']
+						kernel_num = form.cleaned_data['kernel_num']
+						planting_date = form.cleaned_data['planting_date']
+						harvest_date = form.cleaned_data['harvest_date']
+						row_comments = form.cleaned_data['row_comments']
+
+						new_obs_selector = ObsSelector.objects.create(experiment=experiment)
+						new_row = ObsRow.objects.get_or_create(obs_selector=ObsSelector.objects.order_by('-pk')[0], field=field, stock=Stock.objects.get(seed_id=seed_id), row_id=row_id, row_name=row_name, range_num=range_num, plot=plot, block=block, rep=rep, kernel_num=kernel_num, planting_date=planting_date, harvest_date=harvest_date, comments=row_comments)
+
+					except KeyError:
+						pass
+			else:
+				print(log_data_online_form_set.errors)
+		else:
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'environment':
+		data_type_title = 'Log Environment Info'
+		LogDataOnlineFormSet = formset_factory(LogEnvironmentsOnlineForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				for form in log_data_online_form_set:
+					try:
+						experiment = form.cleaned_data['experiment']
+						environment_id = form.cleaned_data['environment_id']
+						field = form.cleaned_data['field']
+						longitude = form.cleaned_data['longitude']
+						latitude = form.cleaned_data['latitude']
+						environment_comments = form.cleaned_data['environment_comments']
+
+						new_obs_selector = ObsSelector.objects.create(experiment=experiment)
+						new_environment = ObsEnv.objects.get_or_create(obs_selector=ObsSelector.objects.order_by('-pk')[0], field=field, environment_id=environment_id, longitude=longitude, latitude=latitude, comments=environment_comments)
+
+					except KeyError:
+						pass
+			else:
+				print(log_data_online_form_set.errors)
+		else:
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'samples':
+		data_type_title = 'Log Samples Info'
+		LogDataOnlineFormSet = formset_factory(LogSamplesOnlineForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				for form in log_data_online_form_set:
+					try:
+						experiment = form.cleaned_data['experiment']
+						sample_id = form.cleaned_data['sample_id']
+						sample_type = form.cleaned_data['sample_type']
+						source_seed_id = form.cleaned_data['source_seed_id']
+						source_row_id = form.cleaned_data['source_row_id']
+						source_plant_id = form.cleaned_data['source_plant_id']
+						source_sample_id = form.cleaned_data['source_sample_id']
+						weight = form.cleaned_data['weight']
+						kernel_num = form.cleaned_data['kernel_num']
+						sample_comments = form.cleaned_data['sample_comments']
+
+						new_obs_selector = ObsSelector.objects.create(experiment=experiment)
+						new_sample = ObsSample.objects.get_or_create(obs_selector=ObsSelector.objects.order_by('-pk')[0], obs_plant=ObsPlant.objects.get(plant_id=source_plant_id), obs_row=ObsRow.objects.get(row_id=source_row_id), stock=Stock.objects.get(seed_id=source_seed_id), source_sample=ObsSample.objects.get(sample_id=source_sample_id), sample_id=sample_id, sample_type=sample_type, weight=weight, kernel_num=kernel_num, comments=sample_comments)
+
+					except KeyError:
+						pass
+			else:
+				print(log_data_online_form_set.errors)
+		else:
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'measurement':
+		data_type_title = 'Log Measurements'
+		LogDataOnlineFormSet = formset_factory(LogMeasurementsOnlineForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				for form in log_data_online_form_set:
+					try:
+						row_id = form.cleaned_data['row_id']
+						plant_id = form.cleaned_data['plant_id']
+						sample_id = form.cleaned_data['sample_id']
+						environment_id = form.cleaned_data['environment_id']
+						measurement_parameter = form.cleaned_data['measurement_parameter']
+						user = form.cleaned_data['user']
+						time_of_measurement = form.cleaned_data['time_of_measurement']
+						value = form.cleaned_data['value']
+						measurement_comments = form.cleaned_data['measurement_comments']
+
+						if row_id != '':
+							obs_row = ObsRow.objects.get(row_id=row_id)
+							new_measurement = Measurement.objects.get_or_create(obs_selector_id=obs_row.obs_selector_id, measurement_parameter=measurement_parameter, user=user, time_of_measurement=time_of_measurement, value=value, comments=measurement_comments)
+						elif plant_id != '':
+							obs_plant = ObsPlant.objects.get(plant_id=plant_id)
+							new_measurement = Measurement.objects.get_or_create(obs_selector_id=obs_plant.obs_selector_id, measurement_parameter=measurement_parameter, user=user, time_of_measurement=time_of_measurement, value=value, comments=measurement_comments)
+						elif sample_id != '':
+							obs_sample = ObsPlant.objects.get(sample_id=sample_id)
+							new_measurement = Measurement.objects.get_or_create(obs_selector_id=obs_sample.obs_selector_id, measurement_parameter=measurement_parameter, user=user, time_of_measurement=time_of_measurement, value=value, comments=measurement_comments)
+						elif environment_id != '':
+							obs_env = ObsPlant.objects.get(environment_id=environment_id)
+							new_measurement = Measurement.objects.get_or_create(obs_selector_id=obs_env.obs_selector_id, measurement_parameter=measurement_parameter, user=user, time_of_measurement=time_of_measurement, value=value, comments=measurement_comments)
 
 					except KeyError:
 						pass

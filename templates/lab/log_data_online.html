@@ -52,6 +52,55 @@
               <th>Column</th>
               <th>Box Name</th>
               <th>Location Comments</th>
+            {% elif data_type == 'plant' %}
+              <th>Experiment</th>
+              <th>Plant ID</th>
+              <th>Plant Num</th>
+              <th>Source Seed ID</th>
+              <th>Source Row ID</th>
+              <th>Comments</th>
+            {% elif data_type == 'row' %}
+              <th>Experiment</th>
+              <th>Row ID</th>
+              <th>Row Name</th>
+              <th>Source Seed ID</th>
+              <th>Field</th>
+              <th>Range Num</th>
+              <th>Plot</th>
+              <th>Block</th>
+              <th>Rep</th>
+              <th>Kernel Num</th>
+              <th>Planting Date</th>
+              <th>Harvest Date</th>
+              <th>Comments</th>
+            {% elif data_type == 'environment' %}
+              <th>Experiment</th>
+              <th>Environment ID</th>
+              <th>Field</th>
+              <th>Longitude</th>
+              <th>Latitude</th>
+              <th>Comments</th>
+            {% elif data_type == 'samples' %}
+              <th>Experiment</th>
+              <th>Sample ID</th>
+              <th>Sample Type</th>
+              <th>Source Seed ID</th>
+              <th>Source Row ID</th>
+              <th>Source Plant ID</th>
+              <th>Source Sample ID</th>
+              <th>Weight</th>
+              <th>Kernel Num</th>
+              <th>Comments</th>
+            {% elif data_type == 'measurement' %}
+              <th>Row ID</th>
+              <th>Plant ID</th>
+              <th>Sample ID</th>
+              <th>Environment ID</th>
+              <th>Parameter</th>
+              <th>Username</th>
+              <th>Time</th>
+              <th>Value</th>
+              <th>Comments</th>
             {% endif %}
           </tr>
         </thead>
