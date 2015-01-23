@@ -22,12 +22,14 @@ class Plate(models.Model):
 
 class Well(models.Model):
 	plate = models.ForeignKey(Plate)
-	tissue = models.ForeignKey(Legacy_Tissue, related_name="tissue_well")
+	tissue = models.ForeignKey(Legacy_Tissue, to_field="ID", related_name="tissue_well")
 	obs_row = models.ForeignKey(ObsRow)
 	well_id = models.CharField(max_length=200)
 	well = models.CharField(max_length=200)
 	plant = models.CharField(max_length=200)
 	inventory = models.CharField(max_length=200)
+	tissue_type = models.CharField(max_length=200, default='None')
+	tube_label = models.CharField(max_length=200, default='None')
 	comments = models.CharField(max_length=1000)
 
 	def __unicode__(self):
@@ -41,7 +43,8 @@ class Donor(models.Model):
 		return self.donor_well
 
 class DNA(models.Model):
-	dna_well = models.ForeignKey(Well)
+	dna_well = models.ForeignKey(Well, related_name="dna_well")
+	tissue_well = models.ForeignKey(Well, related_name="dna_tissue_well", default=1)
 	dna_tube_id = models.CharField(max_length=200)
 	jbc_dna_id = models.CharField(max_length=200)
 	dna_tube_type = models.CharField(max_length=200)
