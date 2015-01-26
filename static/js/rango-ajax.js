@@ -196,6 +196,10 @@ $(document).ready(function() {
 } );
 
 $(document).ready(function() {
+	$('.selected_stocks').dataTable();
+} );
+
+$(document).ready(function() {
 		$('#selected_legacy_stock_child_row').dataTable({
 			"searching": false,
 			"scrollY": "500px",

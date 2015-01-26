@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
+from itertools import chain
+from collections import OrderedDict
 from metamaize.models import Citation, Culture, Medium, Microbe, MicrobeSequence, Person, Primer, Source, Tissue, Temppedigree, Temprow
 from jmaize.models import Plate, Well, DNA, Donor
 #UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm
@@ -70,8 +72,7 @@ def medium(request):
 def fixed_queries(request):
 	context = RequestContext(request)
 	context_dict = {}
-	cultures = Culture.objects.all().exclude(microbe_type_observed='NA').exclude(microbe_type_observed='0').exclude(microbe_type_observed='')
-	context_dict['cultures'] = cultures
+
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('metamaize/fixed_queries.html', context_dict, context)
 
@@ -89,6 +90,26 @@ def download(request, content):
 				writer.writerow([row.tissue.tissue_type, row.row.row_id, row.pedigree_label.pedigree_label, row.row.source, row.microbe_type_observed, row.culture_name, row.notes])
 			except Tissue.DoesNotExist:
 				writer.writerow(['', row.row.row_id, row.pedigree_label.pedigree_label, row.row.source, row.microbe_type_observed, row.culture_name, row.notes])
+	if content == 'query_02':
+		response['Content-Disposition'] = 'attachment; filename="metamaize_query_02.csv"'
+		metamaize_q2 = OrderedDict({})
+		wells = Well.objects.all()
+		for well in wells:
+			if well.obs_row.row_id != 'No Row':
+				metamaize_q2[(well.obs_row, well.obs_row.stock, well.obs_row.stock.pedigree, well.plant, well.tissue_type, well.plate.plate_rep, well.well_id, well.inventory, '', well.comments)] = (well.well_id)
+			donors = Donor.objects.filter(donor_well=well)
+			for donor1 in donors:
+				if donor1.donor_well.obs_row.row_id != 'No Row':
+					metamaize_q2[(donor1.donor_well.obs_row, donor1.donor_well.obs_row.stock, donor1.donor_well.obs_row.stock.pedigree, donor1.donor_well.plant, donor1.donor_well.tissue_type, donor1.donor_well.plate.plate_rep, donor1.donor_well.well_id, donor1.donor_well.inventory, well.well_id, donor1.donor_well.comments)] = (donor1.donor_well.well_id)
+				donor_donor = Donor.objects.filter(donor_well=donor1.donor_well)
+				for donor2 in donor_donor:
+					if donor2.donor_well.obs_row.row_id != 'No Row':
+						metamaize_q2[(donor2.donor_well.obs_row, donor2.donor_well.obs_row.stock, donor2.donor_well.obs_row.stock.pedigree, donor2.donor_well.plant, donor2.donor_well.tissue_type, donor2.donor_well.plate.plate_rep, donor2.donor_well.well_id, donor2.donor_well.inventory, donor1.donor_well.well_id, donor2.donor_well.comments)] = (donor2.donor_well.well_id)
+
+		writer = csv.writer(response)
+		writer.writerow(['Row ID', 'Seed Source', 'Pedigree', 'Plant', 'Tissue Type', 'Plate Rep', 'Well ID', 'Inventory', 'Source Well', 'Comments'])
+		for key in metamaize_q2.iterkeys():
+			writer.writerow(key)
 	if content == 'pedigree_all':
 		response['Content-Disposition'] = 'attachment; filename="metamaize_pedigrees.csv"'
 		pedigree_model_data = Temppedigree.objects.all()
