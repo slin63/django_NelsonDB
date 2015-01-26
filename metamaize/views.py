@@ -95,16 +95,13 @@ def download(request, content):
 		metamaize_q2 = OrderedDict({})
 		wells = Well.objects.all()
 		for well in wells:
-			if well.obs_row.row_id != 'No Row':
-				metamaize_q2[(well.obs_row, well.obs_row.stock, well.obs_row.stock.pedigree, well.plant, well.tissue_type, well.plate.plate_rep, well.well_id, well.inventory, '', well.comments)] = (well.well_id)
-			donors = Donor.objects.filter(donor_well=well)
+			metamaize_q2[(well.obs_row, well.obs_row.stock, well.obs_row.stock.pedigree, well.plant, well.tissue_type, well.plate.plate_rep, well.well_id, well.inventory, '', well.comments)] = (well.well_id)
+			donors = Donor.objects.filter(target_well=well)
 			for donor1 in donors:
-				if donor1.donor_well.obs_row.row_id != 'No Row':
-					metamaize_q2[(donor1.donor_well.obs_row, donor1.donor_well.obs_row.stock, donor1.donor_well.obs_row.stock.pedigree, donor1.donor_well.plant, donor1.donor_well.tissue_type, donor1.donor_well.plate.plate_rep, donor1.donor_well.well_id, donor1.donor_well.inventory, well.well_id, donor1.donor_well.comments)] = (donor1.donor_well.well_id)
-				donor_donor = Donor.objects.filter(donor_well=donor1.donor_well)
+				metamaize_q2[(donor1.donor_well.obs_row, donor1.donor_well.obs_row.stock, donor1.donor_well.obs_row.stock.pedigree, donor1.donor_well.plant, donor1.donor_well.tissue_type, donor1.donor_well.plate.plate_rep, donor1.donor_well.well_id, donor1.donor_well.inventory, well.well_id, donor1.donor_well.comments)] = (donor1.donor_well.well_id)
+				donor_donor = Donor.objects.filter(target_well=donor1.donor_well)
 				for donor2 in donor_donor:
-					if donor2.donor_well.obs_row.row_id != 'No Row':
-						metamaize_q2[(donor2.donor_well.obs_row, donor2.donor_well.obs_row.stock, donor2.donor_well.obs_row.stock.pedigree, donor2.donor_well.plant, donor2.donor_well.tissue_type, donor2.donor_well.plate.plate_rep, donor2.donor_well.well_id, donor2.donor_well.inventory, donor1.donor_well.well_id, donor2.donor_well.comments)] = (donor2.donor_well.well_id)
+					metamaize_q2[(donor2.donor_well.obs_row, donor2.donor_well.obs_row.stock, donor2.donor_well.obs_row.stock.pedigree, donor2.donor_well.plant, donor2.donor_well.tissue_type, donor2.donor_well.plate.plate_rep, donor2.donor_well.well_id, donor2.donor_well.inventory, donor1.donor_well.well_id, donor2.donor_well.comments)] = (donor2.donor_well.well_id)
 
 		writer = csv.writer(response)
 		writer.writerow(['Row ID', 'Seed Source', 'Pedigree', 'Plant', 'Tissue Type', 'Plate Rep', 'Well ID', 'Inventory', 'Source Well', 'Comments'])
