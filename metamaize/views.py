@@ -90,6 +90,8 @@ def download(request, content):
 				writer.writerow([row.tissue.tissue_type, row.row.row_id, row.pedigree_label.pedigree_label, row.row.source, row.microbe_type_observed, row.culture_name, row.notes])
 			except Tissue.DoesNotExist:
 				writer.writerow(['', row.row.row_id, row.pedigree_label.pedigree_label, row.row.source, row.microbe_type_observed, row.culture_name, row.notes])
+			except UnicodeError:
+				pass
 	if content == 'query_02':
 		response['Content-Disposition'] = 'attachment; filename="metamaize_query_02.csv"'
 		metamaize_q2 = OrderedDict({})
