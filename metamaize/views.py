@@ -93,7 +93,7 @@ def download(request, content):
 	if content == 'query_02':
 		response['Content-Disposition'] = 'attachment; filename="metamaize_query_02.csv"'
 		metamaize_q2 = OrderedDict({})
-		wells = Well.objects.all()
+		wells = Well.objects.exclude(obs_row_id=1).exclude(inventory='').exclude(inventory='E').exclude(inventory='X').exclude(inventory='x').exclude(inventory='No Tube').exclude(inventory='No Well')
 		for well in wells:
 			metamaize_q2[(well.obs_row, well.obs_row.stock, well.obs_row.stock.pedigree, well.plant, well.tissue_type, well.plate.plate_rep, well.well_id, well.inventory, '', well.comments)] = (well.well_id)
 			donors = Donor.objects.filter(target_well=well)
