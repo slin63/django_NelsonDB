@@ -92,21 +92,45 @@ def download(request, content):
 				writer.writerow(['', row.row.row_id, row.pedigree_label.pedigree_label, row.row.source, row.microbe_type_observed, row.culture_name, row.notes])
 	if content == 'query_02':
 		response['Content-Disposition'] = 'attachment; filename="metamaize_query_02.csv"'
-		metamaize_q2 = OrderedDict({})
-		wells = Well.objects.exclude(obs_row_id=1).exclude(inventory='').exclude(inventory='E').exclude(inventory='X').exclude(inventory='x').exclude(inventory='No Tube').exclude(inventory='No Well')
+
+		well_check_table = OrderedDict({})
+		wells = Well.objects.all()
 		for well in wells:
-			metamaize_q2[(well.obs_row, well.obs_row.stock, well.obs_row.stock.pedigree, well.plant, well.tissue_type, well.plate.plate_rep, well.well_id, well.inventory, '', well.comments)] = (well.well_id)
-			donors = Donor.objects.filter(target_well=well)
-			for donor1 in donors:
-				metamaize_q2[(donor1.donor_well.obs_row, donor1.donor_well.obs_row.stock, donor1.donor_well.obs_row.stock.pedigree, donor1.donor_well.plant, donor1.donor_well.tissue_type, donor1.donor_well.plate.plate_rep, donor1.donor_well.well_id, donor1.donor_well.inventory, well.well_id, donor1.donor_well.comments)] = (donor1.donor_well.well_id)
-				donor_donor = Donor.objects.filter(target_well=donor1.donor_well)
-				for donor2 in donor_donor:
-					metamaize_q2[(donor2.donor_well.obs_row, donor2.donor_well.obs_row.stock, donor2.donor_well.obs_row.stock.pedigree, donor2.donor_well.plant, donor2.donor_well.tissue_type, donor2.donor_well.plate.plate_rep, donor2.donor_well.well_id, donor2.donor_well.inventory, donor1.donor_well.well_id, donor2.donor_well.comments)] = (donor2.donor_well.well_id)
+			if well.obs_row_id != 1:
+				wells_list = '%s' % (well.well_id)
+				wells_inv_list = '%s' % (well.inventory)
+				donors = Donor.objects.filter(target_well=well)
+				for donor1 in donors:
+					wells_list = '%s %s' % (wells_list, donor1.donor_well.well_id)
+					wells_inv_list = '%s %s' % (wells_inv_list, donor1.donor_well.inventory)
+					donor_donor = Donor.objects.filter(target_well=donor1.donor_well)
+					for donor2 in donor_donor:
+						wells_list = '%s %s' % (wells_list, donor2.donor_well.well_id)
+						wells_inv_list = '%s %s' % (wells_inv_list, donor2.donor_well.inventory)
+						donor_donor_donor = Donor.objects.filter(target_well=donor2.donor_well)
+						for donor3 in donor_donor_donor:
+							wells_list = '%s %s' % (wells_list, donor3.donor_well.well_id)
+							wells_inv_list = '%s %s' % (wells_inv_list, donor3.donor_well.inventory)
+							donor_donor_donor_donor = Donor.objects.filter(target_well=donor3.donor_well)
+							for donor4 in donor_donor_donor_donor:
+								wells_list = '%s %s' % (wells_list, donor4.donor_well.well_id)
+								wells_inv_list = '%s %s' % (wells_inv_list, donor4.donor_well.inventory)
+								donor_donor_donor_donor_donor = Donor.objects.filter(target_well=donor4.donor_well)
+								for donor5 in donor_donor_donor_donor_donor:
+									wells_list = '%s %s' % (wells_list, donor5.donor_well.well_id)
+									wells_inv_list = '%s %s' % (wells_inv_list, donor5.donor_well.inventory)
+
+				if (well.obs_row, well.tissue_type, well.plant) in well_check_table:
+					wells_list = '%s %s' % (well_check_table[(well.obs_row, well.tissue_type, well.plant)][4], wells_list)
+					wells_inv_list = '%s %s' % (well_check_table[(well.obs_row, well.tissue_type, well.plant)][5], wells_inv_list)
+					well_check_table[(well.obs_row, well.tissue_type, well.plant)] = (well.obs_row.stock, well.obs_row, well.tissue_type, well.plant, wells_list, wells_inv_list)
+				else:
+					well_check_table[(well.obs_row, well.tissue_type, well.plant)] = (well.obs_row.stock, well.obs_row, well.tissue_type, well.plant, wells_list, wells_inv_list)
 
 		writer = csv.writer(response)
-		writer.writerow(['Row ID', 'Seed Source', 'Pedigree', 'Plant', 'Tissue Type', 'Plate Rep', 'Well ID', 'Inventory', 'Source Well', 'Comments'])
-		for key in metamaize_q2.iterkeys():
-			writer.writerow(key)
+		writer.writerow(['Seed Source', 'Row ID', 'Tissue Type', 'Plant', 'Well IDs', 'Inventories'])
+		for value in well_check_table.itervalues():
+			writer.writerow(value)
 	if content == 'pedigree_all':
 		response['Content-Disposition'] = 'attachment; filename="metamaize_pedigrees.csv"'
 		pedigree_model_data = Temppedigree.objects.all()

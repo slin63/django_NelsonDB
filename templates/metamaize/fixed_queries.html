@@ -18,8 +18,7 @@
 
   <br/>
   <h3>Query 02:</h3>
-  <h5>Display row_id, seed_source, pedigree, plant, tissue_type, plate_rep, well_id, inventory, source_well, and comments for all wells that have an inventory and row_id recorded.</h5>
-  <h5>--- If a well came from another well, the source well is listed directly beneath it ---</h5>
+  <h5>Display all wells and inventories for a given row_id, plant, and tissue_type.</h5>
 
   <form id="query_2_form" method="post" action="/metamaize/download/query_02/">
     {% csrf_token %}
