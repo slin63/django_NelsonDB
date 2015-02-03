@@ -1146,7 +1146,7 @@ def show_all_measurement_experiment(request):
 	return render_to_response('lab/measurement_experiment_list.html', context_dict, context)
 
 @login_required
-def phenotype_data_from_experiment(request, experiment_name):
+def measurement_data_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
 	phenotype_data = Measurement.objects.filter(obs_selector__experiment__name=experiment_name)
@@ -1174,10 +1174,10 @@ def phenotype_data_from_experiment(request, experiment_name):
 	context_dict['phenotype_data'] = phenotype_data
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/phenotype_experiment_data.html', context_dict, context)
+	return render_to_response('lab/measurement_experiment_data.html', context_dict, context)
 
 @login_required
-def download_phenotype_experiment(request, experiment_name):
+def download_measurement_experiment(request, experiment_name):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="%s_measurements.csv"' % (experiment_name)
 	phenotype_data = Measurement.objects.filter(obs_selector__experiment__name=experiment_name)
