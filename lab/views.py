@@ -369,6 +369,8 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_isolate_taxonomy'] = request.session.get('checkbox_isolate_taxonomy')
 	if request.session.get('checkbox_row_experiment', None):
 		context_dict['checkbox_row_experiment'] = request.session.get('checkbox_row_experiment')
+	if request.session.get('checkbox_plant_experiment', None):
+		context_dict['checkbox_plant_experiment'] = request.session.get('checkbox_plant_experiment')
 	return context_dict
 
 @login_required
@@ -866,7 +868,7 @@ def download_row_data(request):
 def suggest_row_experiment(request):
 	context = RequestContext(request)
 	context_dict = {}
-	pedigree_list = []
+	row_experiment_list = []
 	starts_with = ''
 	if request.method == 'GET':
 		starts_with = request.GET['suggestion']
@@ -924,11 +926,88 @@ def samples_data_browse(request):
 def plant_data_browse(request):
 	context = RequestContext(request)
 	context_dict = {}
-
+	plant_data = sort_plant_data(request)
 	context_dict = checkbox_session_variable_check(request)
-
+	context_dict['plant_data'] = plant_data
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/index.html', context_dict, context)
+	return render_to_response('lab/plant_data.html', context_dict, context)
+
+def sort_plant_data(request):
+	plant_data = {}
+	if request.session.get('checkbox_plant_experiment_id_list', None):
+		checkbox_plant_experiment_id_list = request.session.get('checkbox_plant_experiment_id_list')
+		for plant_experiment in checkbox_plant_experiment_id_list:
+			plants = ObsPlant.objects.filter(obs_selector__experiment__id=plant_experiment)
+			plant_data = list(chain(plants, plant_data))[:1000]
+	else:
+		plant_data = ObsPlant.objects.all()[:1000]
+	return plant_data
+
+@login_required
+def download_plant_data(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="selected_experiment_plants.csv"'
+	plant_data = sort_plant_data(request)
+	writer = csv.writer(response)
+	writer.writerow(['Exp ID', 'Row ID', 'Plant ID', 'Plant Num', 'Comments'])
+	for row in plant_data:
+		writer.writerow([row.obs_selector.experiment, row.obs_row, row.plant_id, row.plant_num, row.comments])
+	return response
+
+def suggest_plant_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	plant_experiment_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with = request.GET['suggestion']
+	else:
+		starts_with = request.POST['suggestion']
+	if starts_with:
+		plant_experiment_list = ObsPlant.objects.filter(obs_selector__experiment__name__contains=starts_with).values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+	else:
+		plant_experiment_list = ObsPlant.objects.all().values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['plant_experiment_list'] = plant_experiment_list
+	return render_to_response('lab/plant_experiment_list.html', context_dict, context)
+
+def select_plant_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	plant_data = []
+	checkbox_plant_experiment_name_list = []
+	checkbox_plant_experiment_list = request.POST.getlist('checkbox_plant_experiment')
+	for plant_experiment in checkbox_plant_experiment_list:
+		plants = ObsPlant.objects.filter(obs_selector__experiment__id=plant_experiment)
+		plant_data = list(chain(plants, plant_data))
+	for experiment_id in checkbox_plant_experiment_list:
+		experiment_name = Experiment.objects.filter(id=experiment_id).values('name')
+		checkbox_plant_experiment_name_list = list(chain(experiment_name, checkbox_plant_experiment_name_list))
+	request.session['checkbox_plant_experiment'] = checkbox_plant_experiment_name_list
+	request.session['checkbox_plant_experiment_id_list'] = checkbox_plant_experiment_list
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['plant_data'] = plant_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/plant_data.html', context_dict, context)
+
+def checkbox_plant_data_clear(request):
+	context = RequestContext(request)
+	context_dict = {}
+	del request.session['checkbox_plant_experiment']
+	del request.session['checkbox_plant_experiment_id_list']
+	plant_data = sort_plant_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['plant_data'] = plant_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/plant_data.html', context_dict, context)
+
+def show_all_plant_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	plant_experiment_list = ObsPlant.objects.all().values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['plant_experiment_list'] = plant_experiment_list
+	return render_to_response('lab/plant_experiment_list.html', context_dict, context)
 
 @login_required
 def plant_data_from_experiment(request, experiment_name):
@@ -940,6 +1019,7 @@ def plant_data_from_experiment(request, experiment_name):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/plant_experiment_data.html', context_dict, context)
 
+@login_required
 def download_plant_experiment(request, experiment_name):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="%s_plants.csv"' % (experiment_name)

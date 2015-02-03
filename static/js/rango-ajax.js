@@ -127,6 +127,32 @@ $('#row_experimentsuggestion').keyup(function(){
 	});
 });
 
+$('#plant_experimentsuggestion').keyup(function(){
+	var query;
+	query = $(this).val();
+	$.get('/lab/data/plant/suggest_plant_experiment/', {suggestion: query}, function(data){
+		$('#plant_experiment').html(data);
+		$('#selected_plant_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
+$('#show_all_plant_experiment').click(function(){
+	$.get('/lab/data/plant/show_all_experiment/', {}, function(data){
+		$('#plant_experiment').html(data);
+		$('#selected_plant_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
 $('#legacypedigreesuggestion').keyup(function(){
 				var query;
 				query = $(this).val();
