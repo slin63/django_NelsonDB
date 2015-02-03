@@ -23,10 +23,7 @@
         </div>
         {% if checkbox_plant_experiment %}
         <div class="span2 offset4">
-          <form id="clear_taxonomy" method="post" action="/lab/data/plant/checkbox_clear/">
-            {% csrf_token %}
-            <button class="btn btn-warning" type="submit">Clear Experiments</button>
-          </form>
+          <button class="btn btn-warning" id="clear_plant_experiment" name="clear_plant_experiment" type="submit">Clear Experiments</button>
         </div>
         {% endif %}
       </div>

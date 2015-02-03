@@ -191,6 +191,24 @@ $('#show_all_measurement_experiment').click(function(){
 	});
 });
 
+$('#clear_plant_experiment').click(function(){
+	$.get('/lab/data/plant/checkbox_clear/', {}, function(data){
+		$('body').html(data);
+	});
+});
+
+$('#clear_measurement_experiment').click(function(){
+	$.get('/lab/data/measurement/checkbox_clear/', {}, function(data){
+		$('body').html(data);
+	});
+});
+
+$('#clear_row_experiment').click(function(){
+	$.get('/lab/data/row/checkbox_clear/', {}, function(data){
+		$('body').html(data);
+	});
+});
+
 $('#legacypedigreesuggestion').keyup(function(){
 				var query;
 				query = $(this).val();

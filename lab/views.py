@@ -851,9 +851,9 @@ def sort_row_data(request):
 		checkbox_row_experiment_id_list = request.session.get('checkbox_row_experiment_id_list')
 		for row_experiment in checkbox_row_experiment_id_list:
 			rows = ObsRow.objects.filter(obs_selector__experiment__id=row_experiment)
-			row_data = list(chain(rows, row_data))[:1000]
+			row_data = list(chain(rows, row_data))[:2000]
 	else:
-		row_data = ObsRow.objects.all()[:1000]
+		row_data = ObsRow.objects.all()[:2000]
 	return row_data
 
 @login_required
@@ -948,9 +948,9 @@ def sort_plant_data(request):
 		checkbox_plant_experiment_id_list = request.session.get('checkbox_plant_experiment_id_list')
 		for plant_experiment in checkbox_plant_experiment_id_list:
 			plants = ObsPlant.objects.filter(obs_selector__experiment__id=plant_experiment)
-			plant_data = list(chain(plants, plant_data))[:1000]
+			plant_data = list(chain(plants, plant_data))[:2000]
 	else:
-		plant_data = ObsPlant.objects.all()[:1000]
+		plant_data = ObsPlant.objects.all()[:2000]
 	return plant_data
 
 @login_required
@@ -1054,9 +1054,9 @@ def sort_measurement_data(request):
 		checkbox_measurement_experiment_id_list = request.session.get('checkbox_measurement_experiment_id_list')
 		for measurement_experiment in checkbox_measurement_experiment_id_list:
 			measurements = Measurement.objects.filter(obs_selector__experiment__id=measurement_experiment)
-			measurement_data = list(chain(measurements, measurement_data))[:1000]
+			measurement_data = list(chain(measurements, measurement_data))[:2000]
 	else:
-		measurement_data = Measurement.objects.all()[:1000]
+		measurement_data = Measurement.objects.all()[:2000]
 
 	obs_types = [ObsRow, ObsPlant, ObsSample, ObsEnv]
 	for data in measurement_data:
