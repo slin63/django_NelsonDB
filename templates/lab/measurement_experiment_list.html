@@ -1,0 +1,26 @@
+{% if measurement_experiment_list %}
+  <form id="select_measurement_experiment_form" method="post" action="/lab/data/measurement/select_measurement_experiment/">
+    {% csrf_token %}
+    <table id="selected_measurement_experiment" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <thead>
+      <tr>
+        <th>Select</th>
+        <th>Experiment</th>
+        <th>Field</th>
+      </tr>
+      </thead>
+      <tbody>
+        {% for row in measurement_experiment_list %}
+          <tr>
+            <td><input type="checkbox" name="checkbox_measurement_experiment" value="{{ row.obs_selector__experiment__id }}"></td>
+            <td><a href='/lab/experiment/{{ row.obs_selector__experiment__name }}/'>{{ row.obs_selector__experiment__name }}</a></td>
+            <td><a href='/lab/field/{{row.obs_selector__experiment__field__id}}/'>{{ row.obs_selector__experiment__field__field_name }}</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <br/>
+    <input class="btn btn-primary" type="submit" name="submit" value="Select Experiments"/>
+  </form>
+
+{% endif %}

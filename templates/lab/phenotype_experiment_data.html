@@ -1,15 +1,15 @@
 {% extends 'lab/base.html' %}
 {% load static %}
-{% block title %}Phenotype Data{% endblock %}
+{% block title %}Measurement Data{% endblock %}
 {% block body_block %}
 <div class="hero-unit">
-  <h1>Phenotype Data</h1>
+  <h1>Measurement Data</h1>
 </div>
   <br />
   <div class="container-fluid">
     <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
       {% if experiment_name %}
-      <h2>Phenotype Data from <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h2><br/>
+      <h2>Measurement Data from <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h2><br/>
       <form id="select_phenotype_from_experiment_form" method="post" action="/lab/download/phenotype/experiment/{{experiment_name}}/">
         {% csrf_token %}
         <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">

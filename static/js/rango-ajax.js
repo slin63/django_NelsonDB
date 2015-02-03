@@ -127,6 +127,18 @@ $('#row_experimentsuggestion').keyup(function(){
 	});
 });
 
+$('#show_all_row_experiment').click(function(){
+	$.get('/lab/data/row/show_all_experiment/', {}, function(data){
+		$('#row_experiment').html(data);
+		$('#selected_row_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
 $('#plant_experimentsuggestion').keyup(function(){
 	var query;
 	query = $(this).val();
@@ -145,6 +157,32 @@ $('#show_all_plant_experiment').click(function(){
 	$.get('/lab/data/plant/show_all_experiment/', {}, function(data){
 		$('#plant_experiment').html(data);
 		$('#selected_plant_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
+$('#measurement_experimentsuggestion').keyup(function(){
+	var query;
+	query = $(this).val();
+	$.get('/lab/data/measurement/suggest_measurement_experiment/', {suggestion: query}, function(data){
+		$('#measurement_experiment').html(data);
+		$('#selected_measurement_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
+$('#show_all_measurement_experiment').click(function(){
+	$.get('/lab/data/measurement/show_all_experiment/', {}, function(data){
+		$('#measurement_experiment').html(data);
+		$('#selected_measurement_experiment').dataTable({
 			"searching": false,
 			"scrollY": "300px",
 			"scrollCollapse": true,

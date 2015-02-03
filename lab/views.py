@@ -371,6 +371,8 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_row_experiment'] = request.session.get('checkbox_row_experiment')
 	if request.session.get('checkbox_plant_experiment', None):
 		context_dict['checkbox_plant_experiment'] = request.session.get('checkbox_plant_experiment')
+	if request.session.get('checkbox_measurement_experiment', None):
+		context_dict['checkbox_measurement_experiment'] = request.session.get('checkbox_measurement_experiment')
 	return context_dict
 
 @login_required
@@ -912,6 +914,14 @@ def checkbox_row_data_clear(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/row_data.html', context_dict, context)
 
+def show_all_row_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	row_experiment_list = ObsRow.objects.all().values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['row_experiment_list'] = row_experiment_list
+	return render_to_response('lab/row_experiment_list.html', context_dict, context)
+
 @login_required
 def samples_data_browse(request):
 	context = RequestContext(request)
@@ -977,14 +987,12 @@ def select_plant_experiment(request):
 	plant_data = []
 	checkbox_plant_experiment_name_list = []
 	checkbox_plant_experiment_list = request.POST.getlist('checkbox_plant_experiment')
-	for plant_experiment in checkbox_plant_experiment_list:
-		plants = ObsPlant.objects.filter(obs_selector__experiment__id=plant_experiment)
-		plant_data = list(chain(plants, plant_data))
 	for experiment_id in checkbox_plant_experiment_list:
 		experiment_name = Experiment.objects.filter(id=experiment_id).values('name')
 		checkbox_plant_experiment_name_list = list(chain(experiment_name, checkbox_plant_experiment_name_list))
 	request.session['checkbox_plant_experiment'] = checkbox_plant_experiment_name_list
 	request.session['checkbox_plant_experiment_id_list'] = checkbox_plant_experiment_list
+	plant_data = sort_plant_data(request)
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['plant_data'] = plant_data
 	context_dict['logged_in_user'] = request.user.username
@@ -1031,14 +1039,111 @@ def download_plant_experiment(request, experiment_name):
 	return response
 
 @login_required
-def phenotype_data_browse(request):
+def measurement_data_browse(request):
 	context = RequestContext(request)
 	context_dict = {}
-
+	measurement_data = sort_measurement_data(request)
 	context_dict = checkbox_session_variable_check(request)
-
+	context_dict['measurement_data'] = measurement_data
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/index.html', context_dict, context)
+	return render_to_response('lab/measurement_data.html', context_dict, context)
+
+def sort_measurement_data(request):
+	measurement_data = {}
+	if request.session.get('checkbox_measurement_experiment_id_list', None):
+		checkbox_measurement_experiment_id_list = request.session.get('checkbox_measurement_experiment_id_list')
+		for measurement_experiment in checkbox_measurement_experiment_id_list:
+			measurements = Measurement.objects.filter(obs_selector__experiment__id=measurement_experiment)
+			measurement_data = list(chain(measurements, measurement_data))[:1000]
+	else:
+		measurement_data = Measurement.objects.all()[:1000]
+
+	obs_types = [ObsRow, ObsPlant, ObsSample, ObsEnv]
+	for data in measurement_data:
+		for obs_type in obs_types:
+			try:
+				obs = obs_type.objects.get(obs_selector=data.obs_selector.id)
+				obs_exists = True
+			except obs_type.DoesNotExist:
+				obs_exists = False
+			if obs_exists == True:
+				if obs_type == ObsRow:
+					data.obs_display = obs.row_id
+					data.obs_url = '/lab/row/%s/' % (obs.id)
+				if obs_type == ObsPlant:
+					data.obs_display = obs.plant_id
+					data.obs_url = '/lab/plant/%s/' % (obs.id)
+				if obs_type == ObsSample:
+					data.obs_display = obs.sample_id
+					data.obs_url = '/lab/sample/%s/' % (obs.id)
+				if obs_type == ObsEnv:
+					data.obs_display = obs.environment_id
+					data.obs_url = '/lab/environment/%s/' % (obs.id)
+	return measurement_data
+
+@login_required
+def download_measurement_data(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="selected_experiment_measurements.csv"'
+	measurement_data = sort_measurement_data(request)
+	writer = csv.writer(response)
+	writer.writerow(['Exp ID', 'Obs ID', 'User', 'Time', 'Parameter Type', 'Parameter', 'Value', 'Units', 'Trait ID Buckler', 'Comments'])
+	for row in measurement_data:
+		writer.writerow([row.obs_selector.experiment, row.obs_display, row.user, row.time_of_measurement, row.measurement_parameter.parameter_type, row.measurement_parameter, row. value, row.measurement_parameter.unit_of_measure, row.measurement_parameter.trait_id_buckler, row.comments])
+	return response
+
+def suggest_measurement_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	measurement_experiment_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with = request.GET['suggestion']
+	else:
+		starts_with = request.POST['suggestion']
+	if starts_with:
+		measurement_experiment_list = Measurement.objects.filter(obs_selector__experiment__name__contains=starts_with).values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+	else:
+		measurement_experiment_list = Measurement.objects.all().values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['measurement_experiment_list'] = measurement_experiment_list
+	return render_to_response('lab/measurement_experiment_list.html', context_dict, context)
+
+def select_measurement_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	measurement_data = []
+	checkbox_measurement_experiment_name_list = []
+	checkbox_measurement_experiment_list = request.POST.getlist('checkbox_measurement_experiment')
+	for experiment_id in checkbox_measurement_experiment_list:
+		experiment_name = Experiment.objects.filter(id=experiment_id).values('name')
+		checkbox_measurement_experiment_name_list = list(chain(experiment_name, checkbox_measurement_experiment_name_list))
+	request.session['checkbox_measurement_experiment'] = checkbox_measurement_experiment_name_list
+	request.session['checkbox_measurement_experiment_id_list'] = checkbox_measurement_experiment_list
+	measurement_data = sort_measurement_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['measurement_data'] = measurement_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/measurement_data.html', context_dict, context)
+
+def checkbox_measurement_data_clear(request):
+	context = RequestContext(request)
+	context_dict = {}
+	del request.session['checkbox_measurement_experiment']
+	del request.session['checkbox_measurement_experiment_id_list']
+	measurement_data = sort_measurement_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['measurement_data'] = measurement_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/measurement_data.html', context_dict, context)
+
+def show_all_measurement_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	measurement_experiment_list = Measurement.objects.all().values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['measurement_experiment_list'] = measurement_experiment_list
+	return render_to_response('lab/measurement_experiment_list.html', context_dict, context)
 
 @login_required
 def phenotype_data_from_experiment(request, experiment_name):

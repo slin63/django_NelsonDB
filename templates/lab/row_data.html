@@ -18,11 +18,14 @@
             </form>
           </ul>
         </div>
+        <div class="span3">
+          <button class="btn btn-info" id="show_all_row_experiment" name="show_all_row_experiment" type="submit">Show All Experiments</button>
+        </div>
         {% if checkbox_row_experiment %}
-        <div class="span2 offset7">
+        <div class="span2 offset4">
           <form id="clear_taxonomy" method="post" action="/lab/data/row/checkbox_clear/">
             {% csrf_token %}
-            <button class="btn btn-primary" type="submit">Clear Experiments</button>
+            <button class="btn btn-warning" type="submit">Clear Experiments</button>
           </form>
         </div>
         {% endif %}
