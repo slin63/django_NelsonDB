@@ -1,0 +1,75 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Samples Data{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Samples Data</h1>
+</div>
+  <br />
+  <div class="container-fluid">
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <div class="row-fluid">
+        <div class="span3">
+          <ul class="nav nav-list">
+            <li class="nav-header">Select Experiments</li>
+            <form>
+              <label></label>
+              <li><input  class="search-query" type="text" name="samples_experimentsuggestion" id="samples_experimentsuggestion" placeholder="Type an Experiment"/></li>
+            </form>
+          </ul>
+        </div>
+        <div class="span3">
+          <button class="btn btn-info" id="show_all_samples_experiment" name="show_all_samples_experiment" type="submit">Show All Experiments</button>
+        </div>
+        {% if checkbox_samples_experiment %}
+        <div class="span2 offset4">
+          <button class="btn btn-warning" id="clear_samples_experiment" name="clear_samples_experiment" type="submit">Clear Experiments</button>
+        </div>
+        {% endif %}
+      </div>
+      <div id="plant_experiment">
+        {% include 'lab/samples_experiment_list.html' with samples_experiment_list=samples_experiment_list %}
+      </div>
+      {% if checkbox_samples_experiment %}
+        <hr>
+        <h5>Selected Experiments</h5>
+        {% for exp in checkbox_samples_experiment %}
+          <li>{{ exp.name }}</li>
+        {% endfor %}
+      {% endif %}
+    </div><br/>
+
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <h2>Samples Data</h2><br/>
+      <form id="select_stocks_form" method="post" action="/lab/download/plants/">
+        {% csrf_token %}
+        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+          <tr>
+            <th>Exp</th>
+            <th>Row ID</th>
+            <th>Plant ID</th>
+            <th>Plant Num</th>
+            <th>Comments</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for data in samples_data %}
+          <tr>
+            <td><a href='/lab/experiment/{{data.obs_selector.experiment.name}}/'>{{data.obs_selector.experiment.name}}</a></td>
+            <td><a href='/lab/row/{{data.obs_row_id}}/'>{{data.obs_row}}</a></td>
+            <td><a href='/lab/plant/{{data.id}}/'>{{data.plant_id}}</a></td>
+            <td>{{data.plant_num}}</td>
+            <td>{{data.comments}}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <br/>
+        <input class="btn btn-primary" type="submit" name="submit" value="Export Data"/>
+      </form>
+    </div><br/><br/>
+  </div>
+
+
+{% endblock %}

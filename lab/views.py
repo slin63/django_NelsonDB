@@ -926,11 +926,23 @@ def show_all_row_experiment(request):
 def samples_data_browse(request):
 	context = RequestContext(request)
 	context_dict = {}
-
+	samples_data = sort_samples_data(request)
 	context_dict = checkbox_session_variable_check(request)
-
+	context_dict['samples_data'] = samples_data
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/index.html', context_dict, context)
+	return render_to_response('lab/samples_data.html', context_dict, context)
+
+def sort_samples_data(request):
+	samples_data = {}
+	if request.session.get('checkbox_samples_experiment_id_list', None):
+		checkbox_samples_experiment_id_list = request.session.get('checkbox_samples_experiment_id_list')
+		for samples_experiment in checkbox_samples_experiment_id_list:
+			samples = ObsSample.objects.filter(obs_selector__experiment__id=samples_experiment)
+			samples_data = list(chain(samples, samples_data))[:2000]
+	else:
+		samples_data = ObsSample.objects.all()[:2000]
+	return samples_data
+
 
 @login_required
 def plant_data_browse(request):
