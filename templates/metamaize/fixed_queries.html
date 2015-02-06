@@ -37,5 +37,15 @@
     <input class="btn btn-primary" type="submit" name="submit" value="Export Data"/>
   </form>
 
+  <br/>
+  <h3>Query 04:</h3>
+  <h5>Display wells and inventories for a given row_id, plant, and tissue_type that are from 2013 and are of pedigree B73, B97, CML103, CML322, or Mo17.</h5>
+  <h5>--- The wells and their inventories are listed respectively. ---</h5>
+
+  <form id="query_4_form" method="post" action="/metamaize/download/query_04/">
+    {% csrf_token %}
+    <input class="btn btn-primary" type="submit" name="submit" value="Export Data"/>
+  </form>
+
 </div>
 {% endblock %}
