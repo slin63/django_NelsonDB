@@ -1582,3 +1582,10 @@ def new_treatment(request):
 	context_dict['treatment_added'] = treatment_added
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/new_treatment.html', context_dict, context)
+
+def site_map(request):
+	context = RequestContext(request)
+	context_dict = {}
+
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/site_map.html', context_dict, context)
