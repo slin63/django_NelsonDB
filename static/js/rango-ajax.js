@@ -274,11 +274,15 @@ $('input:radio[name=query_experiment_option]').click(function(){
 });
 
 $(document).ready(function() {
-		$('#selected_stocks').dataTable();
+		$('#selected_stocks').dataTable({
+			"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+		});
 } );
 
 $(document).ready(function() {
-	$('.selected_stocks').dataTable();
+	$('.selected_stocks').dataTable({
+		"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+	});
 } );
 
 $(document).ready(function() {
@@ -289,3 +293,10 @@ $(document).ready(function() {
 			"paginate": false
 			});
 } );
+
+function toggle(source) {
+	checkboxes = document.getElementsByName('checkbox_stock');
+	for(var i=0, n=checkboxes.length;i<n;i++) {
+		checkboxes[i].checked = source.checked;
+	}
+}

@@ -15,14 +15,13 @@
     <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
       <thead>
       <tr>
-        <th>Select</th>
+        <th>Select<br/>All <input type="checkbox" onClick="toggle(this)" /></th>
         <th>Row ID</th>
         <th>Seed ID</th>
         <th>Cross Type</th>
         <th>Pedigree</th>
         <th>Population</th>
         <th>Status</th>
-        <th>Passport</th>
         <th>Collector</th>
         <th>Comments</th>
       </tr>
@@ -37,7 +36,6 @@
         <td>{{ row.stock.pedigree }}</td>
         <td>{{ row.stock.passport.taxonomy.population }}</td>
         <td>{{ row.stock.stock_status }}</td>
-        <td><a href='/lab/inventory/passport/{{ row.stock.passport.id }}/'>{{ row.stock.passport.id }}</a></td>
         <td><a href='/lab/profile/{{ row.stock.passport.collecting.user.username }}/'>{{ row.stock.passport.collecting.user.username }}</a></td>
         <td>{{ row.stock.comments }}</td>
       </tr>
