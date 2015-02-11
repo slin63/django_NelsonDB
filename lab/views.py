@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsSelector, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm
+from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -1556,3 +1556,29 @@ def log_data_online(request, data_type):
 	context_dict['data_type_title'] = data_type_title
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/log_data_online.html', context_dict, context)
+
+@login_required
+def new_treatment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	if request.method == 'POST':
+		new_treatment_form = NewTreatmentForm(data=request.POST)
+		if new_treatment_form.is_valid():
+			new_treatment_exp = new_treatment_form.cleaned_data['experiment']
+			new_treatment_id = new_treatment_form.cleaned_data['treatment_id']
+			new_treatment_type = new_treatment_form.cleaned_data['treatment_type']
+			new_treatment_date = new_treatment_form.cleaned_data['date']
+			new_treatment_comments = new_treatment_form.cleaned_data['comments']
+			new_treatment = Treatment.objects.get_or_create(experiment=new_treatment_exp, treatment_id=new_treatment_id, treatment_type=new_treatment_type, date=new_treatment_date, comments=new_treatment_comments)
+
+			treatment_added = True
+		else:
+			print(new_treatment_form.errors)
+			treatment_added = False
+	else:
+		new_treatment_form = NewTreatmentForm()
+		treatment_added = False
+	context_dict['new_treatment_form'] = new_treatment_form
+	context_dict['treatment_added'] = treatment_added
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/new_treatment.html', context_dict, context)
