@@ -1,4 +1,4 @@
-{% extends 'lab/base.html' %}
+{% extends 'lab/base2.html' %}
 {% block title %}Site Map{% endblock %}
 {% block body_block %}
 
@@ -9,66 +9,117 @@
 </div>
 
 <div class="container-fluid">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="span6">
-        <h2>Browse Database</h2>
-        <ul class="nav nav-list">
-          <li class="nav-header"><h4>Inventories</h4></li>
-          <li class="nav-list"><a href='/lab/seed_inventory/'>Seed</a></li>
-          <li class="nav-list"><a href='/lab/isolate_inventory/'>Isolates</a></li>
-          <!---
-          <li class="nav-list"><a href='/legacy/legacy_seed_inventory/'>Legacy Seed</a></li>
-        -->
+  <div class="row">
+    <div class="span4">
+      <h2>About</h2>
+      <ul class="nav nav-list">
+        <li class="nav-header"><h4>General</h4></li>
+        <li class="nav-list"><a href='http://www.plantpath.cornell.edu/labs/nelson_r/index.html'>Lab Page</a></li>
+        <li class="nav-list"><a href='/lab/about/people/all'>People</a></li>
+        <li class="nav-list"><a href='/lab/'>Locations</a></li>
+        <li class="nav-list"><a href='/lab/about/goals/'>Goals</a></li>
+      </ul>
+      <br/>
+      <ul class="nav nav-list">
+        <li class="nav-header"><h4>Resources</h4></li>
+        <li class="nav-list"><a href=''>Publications</a></li>
+        <li class="nav-list"><a href='http://newa.cornell.edu/'>Weather Station</a></li>
+        <li class="nav-list"><a href='http://www.aphis.usda.gov/wps/portal/aphis/home'>APHIS</a></li>
+        <li class="nav-list"><a href=''>Downloads</a></li>
+      </ul>
+      <br/>
+      <h2>Profile</h2>
+      <ul class="nav nav-list">
+        <li class="nav-header"><h4>New User</h4></li>
+        <li class="nav-list"><a href='/lab/register/'>Register</a></li>
+        <li class="nav-list"><a href='/lab/login/'>Login</a></li>
+      </ul>
+      <br/>
+      <ul class="nav nav-list">
+        <li class="nav-header"><h4>Returning User</h4></li>
+        <li class="nav-list"><a href='/lab/profile/{{logged_in_user}}/'>View Your Profile</a></li>
+        <li class="nav-list"><a href='/lab/edit_profile/'>Ediit Your Profile</a></li>
+        <li class="nav-list"><a href='/lab/change_password/'>Change Your Password</a></li>
+        <li class="nav-list"><a href='/lab/logout/'>Logout</a></li>
+      </ul>
+    </div>
+
+    <div class="span4">
+      <h2>Browse DB</h2>
+      <ul class="nav nav-list">
+        <li class="nav-header"><h4>Inventories</h4></li>
+        <li class="nav-list"><a href='/lab/seed_inventory/'>Seed</a></li>
+        <li class="nav-list"><a href='/lab/isolate_inventory/'>Isolates</a></li>
+        <!---
+        <li class="nav-list"><a href='/legacy/legacy_seed_inventory/'>Legacy Seed</a></li>
+      -->
+    </ul>
+    <br/>
+    <ul class="nav nav-list">
+      <li class="nav-header"><h4>Data</h4></li>
+      <li class="nav-list"><a href='/lab/experiment/search/'>Find an Experiment</a></li>
+      <li class="nav-list"><a href='/lab/data/row/'>Row Data</a></li>
+      <li class="nav-list"><a href='/lab/data/plant/'>Plant Data</a></li>
+      <li class="nav-list"><a href='/lab/data/samples/'>Samples Data</a></li>
+      <li class="nav-list"><a href='/lab/data/measurement/'>Measurement Data</a></li>
+      <!--
+      <li class="nav-list"><a href='/lab/data/genotype/'>Genotypic Data</a></li>
+      -->
+    </ul>
+    <br/>
+    <ul class="nav nav-list">
+      <li class="nav-header"><h4>MetaMaize</h4></li>
+      <li class="nav-list"><a href='/metamaize/row/'>Row Data</a></li>
+      <li class="nav-list"><a href='/metamaize/pedigree/'>Pedigree Data</a></li>
+      <li class="nav-list"><a href='/metamaize/tissue/'>Tissue Data</a></li>
+      <li class="nav-list"><a href='/metamaize/culture/'>Culture Data</a></li>
+      <li class="nav-list"><a href='/metamaize/medium/'>Medium Data</a></li>
+      <li class="nav-list"><a href='/metamaize/fixed_queries/'>Queries</a></li>
+    </ul>
+    <br/>
+    <ul class="nav nav-list">
+      <li class="nav-header"><h4>General</h4></li>
+      <li class="nav-list"><a href=''>Localities</a></li>
+      <li class="nav-list"><a href=''>Locations</a></li>
+      <li class="nav-list"><a href=''>Fields</a></li>
+      <li class="nav-list"><a href=''>Experiments</a></li>
+      <li class="nav-list"><a href=''>Treatments</a></li>
+      <li class="nav-list"><a href=''>Measurement Parameters</a></li>
+      <li class="nav-list"><a href=''>Diseases</a></li>
+      <li class="nav-list"><a href=''>Taxonomies</a></li>
+    </ul>
+    </div>
+
+    <div class="span4">
+      <h2>Write to DB</h2>
+      <ul class="nav nav-list">
+        <li class="nav-header"><h4>General</h4></li>
+        <li class="nav-list"><a href=''>Localities</a></li>
+        <li class="nav-list"><a href=''>Locations</a></li>
+        <li class="nav-list"><a href=''>Fields</a></li>
+        <li class="nav-list"><a href=''>Experiments</a></li>
+        <li class="nav-list"><a href=''>Treatments</a></li>
+        <li class="nav-list"><a href=''>Measurement Parameters</a></li>
+        <li class="nav-list"><a href=''>Diseases</a></li>
+        <li class="nav-list"><a href=''>Taxonomies</a></li>
       </ul>
       <br/>
       <ul class="nav nav-list">
         <li class="nav-header"><h4>Data</h4></li>
-        <li class="nav-list"><a href='/lab/experiment/search/'>Find an Experiment</a></li>
-        <li class="nav-list"><a href='/lab/data/row/'>Row Data</a></li>
-        <li class="nav-list"><a href='/lab/data/plant/'>Plant Data</a></li>
-        <li class="nav-list"><a href='/lab/data/samples/'>Samples Data</a></li>
-        <li class="nav-list"><a href='/lab/data/measurement/'>Measurement Data</a></li>
-        <!--
-        <li class="nav-list"><a href='/lab/data/genotype/'>Genotypic Data</a></li>
-        -->
+        <li class="nav-list"><a href=''>Seed Info</a></li>
+        <li class="nav-list"><a href=''>Seed Packets</a></li>
+        <li class="nav-list"><a href=''>Seed Packets</a></li>
+        <li class="nav-list"><a href=''>Rows</a></li>
+        <li class="nav-list"><a href=''>Plants</a></li>
+        <li class="nav-list"><a href=''>Samples</a></li>
+        <li class="nav-list"><a href=''>Measurements</a></li>
       </ul>
       <br/>
+      <h2>Admin</h2>
       <ul class="nav nav-list">
-        <li class="nav-header"><h4>MetaMaize</h4></li>
-        <li class="nav-list"><a href='/metamaize/row/'>Row Data</a></li>
-        <li class="nav-list"><a href='/metamaize/pedigree/'>Pedigree Data</a></li>
-        <li class="nav-list"><a href='/metamaize/tissue/'>Tissue Data</a></li>
-        <li class="nav-list"><a href='/metamaize/culture/'>Culture Data</a></li>
-        <li class="nav-list"><a href='/metamaize/medium/'>Medium Data</a></li>
-        <li class="nav-list"><a href='/metamaize/fixed_queries/'>Queries</a></li>
+        <li class="nav-list"><a href='/admin/'>Django</a></li>
+        <li class="nav-list"><a href='/phpmyadmin/'>PHPMyAdmin</a></li>
       </ul>
-
-      </div>
-      <div class="span6">
-        <h2>Write to Database</h2>
-        <ul class="nav nav-list">
-          <li class="nav-header"><h4>General</h4></li>
-          <li class="nav-list"><a href=''>Localities</a></li>
-          <li class="nav-list"><a href=''>Locations</a></li>
-          <li class="nav-list"><a href=''>Fields</a></li>
-          <li class="nav-list"><a href=''>Experiments</a></li>
-          <li class="nav-list"><a href=''>Treatments</a></li>
-          <li class="nav-list"><a href=''>Measurement Parameters</a></li>
-          <li class="nav-list"><a href=''>Diseases</a></li>
-          <li class="nav-list"><a href=''>Taxonomies</a></li>
-        </ul>
-        <br/>
-        <ul class="nav nav-list">
-          <li class="nav-header"><h4>Data</h4></li>
-          <li class="nav-list"><a href=''>Seed Info</a></li>
-          <li class="nav-list"><a href=''>Seed Packets</a></li>
-          <li class="nav-list"><a href=''>Rows</a></li>
-          <li class="nav-list"><a href=''>Plants</a></li>
-          <li class="nav-list"><a href=''>Samples</a></li>
-          <li class="nav-list"><a href=''>Measurements</a></li>
-        </ul>
-      </div>
     </div>
   </div>
 </div>
