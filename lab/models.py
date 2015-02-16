@@ -257,3 +257,15 @@ class Treatment(models.Model):
 
 	def __unicode__(self):
 		return self.treatment_id
+
+class UploadQueue(models.Model):
+	experiment = models.ForeignKey(Experiment)
+	user = models.ForeignKey(User)
+	file_name = models.FileField(upload_to='upload_queue')
+	upload_type = models.CharField(max_length=200)
+	date = models.DateField(max_length=200)
+	completed = models.BooleanField(default=False)
+	comments = models.CharField(max_length=1000)
+
+	def __unicode__(self):
+		return self.file_name
