@@ -342,19 +342,19 @@ def checkbox_seed_inventory_sort(request):
 			for pedigree in checkbox_pedigree_list:
 				for taxonomy in checkbox_taxonomy_list:
 					stocks = Stock.objects.filter(pedigree=pedigree, passport__taxonomy__population=taxonomy)
-					selected_stocks = list(chain(selected_stocks, stocks))[:1000]
+					selected_stocks = list(chain(selected_stocks, stocks))
 		else:
 			for taxonomy in checkbox_taxonomy_list:
 				stocks = Stock.objects.filter(passport__taxonomy__population=taxonomy)
-				selected_stocks = list(chain(selected_stocks, stocks))[:1000]
+				selected_stocks = list(chain(selected_stocks, stocks))
 	else:
 		if request.session.get('checkbox_pedigree', None):
 			checkbox_pedigree_list = request.session.get('checkbox_pedigree')
 			for pedigree in checkbox_pedigree_list:
 				stocks = Stock.objects.filter(pedigree=pedigree)
-				selected_stocks = list(chain(selected_stocks, stocks))[:1000]
+				selected_stocks = list(chain(selected_stocks, stocks))
 		else:
-			selected_stocks = Stock.objects.exclude(seed_id='0')[:1000]
+			selected_stocks = Stock.objects.exclude(seed_id='0')[:5000]
 	return selected_stocks
 
 def checkbox_session_variable_check(request):
@@ -392,10 +392,10 @@ def show_all_seedinv_taxonomy(request):
 	if request.session.get('checkbox_pedigree', None):
 		checkbox_pedigree_list = request.session.get('checkbox_pedigree')
 		for pedigree in checkbox_pedigree_list:
-			taxonomy = Stock.objects.filter(pedigree=pedigree).values('pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()[:1000]
-			taxonomy_list = list(chain(taxonomy, taxonomy_list))
+			taxonomy = Stock.objects.filter(pedigree=pedigree).values('pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()
+			taxonomy_list = list(chain(taxonomy, taxonomy_list))[:5000]
 	else:
-		taxonomy_list = Taxonomy.objects.filter(common_name='Maize')[:1000]
+		taxonomy_list = Taxonomy.objects.filter(common_name='Maize')
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['taxonomy_list'] = taxonomy_list
 	return render_to_response('lab/seed_taxonomy_list.html', context_dict, context)
@@ -407,10 +407,10 @@ def show_all_seedinv_pedigree(request):
 	if request.session.get('checkbox_taxonomy', None):
 		checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
 		for taxonomy in checkbox_taxonomy_list:
-			pedigree = Stock.objects.filter(passport__taxonomy__population=taxonomy).values('pedigree', 'passport__taxonomy__population').distinct()[:1000]
-			pedigree_list = list(chain(pedigree, pedigree_list))
+			pedigree = Stock.objects.filter(passport__taxonomy__population=taxonomy).values('pedigree', 'passport__taxonomy__population').distinct()
+			pedigree_list = list(chain(pedigree, pedigree_list))[:5000]
 	else:
-		pedigree_list = Stock.objects.all().values('pedigree').distinct()[:1000]
+		pedigree_list = Stock.objects.all().values('pedigree').distinct()[:5000]
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['pedigree_list'] = pedigree_list
 	return render_to_response('lab/seed_pedigree_list.html', context_dict, context)
@@ -428,18 +428,18 @@ def suggest_pedigree(request):
 		if request.session.get('checkbox_taxonomy', None):
 			checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
 			for taxonomy in checkbox_taxonomy_list:
-				pedigree = Stock.objects.filter(pedigree__contains=starts_with, passport__taxonomy__population=taxonomy).values('pedigree', 'passport__taxonomy__population').distinct()[:1000]
-				pedigree_list = list(chain(pedigree, pedigree_list))
+				pedigree = Stock.objects.filter(pedigree__contains=starts_with, passport__taxonomy__population=taxonomy).values('pedigree', 'passport__taxonomy__population').distinct()
+				pedigree_list = list(chain(pedigree, pedigree_list))[:5000]
 		else:
-			pedigree_list = Stock.objects.filter(pedigree__contains=starts_with).values('pedigree').distinct()[:1000]
+			pedigree_list = Stock.objects.filter(pedigree__contains=starts_with).values('pedigree').distinct()[:5000]
 	else:
 		if request.session.get('checkbox_taxonomy', None):
 			checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
 			for taxonomy in checkbox_taxonomy_list:
-				pedigree = Stock.objects.filter(passport__taxonomy__population=taxonomy).values('pedigree', 'passport__taxonomy__population').distinct()[:1000]
-				pedigree_list = list(chain(pedigree, pedigree_list))
+				pedigree = Stock.objects.filter(passport__taxonomy__population=taxonomy).values('pedigree', 'passport__taxonomy__population').distinct()
+				pedigree_list = list(chain(pedigree, pedigree_list))[:5000]
 		else:
-			pedigree_list = Stock.objects.all().values('pedigree').distinct()[:1000]
+			pedigree_list = Stock.objects.all().values('pedigree').distinct()[:5000]
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['pedigree_list'] = pedigree_list
 	return render_to_response('lab/seed_pedigree_list.html', context_dict, context)
@@ -457,18 +457,18 @@ def suggest_taxonomy(request):
 		if request.session.get('checkbox_pedigree', None):
 			checkbox_pedigree_list = request.session.get('checkbox_pedigree')
 			for pedigree in checkbox_pedigree_list:
-				taxonomy = Stock.objects.filter(pedigree=pedigree, passport__taxonomy__population__contains=starts_with).values('pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()[:1000]
-				taxonomy_list = list(chain(taxonomy, taxonomy_list))
+				taxonomy = Stock.objects.filter(pedigree=pedigree, passport__taxonomy__population__contains=starts_with).values('pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()
+				taxonomy_list = list(chain(taxonomy, taxonomy_list))[:5000]
 		else:
-			taxonomy_list = Taxonomy.objects.filter(population__contains=starts_with, common_name='Maize')[:1000]
+			taxonomy_list = Taxonomy.objects.filter(population__contains=starts_with, common_name='Maize')[:5000]
 	else:
 		if request.session.get('checkbox_pedigree', None):
 			checkbox_pedigree_list = request.session.get('checkbox_pedigree')
 			for pedigree in checkbox_pedigree_list:
-				taxonomy = Stock.objects.filter(pedigree=pedigree).values('pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()[:1000]
-				taxonomy_list = list(chain(taxonomy, taxonomy_list))
+				taxonomy = Stock.objects.filter(pedigree=pedigree).values('pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()
+				taxonomy_list = list(chain(taxonomy, taxonomy_list))[:5000]
 		else:
-			taxonomy_list = Taxonomy.objects.filter(common_name='Maize')[:1000]
+			taxonomy_list = Taxonomy.objects.filter(common_name='Maize')[:5000]
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['taxonomy_list'] = taxonomy_list
 	return render_to_response('lab/seed_taxonomy_list.html', context_dict, context)
@@ -586,19 +586,19 @@ def checkbox_isolate_sort(request):
 			for disease_id in checkbox_disease_list:
 				for taxonomy_id in checkbox_taxonomy_list:
 					isolates = Isolate.objects.filter(disease_info__id=disease_id, passport__taxonomy__id=taxonomy_id)
-					selected_isolates = list(chain(selected_isolates, isolates))[:1000]
+					selected_isolates = list(chain(selected_isolates, isolates))
 		else:
 			for taxonomy_id in checkbox_taxonomy_list:
 				isolates = Isolate.objects.filter(passport__taxonomy__id=taxonomy_id)
-				selected_isolates = list(chain(selected_isolates, isolates))[:1000]
+				selected_isolates = list(chain(selected_isolates, isolates))
 	else:
 		if request.session.get('checkbox_isolate_disease', None):
 			checkbox_disease_list = request.session.get('checkbox_isolate_disease_id')
 			for disease_id in checkbox_disease_list:
 				isolates = Isolate.objects.filter(disease_info__id=disease_id)
-				selected_isolates = list(chain(selected_isolates, isolates))[:1000]
+				selected_isolates = list(chain(selected_isolates, isolates))
 		else:
-			selected_isolates = Isolate.objects.all()[:1000]
+			selected_isolates = Isolate.objects.all()[:5000]
 	return selected_isolates
 
 def show_all_isolate_taxonomy(request):
@@ -851,9 +851,9 @@ def sort_row_data(request):
 		checkbox_row_experiment_id_list = request.session.get('checkbox_row_experiment_id_list')
 		for row_experiment in checkbox_row_experiment_id_list:
 			rows = ObsRow.objects.filter(obs_selector__experiment__id=row_experiment)
-			row_data = list(chain(rows, row_data))[:2000]
+			row_data = list(chain(rows, row_data))
 	else:
-		row_data = ObsRow.objects.all()[:2000]
+		row_data = ObsRow.objects.all()[:5000]
 	return row_data
 
 @login_required
@@ -938,9 +938,9 @@ def sort_samples_data(request):
 		checkbox_samples_experiment_id_list = request.session.get('checkbox_samples_experiment_id_list')
 		for samples_experiment in checkbox_samples_experiment_id_list:
 			samples = ObsSample.objects.filter(obs_selector__experiment__id=samples_experiment)
-			samples_data = list(chain(samples, samples_data))[:2000]
+			samples_data = list(chain(samples, samples_data))
 	else:
-		samples_data = ObsSample.objects.all()[:2000]
+		samples_data = ObsSample.objects.all()[:5000]
 	return samples_data
 
 
@@ -960,9 +960,9 @@ def sort_plant_data(request):
 		checkbox_plant_experiment_id_list = request.session.get('checkbox_plant_experiment_id_list')
 		for plant_experiment in checkbox_plant_experiment_id_list:
 			plants = ObsPlant.objects.filter(obs_selector__experiment__id=plant_experiment)
-			plant_data = list(chain(plants, plant_data))[:2000]
+			plant_data = list(chain(plants, plant_data))
 	else:
-		plant_data = ObsPlant.objects.all()[:2000]
+		plant_data = ObsPlant.objects.all()[:5000]
 	return plant_data
 
 @login_required
@@ -1066,9 +1066,9 @@ def sort_measurement_data(request):
 		checkbox_measurement_experiment_id_list = request.session.get('checkbox_measurement_experiment_id_list')
 		for measurement_experiment in checkbox_measurement_experiment_id_list:
 			measurements = Measurement.objects.filter(obs_selector__experiment__id=measurement_experiment)
-			measurement_data = list(chain(measurements, measurement_data))[:2000]
+			measurement_data = list(chain(measurements, measurement_data))
 	else:
-		measurement_data = Measurement.objects.all()[:2000]
+		measurement_data = Measurement.objects.all()[:5000]
 
 	obs_types = [ObsRow, ObsPlant, ObsSample, ObsEnv]
 	for data in measurement_data:
