@@ -316,6 +316,10 @@ def experiment(request, experiment_name_url):
 				measurement_data = Measurement.objects.filter(obs_selector__experiment__name=experiment_name)
 			except Measurement.DoesNotExist:
 				measurement_data = None
+			try:
+				packet_collected = StockPacket.objects.filter(stock__passport__collecting__obs_selector__experiment__name=experiment_name)
+			except StockPacket.DoesNotExist:
+				packet_collected = None
 			context_dict['treatment_data'] = treatment_data
 			context_dict['row_data'] = row_data
 			context_dict['plant_data'] = plant_data
@@ -323,6 +327,7 @@ def experiment(request, experiment_name_url):
 			context_dict['stock_row_data'] = stock_row_data
 			context_dict['stock_seed_data'] = stock_seed_data
 			context_dict['measurement_data'] = measurement_data
+			context_dict['packet_collected'] = packet_collected
 		except Experiment.DoesNotExist:
 			pass
 	if experiment_name == 'search':
@@ -1280,6 +1285,36 @@ def seedinv_collected_from_experiment(request, experiment_name):
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_collected_from_experiment.html', context_dict, context)
+
+@login_required
+def seedpackets_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	seed_packet_list = []
+	try:
+		seedpackets_from_row_experiment = ObsRow.objects.filter(obs_selector__experiment__name=experiment_name)
+	except ObsRow.DoesNotExist:
+		seedpackets_from_row_experiment = None
+	for packet in seedpackets_from_row_experiment:
+		try:
+			seed_packet = StockPacket.objects.filter(stock=packet.stock)
+		except StockPacket.DoesNotExist:
+			seed_packet = None
+		seed_packet_list = list(chain(seed_packet, seed_packet_list))
+	context_dict['seed_packet_list'] = seed_packet_list
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/seedpackets_from_experiment.html', context_dict, context)
+
+@login_required
+def seedpackets_collected_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	seed_packet_list = StockPacket.objects.filter(stock__passport__collecting__obs_selector__experiment__name=experiment_name)
+	context_dict['seed_packet_list'] = seed_packet_list
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/seedpackets_from_experiment.html', context_dict, context)
 
 @login_required
 def single_stock_info(request, stock_id):

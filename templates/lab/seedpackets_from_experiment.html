@@ -1,0 +1,52 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Seed Packets{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Experiment: <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h1>
+</div>
+
+{% if seed_packet_list %}
+  <hr>
+  <h2>Seed Packets Planted</h2><br/>
+
+    <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <thead>
+      <tr>
+        <th>Seed ID</th>
+        <th>Cross Type</th>
+        <th>Pedigree</th>
+        <th>Population</th>
+        <th>Status</th>
+        <th>Seed Comments</th>
+        <th>Weight (g)</th>
+        <th>Num Seeds</th>
+        <th>Location</th>
+        <th>Packet Comments</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for row in seed_packet_list %}
+      <tr>
+        <td><a href='/lab/stock/{{row.stock.id}}/'>{{ row.stock.seed_id }}</a></td>
+        <td>{{ row.stock.cross_type }}</td>
+        <td>{{ row.stock.pedigree }}</td>
+        <td>{{ row.stock.passport.taxonomy.population }}</td>
+        <td>{{ row.stock.stock_status }}</td>
+        <td>{{ row.stock.comments }}</td>
+        <td>{{ row.weight }}</td>
+        <td>{{ row.num_seeds }}</td>
+        <td><a href='/lab/location/{{row.location.id}}/'>{{ row.location }}</a></td>
+        <td>{{ row.comments }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+
+  </form>
+{% else %}
+  <hr>
+  <h2>No Seed Packets Planted Inventoried For <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h2><br/>
+{% endif %}
+
+{% endblock %}

@@ -59,7 +59,7 @@
 									<div class="span7">
 										<h3>Seed Planted</h3>
 										{% if stock_row_data %}
-										<h5><a href='/lab/seed_inventory/planted/{{experiment.name}}/'>View</a></h5>
+										<h5><a href='/lab/seed/planted/{{experiment.name}}/'>View</a></h5>
 										<h5><a href='/lab/download/seed_inventory/planted/{{experiment.name}}/'>Download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
@@ -67,7 +67,7 @@
 
 										<h3>Seed Collected</h3>
 										{% if stock_seed_data %}
-										<h5><a href='/lab/seed_inventory/collected/{{experiment.name}}/'>View</a></h5>
+										<h5><a href='/lab/seed/collected/{{experiment.name}}/'>View</a></h5>
 										<h5><a href='/lab/download/seed_inventory/collected/{{experiment.name}}/'>Download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
@@ -83,16 +83,24 @@
 							<div class="container-fluid">
 								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
-										<h3>Samples Data</h3>
-										{% if samples_data %}
-										<h5><a href='/lab/data/samples/{{experiment.name}}/'>View</a></h5>
-										<h5><a href='/lab/download/data/samples/{{experiment.name}}/'>Download</a></h5>
+										<h3>Seed Packets Planted</h3>
+										{% if stock_row_data %}
+										<h5><a href='/lab/seed_packets/planted/{{experiment.name}}/'>View</a></h5>
+										<h5><a href='/lab/download/seed_packets/planted/{{experiment.name}}/'>Download</a></h5>
+										{% else %}
+										<h5>No Data Available</h5>
+										{% endif %}
+
+										<h3>Seed Packets Collected</h3>
+										{% if packet_collected %}
+										<h5><a href='/lab/seed_packets/collected/{{experiment.name}}/'>View</a></h5>
+										<h5><a href='/lab/download/seed_packets/collected/{{experiment.name}}/'>Download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}
 									</div>
 									<div class="span5">
-										<img src='{% static '/media/site_images/sample.jpg' %}' />
+										<img src='{% static '/media/site_images/seed_packet.jpg' %}' />
 									</div>
 								</div>
 							</div>
@@ -159,6 +167,26 @@
 							<div class="container-fluid">
 								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
+										<h3>Samples Data</h3>
+										{% if samples_data %}
+										<h5><a href='/lab/data/samples/{{experiment.name}}/'>View</a></h5>
+										<h5><a href='/lab/download/data/samples/{{experiment.name}}/'>Download</a></h5>
+										{% else %}
+										<h5>No Data Available</h5>
+										{% endif %}
+									</div>
+									<div class="span5">
+										<img src='{% static '/media/site_images/sample.jpg' %}' />
+									</div>
+								</div>
+							</div>
+						</div>
+					</div><br/>
+					<div class="row">
+						<div class="span6">
+							<div class="container-fluid">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+									<div class="span7">
 										<h3>Measurement Data</h3>
 										{% if measurement_data %}
 										<h5><a href='/lab/data/measurement/{{experiment.name}}/'>View</a></h5>
@@ -172,6 +200,9 @@
 									</div>
 								</div>
 							</div>
+						</div>
+						<div class="span6">
+
 						</div>
 					</div>
 				</div>
