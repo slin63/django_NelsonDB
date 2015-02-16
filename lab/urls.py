@@ -78,4 +78,5 @@ urlpatterns = patterns('',
     url(r'^download/rows/$', views.download_row_data, name='download_row_data'),
     url(r'^download/plants/$', views.download_plant_data, name='download_plant_data'),
     url(r'^download/measurements/$', views.download_measurement_data, name='download_measurement_data'),
+    url(r'^upload/(?P<data_type>\w+)/', views.queue_upload_file, name='queue_upload_file'),
     )

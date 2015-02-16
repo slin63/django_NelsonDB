@@ -209,3 +209,9 @@ class LogMeasurementsOnlineForm(forms.Form):
 	time_of_measurement = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Time of Measurement'}), required=False)
 	value = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Value'}), required=True)
 	measurement_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), required=False)
+
+class UploadQueueForm(forms.Form):
+	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", help_text="Choose the experiment that data is related to:", required=True)
+	user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Username ---", help_text="Select the user who produced data:", required=True)
+	file_name = forms.FileField(help_text="Select your file:")
+	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), help_text="Any additional comments:", required=True)

@@ -3,8 +3,8 @@ import csv
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsSelector, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm
+from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsSelector, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue
+from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -1646,3 +1646,29 @@ def site_map(request):
 
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/site_map.html', context_dict, context)
+
+def queue_upload_file(request, data_type):
+	context = RequestContext(request)
+	context_dict = {}
+	if request.method == 'POST':
+		upload_form = UploadQueueForm(request.POST, request.FILES)
+		if upload_form.is_valid():
+			new_upload_exp = upload_form.cleaned_data['experiment']
+			new_upload_user = upload_form.cleaned_data['user']
+			new_upload_filename = upload_form.cleaned_data['file_name']
+			new_upload_comments = upload_form.cleaned_data['comments']
+
+			new_upload = UploadQueue.objects.get_or_create(experiment=new_upload_exp, user=new_upload_user, file_name=new_upload_filename, upload_type=data_type, comments=new_upload_comments)
+
+			upload_added = True
+		else:
+			print(upload_form.errors)
+			upload_added = False
+	else:
+		upload_form = UploadQueueForm()
+		upload_added = False
+	context_dict['upload_form'] = upload_form
+	context_dict['upload_added'] = upload_added
+	context_dict['data_type'] = data_type
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/new_upload.html', context_dict, context)

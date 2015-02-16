@@ -263,7 +263,7 @@ class UploadQueue(models.Model):
 	user = models.ForeignKey(User)
 	file_name = models.FileField(upload_to='upload_queue')
 	upload_type = models.CharField(max_length=200)
-	date = models.DateField(max_length=200)
+	date = models.DateField(auto_now_add=True)
 	completed = models.BooleanField(default=False)
 	comments = models.CharField(max_length=1000)
 
