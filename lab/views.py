@@ -520,6 +520,28 @@ def select_stockpacket_from_stock(request):
 	return render_to_response('lab/stock.html', context_dict, context)
 
 @login_required
+def download_seed_planted_experiment(request, experiment_name):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="%s_seed_planted.csv"' % (experiment_name)
+	seed_data = ObsRow.objects.filter(obs_selector__experiment__name=experiment_name)
+	writer = csv.writer(response)
+	writer.writerow(['Row ID', 'Seed ID', 'Cross Type', 'Pedigree', 'Population', 'Status', 'Collector', 'Comments'])
+	for data in seed_data:
+		writer.writerow([data.row_id, data.stock.seed_id, data.stock.cross_type, data.stock.pedigree, data.stock.passport.taxonomy.population, data.stock.stock_status, data.stock.passport.collecting.user, data.stock.comments])
+	return response
+
+@login_required
+def download_seed_collected_experiment(request, experiment_name):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="%s_seed_collected.csv"' % (experiment_name)
+	seed_data = Stock.objects.filter(passport__collecting__obs_selector__experiment__name=experiment_name)
+	writer = csv.writer(response)
+	writer.writerow(['Seed ID', 'Cross Type', 'Pedigree', 'Population', 'Status', 'Collector', 'Comments'])
+	for data in seed_data:
+		writer.writerow([data.seed_id, data.cross_type, data.pedigree, data.passport.taxonomy.population, data.stock_status, data.passport.collecting.user, data.comments])
+	return response
+
+@login_required
 def row_data_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
