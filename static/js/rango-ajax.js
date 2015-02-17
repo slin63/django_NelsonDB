@@ -301,6 +301,13 @@ function toggle(source) {
 	}
 }
 
+function toggle_isolates(source) {
+	checkboxes = document.getElementsByName('checkbox_isolates');
+	for(var i=0, n=checkboxes.length;i<n;i++) {
+		checkboxes[i].checked = source.checked;
+	}
+}
+
 $('#seedidsearch').keyup(function(){
 	var query;
 	query = $(this).val();
