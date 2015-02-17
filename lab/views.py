@@ -664,13 +664,7 @@ def suggest_isolate_taxonomy(request):
 		else:
 			isolate_taxonomy_list = Taxonomy.objects.filter(genus__contains=starts_with, common_name='Isolate')[:1000]
 	else:
-		if request.session.get('checkbox_isolate_disease', None):
-			checkbox_isolate_disease = request.session.get('checkbox_isolate_disease_id')
-			for disease_id in checkbox_isolate_disease:
-				taxonomy = Isolate.objects.filter(disease_info__id=disease_id).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__genus', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa', 'passport__taxonomy__species').distinct()[:1000]
-				isolate_taxonomy_list = list(chain(taxonomy, isolate_taxonomy_list))
-		else:
-			isolate_taxonomy_list = Taxonomy.objects.filter(common_name='Isolate')[:1000]
+		isolate_taxonomy_list = None
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['isolate_taxonomy_list'] = isolate_taxonomy_list
 	return render_to_response('lab/isolate_taxonomy_list.html', context_dict, context)
@@ -693,13 +687,7 @@ def suggest_isolate_disease(request):
 		else:
 			isolate_disease_list = DiseaseInfo.objects.filter(common_name__contains=starts_with)[:1000]
 	else:
-		if request.session.get('checkbox_isolate_taxonomy', None):
-			checkbox_isolate_taxonomy = request.session.get('checkbox_isolate_taxonomy_id')
-			for taxonomy_id in checkbox_isolate_taxonomy:
-				disease = Isolate.objects.filter(passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()[:1000]
-				isolate_disease_list = list(chain(disease, isolate_disease_list))
-		else:
-			isolate_disease_list = DiseaseInfo.objects.all()[:1000]
+		isolate_disease_list = None
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['isolate_disease_list'] = isolate_disease_list
 	return render_to_response('lab/isolate_disease_list.html', context_dict, context)
