@@ -1320,7 +1320,6 @@ def single_stock_info(request, stock_id):
 			stock_info.row_id = obs_row.row_id
 		except ObsRow.DoesNotExist:
 			obs_row = None
-		context_dict['stock_info'] = stock_info
 
 	try:
 		stock_packets = StockPacket.objects.filter(stock__id=stock_id)
@@ -1346,6 +1345,7 @@ def single_stock_info(request, stock_id):
 			except ObsRow.DoesNotExist:
 				iterate = False"""
 
+	context_dict['stock_info'] = stock_info
 	context_dict['stock_packets'] = stock_packets
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/stock_info.html', context_dict, context)
