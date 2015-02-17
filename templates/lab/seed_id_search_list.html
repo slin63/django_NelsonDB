@@ -1,0 +1,18 @@
+{% if seed_id_list %}
+  <table id="seed_id_search_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th>Seed ID</th>
+        <th>Pedigree</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for seed in seed_id_list %}
+      <tr>
+        <td><a href='/lab/stock/{{seed.id}}/'>{{ seed.seed_id }}</a></td>
+        <td>{{ seed.pedigree }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endif %}

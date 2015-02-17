@@ -5,76 +5,100 @@
 <div class="hero-unit">
 	<h1>Seed Inventory</h1>
 </div>
-	<div class="container-fluid">
-		<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-			<div class="row-fluid">
-				<div class="span3">
-					<ul class="nav nav-list">
-						<li class="nav-header">Select Taxonomy</li>
-						<form>
+
+<hr>
+<h2>Search</h2>
+<div class="container-fluid">
+	<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+		<div class="row-fluid">
+			<div class="span3">
+				<ul class="nav nav-list">
+					<li class="nav-header">Search Seed ID</li>
+					<form>
 						<label></label>
-						<li><input  class="search-query" type="text" name="taxonomysuggestion" id="taxonomysuggestion" placeholder="Type a Population"/></li>
-						</form>
-					</ul>
-				</div>
-				<div class="span3 offset1">
-					<button class="btn btn-info" id="show_all_seedinv_taxonomy" name="show_all_seedinv_taxonomy" type="submit">Show All Populations</button>
-				</div>
-				{% if checkbox_taxonomy %}
-				<div class="span2 offset3">
-					<form id="clear_taxonomy" method="post" action="/lab/seed_inventory/checkbox_clear/checkbox_taxonomy/">
-						{% csrf_token %}
-						<button class="btn btn-warning" type="submit">Clear Taxonomies</button>
+						<li><input  class="search-query" type="text" name="seedidsearch" id="seedidsearch" placeholder="Type a Seed ID"/></li>
 					</form>
-				</div>
-				{% endif %}
+				</ul>
 			</div>
-			<div id="taxonomies">
-				{% include 'lab/seed_taxonomy_list.html' with taxonomy_list=taxonomy_list %}
+		</div>
+		<div id="seed_id_search_results">
+			{% include 'lab/seed_id_search_list.html' with seed_id_list=seed_id_list %}
+		</div>
+	</div>
+</div>
+
+<hr>
+<h2>Filters</h2>
+<div class="container-fluid">
+	<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+		<div class="row-fluid">
+			<div class="span3">
+				<ul class="nav nav-list">
+					<li class="nav-header">Select Taxonomy</li>
+					<form>
+					<label></label>
+					<li><input  class="search-query" type="text" name="taxonomysuggestion" id="taxonomysuggestion" placeholder="Type a Population"/></li>
+					</form>
+				</ul>
+			</div>
+			<div class="span3 offset1">
+				<button class="btn btn-info" id="show_all_seedinv_taxonomy" name="show_all_seedinv_taxonomy" type="submit">Show All Populations</button>
 			</div>
 			{% if checkbox_taxonomy %}
-				<hr>
-				<h5>Selected Populations</h5>
-				{% for tax in checkbox_taxonomy %}
-					<li>{{ tax }}</li>
-				{% endfor %}
-			{% endif %}
-		</div><br/>
-		<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-			<div class="row-fluid">
-				<div class="span3">
-					<ul class="nav nav-list">
-						<li class="nav-header">Find a Pedigree</li>
-						<form>
-						<label></label>
-						<li><input  class="search-query" type="text" name="pedigreesuggestion" id="pedigreesuggestion" placeholder="Type a Pedigree"/></li>
-						</form>
-					</ul>
-				</div>
-				<div class="span3 offset1">
-					<button class="btn btn-info" id="show_all_seedinv_pedigree" name="show_all_seedinv_pedigree" type="submit">Show All Pedigrees</button>
-				</div>
-				{% if checkbox_pedigree %}
-				<div class="span2 offset3">
-					<form id="checkbox_pedigree" method="post" action="/lab/seed_inventory/checkbox_clear/checkbox_pedigree/">
-						{% csrf_token %}
-						<button class="btn btn-warning" type="submit">Clear Pedigrees</button>
-					</form>
-				</div>
-				{% endif %}
+			<div class="span2 offset3">
+				<form id="clear_taxonomy" method="post" action="/lab/seed_inventory/checkbox_clear/checkbox_taxonomy/">
+					{% csrf_token %}
+					<button class="btn btn-warning" type="submit">Clear Taxonomies</button>
+				</form>
 			</div>
-			<div id="pedigrees">
-				{% include 'lab/seed_pedigree_list.html' with pedigree_list=pedigree_list %}
+			{% endif %}
+		</div>
+		<div id="taxonomies">
+			{% include 'lab/seed_taxonomy_list.html' with taxonomy_list=taxonomy_list %}
+		</div>
+		{% if checkbox_taxonomy %}
+			<hr>
+			<h5>Selected Populations</h5>
+			{% for tax in checkbox_taxonomy %}
+				<li>{{ tax }}</li>
+			{% endfor %}
+		{% endif %}
+	</div><br/>
+	<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+		<div class="row-fluid">
+			<div class="span3">
+				<ul class="nav nav-list">
+					<li class="nav-header">Find a Pedigree</li>
+					<form>
+					<label></label>
+					<li><input  class="search-query" type="text" name="pedigreesuggestion" id="pedigreesuggestion" placeholder="Type a Pedigree"/></li>
+					</form>
+				</ul>
+			</div>
+			<div class="span3 offset1">
+				<button class="btn btn-info" id="show_all_seedinv_pedigree" name="show_all_seedinv_pedigree" type="submit">Show All Pedigrees</button>
 			</div>
 			{% if checkbox_pedigree %}
-				<hr>
-				<h5>Selected Pedigrees</h5>
-				{% for ped in checkbox_pedigree %}
-					<li>{{ ped }}</li>
-				{% endfor %}
+			<div class="span2 offset3">
+				<form id="checkbox_pedigree" method="post" action="/lab/seed_inventory/checkbox_clear/checkbox_pedigree/">
+					{% csrf_token %}
+					<button class="btn btn-warning" type="submit">Clear Pedigrees</button>
+				</form>
+			</div>
 			{% endif %}
-		</div><br/>
+		</div>
+		<div id="pedigrees">
+			{% include 'lab/seed_pedigree_list.html' with pedigree_list=pedigree_list %}
+		</div>
+		{% if checkbox_pedigree %}
+			<hr>
+			<h5>Selected Pedigrees</h5>
+			{% for ped in checkbox_pedigree %}
+				<li>{{ ped }}</li>
+			{% endfor %}
+		{% endif %}
 	</div>
+</div>
 
 {% include 'lab/stock_table.html' %}
 {% endblock %}

@@ -300,3 +300,17 @@ function toggle(source) {
 		checkboxes[i].checked = source.checked;
 	}
 }
+
+$('#seedidsearch').keyup(function(){
+	var query;
+	query = $(this).val();
+	$.get('/lab/seed_inventory/seed_id_search/', {suggestion: query}, function(data){
+		$('#seed_id_search_results').html(data);
+		$('#seed_id_search_table').dataTable({
+			"searching": false,
+			"scrollY": "200px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});

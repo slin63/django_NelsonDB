@@ -438,13 +438,7 @@ def suggest_pedigree(request):
 		else:
 			pedigree_list = Stock.objects.filter(pedigree__contains=starts_with).values('pedigree').distinct()[:5000]
 	else:
-		if request.session.get('checkbox_taxonomy', None):
-			checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
-			for taxonomy in checkbox_taxonomy_list:
-				pedigree = Stock.objects.filter(passport__taxonomy__population=taxonomy).values('pedigree', 'passport__taxonomy__population').distinct()
-				pedigree_list = list(chain(pedigree, pedigree_list))[:5000]
-		else:
-			pedigree_list = Stock.objects.all().values('pedigree').distinct()[:5000]
+		pedigree_list = None
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['pedigree_list'] = pedigree_list
 	return render_to_response('lab/seed_pedigree_list.html', context_dict, context)
@@ -467,13 +461,7 @@ def suggest_taxonomy(request):
 		else:
 			taxonomy_list = Taxonomy.objects.filter(population__contains=starts_with, common_name='Maize')[:5000]
 	else:
-		if request.session.get('checkbox_pedigree', None):
-			checkbox_pedigree_list = request.session.get('checkbox_pedigree')
-			for pedigree in checkbox_pedigree_list:
-				taxonomy = Stock.objects.filter(pedigree=pedigree).values('pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()
-				taxonomy_list = list(chain(taxonomy, taxonomy_list))[:5000]
-		else:
-			taxonomy_list = Taxonomy.objects.filter(common_name='Maize')[:5000]
+		taxonomy_list = None
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['taxonomy_list'] = taxonomy_list
 	return render_to_response('lab/seed_taxonomy_list.html', context_dict, context)
@@ -1334,6 +1322,11 @@ def single_stock_info(request, stock_id):
 			obs_row = None
 		context_dict['stock_info'] = stock_info
 
+	try:
+		stock_packets = StockPacket.objects.filter(stock__id=stock_id)
+	except StockPacket.DoesNotExist:
+		stock_packets = None
+
 	obs_row_stock_0 = ObsRow.objects.filter(stock_id=stock_id)
 	context_dict['obs_row_stock_0'] = obs_row_stock_0
 
@@ -1353,6 +1346,7 @@ def single_stock_info(request, stock_id):
 			except ObsRow.DoesNotExist:
 				iterate = False"""
 
+	context_dict['stock_packets'] = stock_packets
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/stock_info.html', context_dict, context)
 
@@ -1672,3 +1666,20 @@ def queue_upload_file(request, data_type):
 	context_dict['data_type'] = data_type
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/new_upload.html', context_dict, context)
+
+def seed_id_search(request):
+	context = RequestContext(request)
+	context_dict = {}
+	isolate_disease_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with = request.GET['suggestion']
+	else:
+		starts_with = request.POST['suggestion']
+	if starts_with:
+		seed_id_list = Stock.objects.filter(seed_id__contains=starts_with)[:1000]
+	else:
+		seed_id_list = None
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['seed_id_list'] = seed_id_list
+	return render_to_response('lab/seed_id_search_list.html', context_dict, context)
