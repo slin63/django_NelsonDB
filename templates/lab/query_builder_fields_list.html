@@ -1,0 +1,35 @@
+{% if query_builder_fields_list %}
+<div class="row">
+  <div class="span6">
+    <form id="query_builder_fields_form" method="post" action="/lab/query/fields/">
+      {% csrf_token %}
+      <table id="selected_plant_experiment" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+          <th>Fields</th>
+          <th>Select</th>
+          <th>Filters</th>
+          <th>Contains</th>
+        </tr>
+        </thead>
+        <tbody>
+          {% for x,y,z in query_builder_fields_list %}
+            <tr>
+              <td>{{x}}</td>
+              <td><input type="checkbox" name="checkbox_qb_fields" value="{{x}}"></td>
+              <td>{{y|safe}}</td>
+              <td>{{z|safe}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <input class="btn btn-primary" type="submit" name="submit" value="Select Fields"/>
+    </form>
+  </div>
+  <div class="span6">
+
+  </div>
+</div>
+
+
+{% endif %}

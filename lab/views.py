@@ -882,7 +882,7 @@ def suggest_row_experiment(request):
 	if starts_with:
 		row_experiment_list = ObsRow.objects.filter(obs_selector__experiment__name__contains=starts_with).values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
 	else:
-		row_experiment_list = ObsRow.objects.all().values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+		row_experiment_list = None
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['row_experiment_list'] = row_experiment_list
 	return render_to_response('lab/row_experiment_list.html', context_dict, context)
@@ -991,7 +991,7 @@ def suggest_plant_experiment(request):
 	if starts_with:
 		plant_experiment_list = ObsPlant.objects.filter(obs_selector__experiment__name__contains=starts_with).values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
 	else:
-		plant_experiment_list = ObsPlant.objects.all().values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+		plant_experiment_list = None
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['plant_experiment_list'] = plant_experiment_list
 	return render_to_response('lab/plant_experiment_list.html', context_dict, context)
@@ -1119,7 +1119,7 @@ def suggest_measurement_experiment(request):
 	if starts_with:
 		measurement_experiment_list = Measurement.objects.filter(obs_selector__experiment__name__contains=starts_with).values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
 	else:
-		measurement_experiment_list = Measurement.objects.all().values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+		measurement_experiment_list = None
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['measurement_experiment_list'] = measurement_experiment_list
 	return render_to_response('lab/measurement_experiment_list.html', context_dict, context)
@@ -1278,6 +1278,7 @@ def seedpackets_from_experiment(request, experiment_name):
 			seed_packet = None
 		seed_packet_list = list(chain(seed_packet, seed_packet_list))
 	context_dict['seed_packet_list'] = seed_packet_list
+	context_dict['packet_type'] = 'Planted'
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seedpackets_from_experiment.html', context_dict, context)
@@ -1288,6 +1289,7 @@ def seedpackets_collected_from_experiment(request, experiment_name):
 	context_dict = {}
 	seed_packet_list = StockPacket.objects.filter(stock__passport__collecting__obs_selector__experiment__name=experiment_name)
 	context_dict['seed_packet_list'] = seed_packet_list
+	context_dict['packet_type'] = 'Collected'
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seedpackets_from_experiment.html', context_dict, context)
@@ -1671,3 +1673,59 @@ def seed_id_search(request):
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['seed_id_list'] = seed_id_list
 	return render_to_response('lab/seed_id_search_list.html', context_dict, context)
+
+def query_builder(request):
+	context = RequestContext(request)
+	context_dict = {}
+
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/query_builder.html', context_dict, context)
+
+def query_builder_options(request):
+	context = RequestContext(request)
+	context_dict = {}
+	query_builder_fields_list = {}
+	if request.POST.get('checkbox_qm', False):
+		measurement_fields_list = [('time_of_measurement', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_measurements_time" placeholder="Type a Date"/>'),('value', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_measurements_value" placeholder="Type a Value"/>'),('measurement_comments', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_measurements_comments" placeholder="Type a Comment"/>'),('parameter', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_measurements_parameter" placeholder="Type a Parameter"/>'),('parameter_type', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_measurements_parameter_type" placeholder="Type a Parameter Type"/>'),('protocol', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_measurement_protocol" placeholder="Type a Protocol"/>'),('unit_of_measure', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_measurements_units" placeholder="Type a Unit"/>'),('trait_id_buckler', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_measurements_buckler" placeholder="Type a Buckler TraitID"/>')]
+		query_builder_fields_list = list(chain(measurement_fields_list, query_builder_fields_list))
+	else:
+		query_measurements = False
+	if request.POST.get('checkbox_qss', False):
+		plant_fields_list = [('seed_id', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_stock_seed_id" placeholder="Type a Seed ID"/>'), ('seed_name', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_seed_name" placeholder="Type a Seed Name"/>'), ('cross_type', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_cross" placeholder="Type a Cross Type"/>'), ('pedigree', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_pedigree" placeholder="Type a Pedigree"/>'), ('stock_status', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_status" placeholder="Type a Stock Status"/>'),('stock_date', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_stock_date" placeholder="Type a Stock Date"/>'),('inoculated', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input type="checkbox" name="qb_stock_inoculated"/>'),('stock_comments', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_comments" placeholder="Type Stock Comments"/>'),('genus', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_genus" placeholder="Type a Genus"/>'),('species', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_species" placeholder="Type a Species"/>'),('population', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_population" placeholder="Type a Population"/>'),('collection_date', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_stock_collecting_date" placeholder="Type a Collection Date"/>'),('collection_method', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_collecting_method" placeholder="Type a Collection Method"/>'),('collecting_comments', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_collecting_comments" placeholder="Type Collecting Comments"/>'),('source_organization', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_people_org" placeholder="Type a Source"/>')]
+		query_builder_fields_list = list(chain(plant_fields_list, query_builder_fields_list))
+	else:
+		query_plant = False
+	if request.POST.get('checkbox_qor', False):
+		row_fields_list = [('row_id', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_id" placeholder="Type a Row ID"/>'), ('row_name', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_name" placeholder="Type a Row Name"/>'), ('range_num', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_range" placeholder="Type a Range Num"/>'), ('plot', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_plot" placeholder="Type a Plot"/>'), ('block', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_block" placeholder="Type a Block"/>'), ('rep', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_rep" placeholder="Type a Rep"/>'), ('kernel_num', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_kernel_num" placeholder="Type Kernel Num"/>'), ('planting_date', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_planting_date" placeholder="Type a Planting Date"/>'), ('harvest_date', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_harvest_date" placeholder="Type a Harvest Date"/>'), ('row_comments', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_comments" placeholder="Type a Row Comment"/>')]
+		query_builder_fields_list = list(chain(row_fields_list, query_builder_fields_list))
+	else:
+		query_row = False
+	if request.POST.get('checkbox_qop', False):
+		plant_fields_list = [('plant_id', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_plant_id" placeholder="Type a Plant ID"/>'), ('plant_num', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_plant_num" placeholder="Type a Plant Num"/>'), ('plant_comments', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_plant_comments" placeholder="Type a Plant Comment"/>')]
+		query_builder_fields_list = list(chain(plant_fields_list, query_builder_fields_list))
+	else:
+		query_plant = False
+	if request.POST.get('checkbox_qos', False):
+		sample_fields_list = [('sample_id', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_sample_id" placeholder="Type a Sample ID"/>'), ('sample_type', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_sample_type" placeholder="Type a Sample Type"/>'), ('weight', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_sample_weight" placeholder="Type a Weight"/>'), ('kernel_num', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_sample_kernel_num" placeholder="Type Kernel Num"/>'), ('sample_comments', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_sample_comments" placeholder="Type a Sample Comment"/>')]
+		query_builder_fields_list = list(chain(sample_fields_list, query_builder_fields_list))
+	else:
+		query_sample = False
+	if request.POST.get('checkbox_qoe', False):
+		env_fields_list = [('environment_id', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_env_id" placeholder="Type an Environment ID"/>'), ('longitude', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_env_longitude" placeholder="Type a Longitude"/>'), ('latitude', "<select><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_env_latitude" placeholder="Type a Latitude"/>'), ('environment_comments', "<select><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_env_comments" placeholder="Type Environment Comments"/>')]
+		query_builder_fields_list = list(chain(env_fields_list, query_builder_fields_list))
+	else:
+		query_env = False
+
+	context_dict['query_builder_fields_list'] = query_builder_fields_list
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/query_builder_fields_list.html', context_dict, context)
+
+def query_builder_fields(request):
+	context = RequestContext(request)
+	context_dict = {}
+
+	query_builder_results = request.POST
+
+	context_dict['query_builder_results'] = query_builder_results
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/query_builder_fields_list.html', context_dict, context)

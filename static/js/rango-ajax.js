@@ -321,3 +321,36 @@ $('#seedidsearch').keyup(function(){
 		});
 	});
 });
+
+
+var frm = $('#query_builder_options_form');
+frm.submit(function () {
+	$.ajax({
+		type: frm.attr('method'),
+		url: frm.attr('action'),
+		data: frm.serialize(),
+		success: function (data) {
+			$("#query_builder_fields").html(data);
+		},
+		error: function(data) {
+			$("#query_builder_fields").html("Something went wrong!");
+		}
+	});
+	return false;
+});
+
+var query_builder_fields_form = $('#query_builder_fields_form');
+query_builder_fields_form.submit(function () {
+	$.ajax({
+		type: query_builder_fields_form.attr('method'),
+		url: query_builder_fields_form.attr('action'),
+		data: query_builder_fields_form.serialize(),
+		success: function (data) {
+			$("#query_builder_results").html(data);
+		},
+		error: function(data) {
+			$("#query_builder_results").html("Something went wrong!");
+		}
+	});
+	return false;
+});

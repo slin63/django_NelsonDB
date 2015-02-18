@@ -1,0 +1,66 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Query Builder{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Query Builder</h1>
+</div>
+
+<div class="container-fluid">
+  <div class="container-fluid">
+    <form id="query_builder_options_form" method="post" action='/lab/query/options/'>
+      {% csrf_token %}
+      <div class="row">
+        <div class="span6">
+          <table id="query_builder_options_1" class="table table-striped table-bordered" cellspacing="0" width="50%">
+            <thead>
+              <tr>
+                <th>Data Types</th>
+                <th>Select</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Measurements</a></td>
+                <td><input type="checkbox" name="checkbox_qm" value="1"></td>
+              </tr>
+              <tr>
+                <td>Seed Stocks</a></td>
+                <td><input type="checkbox" name="checkbox_qss" value="1"></td>
+              </tr>
+              <tr>
+                <td>Rows</a></td>
+                <td><input type="checkbox" name="checkbox_qor" value="1"></td>
+              </tr>
+              <tr>
+                <td>Plants</a></td>
+                <td><input type="checkbox" name="checkbox_qop" value="1"></td>
+              </tr>
+              <tr>
+                <td>Samples</a></td>
+                <td><input type="checkbox" name="checkbox_qos" value="1"></td>
+              </tr>
+              <tr>
+                <td>Environments</a></td>
+                <td><input type="checkbox" name="checkbox_qoe" value="1"></td>
+              </tr>
+            </tbody>
+          </table>
+          <input class="btn btn-primary" type="submit" name="submit" value="Submit Options"/>
+        </div>
+        <div class="span6">
+
+        </div>
+      </div>
+    </form>
+
+    <hr>
+    <div id="query_builder_fields">
+      {% include 'lab/query_builder_fields_list.html' with query_builder_fields_list=query_builder_fields_list %}
+    </div>
+    <div id="query_builder_results">
+      {% include 'lab/query_builder_results.html' with query_builder_results=query_builder_results %}
+    </div>
+  </div>
+</div>
+{% endblock %}
