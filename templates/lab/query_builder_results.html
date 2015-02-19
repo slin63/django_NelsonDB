@@ -1,31 +1,68 @@
-{% if query_builder_fields_list %}
-<div class="row">
-  <div class="span6">
-    <form id="query_builder_fields_form" method="post" action="/lab/query/fields/">
-      {% csrf_token %}
-      <table id="selected_plant_experiment" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
-        <tr>
-          <th>Fields</th>
-          <th>Select</th>
-        </tr>
-        </thead>
-        <tbody>
-          {% for row in query_builder_fields_list %}
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Query Builder Results{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Query Builder Results</h1>
+</div>
+
+<div class="container-fluid">
+  <div class="container-fluid">
+    {% if qb_fields %}
+    <p>Fields</p>
+    {% for x in qb_fields %}
+    <p>{{x}}</p>
+    {% endfor %}
+    {{qb_fields}}
+    <hr>
+    {% endif %}
+
+    {% if kwargs %}
+    <p>Kwargs</p>
+      {% for x in kwargs %}
+        <p>{{x}}</p>
+      {% endfor %}
+      {{kwargs}}
+      <hr>
+    {% endif %}
+
+    {% if order %}
+    <p>Order</p>
+      {% for x in order %}
+        <p>{{x}}</p>
+      {% endfor %}
+      {{order}}
+      <hr>
+    {% endif %}
+
+    {% if query_builder_ordered_results %}
+    <div class="row">
+      <div class="span6">
+
+        <table id="qb_results_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Fields</th>
+              <th>Select</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in query_builder_ordered_results %}
             <tr>
               <td>{{row}}</td>
               <td><input type="checkbox" name="checkbox_plant_experiment" value="{{row}}"></td>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      <input class="btn btn-primary" type="submit" name="submit" value="Select Fields"/>
-    </form>
-  </div>
-  <div class="span6">
+            {% endfor %}
+          </tbody>
+        </table>
 
+      </div>
+      <div class="span6">
+
+      </div>
+    </div>
+
+    {% endif %}
   </div>
 </div>
-
-
-{% endif %}
+{% endblock %}

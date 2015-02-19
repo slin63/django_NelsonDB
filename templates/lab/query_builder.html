@@ -22,27 +22,35 @@
             <tbody>
               <tr>
                 <td>Measurements</a></td>
-                <td><input type="checkbox" name="checkbox_qm" value="1"></td>
+                <td><input type="checkbox" name="checkbox_qm" value="Measurement"></td>
               </tr>
               <tr>
                 <td>Seed Stocks</a></td>
-                <td><input type="checkbox" name="checkbox_qss" value="1"></td>
+                <td><input type="checkbox" name="checkbox_qss" value="Stock"></td>
+              </tr>
+              <tr>
+                <td>Experiments</a></td>
+                <td><input type="checkbox" name="checkbox_qe" value="Experiment"></td>
+              </tr>
+              <tr>
+                <td>Treatments</a></td>
+                <td><input type="checkbox" name="checkbox_qt" value="Treatment"></td>
               </tr>
               <tr>
                 <td>Rows</a></td>
-                <td><input type="checkbox" name="checkbox_qor" value="1"></td>
+                <td><input type="checkbox" name="checkbox_qor" value="ObsRow"></td>
               </tr>
               <tr>
                 <td>Plants</a></td>
-                <td><input type="checkbox" name="checkbox_qop" value="1"></td>
+                <td><input type="checkbox" name="checkbox_qop" value="ObsPlant"></td>
               </tr>
               <tr>
                 <td>Samples</a></td>
-                <td><input type="checkbox" name="checkbox_qos" value="1"></td>
+                <td><input type="checkbox" name="checkbox_qos" value="ObsSample"></td>
               </tr>
               <tr>
                 <td>Environments</a></td>
-                <td><input type="checkbox" name="checkbox_qoe" value="1"></td>
+                <td><input type="checkbox" name="checkbox_qoe" value="ObsEnv"></td>
               </tr>
             </tbody>
           </table>
@@ -57,9 +65,6 @@
     <hr>
     <div id="query_builder_fields">
       {% include 'lab/query_builder_fields_list.html' with query_builder_fields_list=query_builder_fields_list %}
-    </div>
-    <div id="query_builder_results">
-      {% include 'lab/query_builder_results.html' with query_builder_results=query_builder_results %}
     </div>
   </div>
 </div>

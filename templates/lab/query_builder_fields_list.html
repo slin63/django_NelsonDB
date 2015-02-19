@@ -13,6 +13,7 @@
         </tr>
         </thead>
         <tbody>
+          <input type="hidden" name="checkbox_qb_options" value="{{selected_options}}">
           {% for x,y,z in query_builder_fields_list %}
             <tr>
               <td>{{x}}</td>
