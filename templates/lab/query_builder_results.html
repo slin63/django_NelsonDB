@@ -8,49 +8,39 @@
 
 <div class="container-fluid">
   <div class="container-fluid">
-    {% if qb_fields %}
-    <p>Fields</p>
-    {% for x in qb_fields %}
+    {% if qb_options %}
+    <p>Options</p>
+    {% for x in qb_options %}
     <p>{{x}}</p>
     {% endfor %}
-    {{qb_fields}}
+    {{qb_options}}
     <hr>
     {% endif %}
 
-    {% if kwargs %}
-    <p>Kwargs</p>
-      {% for x in kwargs %}
-        <p>{{x}}</p>
-      {% endfor %}
-      {{kwargs}}
-      <hr>
+    {% if display_fields %}
+    <p>Fields</p>
+    {% for x in display_fields %}
+    <p>{{x}}</p>
+    {% endfor %}
+    {{display_fields}}
+    <hr>
     {% endif %}
 
-    {% if order %}
-    <p>Order</p>
-      {% for x in order %}
-        <p>{{x}}</p>
-      {% endfor %}
-      {{order}}
-      <hr>
-    {% endif %}
-
-    {% if query_builder_ordered_results %}
     <div class="row">
       <div class="span6">
 
         <table id="qb_results_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
             <tr>
-              <th>Fields</th>
-              <th>Select</th>
+              {% for f in display_fields %}
+                <th>{{f}}</th>
+              {% endfor %}
             </tr>
           </thead>
           <tbody>
-            {% for row in query_builder_ordered_results %}
+            {% for row in qb_measurement_results %}
             <tr>
               <td>{{row}}</td>
-              <td><input type="checkbox" name="checkbox_plant_experiment" value="{{row}}"></td>
             </tr>
             {% endfor %}
           </tbody>
@@ -62,7 +52,6 @@
       </div>
     </div>
 
-    {% endif %}
   </div>
 </div>
 {% endblock %}
