@@ -46,6 +46,12 @@
             {% endfor %}
           </tbody>
         </table>
+      <form id="qb_row_results_export" method="post" action="/lab/download/qb/row/">
+        {% csrf_token %}
+        <input type="hidden" id="qb_row_data" name="qb_row_data" value={{qb_ordered_row_results}} />
+        <input type="hidden" id="qb_row_fields" name="qb_row_fields" value={{display_fields}} />
+        <input class="btn btn-primary" type="submit" name="submit" value="Export Data"/>
+      </form>
     {% endif %}
     {% if qb_ordered_plant_results %}
         <table id="qb_plants_results_table" class="table table-striped table-bordered" cellspacing="0" width="100%">

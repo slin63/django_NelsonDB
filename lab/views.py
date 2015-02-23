@@ -1634,6 +1634,7 @@ def site_map(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/site_map.html', context_dict, context)
 
+@login_required
 def queue_upload_file(request, data_type):
 	context = RequestContext(request)
 	context_dict = {}
@@ -1660,6 +1661,7 @@ def queue_upload_file(request, data_type):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/new_upload.html', context_dict, context)
 
+@login_required
 def seed_id_search(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -1677,6 +1679,7 @@ def seed_id_search(request):
 	context_dict['seed_id_list'] = seed_id_list
 	return render_to_response('lab/seed_id_search_list.html', context_dict, context)
 
+@login_required
 def query_builder(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -1684,6 +1687,7 @@ def query_builder(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/query_builder.html', context_dict, context)
 
+@login_required
 def query_builder_options(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -1724,6 +1728,7 @@ def query_builder_options(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/query_builder_fields_list.html', context_dict, context)
 
+@login_required
 def query_builder_fields(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -1945,3 +1950,18 @@ def query_builder_fields(request):
 	context_dict['qb_ordered_plant_results'] = qb_ordered_plant_results
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/query_builder_results.html', context_dict, context)
+
+@login_required
+def download_qb_data(request, data_type):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="query_builder_results.csv"'
+	if data_type == 'row':
+		results_dict = request.POST.getlist('qb_row_data')
+		results_fields = request.POST.getlist('qb_row_fields')
+	writer = csv.writer(response)
+	for row in results_dict:
+		export_values = []
+		for key, value in row:
+			export_values.append(value)
+		writer.writerow(export_values)
+	return response
