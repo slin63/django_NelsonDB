@@ -1,5 +1,7 @@
 {% extends 'lab/base.html' %}
 {% load static %}
+{% load lab_extras %}
+
 {% block title %}Query Builder Results{% endblock %}
 {% block body_block %}
 <div class="hero-unit">
@@ -13,7 +15,6 @@
     {% for x in qb_options %}
     <p>{{x}}</p>
     {% endfor %}
-    {{qb_options}}
     <hr>
     {% endif %}
 
@@ -22,14 +23,11 @@
     {% for x in display_fields %}
     <p>{{x}}</p>
     {% endfor %}
-    {{display_fields}}
     <hr>
     {% endif %}
 
-    <div class="row">
-      <div class="span6">
-
-        <table id="qb_results_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    {% if qb_ordered_row_results %}
+        <table id="qb_row_results_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
             <tr>
               {% for f in display_fields %}
@@ -38,18 +36,37 @@
             </tr>
           </thead>
           <tbody>
-            {% for row in qb_measurement_results %}
+            {% for row in qb_ordered_row_results %}
             <tr>
-              <td>{{row}}</td>
+              {% for f in display_fields %}
+              <td>{{row|qb_get_fields:f}}</td>
+              {% endfor %}
             </tr>
             {% endfor %}
           </tbody>
         </table>
+    {% endif %}
+    {% if qb_ordered_plant_results %}
+        <table id="qb_plants_results_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              {% for f in display_fields %}
+              <th>{{f}}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in qb_ordered_plant_results %}
+            <tr>
+              {% for f in display_fields %}
+              <td>{{row|qb_get_fields:f}}</td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    {% endif %}
 
-      </div>
-      <div class="span6">
-
-      </div>
     </div>
 
   </div>
