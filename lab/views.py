@@ -2016,26 +2016,42 @@ def query_builder_fields(request):
 					m[f] = m[model_field_mapper[f]]
 				qb_ordered_results.append(m)
 
+	if 'qb_results_view' in request.POST:
+		context_dict['qb_options'] = qb_options
+		context_dict['display_fields'] = display_fields
+		context_dict['qb_ordered_row_results'] = qb_ordered_row_results
+		context_dict['qb_ordered_plant_results'] = qb_ordered_plant_results
+		context_dict['qb_ordered_results'] = qb_ordered_results
+		context_dict['logged_in_user'] = request.user.username
+		return render_to_response('lab/query_builder_results.html', context_dict, context)
 
-	context_dict['qb_options'] = qb_options
-	context_dict['display_fields'] = display_fields
-	context_dict['qb_ordered_row_results'] = qb_ordered_row_results
-	context_dict['qb_ordered_plant_results'] = qb_ordered_plant_results
-	context_dict['qb_ordered_results'] = qb_ordered_results
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/query_builder_results.html', context_dict, context)
-
-@login_required
-def download_qb_data(request, data_type):
-	response = HttpResponse(content_type='text/csv')
-	response['Content-Disposition'] = 'attachment; filename="query_builder_results.csv"'
-	if data_type == 'row':
-		results_dict = request.POST.getlist('qb_row_data')
-		results_fields = request.POST.getlist('qb_row_fields')
-	writer = csv.writer(response)
-	for row in results_dict:
-		export_values = []
-		for key, value in row:
-			export_values.append(value)
-		writer.writerow(export_values)
-	return response
+	if 'qb_results_download' in request.POST:
+		response = HttpResponse(content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="query_builder_results.csv"'
+		writer = csv.writer(response)
+		writer.writerow(display_fields)
+		for value in qb_ordered_row_results:
+			value_write = []
+			for field in display_fields:
+				try:
+					value_write.append(value[field])
+				except KeyError:
+					value_write.append('N/A')
+			writer.writerow(value_write)
+		for value in qb_ordered_plant_results:
+			value_write = []
+			for field in display_fields:
+				try:
+					value_write.append(value[field])
+				except KeyError:
+					value_write.append('N/A')
+			writer.writerow(value_write)
+		for value in qb_ordered_results:
+			value_write = []
+			for field in display_fields:
+				try:
+					value_write.append(value[field])
+				except KeyError:
+					value_write.append('N/A')
+			writer.writerow(value_write)
+		return response
