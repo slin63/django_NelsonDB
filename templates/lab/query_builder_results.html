@@ -73,6 +73,26 @@
           </tbody>
         </table>
     {% endif %}
+    {% if qb_ordered_results %}
+    <table id="qb_plants_results_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          {% for f in display_fields %}
+          <th>{{f}}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in qb_ordered_results %}
+        <tr>
+          {% for f in display_fields %}
+          <td>{{row|qb_get_fields:f}}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
 
     </div>
 
