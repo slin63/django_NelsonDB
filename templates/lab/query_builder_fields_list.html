@@ -1,0 +1,39 @@
+{% if query_builder_fields_list %}
+<div class="row">
+  <div class="span6">
+    <form id="query_builder_fields_form" method="post" action="/lab/query/fields/">
+      {% csrf_token %}
+      <table id="selected_plant_experiment" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+          <th>Fields</th>
+          <th>Select</th>
+          <th>Filters</th>
+          <th>Contains</th>
+        </tr>
+        </thead>
+        <tbody>
+          {% for opt in selected_options %}
+            <input type="hidden" name="checkbox_qb_options" value={{opt}}>
+          {% endfor %}
+          {% for x,y,z,a in query_builder_fields_list %}
+            <tr>
+              <td>{{x}}</td>
+              <td><input type="checkbox" name="{{a}}" value="{{x}}"></td>
+              <td>{{y|safe}}</td>
+              <td>{{z|safe}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <input class="btn btn-primary" type="submit" name="qb_results_view" value="View Results"/>
+      <input class="btn btn-primary" type="submit" name="qb_results_download" value="Download Results"/>
+    </form>
+  </div>
+  <div class="span6">
+
+  </div>
+</div>
+
+
+{% endif %}

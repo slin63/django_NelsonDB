@@ -47,8 +47,8 @@
           <thead>
           <tr>
             <th>Exp</th>
-            <th>Row ID</th>
             <th>Plant ID</th>
+            <th>Row ID</th>
             <th>Plant Num</th>
             <th>Comments</th>
           </tr>
@@ -57,8 +57,8 @@
           {% for data in plant_data %}
           <tr>
             <td><a href='/lab/experiment/{{data.obs_selector.experiment.name}}/'>{{data.obs_selector.experiment.name}}</a></td>
-            <td><a href='/lab/row/{{data.obs_row_id}}/'>{{data.obs_row}}</a></td>
             <td><a href='/lab/plant/{{data.id}}/'>{{data.plant_id}}</a></td>
+            <td><a href='/lab/row/{{data.obs_row_id}}/'>{{data.obs_row}}</a></td>
             <td>{{data.plant_num}}</td>
             <td>{{data.comments}}</td>
           </tr>
