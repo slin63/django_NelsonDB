@@ -4,6 +4,7 @@ from lab import views
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
     url(r'^about/goals/$', views.about_goals, name='about_goals'),
+    url(r'^about/help/$', views.about_help, name='about_help'),
     url(r'^about/collaborators/$', views.about_collaborators, name='about_collaborators'),
     url(r'^about/people/(?P<people_selection>\w+)/$', views.about_people, name='about_people'),
     url(r'^about/literature/$', views.about_literature, name='about_literature'),

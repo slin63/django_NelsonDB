@@ -1,163 +1,295 @@
-------------------------------------
---- How To Deploy
-------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------
 
-
----------------------------------------------------------------------------
---- Setting Up Apache
----------------------------------------------------------------------------
-
-
----------------------------------------------------------------------------
---- File Structure
----------------------------------------------------------------------------
-
-On local machine:
-
-	-documents
-		-GitHub
-			-django_NelsonDB
-				-webapp
-					-data
-					-lab
-					-legacy
-					-media
-					-static
-					-template
-						-lab
-						-legacy
-					-webapp
-						-settings.py
-						-urls.py
-						-wsgi.py
-		
-On production machine:
+Documentation For NelsonLab Online Database
+Last Updated: 02/25/2015
+Authored By: Nicolas Morales
 	
-	-srv
-		-nelsondb
-			-app
-				-conf
-					-apache
-						-django.wsgi
-				-webapp
-					-lab
-					-legacy
-					-media
-					-static
-					-template
-						-lab
-						-legacy
-					-webapp
-						-settings.py
-						-urls.py
-						-wsgi.py
-			-logs
-			-run
-			-venv
-			
-
----------------------------------------------------------------------------
---- Preparing Django
----------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------
 
 
----------------------------------------------------------------------------
---- Mod_wsgi and Apache Conf
----------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------
+Support Contacts
+----------------------------------------------------------------------------------------------------------------------------------------------
 
-On Ubuntu VM with Apache2
+Nicolas Morales	
+email: nmorales3142@gmail.com
+phone: 321-695-9465
 
-	1. apache conf file, which is found at /etc/apache2/site-available/nelsonlab.conf looks like this:
+Surya Saha
+email: ss2489@cornell.edu
+phone:
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+General Infrastructure
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+General Use Production Website:
+URL:                 nelsonlab.cac.cornell.edu
+VM Directory:        /data/srv/nelsondb/app/webapp
+Database:            db_prod
+Code Repository:     https://github.com/nelsonlab/django_NelsonDB  Master Branch
+
+
+Development Website:
+URL:                 nelsonlab.cac.cornell.edu:8080
+VM Directory:        /data/srv/testnelsondb/app/webapp
+Database:            db_test
+Code Repository:     https://github.com/nelsonlab/django_NelsonDB  Dev Branch
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+How To Login
+----------------------------------------------------------------------------------------------------------------------------------------------
+nelsonlab.cac.cornell.edu/lab/login/
+
+If you were a member of the lab before the transition to the new online database:
+
+1. Go to nelsonlab.cac.cornell.edu
+2. Your username should be firstname_lastname, but to verify your username go to nelsonlab.cac.cornell.edu/lab/people/ and find your profile.
+3. Click Login in the top right corner of the website.
+4. By default, your password is 123123. Use your username and password to login.
+
+*****Important*****
+Please change your password ASAP by going to nelsonlab.cac.cornell.edu/lab/change_password/ 
+More info found in sections below.
+*******************
+
+If you are a new member of the lab:
+
+1. Go to nelsonlab.cac.cornell.edu
+2. Click Register in the top right corner of the website.
+3. Fill out the information to register your account.
+4. Login using your new account.
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+How To Edit Your Profile
+----------------------------------------------------------------------------------------------------------------------------------------------
+nelsonlab.cac.cornell.edu/lab/profile/
+
+1. You must first login to edit your profile.
+2. Click "Profile" in the top right corner of the website.
+3. Click "Edit Profile"
+4. Fill out the form and click "Submit Changes"
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+How To Change Your Password
+----------------------------------------------------------------------------------------------------------------------------------------------
+nelsonlab.cac.cornell.edu/lab/change_password/
+
+1. You must first login to change your password.
+2. Click "Profile" in the top right corner of the website.
+3. Click "Change Password"
+4. Fill out the form and click "Change Password"
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+How To View Data
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+The left bar on the screen holds links that are useful for browsing data.
+
+-Seed Inventory
+-Isolate Inventory
+-Find an Experiment
+-Row Data
+-Plant Data
+-Samples Data
+-Measurement Data
+-Query Builder
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+How To Use "Seed Inventory"
+----------------------------------------------------------------------------------------------------------------------------------------------
+nelsonlab.cac.cornell.edu/lab/seed_inventory/
+
+Searching for a specific Seed ID
+
+1. Enter a Seed ID into the "Search Seed ID" Box
+2. Seed IDs which match what you entered are listed below.
+3. Click on the Seed ID that matches. This will take you to the Stock Info page, which displays all known information about the seed.
+
+Filtering through Seed Stock Info to find Seed Packets
+
+1. On the Seed Inventory page there are two Filters currently built in: Population and Pedigree
+2. Entering a population in the "Select Taxonomy" box causes a list of matching results to appear. You can also click "Show all Populations".
+3. Select the checkboxes that meet your needs and click "Select Taxonomies"
+4. Entering a pedigree in the "Find a Pedigree" box causes a list of matching results to appear. You can also click "Show all Pedigrees".
+5. Select the checkboxes that meet your needs and click "Select Pedigrees"
+6. These two filters are applied to the "Seed Stocks" table that appears on the bottom of the Seed Inventory page.
+7. You can then select the Seed IDs of interest by selecting the checkboxes, and clicking "Search Inventory for Selected Stocks".
+
+*****IMPORTANT*****
+Not all seed stocks have seed packets, and not all seed packets have been inventoried!
+*******************
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+How To Use "Isolate Inventory"
+----------------------------------------------------------------------------------------------------------------------------------------------
+nelsonlab.cac.cornell.edu/lab/isolate_inventory/
+
+Filtering through Isolate Info to find Inventoried Isolates
+
+1. On the Isolate Inventory page there are two Filters currently built in: Disease Name and Genus
+2. Entering a disease name in the "Select Disease" box causes a list of matching results to appear. You can also click "Show all Diseases".
+3. Select the checkboxes that meet your needs and click "Select Disease"
+4. Entering a genus in the "Select Taxonomy" box causes a list of matching results to appear. You can also click "Show all Taxonomies".
+5. Select the checkboxes that meet your needs and click "Select Taxonomies"
+6. These two filters are applied to the "Isolates" table that appears on the bottom of the Isolate Inventory page.
+7. You can then select the isolates of interest by selecting the checkboxes, and clicking "Search Inventory for Selected Isolates".
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+How To Use "Find an Experiment"
+----------------------------------------------------------------------------------------------------------------------------------------------
+nelsonlab.cac.cornell.edu/lab/experiment/search/
+
+1. A table listing all experiments is shown. 
+2. You can search using the "Search" box.
+3. Click on the Name to access the Experiment page.
+4. The Experiment page holds all datasets that have been recorded for an experiment.
+
+	Treatments that were applied to the experiment are listed in a table, or "No Treatment Data" is shown.
 	
-		<VirtualHost *:80>
-		ServerAdmin root@euca-128-84-9-141.instances.redcloud.cac.cornell.edu
-		ServerName euca-128-84-9-141.instances.redcloud.cac.cornell.edu
+	Datasets include:
+	- Seed Planted
+	- Seed Collected
+	- Seed Packets Planted
+	- Seed Packets Collected
+	- Plant Data
+	- Row Data
+	- Environment Data
+	- Samples Data
+	- Measurements Data
+	
+5a. By clicking "View" on a dataset, it will take you to a page with the data displayed on a table.
+5b. Alternatively, by clicking "Download" on a dataset, a csv file with the data will be downloaded by your browser.
 
-		Alias /media/ /srv/nelsondb/app/webapp/media/
-		Alias /static/ /srv/nelsondb/app/webapp/static/
-		Alias /robots.txt /srv/nelsondb/app/webapp/media/robots.txt
-		Alias /favicon.ico /srv/nelsondb/app/webapp/media/favicon.ico
+*****IMPORTANT*****
+The Experiment page holds all recorded information for a given experiment.
+*******************
 
-		CustomLog "|/usr/bin/rotatelogs /srv/nelsondb/logs/access.log.%Y%m%d-%H%M%S 5M" combined
-		ErrorLog "|/usr/bin/rotatelogs /srv/nelsondb/logs/error.log.%Y%m%d-%H%M%S 5M"
-		LogLevel info
+----------------------------------------------------------------------------------------------------------------------------------------------
+How To Use "Browse Row Data", "Browse Plant Data", "Browse Samples Data", "Browse Measurement Data"
+----------------------------------------------------------------------------------------------------------------------------------------------
+nelsonlab.cac.cornell.edu/lab/data/row/
+nelsonlab.cac.cornell.edu/lab/data/plant/
+nelsonlab.cac.cornell.edu/lab/data/samples/
+nelsonlab.cac.cornell.edu/lab/data/measurement/
 
-		WSGIDaemonProcess euca-128-84-9-141.instances.redcloud.cac.cornell.edu user=web_user group=web_user processes=1 threads=15 maximum-requests=10000 python-path=/srv/nelsondb/venv/lib/python2.7/site-packages python-eggs=/srv/nelsondb/run/eggs
-		WSGIProcessGroup euca-128-84-9-141.instances.redcloud.cac.cornell.edu
-		WSGIScriptAlias / /srv/nelsondb/app/conf/apache/django.wsgi
+1. These pages allow you to easily view data sets across different experiments.
+2. Enter an experiment name in the "Select Experiments" box, or click "Show all Experiments"
+3. Select the experiments you want by clicking the checkboxes, and then click "Select Experiments"
+4. You can download the data that is displayed in the table by clicking "Export Data". A csv file will be downloaded by your browser. 
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+How To Use "Query Builder"
+----------------------------------------------------------------------------------------------------------------------------------------------
+nelsonlab.cac.cornell.edu/lab/query/
+
+The Query Builder allows greater flexibility in querying the database.
+
+1. Select the Data Types you are interested in by clicking the checkboxes. 
+
+	For Example:
+	- If you want measurements of row data for an experiment, you would click Measurements, Experiments, and Rows
+	- If you want measurements that came from seed stocks, you would click Measurements and Seed Stocks
+	- If you want to know what seed stocks were used in what rows in an experiment, you would click Seed Stocks, Rows, and Experiment
+	- If you want measurements of row data (and you want to know what seed stocks were planted in those rows), you would click Seed Stocks, Rows, and Measurements
+	
+2. Select the field names that you are interested in viewing by clicking their checkboxes. 
+3. Add any filter sorting options for the fields you selected by selecting a filter from the dropdowns.
+4. Add any restrictions to the query for the fields you selected by entering text in the "contains" box.
+5a. Click "View Results" to see the results in a table on the website.
+5b. Alternatively (and much faster), click "Download Results" to have a csv file with the results downloaded by your browser.
+
+*****IMPORTANT*****
+Queries can be quite intensive and slow if the query is very broad. 
+*******************
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+What is the "MetaMaize" Section on the left bar?
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+MetaMaize is a project that currently has its own separate database. 
+Its database is not directly connected with the NelsonLab database tables.
+Future plans are to merge the data from the MetaMaize database into the NelsonLab database tables.
+
+For example:
+	- The MetaMaize Row Data will be merged with the overall Row Data
+	- The MetaMaize Tissue Data, Culture Data, and Medium Data will be merged with the overall Tissue Data, Culture Data, and Medium Data
+	
+----------------------------------------------------------------------------------------------------------------------------------------------
+How To Add A New Experiment
+----------------------------------------------------------------------------------------------------------------------------------------------
+nelsonlab.cac.cornell.edu/lab/new_experiment/
+
+1. You must first login to submit a new experiment.
+2. Click "New Experiment" in the top header bar.
+3. Fill out the form and click "Submit".
+4. Your experiment will now show up in "Find an Experiment"
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+How To Add A New Treatment to an Experiment
+----------------------------------------------------------------------------------------------------------------------------------------------
+nelsonlab.cac.cornell.edu/lab/new_treatment/
+
+1. You must first login to submit a new treatment.
+2. Click "Add Treatment" in the top header bar.
+3. Fill out the form and click "Submit".
+4. Your treatment will now show up in Experiment's page.
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+How To Add New Data to an Experiment
+----------------------------------------------------------------------------------------------------------------------------------------------
+nelsonlab.cac.cornell.edu/lab/log_data/select_obs/
+
+1. You must first login to add data.
+2. Click "Log Data" in the top header bar.
+3. You will see the different data types that are available. 
+	- Download the template that matches the data you want to add.
+	- Fill in the template with your data.
+4. Click "Upload to Queue".
+5. Fill out the form and click "Submit".
+	- Attach the completed template as the file attachment.
+	
+*****IMPORTANT*****
+When you submit a file using the "Upload to Queue" option, 
+a curator will need to take a look at the file that was submitted, validate it, and then insert the data into the database!
+*******************
+
+*****IMPORTANT*****
+Ideally all data submitted using the "Upload to Queue" option will be formatted using the templates provided, but
+it is possible for a curator to work with users to map their data to the templates.
+*******************
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+How will the Curator Add Data to the Database?
+----------------------------------------------------------------------------------------------------------------------------------------------
+nelsonlab.cac.cornell.edu/admin/
+
+1. Click on "Django" in the Admin section on the bottom of the left bar.
+2. Login to the Admin page. To get admin credentials, contact an administrator. 
+3. Click "Upload Queues"
+4. A list of files and whether the job has been Completed or Not Completed is shown.
+5. The curator will then find the files in /data/srv/nelsondb/app/webapp/media/upload_queue/, run validation scripts on the file, and then insert the data into the database.
+
+*****IMPORTANT*****
+Validation and data loading scripts still need to be developed.
+*******************
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+How can advanced users access the database directly?
+----------------------------------------------------------------------------------------------------------------------------------------------
+nelsonlab.cac.cornell.edu/phpmyadmin/
+
+1. Click on "PHPMyAdmin" in the Admin section on the bottom of the left bar.
+2. Login to the Database. To get admin credentials, contact an administrator. 
+
+*****IMPORTANT*****
+This page gives direct access to the database. 
+Users can add, edit, and delete data easily.
+Users can add, edit, and delete tables easily.
+*******************
 
 
-		<directory /srv/nelsondb/app/webapp/static>
-		Require all granted
-		</directory>
 
-		<Directory /srv/nelsondb/app/conf/apache>
-		Require all granted
-		</Directory>
-
-		<Directory /srv/nelsondb/app/webapp/media>
-		Require all granted
-		</Directory>
-
-		</VirtualHost>
-
-	2. sudo a2ensite nelsonlab.conf
-	3. wsgi file, which is found at /srv/nelsondn/app/conf/apache/django.wsgi looks like this:
-		
-		import os
-		import sys
-
-		root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
-		sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'venv/lib/python2.7/site-packages/')))
-		sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'app')))
-		sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'app', 'webapp')))
-
-		os.environ['DJANGO_SETTINGS_MODULE'] = 'webapp.settings'
-
-		#  import django.core.handlers.wsgi
-		#  application = django.core.handlers.wsgi.WSGIHandler()
-
-		from django.core.wsgi import get_wsgi_application
-		application = get_wsgi_application()
-
-
----------------------------------------------------------------------------
---- Migrating Legacy Database to New Database structure
----------------------------------------------------------------------------
-
-On a local machine:
-
-	1. python populate_new.py
-		---populate_new.py uses data/mine_data/ csv files to create new csv files that fit into the new database structure
-	2. python manage.py makemigrations
-		--- makemigrations tracks any changes made to models.py
-	3. python manage.py migrate
-		--- migrate creates and applies changes to database tables
-	4. python user_loader.py
-		--- user_loader.py fills auth_user and lab_userprofile tables
-	5. mysql -u root -p -D nelson_db < data_loader.sql
-		--- data_loader.sql fills all other lab and legacy tables
-
----------------------------------------------------------------------------
---- Moving Webapp Project and Data onto VM
----------------------------------------------------------------------------
-
-Method 1 On VM:
-
-	1. git pull app and data
-	2. sudo python manage.py makemigrations
-	3. sudo python manage.py migrate
-	4. mysql -u web_user -p -D db_test < /data/home/nm529/DataDumps/scripts/data_delete.sql
-	5. mysql -u web_user -p -D db_test < /data/home/nm529/DataDumps/NelsonDB_Dump/nelson_db.sql
-
-Method 2 On VM (step 5 is slow b/c data_dump.json ~ 300MB):
-
-	1. git pull app and data
-	2. sudo python manage.py makemigrations
-		--- makemigrations tracks any changes made to models.py
-	3. sudo python manage.py migrate
-		--- migrate creates and applies changes to database tables
-	4. sudo python manage.py loaddata /data/home/nm529/webapp/data_dump.json
-		--- loaddata will overwrite all data in the database already
-		--- data_dump.json is created using python manage.py datadump > data_dump.json
 
