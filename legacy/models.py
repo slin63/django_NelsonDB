@@ -12,7 +12,7 @@ class Legacy_DiseaseInfo(models.Model):
     def __unicode__(self):
         return self.abbreviation
 
-# phenotype and row feed into it, no forein keys
+# phenotype and row feed into it, no foreign keys
 class Legacy_Experiment(models.Model):
     experiment_id = models.CharField(max_length=100, primary_key=True)
     location = models.CharField(max_length=100)
@@ -464,3 +464,152 @@ class Legacy_Trait_info(models.Model):
 
     def __unicode__(self):
         return self.trait_name
+
+class Legacy_DivPanel_Association(models.Model):
+    disease = models.CharField(max_length=100)
+    trait = models.CharField(max_length=100)
+    marker_set = models.CharField(max_length=100)
+    marker = models.CharField(max_length=100)
+    chromosome = models.CharField(max_length=100)
+    position_agpv1 = models.CharField(max_length=100)
+    position_agpv2 = models.CharField(max_length=100)
+    marker_f = models.CharField(max_length=100)
+    marker_p = models.CharField(max_length=100)
+    perm_p = models.CharField(max_length=100)
+    markerr2 = models.CharField(max_length=100)
+    markerdf = models.CharField(max_length=100)
+    markerms = models.CharField(max_length=100)
+    errordf = models.CharField(max_length=100)
+    errorms = models.CharField(max_length=100)
+    modeldf = models.CharField(max_length=100)
+    modelms = models.CharField(max_length=100)
+    geneticvar = models.CharField(max_length=100)
+    residualvar = models.CharField(max_length=100)
+    neg2LnLikelihood = models.CharField(max_length=100)
+    gene_id = models.CharField(max_length=100)
+    start_agpv1 = models.CharField(max_length=100)
+    stop_agpv1 = models.CharField(max_length=100)
+    strand = models.CharField(max_length=100)
+    relationship_to_hit = models.CharField(max_length=100)
+    interpro_domain = models.CharField(max_length=100)
+    distance_from_gene = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.position_agpv1
+
+class Legacy_DNA(models.Model):
+    id_placeholder = models.CharField(max_length=100)
+    plate_id = models.CharField(max_length=100)
+    plate_name = models.CharField(max_length=100)
+    well_id = models.CharField(max_length=100)
+    well_A01 = models.CharField(max_length=100)
+    well_01A = models.CharField(max_length=100)
+    tissue_id = models.CharField(max_length=100)
+    tissue_name = models.CharField(max_length=100)
+    tissue_type = models.CharField(max_length=100)
+    dna_person = models.CharField(max_length=100)
+    dna_date = models.CharField(max_length=100)
+    notes = models.CharField(max_length=1000)
+
+    def __unicode__(self):
+        return self.well_id
+
+class Legacy_NAM_GWAS(models.Model):
+    disease = models.CharField(max_length=100)
+    marker_set = models.CharField(max_length=100)
+    chromosome = models.CharField(max_length=100)
+    location_agpv1 = models.CharField(max_length=100)
+    allele = models.CharField(max_length=100)
+    NAM_GWAS_class = models.CharField(max_length=100)
+    bpp = models.CharField(max_length=100)
+    effect = models.CharField(max_length=100)
+    cM = models.CharField(max_length=100)
+    pvalue = models.CharField(max_length=100)
+    consequence = models.CharField(max_length=100)
+    gene_id = models.CharField(max_length=100)
+    start_agpv1 = models.CharField(max_length=100)
+    stop_agpv1 = models.CharField(max_length=100)
+    strand = models.CharField(max_length=100)
+    relationship_to_hit = models.CharField(max_length=100)
+    interpro_domain = models.CharField(max_length=100)
+    distance_from_gene = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.location_agpv1
+
+class Legacy_Plate(models.Model):
+    Plate_ID = models.CharField(max_length=100)
+    Plate_Name = models.CharField(max_length=100)
+    Plate_Type = models.CharField(max_length=100)
+    Plate_Rep = models.CharField(max_length=100)
+    Plate_Person_ID = models.CharField(max_length=100)
+    Location = models.CharField(max_length=100)
+    Shelf = models.CharField(max_length=100)
+    Container_Name = models.CharField(max_length=100)
+    Notes = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.Plate_ID
+
+class Legacy_ProtocolTopics(models.Model):
+    Topic = models.CharField(max_length=100)
+    ID_placeholder = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.Topic
+
+class Legacy_Protocols(models.Model):
+    ID_placeholder = models.CharField(max_length=100)
+    Title = models.CharField(max_length=100)
+    Filename = models.CharField(max_length=100)
+    Filetype = models.CharField(max_length=100)
+    Keywords = models.CharField(max_length=100)
+    Author = models.CharField(max_length=100)
+    Reference = models.CharField(max_length=100)
+    ProtocolTopic_ID = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.Title
+
+class Legacy_QTLSummarys(models.Model):
+    ID_placeholder = models.CharField(max_length=100)
+    ReferenceID = models.CharField(max_length=100)
+    Pathogen = models.CharField(max_length=100)
+    AnalysisMethod = models.CharField(max_length=100)
+    pValueThreshold = models.CharField(max_length=100)
+    LODThreshold = models.CharField(max_length=100)
+    Phenotype = models.CharField(max_length=100)
+    Population = models.CharField(max_length=100)
+    Germplasm = models.CharField(max_length=100)
+    Chromosome = models.CharField(max_length=100)
+    Significant_marker = models.CharField(max_length=100)
+    Sig_cM = models.CharField(max_length=100)
+    Sig_bp_agpv1 = models.CharField(max_length=100)
+    BinPub = models.CharField(max_length=100)
+    LBinIBM2Neighbors = models.CharField(max_length=100)
+    Lbin = models.CharField(max_length=100)
+    LMarkerSpecific_panzea = models.CharField(max_length=100)
+    LMarker_m = models.CharField(max_length=100)
+    LcM = models.CharField(max_length=100)
+    Lbp_agpv1 = models.CharField(max_length=100)
+    QTL_95_CI = models.CharField(max_length=100)
+    Chr = models.CharField(max_length=100)
+    RBinIBM2Neighbors = models.CharField(max_length=100)
+    Rbin = models.CharField(max_length=100)
+    RMarkerSpecific_panzea = models.CharField(max_length=100)
+    RMarker_m = models.CharField(max_length=100)
+    RcM = models.CharField(max_length=100)
+    Rbp_agpv1 = models.CharField(max_length=100)
+    Donor = models.CharField(max_length=100)
+    DonorNotes = models.CharField(max_length=100)
+    ENVobsENVexp = models.CharField(max_length=100)
+    YRobsYRexp = models.CharField(max_length=100)
+    DetectedInCombinedAnalysis = models.CharField(max_length=100)
+    LOD = models.CharField(max_length=100)
+    PVE = models.CharField(max_length=100)
+    NOTES = models.CharField(max_length=100)
+    Authority = models.CharField(max_length=100)
+    DiseaseInfo_ID = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.Chromosome
