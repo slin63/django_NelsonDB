@@ -613,3 +613,45 @@ class Legacy_QTLSummarys(models.Model):
 
     def __unicode__(self):
         return self.Chromosome
+
+class Legacy_Isolate_Media(models.Model):
+    ID_placeholder = models.CharField(max_length=100)
+    scientific_name = models.CharField(max_length=100)
+    other_sname = models.CharField(max_length=100)
+    media_growth = models.CharField(max_length=100)
+    media_sporulation = models.CharField(max_length=100)
+    temp = models.CharField(max_length=100)
+    light = models.CharField(max_length=100)
+    cite = models.CharField(max_length=100)
+    other_authority = models.CharField(max_length=100)
+    notes = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.scientific_name
+
+class Legacy_JournalReferences(models.Model):
+    ID_placeholder = models.CharField(max_length=100)
+    Authors = models.CharField(max_length=100)
+    REFERENCE = models.CharField(max_length=100)
+    Year = models.CharField(max_length=100)
+    Note = models.CharField(max_length=100)
+    NCLB = models.CharField(max_length=100)
+    NCLS = models.CharField(max_length=100)
+    GLS = models.CharField(max_length=100)
+    SCLB = models.CharField(max_length=100)
+    SRust = models.CharField(max_length=100)
+    CRust = models.CharField(max_length=100)
+    DM = models.CharField(max_length=100)
+    Smut = models.CharField(max_length=100)
+    Rot = models.CharField(max_length=100)
+    Aflatoxin = models.CharField(max_length=100)
+    Swilt = models.CharField(max_length=100)
+    Viral = models.CharField(max_length=100)
+    RGAs = models.CharField(max_length=100)
+    FT = models.CharField(max_length=100)
+    STATUS = models.CharField(max_length=100)
+    GenomePix = models.CharField(max_length=100)
+    Authority = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.REFERENCE
