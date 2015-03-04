@@ -9,7 +9,7 @@
 <div class="container-fluid">
 
   <h3>Query 01:</h3>
-  <h5>Display tissue_type, row_id, pedigree, seed_source, microbe_type, culture_name, and notes for cultures which had a microbe type observed.</h5>
+  <h5>Display tissue_type, media, row_id, pedigree, seed_source, microbe_type, culture_name, and notes for cultures which had a microbe type observed.</h5>
 
   <form id="query_1_form" method="post" action="/metamaize/download/query_01/">
     {% csrf_token %}
@@ -64,6 +64,15 @@
   <form id="query_6_form" method="post" action="/metamaize/download/query_06/">
     {% csrf_token %}
     <input class="btn btn-primary" type="submit" name="submit" value="Export Data"/>
+  </form>
+
+  <br/>
+  <h3>Query 07:</h3>
+  <h5>Automatically writes a completed thesis.</h5>
+
+  <form id="query_7_form" >
+    {% csrf_token %}
+    <input class="btn btn-primary" type="submit" name="submit" value="Write Thesis"/>
   </form>
 
 </div>
