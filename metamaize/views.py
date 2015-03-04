@@ -84,12 +84,12 @@ def download(request, content):
 		response['Content-Disposition'] = 'attachment; filename="metamaize_query_01.csv"'
 		cultures = Culture.objects.all().exclude(microbe_type_observed='NA').exclude(microbe_type_observed='0').exclude(microbe_type_observed='')
 		writer = csv.writer(response)
-		writer.writerow(['Tissue Type', 'Row ID', 'Pedigree', 'Seed Source', 'Microbe Type', 'Culture Name', 'Notes'])
+		writer.writerow(['Tissue Type', 'Media', 'Row ID', 'Pedigree', 'Seed Source', 'Microbe Type', 'Culture Name', 'Notes'])
 		for row in cultures:
 			try:
-				writer.writerow([row.tissue.tissue_type, row.row.row_id, row.pedigree_label.pedigree_label, row.row.source, row.microbe_type_observed, row.culture_name, row.notes])
+				writer.writerow([row.tissue.tissue_type, row.medium.medium_id, row.row.row_id, row.pedigree_label.pedigree_label, row.row.source, row.microbe_type_observed, row.culture_name, row.notes])
 			except Tissue.DoesNotExist:
-				writer.writerow(['', row.row.row_id, row.pedigree_label.pedigree_label, row.row.source, row.microbe_type_observed, row.culture_name, row.notes])
+				writer.writerow(['', row.medium.medium_id, row.row.row_id, row.pedigree_label.pedigree_label, row.row.source, row.microbe_type_observed, row.culture_name, row.notes])
 			except UnicodeError:
 				pass
 	if content == 'query_02':
