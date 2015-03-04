@@ -269,3 +269,80 @@ class UploadQueue(models.Model):
 
 	def __unicode__(self):
 		return self.file_name
+
+class Citation(models.Model):
+	citation_type = models.CharField(max_length=200)
+	url = models.CharField(max_length=300)
+	pubmed_id = models.CharField(max_length=300)
+	comments = models.CharField(max_length=1000)
+
+	def __unicode__(self):
+		return self.url
+
+class Medium(models.Model):
+	citaion = models.ForeignKey(Citation)
+	media_type = models.CharField(max_length=200)
+	media_description = models.CharField(max_length=200)
+	media_preparation = models.CharField(max_length=200)
+	comments = models.CharField(max_length=1000)
+
+	def __unicode__(self):
+		return self.media_description
+
+class ObsOther(models.Model):
+	user = models.ForeignKey(User)
+	medium = models.ForeignKey(Medium)
+	location = models.ForeignKey(Location)
+	source_stock = models.ForeignKey(Stock)
+	source_isolate = models.ForeignKey(Isolate)
+	source_row = models.ForeignKey(ObsRow)
+	source_plant = models.ForeignKey(ObsPlant)
+	source_well = models.ForeignKey("self", related_name='well_entity')
+	source_microbe = models.ForeignKey("self", related_name='microbe_entity')
+	source_culture = models.ForeignKey("self", related_name='culture_entity')
+	source_tissue = models.ForeignKey("self", related_name='tissue_entity')
+	source_sample = models.ForeignKey("self", related_name='sample_entity')
+	source_dna = models.ForeignKey("self", related_name='dna_entity')
+	source_plate = models.ForeignKey("self", related_name='plate_entity')
+	entity_type = models.CharField(max_length=200)
+	dna_id = models.CharField(max_length=200)
+	dna_extraction_method = models.CharField(max_length=200)
+	dna_date = models.DateField()
+	dna_tube_id = models.CharField(max_length=200)
+	dna_tube_type = models.CharField(max_length=200)
+	dna_comments = models.CharField(max_length=1000)
+	tissue_id = models.CharField(max_length=200)
+	tissue_type = models.CharField(max_length=200)
+	tissue_name = models.CharField(max_length=200)
+	tissue_date_ground = models.DateField()
+	tissue_comments = models.CharField(max_length=1000)
+	plate_id = models.CharField(max_length=200)
+	plate_name = models.CharField(max_length=200)
+	plate_date_plated = models.DateField()
+	plate_contents = models.CharField(max_length=200)
+	plate_rep = models.CharField(max_length=200)
+	plate_type = models.CharField(max_length=200)
+	plate_status = models.CharField(max_length=200)
+	plate_comments = models.CharField(max_length=1000)
+	sample_id = models.CharField(max_length=200)
+	sample_type = models.CharField(max_length=200)
+	sample_weight = models.CharField(max_length=200)
+	sample_kernel_num = models.CharField(max_length=200)
+	sample_comments = models.CharField(max_length=1000)
+	well_id = models.CharField(max_length=200)
+	well = models.CharField(max_length=200)
+	well_inventory = models.CharField(max_length=200)
+	well_tube_label = models.CharField(max_length=200)
+	well_comments = models.CharField(max_length=1000)
+	culture_id = models.CharField(max_length=200)
+	culture_name = models.CharField(max_length=200)
+	culture_microbe_type = models.CharField(max_length=200)
+	culture_plating_cycle = models.CharField(max_length=200)
+	culture_dilution = models.CharField(max_length=200)
+	culture_image = models.CharField(max_length=200)
+	culture_comments = models.CharField(max_length=1000)
+	microbe_type = models.CharField(max_length=200)
+	microbe_comments = models.CharField(max_length=1000)
+
+	def __unicode__(self):
+		return self.entity_type
