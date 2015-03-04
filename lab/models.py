@@ -280,7 +280,7 @@ class Citation(models.Model):
 		return self.url
 
 class Medium(models.Model):
-	citaion = models.ForeignKey(Citation)
+	citation = models.ForeignKey(Citation)
 	media_type = models.CharField(max_length=200)
 	media_description = models.CharField(max_length=200)
 	media_preparation = models.CharField(max_length=200)
@@ -341,6 +341,7 @@ class ObsOther(models.Model):
 	culture_dilution = models.CharField(max_length=200)
 	culture_image = models.CharField(max_length=200)
 	culture_comments = models.CharField(max_length=1000)
+	microbe_id = models.CharField(max_length=200)
 	microbe_type = models.CharField(max_length=200)
 	microbe_comments = models.CharField(max_length=1000)
 
