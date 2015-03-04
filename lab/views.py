@@ -844,7 +844,7 @@ def serve_data_template_file(request, filename):
 	with open(path, "rb") as excel:
 		data = excel.read()
 		response = HttpResponse(data,content_type='application/vnd.ms-excel')
-		response['Content-Disposition'] = 'attachment; filename=%s' % (filename)
+		response['Content-Disposition'] = 'attachment; filename=%s.xlsx' % (filename)
 		return response
 
 @login_required
