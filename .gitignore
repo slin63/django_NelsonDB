@@ -50,3 +50,4 @@ webapp/settings.py
 
 media/profile_images/underwater.jpg
 lab/migrations/0002_uploadqueue.py
+lab/migrations/0003_obsother_obs_selector.py

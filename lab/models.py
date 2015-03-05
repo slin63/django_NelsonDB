@@ -290,6 +290,7 @@ class Medium(models.Model):
 		return self.media_description
 
 class ObsOther(models.Model):
+	obs_selector = models.ForeignKey(ObsSelector)
 	user = models.ForeignKey(User)
 	medium = models.ForeignKey(Medium)
 	location = models.ForeignKey(Location)
