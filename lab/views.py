@@ -865,7 +865,7 @@ def sort_row_data(request):
 			rows = ObsRow.objects.filter(obs_selector__experiment__id=row_experiment)
 			row_data = list(chain(rows, row_data))
 	else:
-		row_data = ObsRow.objects.all()[:5000]
+		row_data = ObsRow.objects.all().exclude(stock__seed_id=0).exclude(stock__seed_id='YW').exclude(stock__seed_id='135sib').exclude(stock__seed_id='R. Wisser').exclude(stock__seed_id='R_Wisser')[:2000]
 	return row_data
 
 @login_required
@@ -2061,3 +2061,32 @@ def query_builder_fields(request):
 					value_write.append('N/A')
 			writer.writerow(value_write)
 		return response
+
+def sort_obsother_data_experiment(request, entity_type):
+	obsother_data = {}
+	if entity_type == 'tissue':
+		if request.session.get('checkbox_tissue_experiment_id_list', None):
+			checkbox_tissue_experiment_id_list = request.session.get('checkbox_tissue_experiment_id_list')
+			for tissue_experiment in checkbox_tissue_experiment_id_list:
+				data = ObsOther.objects.filter(obs_selector__experiment__id=tissue_experiment, entity_type=entity_type)
+				obsother_data = list(chain(data, obsother_data))
+		else:
+			obsother_data = ObsOther.objects.filter(entity_type=entity_type)[:2000]
+	return obsother_data
+
+def checkbox_session_variable_check(request):
+	context_dict = {}
+	if request.session.get('checkbox_pedigree', None):
+		context_dict['checkbox_pedigree'] = request.session.get('checkbox_pedigree')
+	return context_dict
+
+def obs_other_data_browse(request, entity_type):
+	context = RequestContext(request)
+	context_dict = {}
+	if entity_type == 'tissue':
+		obsother_data = sort_obsother_data_experiment(request, entity_type)
+		context_dict = checkbox_obsother_session_variable_check(request)
+		context_dict['tissue_data'] = tissue_data
+
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/query_builder.html', context_dict, context)

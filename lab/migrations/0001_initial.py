@@ -13,6 +13,19 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='Citation',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('citation_type', models.CharField(max_length=200)),
+                ('url', models.CharField(max_length=300)),
+                ('pubmed_id', models.CharField(max_length=300)),
+                ('comments', models.CharField(max_length=1000)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='Collecting',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -132,6 +145,51 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
+            name='Medium',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('media_type', models.CharField(max_length=200)),
+                ('media_description', models.CharField(max_length=200)),
+                ('media_preparation', models.CharField(max_length=200)),
+                ('comments', models.CharField(max_length=1000)),
+                ('citation', models.ForeignKey(to='lab.Citation')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ObsCulture',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('culture_id', models.CharField(max_length=200)),
+                ('culture_name', models.CharField(max_length=200)),
+                ('microbe_type', models.CharField(max_length=200)),
+                ('plating_cycle', models.CharField(max_length=200)),
+                ('dilution', models.CharField(max_length=200)),
+                ('image_filename', models.CharField(max_length=200)),
+                ('comments', models.CharField(max_length=1000)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ObsDNA',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('dna_id', models.CharField(max_length=200)),
+                ('extraction_method', models.CharField(max_length=500)),
+                ('date', models.CharField(max_length=200)),
+                ('tube_id', models.CharField(max_length=200)),
+                ('tube_type', models.CharField(max_length=200)),
+                ('comments', models.CharField(max_length=1000)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='ObsEnv',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -139,7 +197,18 @@ class Migration(migrations.Migration):
                 ('longitude', models.CharField(max_length=200)),
                 ('latitude', models.CharField(max_length=200)),
                 ('comments', models.CharField(max_length=1000)),
-                ('field', models.ForeignKey(to='lab.Field')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ObsMicrobe',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('microbe_id', models.CharField(max_length=200)),
+                ('microbe_type', models.CharField(max_length=200)),
+                ('comments', models.CharField(max_length=1000)),
             ],
             options={
             },
@@ -151,6 +220,23 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('plant_id', models.CharField(max_length=200)),
                 ('plant_num', models.CharField(max_length=200)),
+                ('comments', models.CharField(max_length=1000)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ObsPlate',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('plate_id', models.CharField(max_length=200)),
+                ('plate_name', models.CharField(max_length=200)),
+                ('date', models.CharField(max_length=200)),
+                ('contents', models.CharField(max_length=200)),
+                ('rep', models.CharField(max_length=200)),
+                ('plate_type', models.CharField(max_length=200)),
+                ('plate_status', models.CharField(max_length=200)),
                 ('comments', models.CharField(max_length=1000)),
             ],
             options={
@@ -171,7 +257,6 @@ class Migration(migrations.Migration):
                 ('planting_date', models.CharField(max_length=200)),
                 ('harvest_date', models.CharField(max_length=200)),
                 ('comments', models.CharField(max_length=1000)),
-                ('field', models.ForeignKey(to='lab.Field')),
             ],
             options={
             },
@@ -186,18 +271,59 @@ class Migration(migrations.Migration):
                 ('weight', models.CharField(max_length=200)),
                 ('kernel_num', models.CharField(max_length=200)),
                 ('comments', models.CharField(max_length=1000)),
-                ('obs_plant', models.ForeignKey(to='lab.ObsPlant')),
-                ('obs_row', models.ForeignKey(to='lab.ObsRow')),
             ],
             options={
             },
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='ObsSelector',
+            name='ObsTissue',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('tissue_id', models.CharField(max_length=200)),
+                ('tissue_type', models.CharField(max_length=200)),
+                ('tissue_name', models.CharField(max_length=200)),
+                ('date_ground', models.CharField(max_length=200)),
+                ('comments', models.CharField(max_length=1000)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ObsTracker',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('entity_type', models.CharField(max_length=200)),
+                ('collecting', models.ForeignKey(to='lab.Collecting')),
                 ('experiment', models.ForeignKey(to='lab.Experiment')),
+                ('field', models.ForeignKey(to='lab.Field')),
+                ('isolate', models.ForeignKey(to='lab.Isolate')),
+                ('location', models.ForeignKey(to='lab.Location')),
+                ('medium', models.ForeignKey(to='lab.Medium')),
+                ('obs_culture', models.OneToOneField(to='lab.ObsCulture')),
+                ('obs_dna', models.OneToOneField(to='lab.ObsDNA')),
+                ('obs_env', models.OneToOneField(to='lab.ObsEnv')),
+                ('obs_microbe', models.OneToOneField(to='lab.ObsMicrobe')),
+                ('obs_plant', models.OneToOneField(to='lab.ObsPlant')),
+                ('obs_plate', models.OneToOneField(to='lab.ObsPlate')),
+                ('obs_row', models.OneToOneField(to='lab.ObsRow')),
+                ('obs_sample', models.OneToOneField(to='lab.ObsSample')),
+                ('obs_tissue', models.OneToOneField(to='lab.ObsTissue')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ObsWell',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('well_id', models.CharField(max_length=200)),
+                ('well', models.CharField(max_length=200)),
+                ('well_inventory', models.CharField(max_length=200)),
+                ('tube_label', models.CharField(max_length=200)),
+                ('comments', models.CharField(max_length=1000)),
             ],
             options={
             },
@@ -305,6 +431,22 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
+            name='UploadQueue',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('file_name', models.FileField(upload_to=b'upload_queue')),
+                ('upload_type', models.CharField(max_length=200)),
+                ('date', models.DateField(auto_now_add=True)),
+                ('completed', models.BooleanField(default=False)),
+                ('comments', models.CharField(max_length=1000)),
+                ('experiment', models.ForeignKey(to='lab.Experiment')),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='UserProfile',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -333,57 +475,81 @@ class Migration(migrations.Migration):
             preserve_default=True,
         ),
         migrations.AddField(
-            model_name='obssample',
-            name='obs_selector',
-            field=models.ForeignKey(to='lab.ObsSelector'),
+            model_name='obstracker',
+            name='obs_well',
+            field=models.OneToOneField(to='lab.ObsWell'),
             preserve_default=True,
         ),
         migrations.AddField(
-            model_name='obssample',
-            name='source_sample',
-            field=models.ForeignKey(to='lab.ObsSample'),
+            model_name='obstracker',
+            name='source_obs_culture',
+            field=models.ForeignKey(related_name=b'source_culture', to='lab.ObsTracker'),
             preserve_default=True,
         ),
         migrations.AddField(
-            model_name='obssample',
+            model_name='obstracker',
+            name='source_obs_dna',
+            field=models.ForeignKey(related_name=b'source_dna', to='lab.ObsTracker'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='obstracker',
+            name='source_obs_env',
+            field=models.ForeignKey(related_name=b'source_env', to='lab.ObsTracker'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='obstracker',
+            name='source_obs_microbe',
+            field=models.ForeignKey(related_name=b'source_microbe', to='lab.ObsTracker'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='obstracker',
+            name='source_obs_plant',
+            field=models.ForeignKey(related_name=b'source_plant', to='lab.ObsTracker'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='obstracker',
+            name='source_obs_plate',
+            field=models.ForeignKey(related_name=b'source_plate', to='lab.ObsTracker'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='obstracker',
+            name='source_obs_row',
+            field=models.ForeignKey(related_name=b'source_row', to='lab.ObsTracker'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='obstracker',
+            name='source_obs_sample',
+            field=models.ForeignKey(related_name=b'source_sample', to='lab.ObsTracker'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='obstracker',
+            name='source_obs_tissue',
+            field=models.ForeignKey(related_name=b'source_tissue', to='lab.ObsTracker'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='obstracker',
+            name='source_obs_well',
+            field=models.ForeignKey(related_name=b'source_well', to='lab.ObsTracker'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='obstracker',
             name='stock',
             field=models.ForeignKey(to='lab.Stock'),
             preserve_default=True,
         ),
         migrations.AddField(
-            model_name='obsrow',
-            name='obs_selector',
-            field=models.ForeignKey(to='lab.ObsSelector'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='obsrow',
-            name='stock',
-            field=models.ForeignKey(to='lab.Stock'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='obsplant',
-            name='obs_row',
-            field=models.ForeignKey(to='lab.ObsRow'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='obsplant',
-            name='obs_selector',
-            field=models.ForeignKey(to='lab.ObsSelector'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='obsplant',
-            name='stock',
-            field=models.ForeignKey(default=1, to='lab.Stock'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='obsenv',
-            name='obs_selector',
-            field=models.ForeignKey(to='lab.ObsSelector'),
+            model_name='obstracker',
+            name='user',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -394,8 +560,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='measurement',
-            name='obs_selector',
-            field=models.ForeignKey(to='lab.ObsSelector'),
+            name='obs_tracker',
+            field=models.ForeignKey(to='lab.ObsTracker'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -438,12 +604,6 @@ class Migration(migrations.Migration):
             model_name='collecting',
             name='field',
             field=models.ForeignKey(to='lab.Field'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='collecting',
-            name='obs_selector',
-            field=models.ForeignKey(to='lab.ObsSelector'),
             preserve_default=True,
         ),
         migrations.AddField(
