@@ -97,6 +97,27 @@ class People(models.Model):
 	def __unicode__(self):
 		return self.organization
 
+class Citation(models.Model):
+	citation_type = models.CharField(max_length=200)
+	title = models.CharField(max_length=200, unique=True)
+	url = models.CharField(max_length=300)
+	pubmed_id = models.CharField(max_length=300)
+	comments = models.CharField(max_length=1000)
+
+	def __unicode__(self):
+		return self.title
+
+class Medium(models.Model):
+	citation = models.ForeignKey(Citation)
+	media_name = models.CharField(max_length=200, unique=True)
+	media_type = models.CharField(max_length=200)
+	media_description = models.CharField(max_length=200)
+	media_preparation = models.CharField(max_length=200)
+	comments = models.CharField(max_length=1000)
+
+	def __unicode__(self):
+		return self.media_name
+
 class ObsRow(models.Model):
   row_id = models.CharField(max_length=200, unique=True)
   row_name = models.CharField(max_length=200)
@@ -184,6 +205,7 @@ class ObsWell(models.Model):
 		return self.well_id
 
 class ObsCulture(models.Model):
+	medium = models.ForeignKey(Medium)
 	culture_id = models.CharField(max_length=200, unique=True)
 	culture_name = models.CharField(max_length=200)
 	microbe_type = models.CharField(max_length=200)
@@ -300,30 +322,10 @@ class UploadQueue(models.Model):
 	def __unicode__(self):
 		return self.file_name
 
-class Citation(models.Model):
-	citation_type = models.CharField(max_length=200)
-	url = models.CharField(max_length=300, unique=True)
-	pubmed_id = models.CharField(max_length=300)
-	comments = models.CharField(max_length=1000)
-
-	def __unicode__(self):
-		return self.url
-
-class Medium(models.Model):
-	citation = models.ForeignKey(Citation)
-	media_type = models.CharField(max_length=200, unique=True)
-	media_description = models.CharField(max_length=200)
-	media_preparation = models.CharField(max_length=200)
-	comments = models.CharField(max_length=1000)
-
-	def __unicode__(self):
-		return self.media_description
-
 class ObsTracker(models.Model):
-	entity_type = models.CharField(max_length=200)
+	obs_entity_type = models.CharField(max_length=200)
 	user = models.ForeignKey(User)
 	location = models.ForeignKey(Location)
-	medium = models.ForeignKey(Medium)
 	experiment = models.ForeignKey(Experiment)
 	field = models.ForeignKey(Field)
 	isolate = models.ForeignKey(Isolate)
@@ -339,19 +341,16 @@ class ObsTracker(models.Model):
 	obs_tissue = models.OneToOneField(ObsTissue)
 	obs_well = models.OneToOneField(ObsWell)
 	obs_env = models.OneToOneField(ObsEnv)
-	source_obs_culture = models.ForeignKey('self', related_name='source_culture')
-	source_obs_dna = models.ForeignKey('self', related_name='source_dna')
-	source_obs_microbe = models.ForeignKey('self', related_name='source_microbe')
-	source_obs_plant = models.ForeignKey('self', related_name='source_plant')
-	source_obs_plate = models.ForeignKey('self', related_name='source_plate')
-	source_obs_row = models.ForeignKey('self', related_name='source_row')
-	source_obs_sample = models.ForeignKey('self', related_name='source_sample')
-	source_obs_tissue = models.ForeignKey('self', related_name='source_tissue')
-	source_obs_well = models.ForeignKey('self', related_name='source_well')
-	source_obs_env = models.ForeignKey('self', related_name='source_env')
 
 	def __unicode__(self):
 		return self.entity_type
+
+class ObsTrackerSource(models.Model):
+	target_obs = models.ForeignKey(ObsTracker, related_name='target_obs_tracker')
+	source_obs = models.ForeignKey(ObsTracker, related_name='source_obs_tracker')
+
+	def __unicode__(self):
+		return self.target_obs
 
 class MeasurementParameter(models.Model):
 	parameter = models.CharField(max_length=200, unique=True)
