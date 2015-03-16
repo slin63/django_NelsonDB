@@ -3,7 +3,7 @@ import csv
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsSelector, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue
+from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsTracker, ObsTrackerSource, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue
 from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -301,42 +301,33 @@ def experiment(request, experiment_name_url):
 				treatment_data = Treatment.objects.filter(experiment=experiment)
 			except Treatment.DoesNotExist:
 				treatment_data = None
+			context_dict['treatment_data'] = treatment_data
+
+			obs_type_list = ['row', 'plant', 'sample', 'env', 'dna', 'tissue', 'plate', 'well', 'microbe', 'culture']
+			for obs_type in obs_type_list:
+				obs_data = "%s_data" % (obs_type)
+				try:
+					obs_type_data = ObsTracker.objects.filter(experiment=experiment_name, obs_entity_type=obs_type)
+				except ObsTracker.DoesNotExist:
+					obs_type_data = None
+				context_dict[obs_data] = obs_type_data
+
 			try:
-				row_data = ObsRow.objects.filter(obs_selector__experiment__name=experiment_name)
-			except ObsRow.DoesNotExist:
-				row_data = None
+				stock_data = ObsTracker.objects.filter(experiment=experiment_name, obs_entity_type='stock', collecting_id='1')
+			except ObsTracker.DoesNotExist:
+				stock_data = None
+			context_dict['stock_data'] = stock_data
 			try:
-				plant_data = ObsPlant.objects.filter(obs_selector__experiment__name=experiment_name)
-			except ObsPlant.DoesNotExist:
-				plant_data = None
+				collected_stock_data = ObsTracker.objects.filter(experiment=experiment_name, obs_entity_type='stock').exclude(collecting_id='1')
+			except ObsTracker.DoesNotExist:
+				collected_stock_data = None
+			context_dict['collected_stock_data'] = collected_stock_data
 			try:
-				samples_data = ObsSample.objects.filter(obs_selector__experiment__name=experiment_name)
-			except ObsSample.DoesNotExist:
-				samples_data = None
-			try:
-				stock_row_data = ObsRow.objects.filter(obs_selector__experiment__name=experiment_name)
-			except ObsRow.DoesNotExist:
-				stock_row_data = None
-			try:
-				stock_seed_data = Stock.objects.filter(passport__collecting__obs_selector__experiment__name=experiment_name)
-			except:
-				stock_seed_data = None
-			try:
-				measurement_data = Measurement.objects.filter(obs_selector__experiment__name=experiment_name)
+				measurement_data = Measurement.objects.filter(obs_tracker__experiment__name=experiment_name)
 			except Measurement.DoesNotExist:
 				measurement_data = None
-			try:
-				packet_collected = StockPacket.objects.filter(stock__passport__collecting__obs_selector__experiment__name=experiment_name)
-			except StockPacket.DoesNotExist:
-				packet_collected = None
-			context_dict['treatment_data'] = treatment_data
-			context_dict['row_data'] = row_data
-			context_dict['plant_data'] = plant_data
-			context_dict['samples_data'] = samples_data
-			context_dict['stock_row_data'] = stock_row_data
-			context_dict['stock_seed_data'] = stock_seed_data
 			context_dict['measurement_data'] = measurement_data
-			context_dict['packet_collected'] = packet_collected
+
 		except Experiment.DoesNotExist:
 			pass
 	if experiment_name == 'search':
@@ -536,11 +527,14 @@ def download_seed_planted_experiment(request, experiment_name):
 def download_seed_collected_experiment(request, experiment_name):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="%s_seed_collected.csv"' % (experiment_name)
-	seed_data = Stock.objects.filter(passport__collecting__obs_selector__experiment__name=experiment_name)
+	seed_data = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='stock').exclude(collecting_id='1')
 	writer = csv.writer(response)
-	writer.writerow(['Seed ID', 'Cross Type', 'Pedigree', 'Population', 'Status', 'Collector', 'Comments'])
+	writer.writerow(['Seed ID', 'Collected from Row ID', 'Cross Type', 'Pedigree', 'Population', 'Status', 'Collector', 'Comments'])
 	for data in seed_data:
-		writer.writerow([data.seed_id, data.cross_type, data.pedigree, data.passport.taxonomy.population, data.stock_status, data.passport.collecting.user, data.comments])
+		try:
+			writer.writerow([data.stock.seed_id, data.obs_row.row_id, data.stock.cross_type, data.stock.pedigree, data.stock.passport.taxonomy.population, data.stock.stock_status, data.stock.passport.collecting.user, data.stock.comments])
+		except ObsRow.DoesNotExist:
+			writer.writerow([data.stock.seed_id, 'No Row', data.stock.cross_type, data.stock.pedigree, data.stock.passport.taxonomy.population, data.stock.stock_status, data.stock.passport.collecting.user, data.stock.comments])
 	return response
 
 @login_required
@@ -548,7 +542,7 @@ def row_data_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
 	context_dict = checkbox_session_variable_check(request)
-	row_data = ObsRow.objects.filter(obs_selector__experiment__name=experiment_name)
+	row_data = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='row')
 	context_dict['row_data'] = row_data
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
@@ -558,11 +552,11 @@ def row_data_from_experiment(request, experiment_name):
 def download_row_experiment(request, experiment_name):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="%s_rows.csv"' % (experiment_name)
-	row_data = ObsRow.objects.filter(obs_selector__experiment__name=experiment_name)
+	row_data = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='row')
 	writer = csv.writer(response)
 	writer.writerow(['Row ID', 'Row Name', 'Field', 'Source Stock', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
 	for row in row_data:
-		writer.writerow([row.row_id, row.row_name, row.field.field_name, row.stock.seed_id, row.range_num, row.plot, row.block, row.rep, row.kernel_num, row.planting_date, row.harvest_date, row.comments])
+		writer.writerow([row.obs_row.row_id, row.obs_row.row_name, row.field.field_name, row.stock.seed_id, row.obs_row.range_num, row.obs_row.plot, row.obs_row.block, row.obs_row.rep, row.obs_row.kernel_num, row.obs_row.planting_date, row.obs_row.harvest_date, row.obs_row.comments])
 	return response
 
 @login_required
@@ -570,10 +564,16 @@ def passport(request, passport_id):
 	context = RequestContext(request)
 	context_dict = {}
 	passport = Passport.objects.get(id=passport_id)
-	try:
-		collecting_row = ObsRow.objects.get(obs_selector=passport.collecting.obs_selector)
-	except ObsRow.DoesNotExist:
-		collecting_row = None
+	obs_type_list = ['row', 'plant', 'sample', 'env', 'dna', 'tissue', 'plate', 'well', 'microbe', 'culture']
+	for obs_type in obs_type_list:
+		obs_data = "collecting_%s" % (obs_type)
+		obs_data_type = "obs_%s" % (obs_type)
+		try:
+			collecting_obs_type = ObsTracker.objects.get(obs_entity_type='stock', stock__passport=passport).exclude(obs_data_type='1')
+		except ObsTracker.DoesNotExist:
+			collecting_obs_type = None
+		context_dict[obs_data] = collecting_obs_type
+
 	if passport.collecting.field.field_name != 'No Field':
 		collecting_field = True
 	else:
@@ -583,7 +583,6 @@ def passport(request, passport_id):
 	else:
 		collecting_source = None
 	context_dict['passport'] = passport
-	context_dict['collecting_row'] = collecting_row
 	context_dict['collecting_field'] = collecting_field
 	context_dict['collecting_source'] = collecting_source
 	context_dict['logged_in_user'] = request.user.username
@@ -862,10 +861,10 @@ def sort_row_data(request):
 	if request.session.get('checkbox_row_experiment_id_list', None):
 		checkbox_row_experiment_id_list = request.session.get('checkbox_row_experiment_id_list')
 		for row_experiment in checkbox_row_experiment_id_list:
-			rows = ObsRow.objects.filter(obs_selector__experiment__id=row_experiment)
+			rows = ObsTracker.objects.filter(obs_entity_type='row', experiment__id=row_experiment)
 			row_data = list(chain(rows, row_data))
 	else:
-		row_data = ObsRow.objects.all().exclude(stock__seed_id=0).exclude(stock__seed_id='YW').exclude(stock__seed_id='135sib').exclude(stock__seed_id='R. Wisser').exclude(stock__seed_id='R_Wisser')[:2000]
+		row_data = ObsTracker.objects.filter(obs_entity_type='row').exclude(stock__seed_id=0).exclude(stock__seed_id='YW').exclude(stock__seed_id='135sib').exclude(stock__seed_id='R. Wisser').exclude(stock__seed_id='R_Wisser')[:2000]
 	return row_data
 
 @login_required
@@ -876,7 +875,7 @@ def download_row_data(request):
 	writer = csv.writer(response)
 	writer.writerow(['Exp ID', 'Row ID', 'Row Name', 'Field', 'Source Stock', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
 	for row in row_data:
-		writer.writerow([row.obs_selector.experiment, row.row_id, row.row_name, row.field.field_name, row.stock.seed_id, row.range_num, row.plot, row.block, row.rep, row.kernel_num, row.planting_date, row.harvest_date, row.comments])
+		writer.writerow([row.experiment.name, row.obs_row.row_id, row.obs_row.row_name, row.field.field_name, row.stock.seed_id, row.obs_row.range_num, row.obs_row.plot, row.obs_row.block, row.obs_row.rep, row.obs_row.kernel_num, row.obs_row.planting_date, row.obs_row.harvest_date, row.obs_row.comments])
 	return response
 
 def suggest_row_experiment(request):
@@ -889,7 +888,7 @@ def suggest_row_experiment(request):
 	else:
 		starts_with = request.POST['suggestion']
 	if starts_with:
-		row_experiment_list = ObsRow.objects.filter(obs_selector__experiment__name__contains=starts_with).values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+		row_experiment_list = ObsTracker.objects.filter(obs_entity_type='row', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
 	else:
 		row_experiment_list = None
 	context_dict = checkbox_session_variable_check(request)
@@ -903,7 +902,7 @@ def select_row_experiment(request):
 	checkbox_row_experiment_name_list = []
 	checkbox_row_experiment_list = request.POST.getlist('checkbox_row_experiment')
 	for row_experiment in checkbox_row_experiment_list:
-		rows = ObsRow.objects.filter(obs_selector__experiment__id=row_experiment)
+		rows = ObsTracker.objects.filter(obs_entity_type='row', experiment__id=row_experiment)
 		row_data = list(chain(rows, row_data))
 	for experiment_id in checkbox_row_experiment_list:
 		experiment_name = Experiment.objects.filter(id=experiment_id).values('name')
@@ -929,7 +928,7 @@ def checkbox_row_data_clear(request):
 def show_all_row_experiment(request):
 	context = RequestContext(request)
 	context_dict = {}
-	row_experiment_list = ObsRow.objects.all().values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+	row_experiment_list = ObsTracker.objects.filter(obs_entity_type='row').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['row_experiment_list'] = row_experiment_list
 	return render_to_response('lab/row_experiment_list.html', context_dict, context)
@@ -949,10 +948,10 @@ def sort_samples_data(request):
 	if request.session.get('checkbox_samples_experiment_id_list', None):
 		checkbox_samples_experiment_id_list = request.session.get('checkbox_samples_experiment_id_list')
 		for samples_experiment in checkbox_samples_experiment_id_list:
-			samples = ObsSample.objects.filter(obs_selector__experiment__id=samples_experiment)
+			samples = ObsTracker.objects.filter(obs_entity_type='sample', experiment__id=samples_experiment)
 			samples_data = list(chain(samples, samples_data))
 	else:
-		samples_data = ObsSample.objects.all()[:5000]
+		samples_data = ObsTracker.objects.filter(obs_entity_type='sample')[:5000]
 	return samples_data
 
 
@@ -971,10 +970,10 @@ def sort_plant_data(request):
 	if request.session.get('checkbox_plant_experiment_id_list', None):
 		checkbox_plant_experiment_id_list = request.session.get('checkbox_plant_experiment_id_list')
 		for plant_experiment in checkbox_plant_experiment_id_list:
-			plants = ObsPlant.objects.filter(obs_selector__experiment__id=plant_experiment)
+			plants = ObsTracker.objects.filter(obs_entity_type='plant', experiment__id=plant_experiment)
 			plant_data = list(chain(plants, plant_data))
 	else:
-		plant_data = ObsPlant.objects.all()[:5000]
+		plant_data = ObsTracker.objects.filter(obs_entity_type='plant')[:5000]
 	return plant_data
 
 @login_required
@@ -983,9 +982,9 @@ def download_plant_data(request):
 	response['Content-Disposition'] = 'attachment; filename="selected_experiment_plants.csv"'
 	plant_data = sort_plant_data(request)
 	writer = csv.writer(response)
-	writer.writerow(['Exp ID', 'Row ID', 'Plant ID', 'Plant Num', 'Comments'])
+	writer.writerow(['Exp ID', 'Row ID', 'Seed ID', 'Plant ID', 'Plant Num', 'Comments'])
 	for row in plant_data:
-		writer.writerow([row.obs_selector.experiment, row.obs_row, row.plant_id, row.plant_num, row.comments])
+		writer.writerow([row.experiment, row.obs_row, row.stock.seed_id, row.obs_plant.plant_id, row.obs_plant.plant_num, row.obs_plant.comments])
 	return response
 
 def suggest_plant_experiment(request):
@@ -998,7 +997,7 @@ def suggest_plant_experiment(request):
 	else:
 		starts_with = request.POST['suggestion']
 	if starts_with:
-		plant_experiment_list = ObsPlant.objects.filter(obs_selector__experiment__name__contains=starts_with).values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+		plant_experiment_list = ObsTracker.objects.filter(obs_entity_type='plant', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
 	else:
 		plant_experiment_list = None
 	context_dict = checkbox_session_variable_check(request)
@@ -1036,7 +1035,7 @@ def checkbox_plant_data_clear(request):
 def show_all_plant_experiment(request):
 	context = RequestContext(request)
 	context_dict = {}
-	plant_experiment_list = ObsPlant.objects.all().values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+	plant_experiment_list = ObsTracker.objects.filter(obs_entity_type='plant').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['plant_experiment_list'] = plant_experiment_list
 	return render_to_response('lab/plant_experiment_list.html', context_dict, context)
@@ -1045,7 +1044,7 @@ def show_all_plant_experiment(request):
 def plant_data_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
-	plant_data = ObsPlant.objects.filter(obs_selector__experiment__name=experiment_name)
+	plant_data = ObsTracker.objects.filter(obs_entity_type='plant', experiment__name=experiment_name)
 	context_dict['plant_data'] = plant_data
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
@@ -1055,11 +1054,11 @@ def plant_data_from_experiment(request, experiment_name):
 def download_plant_experiment(request, experiment_name):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="%s_plants.csv"' % (experiment_name)
-	plant_data = ObsPlant.objects.filter(obs_selector__experiment__name=experiment_name)
+	plant_data = ObsTracker.objects.filter(obs_entity_type='plant', experiment__name=experiment_name)
 	writer = csv.writer(response)
 	writer.writerow(['Plant ID', 'Plant Num', 'Row ID', 'Stock ID', 'Comments'])
 	for row in plant_data:
-		writer.writerow([row.plant_id, row.plant_num, row.obs_row.row_id, row.stock.seed_id, row.comments])
+		writer.writerow([row.obs_plant.plant_id, row.obs_plant.plant_num, row.obs_row.row_id, row.stock.seed_id, row.obs_plant.comments])
 	return response
 
 @login_required
@@ -1077,32 +1076,17 @@ def sort_measurement_data(request):
 	if request.session.get('checkbox_measurement_experiment_id_list', None):
 		checkbox_measurement_experiment_id_list = request.session.get('checkbox_measurement_experiment_id_list')
 		for measurement_experiment in checkbox_measurement_experiment_id_list:
-			measurements = Measurement.objects.filter(obs_selector__experiment__id=measurement_experiment)
+			measurements = Measurement.objects.filter(obs_tracker__experiment__id=measurement_experiment)
 			measurement_data = list(chain(measurements, measurement_data))
 	else:
 		measurement_data = Measurement.objects.all()[:5000]
 
-	obs_types = [ObsRow, ObsPlant, ObsSample, ObsEnv]
 	for data in measurement_data:
-		for obs_type in obs_types:
-			try:
-				obs = obs_type.objects.get(obs_selector=data.obs_selector.id)
-				obs_exists = True
-			except obs_type.DoesNotExist:
-				obs_exists = False
-			if obs_exists == True:
-				if obs_type == ObsRow:
-					data.obs_display = obs.row_id
-					data.obs_url = '/lab/row/%s/' % (obs.id)
-				if obs_type == ObsPlant:
-					data.obs_display = obs.plant_id
-					data.obs_url = '/lab/plant/%s/' % (obs.id)
-				if obs_type == ObsSample:
-					data.obs_display = obs.sample_id
-					data.obs_url = '/lab/sample/%s/' % (obs.id)
-				if obs_type == ObsEnv:
-					data.obs_display = obs.environment_id
-					data.obs_url = '/lab/environment/%s/' % (obs.id)
+		obs_entity_type = data.obs_entity_type
+		obs_url_id = "%s_id" % (obs_entity_type)
+		data.obs_display = data.obs_url_id
+		data.obs_url = "/lab/%s/%s/" % (obs_entity_type, data.obs_url_id)
+
 	return measurement_data
 
 @login_required
@@ -1113,7 +1097,7 @@ def download_measurement_data(request):
 	writer = csv.writer(response)
 	writer.writerow(['Exp ID', 'Obs ID', 'User', 'Time', 'Parameter Type', 'Parameter', 'Value', 'Units', 'Trait ID Buckler', 'Comments'])
 	for row in measurement_data:
-		writer.writerow([row.obs_selector.experiment, row.obs_display, row.user, row.time_of_measurement, row.measurement_parameter.parameter_type, row.measurement_parameter, row. value, row.measurement_parameter.unit_of_measure, row.measurement_parameter.trait_id_buckler, row.comments])
+		writer.writerow([row.obs_tracker.experiment, row.obs_display, row.user, row.time_of_measurement, row.measurement_parameter.parameter_type, row.measurement_parameter, row.value, row.measurement_parameter.unit_of_measure, row.measurement_parameter.trait_id_buckler, row.comments])
 	return response
 
 def suggest_measurement_experiment(request):
@@ -1126,7 +1110,7 @@ def suggest_measurement_experiment(request):
 	else:
 		starts_with = request.POST['suggestion']
 	if starts_with:
-		measurement_experiment_list = Measurement.objects.filter(obs_selector__experiment__name__contains=starts_with).values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+		measurement_experiment_list = Measurement.objects.filter(obs_tracker__experiment__name__contains=starts_with).values('obs_tracker__experiment__name', 'obs_tracker__experiment__field__field_name', 'obs_tracker__experiment__field__id', 'obs_tracker__experiment__id').distinct()[:1000]
 	else:
 		measurement_experiment_list = None
 	context_dict = checkbox_session_variable_check(request)
@@ -1164,7 +1148,7 @@ def checkbox_measurement_data_clear(request):
 def show_all_measurement_experiment(request):
 	context = RequestContext(request)
 	context_dict = {}
-	measurement_experiment_list = Measurement.objects.all().values('obs_selector__experiment__name', 'obs_selector__experiment__field__field_name', 'obs_selector__experiment__field__id', 'obs_selector__experiment__id').distinct()[:1000]
+	measurement_experiment_list = Measurement.objects.all().values('obs_tracker__experiment__name', 'obs_tracker__experiment__field__field_name', 'obs_tracker__experiment__field__id', 'obs_tracker__experiment__id').distinct()[:1000]
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['measurement_experiment_list'] = measurement_experiment_list
 	return render_to_response('lab/measurement_experiment_list.html', context_dict, context)
@@ -1173,28 +1157,14 @@ def show_all_measurement_experiment(request):
 def measurement_data_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
-	phenotype_data = Measurement.objects.filter(obs_selector__experiment__name=experiment_name)
-	obs_types = [ObsRow, ObsPlant, ObsSample, ObsEnv]
+	phenotype_data = Measurement.objects.filter(obs_tracker__experiment__name=experiment_name)
+
 	for data in phenotype_data:
-		for obs_type in obs_types:
-			try:
-				obs = obs_type.objects.get(obs_selector=data.obs_selector.id)
-				obs_exists = True
-			except obs_type.DoesNotExist:
-				obs_exists = False
-			if obs_exists == True:
-				if obs_type == ObsRow:
-					data.obs_display = obs.row_id
-					data.obs_url = '/lab/row/%s/' % (obs.id)
-				if obs_type == ObsPlant:
-					data.obs_display = obs.plant_id
-					data.obs_url = '/lab/plant/%s/' % (obs.id)
-				if obs_type == ObsSample:
-					data.obs_display = obs.sample_id
-					data.obs_url = '/lab/sample/%s/' % (obs.id)
-				if obs_type == ObsEnv:
-					data.obs_display = obs.environment_id
-					data.obs_url = '/lab/environment/%s/' % (obs.id)
+		obs_entity_type = data.obs_tracker.obs_entity_type
+		obs_url_id = "%s_id" % (obs_entity_type)
+		data.obs_display = data.obs_tracker.obs_url_id
+		data.obs_url = "/lab/%s/%s/" % (obs_entity_type, data.obs_tracker.obs_url_id)
+
 	context_dict['phenotype_data'] = phenotype_data
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
@@ -1204,28 +1174,14 @@ def measurement_data_from_experiment(request, experiment_name):
 def download_measurement_experiment(request, experiment_name):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="%s_measurements.csv"' % (experiment_name)
-	phenotype_data = Measurement.objects.filter(obs_selector__experiment__name=experiment_name)
-	obs_types = [ObsRow, ObsPlant, ObsSample, ObsEnv]
+	phenotype_data = Measurement.objects.filter(obs_tracker__experiment__name=experiment_name)
+
 	for data in phenotype_data:
-		for obs_type in obs_types:
-			try:
-				obs = obs_type.objects.get(obs_selector=data.obs_selector.id)
-				obs_exists = True
-			except obs_type.DoesNotExist:
-				obs_exists = False
-			if obs_exists == True:
-				if obs_type == ObsRow:
-					data.obs_display = obs.row_id
-					data.obs_url = '/lab/row/%s/' % (obs.id)
-				if obs_type == ObsPlant:
-					data.obs_display = obs.plant_id
-					data.obs_url = '/lab/plant/%s/' % (obs.id)
-				if obs_type == ObsSample:
-					data.obs_display = obs.sample_id
-					data.obs_url = '/lab/sample/%s/' % (obs.id)
-				if obs_type == ObsEnv:
-					data.obs_display = obs.environment_id
-					data.obs_url = '/lab/environment/%s/' % (obs.id)
+		obs_entity_type = data.obs_tracker.obs_entity_type
+		obs_url_id = "%s_id" % (obs_entity_type)
+		data.obs_display = data.obs_tracker.obs_url_id
+		data.obs_url = "/lab/%s/%s/" % (obs_entity_type, data.obs_tracker.obs_url_id)
+
 	writer = csv.writer(response)
 	writer.writerow(['Obs', 'User', 'Time', 'Parameter Type', 'Parameter', 'Value', 'Units', 'TraitID Buckler', 'Comments'])
 	for row in phenotype_data:
@@ -1241,52 +1197,50 @@ def genotype_data_browse(request):
 	return render_to_response('lab/index.html', context_dict, context)
 
 @login_required
-def seedinv_from_experiment(request, experiment_name):
+def stock_for_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
 	try:
-		seedinv_from_row_experiment = ObsRow.objects.filter(obs_selector__experiment__name=experiment_name)
-	except ObsRow.DoesNotExist:
-		seedinv_from_row_experiment = None
-	try:
-		seedinv_from_sample_experiment = ObsSample.objects.filter(obs_selector__experiment__name=experiment_name)
-	except ObsSample.DoesNotExist:
-		seedinv_from_sample_experiment = None
-	context_dict['seedinv_from_row_experiment'] = seedinv_from_row_experiment
-	context_dict['seedinv_from_sample_experiment'] = seedinv_from_sample_experiment
+		stock_for_experiment = ObsTracker.objects.filter(obs_entity_type='stock', experiment__name=experiment_name, collecting_id='1')
+	except ObsTracker.DoesNotExist:
+		stock_for_experiment = None
+	context_dict['stock_for_experiment'] = stock_for_experiment
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_from_experiment.html', context_dict, context)
 
 @login_required
-def seedinv_collected_from_experiment(request, experiment_name):
+def stock_collected_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
 	try:
-		seedinv_stock = Stock.objects.filter(passport__collecting__obs_selector__experiment__name=experiment_name)
-	except:
-		seedinv_stock = None
-	context_dict['seedinv_stock'] = seedinv_stock
+		stock_collected_from_experiment = ObsTracker.objects.filter(obs_entity_type='stock', experiment__name=experiment_name).exclude(collecting_id='1')
+	except ObsTracker.DoesNotExist:
+		stock_collected_from_experiment = None
+	context_dict['stock_collected_from_experiment'] = stock_collected_from_experiment
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_collected_from_experiment.html', context_dict, context)
 
-@login_required
-def seedpackets_from_experiment(request, experiment_name):
-	context = RequestContext(request)
-	context_dict = {}
-	seed_packet_list = []
-	try:
-		seedpackets_from_row_experiment = ObsRow.objects.filter(obs_selector__experiment__name=experiment_name)
-	except ObsRow.DoesNotExist:
-		seedpackets_from_row_experiment = None
-	for packet in seedpackets_from_row_experiment:
+def find_seedpackets_from_stock(stock_query):
+	for packet in stock_query:
 		try:
 			seed_packet = StockPacket.objects.filter(stock=packet.stock)
 		except StockPacket.DoesNotExist:
 			seed_packet = None
 		seed_packet_list = list(chain(seed_packet, seed_packet_list))
-	context_dict['seed_packet_list'] = seed_packet_list
+	return seed_packet_list
+
+@login_required
+def seedpackets_for_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	seed_packet_list = []
+	try:
+		seedpackets_for_experiment = ObsTracker.objects.filter(obs_entity_type='stock', experiment__name=experiment_name, collecting_id='1')
+	except ObsTracker.DoesNotExist:
+		seedpackets_for_experiment = None
+	context_dict['seed_packet_list'] = find_seedpackets_from_stock(seedpackets_for_experiment)
 	context_dict['packet_type'] = 'Planted'
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
@@ -1296,8 +1250,11 @@ def seedpackets_from_experiment(request, experiment_name):
 def seedpackets_collected_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
-	seed_packet_list = StockPacket.objects.filter(stock__passport__collecting__obs_selector__experiment__name=experiment_name)
-	context_dict['seed_packet_list'] = seed_packet_list
+	try:
+		seedpackets_from_experiment = ObsTracker.objects.filter(obs_entity_type='stock', experiment__name=experiment_name).exclude(collecting_id='1')
+	except ObsTracker.DoesNotExist:
+		seedpackets_from_experiment = None
+	context_dict['seed_packet_list'] = find_seedpackets_from_stock(seedpackets_from_experiment)
 	context_dict['packet_type'] = 'Collected'
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
@@ -1314,11 +1271,9 @@ def single_stock_info(request, stock_id):
 
 	if stock_info is not None:
 		try:
-			obs_row = ObsRow.objects.get(obs_selector_id=stock_info.passport.collecting.obs_selector_id)
-			stock_info.obs_row_id = obs_row.id
-			stock_info.row_id = obs_row.row_id
-		except ObsRow.DoesNotExist:
-			obs_row = None
+			obs_tracker = ObsTracker.objects.get(stock__id=stock_id)
+		except ObsTracker.DoesNotExist:
+			obs_tracker = None
 
 	try:
 		stock_packets = StockPacket.objects.filter(stock__id=stock_id)
@@ -1353,12 +1308,13 @@ def single_stock_info(request, stock_id):
 def single_row_info(request, obs_row_id):
 	context = RequestContext(request)
 	context_dict = {}
-	row_info = ObsRow.objects.get(id=obs_row_id)
+	row_info = ObsTracker.objects.get(obs_row__id=obs_row_id)
 
 	context_dict['row_info'] = row_info
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/row_info.html', context_dict, context)
 
+"""
 @login_required
 def log_data_online(request, data_type):
 	context = RequestContext(request)
@@ -1605,7 +1561,7 @@ def log_data_online(request, data_type):
 	context_dict['data_type'] = data_type
 	context_dict['data_type_title'] = data_type_title
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/log_data_online.html', context_dict, context)
+	return render_to_response('lab/log_data_online.html', context_dict, context)"""
 
 @login_required
 def new_treatment(request):
@@ -1693,7 +1649,7 @@ def query_builder(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/query_builder.html', context_dict, context)
 
-@login_required
+"""@login_required
 def query_builder_options(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -2060,33 +2016,4 @@ def query_builder_fields(request):
 				except KeyError:
 					value_write.append('N/A')
 			writer.writerow(value_write)
-		return response
-
-def sort_obsother_data_experiment(request, entity_type):
-	obsother_data = {}
-	if entity_type == 'tissue':
-		if request.session.get('checkbox_tissue_experiment_id_list', None):
-			checkbox_tissue_experiment_id_list = request.session.get('checkbox_tissue_experiment_id_list')
-			for tissue_experiment in checkbox_tissue_experiment_id_list:
-				data = ObsOther.objects.filter(obs_selector__experiment__id=tissue_experiment, entity_type=entity_type)
-				obsother_data = list(chain(data, obsother_data))
-		else:
-			obsother_data = ObsOther.objects.filter(entity_type=entity_type)[:2000]
-	return obsother_data
-
-def checkbox_session_variable_check(request):
-	context_dict = {}
-	if request.session.get('checkbox_pedigree', None):
-		context_dict['checkbox_pedigree'] = request.session.get('checkbox_pedigree')
-	return context_dict
-
-def obs_other_data_browse(request, entity_type):
-	context = RequestContext(request)
-	context_dict = {}
-	if entity_type == 'tissue':
-		obsother_data = sort_obsother_data_experiment(request, entity_type)
-		context_dict = checkbox_obsother_session_variable_check(request)
-		context_dict['tissue_data'] = tissue_data
-
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/query_builder.html', context_dict, context)
+		return response"""

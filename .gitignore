@@ -57,3 +57,4 @@ lab/migrations/0001_initial.py
 legacy/migrations/0001_initial.py
 metamaize/migrations/0001_initial.py
 jmaize/migrations/0001_initial.py
+genetics/migrations/0001_initial.py
