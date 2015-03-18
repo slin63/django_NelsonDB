@@ -57,13 +57,6 @@ class Experiment(models.Model):
   def __unicode__(self):
     return self.name
 
-class ExperimentSet(models.Model):
-  experiment = models.ForeignKey(Experiment)
-  set_name = models.CharField(max_length=200)
-
-  def __unicode__(self):
-    return self.set_name
-
 class Publication(models.Model):
   user = models.ForeignKey(User)
   publisher = models.CharField(max_length=200)
@@ -240,10 +233,9 @@ class Location(models.Model):
 
 class Collecting(models.Model):
   user = models.ForeignKey(User)
-  field = models.ForeignKey(Field)
   collection_date = models.CharField(max_length=200)
-  collection_method = models.CharField(max_length=1000, blank=True)
-  comments = models.CharField(max_length=1000, blank=True)
+  collection_method = models.CharField(max_length=1000)
+  comments = models.CharField(max_length=1000)
 
   def __unicode__(self):
     return self.collection_date
@@ -330,7 +322,6 @@ class ObsTracker(models.Model):
 	field = models.ForeignKey(Field)
 	isolate = models.ForeignKey(Isolate)
 	stock = models.ForeignKey(Stock)
-	collecting = models.ForeignKey(Collecting)
 	obs_culture = models.OneToOneField(ObsCulture)
 	obs_dna = models.OneToOneField(ObsDNA)
 	obs_microbe = models.OneToOneField(ObsMicrobe)
