@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsTracker, ObsTrackerSource, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue
+from genetics.models import GWASExperimentSet
 from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -298,35 +299,46 @@ def experiment(request, experiment_name_url):
 			u = User.objects.get(username=experiment.user.username)
 			context_dict['user'] = u
 			try:
-				treatment_data = Treatment.objects.filter(experiment=experiment)
+				treatment_data = Treatment.objects.filter(experiment__name=experiment_name)
 			except Treatment.DoesNotExist:
 				treatment_data = None
 			context_dict['treatment_data'] = treatment_data
 
-			obs_type_list = ['row', 'plant', 'sample', 'env', 'dna', 'tissue', 'plate', 'well', 'microbe', 'culture']
+			obs_type_list = ['stock', 'isolate', 'row', 'plant', 'sample', 'environment', 'dna', 'tissue', 'plate', 'well', 'microbe', 'culture']
 			for obs_type in obs_type_list:
 				obs_data = "%s_data" % (obs_type)
 				try:
-					obs_type_data = ObsTracker.objects.filter(experiment=experiment_name, obs_entity_type=obs_type)
+					obs_type_data = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type=obs_type)
 				except ObsTracker.DoesNotExist:
 					obs_type_data = None
+
+				if obs_type == 'stock':
+					obs_type_data = find_stock_for_experiment(experiment_name)
+					stockpackets_used = find_seedpackets_from_obstracker_stock(obs_type_data)
+					context_dict['stockpackets_used'] = stockpackets_used
+
 				context_dict[obs_data] = obs_type_data
 
-			try:
-				stock_data = ObsTracker.objects.filter(experiment=experiment_name, obs_entity_type='stock', collecting_id='1')
-			except ObsTracker.DoesNotExist:
-				stock_data = None
-			context_dict['stock_data'] = stock_data
-			try:
-				collected_stock_data = ObsTracker.objects.filter(experiment=experiment_name, obs_entity_type='stock').exclude(collecting_id='1')
-			except ObsTracker.DoesNotExist:
-				collected_stock_data = None
+			collected_stock_data = find_stock_collected_from_experiment(experiment_name)
 			context_dict['collected_stock_data'] = collected_stock_data
+
+			if collected_stock_data is not None:
+				stockpackets_collected = find_seedpackets_from_obstrackersource_stock(collected_stock_data)
+			else:
+				stockpackets_collected = None
+			context_dict['stockpackets_collected'] = stockpackets_collected
+
 			try:
 				measurement_data = Measurement.objects.filter(obs_tracker__experiment__name=experiment_name)
 			except Measurement.DoesNotExist:
 				measurement_data = None
 			context_dict['measurement_data'] = measurement_data
+
+			try:
+				genotype_data = GWASExperimentSet.objects.filter(experiment__name=experiment_name)
+			except GWASExperimentSet.DoesNotExist:
+				genotype_data = None
+			context_dict['genotype_data'] = genotype_data
 
 		except Experiment.DoesNotExist:
 			pass
@@ -335,6 +347,13 @@ def experiment(request, experiment_name_url):
 		context_dict['exp_list'] = exp_list
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/experiment.html', context_dict, context)
+
+def find_stock_collected_from_experiment(experiment_name):
+	try:
+		collected_stock_data = ObsTrackerSource.objects.filter(source_obs__experiment__name=experiment_name, target_obs__obs_entity_type='stock')
+	except ObsTracker.DoesNotExist:
+		collected_stock_data = None
+	return collected_stock_data
 
 def checkbox_seed_inventory_sort(request):
 	selected_stocks = {}
@@ -513,28 +532,42 @@ def select_stockpacket_from_stock(request):
 	return render_to_response('lab/stock.html', context_dict, context)
 
 @login_required
-def download_seed_planted_experiment(request, experiment_name):
+def download_stock_used_experiment(request, experiment_name):
 	response = HttpResponse(content_type='text/csv')
-	response['Content-Disposition'] = 'attachment; filename="%s_seed_planted.csv"' % (experiment_name)
-	seed_data = ObsRow.objects.filter(obs_selector__experiment__name=experiment_name)
+	response['Content-Disposition'] = 'attachment; filename="%s_seed_used.csv"' % (experiment_name)
+	try:
+		stock_associated_experiment = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='stock')
+	except ObsTracker.DoesNotExist:
+		stock_associated_experiment = None
+	try:
+		collected_stock_data = ObsTrackerSource.objects.filter(source_obs__experiment__name=experiment_name, target_obs__obs_entity_type='stock').values_list('target_obs__stock__id', flat=True)
+	except ObsTracker.DoesNotExist:
+		collected_stock_data = []
+	stock_for_experiment = []
+	if collected_stock_data is not None:
+		for s in stock_associated_experiment:
+			if s.stock.id in collected_stock_data:
+				pass
+			else:
+				stock_for_experiment.append(s)
 	writer = csv.writer(response)
-	writer.writerow(['Row ID', 'Seed ID', 'Cross Type', 'Pedigree', 'Population', 'Status', 'Collector', 'Comments'])
-	for data in seed_data:
-		writer.writerow([data.row_id, data.stock.seed_id, data.stock.cross_type, data.stock.pedigree, data.stock.passport.taxonomy.population, data.stock.stock_status, data.stock.passport.collecting.user, data.stock.comments])
+	writer.writerow(['Seed ID', 'Seed Name', 'Cross Type', 'Pedigree', 'Population', 'Status', 'Inoculated', 'Collector', 'Comments'])
+	for data in stock_for_experiment:
+		writer.writerow([data.stock.seed_id, data.stock.seed_name, data.stock.cross_type, data.stock.pedigree, data.stock.passport.taxonomy.population, data.stock.stock_status, data.stock.inoculated, data.stock.passport.collecting.user, data.stock.comments])
 	return response
 
 @login_required
-def download_seed_collected_experiment(request, experiment_name):
+def download_stock_collected_experiment(request, experiment_name):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="%s_seed_collected.csv"' % (experiment_name)
-	seed_data = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='stock').exclude(collecting_id='1')
+	try:
+		collected_stock_data = ObsTrackerSource.objects.filter(source_obs__experiment__name=experiment_name, target_obs__obs_entity_type='stock')
+	except ObsTracker.DoesNotExist:
+		collected_stock_data = None
 	writer = csv.writer(response)
-	writer.writerow(['Seed ID', 'Collected from Row ID', 'Cross Type', 'Pedigree', 'Population', 'Status', 'Collector', 'Comments'])
-	for data in seed_data:
-		try:
-			writer.writerow([data.stock.seed_id, data.obs_row.row_id, data.stock.cross_type, data.stock.pedigree, data.stock.passport.taxonomy.population, data.stock.stock_status, data.stock.passport.collecting.user, data.stock.comments])
-		except ObsRow.DoesNotExist:
-			writer.writerow([data.stock.seed_id, 'No Row', data.stock.cross_type, data.stock.pedigree, data.stock.passport.taxonomy.population, data.stock.stock_status, data.stock.passport.collecting.user, data.stock.comments])
+	writer.writerow(['Seed ID', 'Seed Name', 'Cross Type', 'Pedigree', 'Population', 'Status', 'Inoculated', 'Collector', 'Comments'])
+	for data in collected_stock_data:
+		writer.writerow([data.target_obs.stock.seed_id, data.target_obs.stock.seed_name, data.target_obs.stock.cross_type, data.target_obs.stock.pedigree, data.target_obs.stock.passport.taxonomy.population, data.target_obs.stock.stock_status, data.target_obs.stock.inoculated, data.target_obs.stock.passport.collecting.user, data.target_obs.stock.comments])
 	return response
 
 @login_required
@@ -1201,28 +1234,40 @@ def stock_for_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
 	try:
-		stock_for_experiment = ObsTracker.objects.filter(obs_entity_type='stock', experiment__name=experiment_name, collecting_id='1')
+		stock_associated_experiment = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='stock')
 	except ObsTracker.DoesNotExist:
-		stock_for_experiment = None
+		stock_associated_experiment = None
+	try:
+		collected_stock_data = ObsTrackerSource.objects.filter(source_obs__experiment__name=experiment_name, target_obs__obs_entity_type='stock').values_list('target_obs__stock__id', flat=True)
+	except ObsTracker.DoesNotExist:
+		collected_stock_data = []
+	stock_for_experiment = []
+	if collected_stock_data is not None:
+		for s in stock_associated_experiment:
+			if s.stock.id in collected_stock_data:
+				pass
+			else:
+				stock_for_experiment.append(s)
 	context_dict['stock_for_experiment'] = stock_for_experiment
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/seed_from_experiment.html', context_dict, context)
+	return render_to_response('lab/seed_for_experiment.html', context_dict, context)
 
 @login_required
 def stock_collected_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
 	try:
-		stock_collected_from_experiment = ObsTracker.objects.filter(obs_entity_type='stock', experiment__name=experiment_name).exclude(collecting_id='1')
+		collected_stock_data = ObsTrackerSource.objects.filter(source_obs__experiment__name=experiment_name, target_obs__obs_entity_type='stock')
 	except ObsTracker.DoesNotExist:
-		stock_collected_from_experiment = None
-	context_dict['stock_collected_from_experiment'] = stock_collected_from_experiment
+		collected_stock_data = None
+	context_dict['collected_stock_data'] = collected_stock_data
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_collected_from_experiment.html', context_dict, context)
 
-def find_seedpackets_from_stock(stock_query):
+def find_seedpackets_from_obstracker_stock(stock_query):
+	seed_packet_list = []
 	for packet in stock_query:
 		try:
 			seed_packet = StockPacket.objects.filter(stock=packet.stock)
@@ -1231,34 +1276,131 @@ def find_seedpackets_from_stock(stock_query):
 		seed_packet_list = list(chain(seed_packet, seed_packet_list))
 	return seed_packet_list
 
-@login_required
-def seedpackets_for_experiment(request, experiment_name):
-	context = RequestContext(request)
-	context_dict = {}
+def find_seedpackets_from_obstrackersource_stock(stock_query):
 	seed_packet_list = []
+	for packet in stock_query:
+		try:
+			seed_packet = StockPacket.objects.filter(stock=packet.target_obs.stock)
+		except StockPacket.DoesNotExist:
+			seed_packet = None
+		seed_packet_list = list(chain(seed_packet, seed_packet_list))
+	return seed_packet_list
+
+def find_stock_for_experiment(experiment_name):
 	try:
-		seedpackets_for_experiment = ObsTracker.objects.filter(obs_entity_type='stock', experiment__name=experiment_name, collecting_id='1')
+		stock_data = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='stock')
 	except ObsTracker.DoesNotExist:
-		seedpackets_for_experiment = None
-	context_dict['seed_packet_list'] = find_seedpackets_from_stock(seedpackets_for_experiment)
-	context_dict['packet_type'] = 'Planted'
-	context_dict['experiment_name'] = experiment_name
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/seedpackets_from_experiment.html', context_dict, context)
+		stock_data = None
+	if stock_data is not None:
+		try:
+			collected_stock_data = ObsTrackerSource.objects.filter(source_obs__experiment__name=experiment_name, target_obs__obs_entity_type='stock').values_list('target_obs__stock__id', flat=True)
+		except ObsTracker.DoesNotExist:
+			collected_stock_data = []
+		stock_for_experiment = []
+		if collected_stock_data is not None:
+			for s in stock_data:
+				if s.stock.id in collected_stock_data:
+					pass
+				else:
+					stock_for_experiment.append(s)
+	else:
+		stock_for_experiment = None
+	return stock_for_experiment
 
 @login_required
-def seedpackets_collected_from_experiment(request, experiment_name):
+def stockpackets_for_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
-	try:
-		seedpackets_from_experiment = ObsTracker.objects.filter(obs_entity_type='stock', experiment__name=experiment_name).exclude(collecting_id='1')
-	except ObsTracker.DoesNotExist:
-		seedpackets_from_experiment = None
-	context_dict['seed_packet_list'] = find_seedpackets_from_stock(seedpackets_from_experiment)
+	stock_data = find_stock_for_experiment(experiment_name)
+	if stock_data is not None:
+		stockpackets_used = find_seedpackets_from_obstracker_stock(stock_data)
+	else:
+		stockpackets_used = None
+	context_dict['stockpackets'] = stockpackets_used
+	context_dict['packet_type'] = 'Used'
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/seedpackets_for_experiment.html', context_dict, context)
+
+def download_stockpackets_for_experiment(request, experiment_name):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="%s_measurements.csv"' % (experiment_name)
+	stock_data = find_stock_for_experiment(experiment_name)
+	if stock_data is not None:
+		stockpackets_used = find_seedpackets_from_obstracker_stock(stock_data)
+	else:
+		stockpackets_used = None
+	writer = csv.writer(response)
+	writer.writerow(['Seed ID', 'Seed Name', 'Cross Type', 'Pedigree', 'Population', 'Status', 'Inoculated', 'Seed Comments', 'Weight (g)', 'Num Seeds', 'Location', 'Packet Comments'])
+	for row in stockpackets_used:
+		writer.writerow([row.stock.seed_id, row.stock.seed_name, row.stock.cross_type, row.stock.pedigree, row.stock.passport.taxonomy.population, row.stock.stock_status, row.stock.inoculated, row.stock.comments, row.weight, row.num_seeds, row.location.location_name, row.comments])
+	return response
+
+@login_required
+def stockpackets_collected_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	collected_stock_data = find_stock_collected_from_experiment(experiment_name)
+	if collected_stock_data is not None:
+		stockpackets_collected = find_seedpackets_from_obstrackersource_stock(collected_stock_data)
+	else:
+		stockpackets_collected = None
+	context_dict['stockpackets'] = stockpackets_collected
 	context_dict['packet_type'] = 'Collected'
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/seedpackets_from_experiment.html', context_dict, context)
+	return render_to_response('lab/seedpackets_for_experiment.html', context_dict, context)
+
+def download_stockpackets_collected_experiment(request, experiment_name):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="%s_measurements.csv"' % (experiment_name)
+	stock_data = find_stock_collected_from_experiment(experiment_name)
+	if stock_data is not None:
+		stockpackets_collected = find_seedpackets_from_obstrackersource_stock(stock_data)
+	else:
+		stockpackets_collected = None
+	writer = csv.writer(response)
+	writer.writerow(['Seed ID', 'Seed Name', 'Cross Type', 'Pedigree', 'Population', 'Status', 'Inoculated', 'Seed Comments', 'Weight (g)', 'Num Seeds', 'Location', 'Packet Comments'])
+	for row in stockpackets_collected:
+		writer.writerow([row.stock.seed_id, row.stock.seed_name, row.stock.cross_type, row.stock.pedigree, row.stock.passport.taxonomy.population, row.stock.stock_status, row.stock.inoculated, row.stock.comments, row.weight, row.num_seeds, row.location.location_name, row.comments])
+	return response
+
+def get_obs_tracker(obs_type, obs_id):
+	kwargs = {obs_type:obs_id}
+	try:
+		obs_tracker = ObsTracker.objects.filter(**kwargs)
+	except ObsTracker.DoesNotExist:
+		obs_tracker = None
+	if obs_tracker is not None:
+		for tracker in obs_tracker:
+			obs_entity_type = tracker.obs_entity_type
+			if obs_entity_type == 'stock':
+				obs_tracker_id_info = [tracker.stock.seed_id, obs_entity_type, tracker.stock_id]
+			if obs_entity_type == 'isolate':
+				obs_tracker_id_info = [tracker.isolate.isolate_id, obs_entity_type, tracker.isolate_id]
+			if obs_entity_type == 'row':
+				obs_tracker_id_info = [tracker.obs_row.row_id, obs_entity_type, tracker.obs_row_id]
+			if obs_entity_type == 'plant':
+				obs_tracker_id_info = [tracker.obs_plant.plant_id, obs_entity_type, tracker.obs_plant_id]
+			if obs_entity_type == 'culture':
+				obs_tracker_id_info = [tracker.obs_culture.culture_id, obs_entity_type, tracker.obs_culture_id]
+			if obs_entity_type == 'dna':
+				obs_tracker_id_info = [tracker.obs_dna.dna_id, obs_entity_type, tracker.obs_dna_id]
+			if obs_entity_type == 'microbe':
+				obs_tracker_id_info = [tracker.obs_microbe.microbe_id, obs_entity_type, tracker.obs_microbe_id]
+			if obs_entity_type == 'plate':
+				obs_tracker_id_info = [tracker.obs_plate.plate_id, obs_entity_type, tracker.obs_plate_id]
+			if obs_entity_type == 'well':
+				obs_tracker_id_info = [tracker.obs_well.well_id, obs_entity_type, tracker.obs_well_id]
+			if obs_entity_type == 'tissue':
+				obs_tracker_id_info = [tracker.obs_tissue.tissue_id, obs_entity_type, tracker.obs_tissue_id]
+			if obs_entity_type == 'culture':
+				obs_tracker_id_info = [tracker.obs_culture.microbe_id, obs_entity_type, tracker.obs_culture_id]
+			if obs_entity_type == 'sample':
+				obs_tracker_id_info = [tracker.obs_sample.sample_id, obs_entity_type, tracker.obs_sample_id]
+			tracker.obs_id = obs_tracker_id_info[0]
+			tracker.obs_id_url = '/lab/%s/%d/' % (obs_tracker_id_info[1], obs_tracker_id_info[2])
+	return obs_tracker
 
 @login_required
 def single_stock_info(request, stock_id):
@@ -1268,38 +1410,14 @@ def single_stock_info(request, stock_id):
 		stock_info = Stock.objects.get(id=stock_id)
 	except Stock.DoesNotExist:
 		stock_info = None
-
 	if stock_info is not None:
-		try:
-			obs_tracker = ObsTracker.objects.get(stock__id=stock_id)
-		except ObsTracker.DoesNotExist:
-			obs_tracker = None
-
+		obs_tracker = get_obs_tracker('stock_id', stock_id)
 	try:
-		stock_packets = StockPacket.objects.filter(stock__id=stock_id)
+		stock_packets = StockPacket.objects.filter(stock_id=stock_id)
 	except StockPacket.DoesNotExist:
 		stock_packets = None
-
-	obs_row_stock_0 = ObsRow.objects.filter(stock_id=stock_id)
-	context_dict['obs_row_stock_0'] = obs_row_stock_0
-
-	"""step = 1
-	iterate = True
-	while iterate == True:
-		obs_row_stock_prev = 'obs_row_stock_%d' % (step-1)
-		for row_stock in context_dict[obs_row_stock_prev]:
-			obs_row_stock_index = 'obs_row_stock_%d' % (step)
-			try:
-				obs_row_stock_info = ObsRow.objects.get(obs_selector=row_stock.stock.passport.collecting.obs_selector_id)
-				if obs_row_stock_info:
-					context_dict[obs_row_stock_index] = obs_row_stock_info
-					step = step + 1
-				else:
-					iterate = False
-			except ObsRow.DoesNotExist:
-				iterate = False"""
-
 	context_dict['stock_info'] = stock_info
+	context_dict['obs_tracker'] = obs_tracker
 	context_dict['stock_packets'] = stock_packets
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/stock_info.html', context_dict, context)
@@ -1308,9 +1426,14 @@ def single_stock_info(request, stock_id):
 def single_row_info(request, obs_row_id):
 	context = RequestContext(request)
 	context_dict = {}
-	row_info = ObsTracker.objects.get(obs_row__id=obs_row_id)
-
+	try:
+		row_info = ObsRow.objects.get(id=obs_row_id)
+	except ObsRow.DoesNotExist:
+		row_info = None
+	if row_info is not None:
+		obs_tracker = get_obs_tracker('obs_row_id', obs_row_id)
 	context_dict['row_info'] = row_info
+	context_dict['obs_tracker'] = obs_tracker
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/row_info.html', context_dict, context)
 

@@ -49,11 +49,13 @@
       </tr>
     </thead>
     <tbody>
+      {% for t in obs_tracker %}
       <tr>
-        <td><a href='/lab/field/{{row_info.field.id}}/'>{{ row_info.field.field_name }}</a></td>
-        <td>{{ row_info.field.field_num }}</td>
-        <td>{{ row_info.field.comments }}</td>
+        <td><a href='/lab/field/{{t.field.id}}/'>{{ t.field.field_name }}</a></td>
+        <td>{{ t.field.field_num }}</td>
+        <td>{{ t.field.comments }}</td>
       </tr>
+      {% endfor %}
     </tbody>
   </table>
 
@@ -71,15 +73,17 @@
       </tr>
     </thead>
     <tbody>
+      {% for t in obs_tracker %}
       <tr>
-        <td><a href='/lab/stock/{{row_info.stock.id}}/'>{{ row_info.stock.seed_id }}</a></td>
-        <td>{{ row_info.stock.seed_name }}</td>
-        <td>{{ row_info.stock.cross_type }}</td>
-        <td>{{ row_info.stock.pedigree }}</td>
-        <td>{{ row_info.stock.stock_status }}</td>
-        <td>{{ row_info.stock.stock_date }}</td>
-        <td>{{ row_info.stock.comments }}</td>
+        <td><a href='/lab/stock/{{t.stock.id}}/'>{{ t.stock.seed_id }}</a></td>
+        <td>{{ t.stock.seed_name }}</td>
+        <td>{{ t.stock.cross_type }}</td>
+        <td>{{ t.stock.pedigree }}</td>
+        <td>{{ t.stock.stock_status }}</td>
+        <td>{{ t.stock.stock_date }}</td>
+        <td>{{ t.stock.comments }}</td>
       </tr>
+      {% endfor %}
     </tbody>
   </table>
 
