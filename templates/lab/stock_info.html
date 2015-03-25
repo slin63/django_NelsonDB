@@ -69,12 +69,14 @@
       </thead>
       <tbody>
         {% for collection in obs_tracker %}
+          {% if collection.obs_entity_type == 'stock' %}
           <tr>
             <td><a href='/lab/profile/{{ stock_info.passport.collecting.user.username }}/'>{{ stock_info.passport.collecting.user }}</a></td>
             <td>{{ stock_info.passport.collecting.collection_date }}</td>
             <td>{{ stock_info.passport.collecting.collection_method }}</td>
             <td>{{ stock_info.passport.collecting.comments }}</td>
           </tr>
+          {% endif %}
         {% endfor %}
       </tbody>
     </table>

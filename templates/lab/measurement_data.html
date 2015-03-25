@@ -61,8 +61,8 @@
           <tbody>
           {% for data in measurement_data %}
           <tr>
-            <td><a href='/lab/experiment/{{data.obs_selector.experiment.name}}/'>{{data.obs_selector.experiment.name}}</a></td>
-            <td><a href='{{data.obs_url}}'>{{data.obs_display}}</a></td>
+            <td><a href='/lab/experiment/{{data.obs_tracker.experiment.name}}/'>{{data.obs_tracker.experiment.name}}</a></td>
+            <td><a href='{{data.obs_tracker.obs_id_url}}'>{{data.obs_tracker.obs_id}}</a></td>
             <td><a href='/lab/profile/{{data.user}}/'>{{data.user}}</a></td>
             <td>{{data.time_of_measurement}}</td>
             <td>{{data.measurement_parameter.parameter_type}}</td>

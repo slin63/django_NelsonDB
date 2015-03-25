@@ -395,6 +395,8 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_row_experiment'] = request.session.get('checkbox_row_experiment')
 	if request.session.get('checkbox_plant_experiment', None):
 		context_dict['checkbox_plant_experiment'] = request.session.get('checkbox_plant_experiment')
+	if request.session.get('checkbox_tissue_experiment', None):
+		context_dict['checkbox_tissue_experiment'] = request.session.get('checkbox_tissue_experiment')
 	if request.session.get('checkbox_measurement_experiment', None):
 		context_dict['checkbox_measurement_experiment'] = request.session.get('checkbox_measurement_experiment')
 	return context_dict
@@ -570,12 +572,19 @@ def download_stock_collected_experiment(request, experiment_name):
 		writer.writerow([data.target_obs.stock.seed_id, data.target_obs.stock.seed_name, data.target_obs.stock.cross_type, data.target_obs.stock.pedigree, data.target_obs.stock.passport.taxonomy.population, data.target_obs.stock.stock_status, data.target_obs.stock.inoculated, data.target_obs.stock.passport.collecting.user, data.target_obs.stock.comments])
 	return response
 
+def find_row_from_experiment(experiment_name):
+	try:
+		row_data = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='row')
+	except ObsTracker.DoesNotExist:
+		row_data = None
+	return row_data
+
 @login_required
 def row_data_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
 	context_dict = checkbox_session_variable_check(request)
-	row_data = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='row')
+	row_data = find_row_from_experiment(experiment_name)
 	context_dict['row_data'] = row_data
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
@@ -585,7 +594,7 @@ def row_data_from_experiment(request, experiment_name):
 def download_row_experiment(request, experiment_name):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="%s_rows.csv"' % (experiment_name)
-	row_data = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='row')
+	row_data = find_row_from_experiment(experiment_name)
 	writer = csv.writer(response)
 	writer.writerow(['Row ID', 'Row Name', 'Field', 'Source Stock', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
 	for row in row_data:
@@ -987,6 +996,90 @@ def sort_samples_data(request):
 		samples_data = ObsTracker.objects.filter(obs_entity_type='sample')[:5000]
 	return samples_data
 
+@login_required
+def tissue_data_browse(request):
+	context = RequestContext(request)
+	context_dict = {}
+	tissue_data = sort_tissue_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['tissue_data'] = tissue_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/tissue_data.html', context_dict, context)
+
+def sort_tissue_data(request):
+	tissue_data = {}
+	if request.session.get('checkbox_tissue_experiment_id_list', None):
+		checkbox_tissue_experiment_id_list = request.session.get('checkbox_tissue_experiment_id_list')
+		for tissue_experiment in checkbox_tissue_experiment_id_list:
+			tissues = ObsTracker.objects.filter(obs_entity_type='tissue', experiment__id=tissue_experiment)
+			tissue_data = list(chain(tissues, tissue_data))
+	else:
+		tissue_data = ObsTracker.objects.filter(obs_entity_type='tissue')[:5000]
+	return tissue_data
+
+@login_required
+def download_tissue_data(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="selected_experiment_tissues.csv"'
+	tissue_data = sort_tissue_data(request)
+	writer = csv.writer(response)
+	writer.writerow(['Exp ID', 'Tissue ID', 'Tissue Type', 'Tissue Name', 'Date Ground', 'Comments', 'Row ID', 'Plant ID', 'Plate ID', 'Seed ID'])
+	for row in tissue_data:
+		writer.writerow([row.experiment, row.obs_tissue, row.obs_tissue.tissue_type, row.obs_tissue.tissue_name, row.obs_tissue.date_ground, row.obs_tissue.comments, row.obs_row.row_id, row.obs_plant.plant_id, row.obs_plate.plate_id, row.stock.seed_id])
+	return response
+
+def suggest_tissue_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	tissue_experiment_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with = request.GET['suggestion']
+	else:
+		starts_with = request.POST['suggestion']
+	if starts_with:
+		tissue_experiment_list = ObsTracker.objects.filter(obs_entity_type='tissue', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
+	else:
+		tissue_experiment_list = None
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['tissue_experiment_list'] = tissue_experiment_list
+	return render_to_response('lab/tissue_experiment_list.html', context_dict, context)
+
+def select_tissue_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	plant_data = []
+	checkbox_tissue_experiment_name_list = []
+	checkbox_tissue_experiment_list = request.POST.getlist('checkbox_tissue_experiment')
+	for experiment_id in checkbox_tissue_experiment_list:
+		experiment_name = Experiment.objects.filter(id=experiment_id).values('name')
+		checkbox_tissue_experiment_name_list = list(chain(experiment_name, checkbox_tissue_experiment_name_list))
+	request.session['checkbox_tissue_experiment'] = checkbox_tissue_experiment_name_list
+	request.session['checkbox_tissue_experiment_id_list'] = checkbox_tissue_experiment_list
+	tissue_data = sort_tissue_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['tissue_data'] = tissue_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/tissue_data.html', context_dict, context)
+
+def checkbox_tissue_data_clear(request):
+	context = RequestContext(request)
+	context_dict = {}
+	del request.session['checkbox_tissue_experiment']
+	del request.session['checkbox_tissue_experiment_id_list']
+	tissue_data = sort_tissue_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['tissue_data'] = tissue_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/tissue_data.html', context_dict, context)
+
+def show_all_tissue_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	tissue_experiment_list = ObsTracker.objects.filter(obs_entity_type='tissue').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['tissue_experiment_list'] = tissue_experiment_list
+	return render_to_response('lab/tissue_experiment_list.html', context_dict, context)
 
 @login_required
 def plant_data_browse(request):
@@ -1073,11 +1166,18 @@ def show_all_plant_experiment(request):
 	context_dict['plant_experiment_list'] = plant_experiment_list
 	return render_to_response('lab/plant_experiment_list.html', context_dict, context)
 
+def find_plant_from_experiment(experiment_name):
+	try:
+		plant_data = ObsTracker.objects.filter(obs_entity_type='plant', experiment__name=experiment_name)
+	except ObsTracker.DoesNotExist:
+		plant_data = None
+	return plant_data
+
 @login_required
 def plant_data_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
-	plant_data = ObsTracker.objects.filter(obs_entity_type='plant', experiment__name=experiment_name)
+	plant_data = find_plant_from_experiment(experiment_name)
 	context_dict['plant_data'] = plant_data
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
@@ -1087,7 +1187,7 @@ def plant_data_from_experiment(request, experiment_name):
 def download_plant_experiment(request, experiment_name):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="%s_plants.csv"' % (experiment_name)
-	plant_data = ObsTracker.objects.filter(obs_entity_type='plant', experiment__name=experiment_name)
+	plant_data = find_plant_from_experiment(experiment_name)
 	writer = csv.writer(response)
 	writer.writerow(['Plant ID', 'Plant Num', 'Row ID', 'Stock ID', 'Comments'])
 	for row in plant_data:
@@ -1113,13 +1213,8 @@ def sort_measurement_data(request):
 			measurement_data = list(chain(measurements, measurement_data))
 	else:
 		measurement_data = Measurement.objects.all()[:5000]
-
 	for data in measurement_data:
-		obs_entity_type = data.obs_entity_type
-		obs_url_id = "%s_id" % (obs_entity_type)
-		data.obs_display = data.obs_url_id
-		data.obs_url = "/lab/%s/%s/" % (obs_entity_type, data.obs_url_id)
-
+		data = make_obs_tracker_info(data.obs_tracker)
 	return measurement_data
 
 @login_required
@@ -1130,7 +1225,7 @@ def download_measurement_data(request):
 	writer = csv.writer(response)
 	writer.writerow(['Exp ID', 'Obs ID', 'User', 'Time', 'Parameter Type', 'Parameter', 'Value', 'Units', 'Trait ID Buckler', 'Comments'])
 	for row in measurement_data:
-		writer.writerow([row.obs_tracker.experiment, row.obs_display, row.user, row.time_of_measurement, row.measurement_parameter.parameter_type, row.measurement_parameter, row.value, row.measurement_parameter.unit_of_measure, row.measurement_parameter.trait_id_buckler, row.comments])
+		writer.writerow([row.obs_tracker.experiment, row.obs_tracker.obs_id, row.user, row.time_of_measurement, row.measurement_parameter.parameter_type, row.measurement_parameter, row.value, row.measurement_parameter.unit_of_measure, row.measurement_parameter.trait_id_buckler, row.comments])
 	return response
 
 def suggest_measurement_experiment(request):
@@ -1186,19 +1281,21 @@ def show_all_measurement_experiment(request):
 	context_dict['measurement_experiment_list'] = measurement_experiment_list
 	return render_to_response('lab/measurement_experiment_list.html', context_dict, context)
 
+def find_measurement_from_experiment(experiment_name):
+	try:
+		measurement_data = Measurement.objects.filter(obs_tracker__experiment__name=experiment_name)
+	except Measurement.DoesNotExist:
+		measurement_data = None
+	return measurement_data
+
 @login_required
 def measurement_data_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
-	phenotype_data = Measurement.objects.filter(obs_tracker__experiment__name=experiment_name)
-
-	for data in phenotype_data:
-		obs_entity_type = data.obs_tracker.obs_entity_type
-		obs_url_id = "%s_id" % (obs_entity_type)
-		data.obs_display = data.obs_tracker.obs_url_id
-		data.obs_url = "/lab/%s/%s/" % (obs_entity_type, data.obs_tracker.obs_url_id)
-
-	context_dict['phenotype_data'] = phenotype_data
+	measurement_data = find_measurement_from_experiment(experiment_name)
+	for m in measurement_data:
+		m = make_obs_tracker_info(m.obs_tracker)
+	context_dict['measurement_data'] = measurement_data
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/measurement_experiment_data.html', context_dict, context)
@@ -1207,18 +1304,13 @@ def measurement_data_from_experiment(request, experiment_name):
 def download_measurement_experiment(request, experiment_name):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="%s_measurements.csv"' % (experiment_name)
-	phenotype_data = Measurement.objects.filter(obs_tracker__experiment__name=experiment_name)
-
-	for data in phenotype_data:
-		obs_entity_type = data.obs_tracker.obs_entity_type
-		obs_url_id = "%s_id" % (obs_entity_type)
-		data.obs_display = data.obs_tracker.obs_url_id
-		data.obs_url = "/lab/%s/%s/" % (obs_entity_type, data.obs_tracker.obs_url_id)
-
+	measurement_data = find_measurement_from_experiment(experiment_name)
+	for m in measurement_data:
+		m = make_obs_tracker_info(m.obs_tracker)
 	writer = csv.writer(response)
 	writer.writerow(['Obs', 'User', 'Time', 'Parameter Type', 'Parameter', 'Value', 'Units', 'TraitID Buckler', 'Comments'])
-	for row in phenotype_data:
-		writer.writerow([row.obs_display, row.user, row.time_of_measurement, row.measurement_parameter.parameter_type, row.measurement_parameter.parameter, row.value, row.measurement_parameter.unit_of_measure, row.measurement_parameter.trait_id_buckler, row.comments])
+	for row in measurement_data:
+		writer.writerow([row.obs_tracker.obs_id, row.user, row.time_of_measurement, row.measurement_parameter.parameter_type, row.measurement_parameter.parameter, row.value, row.measurement_parameter.unit_of_measure, row.measurement_parameter.trait_id_buckler, row.comments])
 	return response
 
 @login_required
@@ -1365,6 +1457,62 @@ def download_stockpackets_collected_experiment(request, experiment_name):
 		writer.writerow([row.stock.seed_id, row.stock.seed_name, row.stock.cross_type, row.stock.pedigree, row.stock.passport.taxonomy.population, row.stock.stock_status, row.stock.inoculated, row.stock.comments, row.weight, row.num_seeds, row.location.location_name, row.comments])
 	return response
 
+def find_isolate_for_experiment(experiment_name):
+	try:
+		isolate_data = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='isolate')
+	except ObsTracker.DoesNotExist:
+		isolate_data = None
+	return isolate_data
+
+def isolate_data_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	isolate_data = find_isolate_for_experiment(experiment_name)
+	context_dict['isolate_data'] = isolate_data
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/isolate_from_experiment.html', context_dict, context)
+
+def download_isolates_experiment(request, experiment_name):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="%s_measurements.csv"' % (experiment_name)
+	isolate_data = find_isolate_for_experiment(experiment_name)
+	writer = csv.writer(response)
+	writer.writerow(['Isolate ID', 'Isolate Name', 'Plant Organ', 'Isolate Comments', 'Genus', 'Species', 'Alias', 'Race', 'Subtaxa', 'Disease Name', 'Location Name', 'Box Name'])
+	for i in isolate_data:
+		writer.writerow([i.isolate_id, i.isolate_name, i.plant_organ, i.comments, i.passport.taxonomy.genus, i.passport.taxonomy.species, i.passport.taxonomy.alias, i.passport.taxonomy.race, i.passport.taxonomy.subtaxa, i.disease_info, i.location.location_name, i.location.box_name])
+	return response
+
+def make_obs_tracker_info(tracker):
+	obs_entity_type = tracker.obs_entity_type
+	if obs_entity_type == 'stock':
+		obs_tracker_id_info = [tracker.stock.seed_id, obs_entity_type, tracker.stock_id]
+	if obs_entity_type == 'isolate':
+		obs_tracker_id_info = [tracker.isolate.isolate_id, obs_entity_type, tracker.isolate_id]
+	if obs_entity_type == 'row':
+		obs_tracker_id_info = [tracker.obs_row.row_id, obs_entity_type, tracker.obs_row_id]
+	if obs_entity_type == 'plant':
+		obs_tracker_id_info = [tracker.obs_plant.plant_id, obs_entity_type, tracker.obs_plant_id]
+	if obs_entity_type == 'culture':
+		obs_tracker_id_info = [tracker.obs_culture.culture_id, obs_entity_type, tracker.obs_culture_id]
+	if obs_entity_type == 'dna':
+		obs_tracker_id_info = [tracker.obs_dna.dna_id, obs_entity_type, tracker.obs_dna_id]
+	if obs_entity_type == 'microbe':
+		obs_tracker_id_info = [tracker.obs_microbe.microbe_id, obs_entity_type, tracker.obs_microbe_id]
+	if obs_entity_type == 'plate':
+		obs_tracker_id_info = [tracker.obs_plate.plate_id, obs_entity_type, tracker.obs_plate_id]
+	if obs_entity_type == 'well':
+		obs_tracker_id_info = [tracker.obs_well.well_id, obs_entity_type, tracker.obs_well_id]
+	if obs_entity_type == 'tissue':
+		obs_tracker_id_info = [tracker.obs_tissue.tissue_id, obs_entity_type, tracker.obs_tissue_id]
+	if obs_entity_type == 'culture':
+		obs_tracker_id_info = [tracker.obs_culture.microbe_id, obs_entity_type, tracker.obs_culture_id]
+	if obs_entity_type == 'sample':
+		obs_tracker_id_info = [tracker.obs_sample.sample_id, obs_entity_type, tracker.obs_sample_id]
+	tracker.obs_id = obs_tracker_id_info[0]
+	tracker.obs_id_url = '/lab/%s/%d/' % (obs_tracker_id_info[1], obs_tracker_id_info[2])
+	return tracker
+
 def get_obs_tracker(obs_type, obs_id):
 	kwargs = {obs_type:obs_id}
 	try:
@@ -1373,33 +1521,7 @@ def get_obs_tracker(obs_type, obs_id):
 		obs_tracker = None
 	if obs_tracker is not None:
 		for tracker in obs_tracker:
-			obs_entity_type = tracker.obs_entity_type
-			if obs_entity_type == 'stock':
-				obs_tracker_id_info = [tracker.stock.seed_id, obs_entity_type, tracker.stock_id]
-			if obs_entity_type == 'isolate':
-				obs_tracker_id_info = [tracker.isolate.isolate_id, obs_entity_type, tracker.isolate_id]
-			if obs_entity_type == 'row':
-				obs_tracker_id_info = [tracker.obs_row.row_id, obs_entity_type, tracker.obs_row_id]
-			if obs_entity_type == 'plant':
-				obs_tracker_id_info = [tracker.obs_plant.plant_id, obs_entity_type, tracker.obs_plant_id]
-			if obs_entity_type == 'culture':
-				obs_tracker_id_info = [tracker.obs_culture.culture_id, obs_entity_type, tracker.obs_culture_id]
-			if obs_entity_type == 'dna':
-				obs_tracker_id_info = [tracker.obs_dna.dna_id, obs_entity_type, tracker.obs_dna_id]
-			if obs_entity_type == 'microbe':
-				obs_tracker_id_info = [tracker.obs_microbe.microbe_id, obs_entity_type, tracker.obs_microbe_id]
-			if obs_entity_type == 'plate':
-				obs_tracker_id_info = [tracker.obs_plate.plate_id, obs_entity_type, tracker.obs_plate_id]
-			if obs_entity_type == 'well':
-				obs_tracker_id_info = [tracker.obs_well.well_id, obs_entity_type, tracker.obs_well_id]
-			if obs_entity_type == 'tissue':
-				obs_tracker_id_info = [tracker.obs_tissue.tissue_id, obs_entity_type, tracker.obs_tissue_id]
-			if obs_entity_type == 'culture':
-				obs_tracker_id_info = [tracker.obs_culture.microbe_id, obs_entity_type, tracker.obs_culture_id]
-			if obs_entity_type == 'sample':
-				obs_tracker_id_info = [tracker.obs_sample.sample_id, obs_entity_type, tracker.obs_sample_id]
-			tracker.obs_id = obs_tracker_id_info[0]
-			tracker.obs_id_url = '/lab/%s/%d/' % (obs_tracker_id_info[1], obs_tracker_id_info[2])
+			tracker = make_obs_tracker_info(tracker)
 	return obs_tracker
 
 @login_required
@@ -1772,7 +1894,7 @@ def query_builder(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/query_builder.html', context_dict, context)
 
-"""@login_required
+@login_required
 def query_builder_options(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -1790,22 +1912,22 @@ def query_builder_options(request):
 		stock_fields_list = [('stock_seed_id', "<select name='qb_stock_seed_id_choice'><option value='' >None</option><option value='stock__seed_id'>Ascending</option><option value='-stock__seed_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_stock_seed_id" placeholder="Type a Seed ID"/>', 'checkbox_qb_stock'), ('stock_seed_name', "<select name='qb_stock_seed_name_choice'><option value='' >None</option><option value='stock__seed_name'>A to Z</option><option value='-stock__seed_name'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_seed_name" placeholder="Type a Seed Name"/>', 'checkbox_qb_stock'), ('stock_cross_type', "<select name='qb_stock_cross_choice'><option value='' >None</option><option value='stock__cross_type'>A to Z</option><option value='-stock__cross_type'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_cross" placeholder="Type a Cross Type"/>', 'checkbox_qb_stock'), ('stock_pedigree', "<select name='qb_stock_pedigree_choice'><option value='' >None</option><option value='stock__pedigree'>A to Z</option><option value='-stock__pedigree'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_pedigree" placeholder="Type a Pedigree"/>', 'checkbox_qb_stock'), ('stock_status', "<select name='qb_stock_status_choice'><option value='' >None</option><option value='stock__stock_status'>A to Z</option><option value='-stock__stock_status'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_status" placeholder="Type a Stock Status"/>', 'checkbox_qb_stock'),('stock_date', "<select name='qb_stock_date_choice'><option value='' >None</option><option value='stock__stock_date'>Ascending</option><option value='-stock__stock_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_stock_date" placeholder="Type a Stock Date"/>', 'checkbox_qb_stock'),('stock_inoculated', '', '<input type="checkbox" name="qb_stock_inoculated" value="1"/>', 'checkbox_qb_stock'),('stock_comments', "<select name='qb_stock_comments_choice'><option value='' >None</option><option value='stock__comments'>A to Z</option><option value='-stock__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_comments" placeholder="Type Stock Comments"/>', 'checkbox_qb_stock'),('stock_genus', "<select name='qb_stock_genus_choice'><option value='' >None</option><option value='stock__passport__taxonomy__genus'>A to Z</option><option value='-stock__passport__taxonomy__genus'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_genus" placeholder="Type a Genus"/>', 'checkbox_qb_stock'),('stock_species', "<select name='qb_stock_species_choice'><option value='' >None</option><option value='stock__passport__taxonomy__species'>A to Z</option><option value='-stock__passport__taxonomy__species'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_species" placeholder="Type a Species"/>', 'checkbox_qb_stock'),('stock_population', "<select name='qb_stock_population_choice'><option value='' >None</option><option value='stock__passport__taxonomy__population'>A to Z</option><option value='-stock__passport__taxonomy__population'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_population" placeholder="Type a Population"/>', 'checkbox_qb_stock'),('stock_collection_date', "<select name='qb_stock_collecting_date_choice'><option value='' >None</option><option value='stock__passport__collecting__collection_date'>Ascending</option><option value='-stock__passport__collecting__collection_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_stock_collecting_date" placeholder="Type a Collection Date"/>', 'checkbox_qb_stock'),('stock_collection_method', "<select name='qb_stock_collecting_method_choice'><option value='' >None</option><option value='stock__passport__collecting__collection_method'>A to Z</option><option value='-stock__passport__collecting__collection_method'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_collecting_method" placeholder="Type a Collection Method"/>', 'checkbox_qb_stock'),('stock_collection_comments', "<select name='qb_stock_collecting_comments_choice'><option value='' >None</option><option value='stock__passport__collecting__comments'>A to Z</option><option value='-stock__passport__collecting__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_collecting_comments" placeholder="Type Collecting Comments"/>', 'checkbox_qb_stock'),('stock_source_organization', "<select name='qb_stock_people_org_choice'><option value='' >None</option><option value='stock__passport__people__organization'>A to Z</option><option value='-stock__passport__people__organization'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_people_org" placeholder="Type a Source"/>', 'checkbox_qb_stock')]
 		query_builder_fields_list = list(chain(stock_fields_list, query_builder_fields_list))
 	if 'Experiment' in selected_options:
-		experiment_fields_list = [('experiment_name', "<select name='qb_experiment_name_choice'><option value='' >None</option><option value='obs_selector__experiment__name'>Ascending</option><option value='-obs_selector__experiment__name'>Descending</option></select>", '<input class="search-query" type="text" name="qb_experiment_name" placeholder="Type Experiment Name"/>', 'checkbox_qb_experiment'), ('experiment_field_name', "<select name='qb_experiment_field_name_choice'><option value='' >None</option><option value='obs_selector__experiment__field__field_name'>A to Z</option><option value='-obs_selector__experiment__field__field_name'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_experiment_field_name" placeholder="Type a Field Name"/>', 'checkbox_qb_experiment'), ('experiment_field_locality_city', "<select name='qb_experiment_field_locality_city_choice'><option value='' >None</option><option value='obs_selector__experiment__field__locality__city'>A to Z</option><option value='-obs_selector__experiment__field__locality__city'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_experiment_field_locality_city" placeholder="Type a Locality City"/>', 'checkbox_qb_experiment'), ('experiment_start_date', "<select name='qb_experiment_date_choice'><option value='' >None</option><option value='obs_selector__experiment__start_date'>Ascending</option><option value='-obs_selector__experiment__start_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_experiment_date" placeholder="Type an Experiment Date"/>', 'checkbox_qb_experiment'), ('experiment_purpose', "<select name='qb_experiment_purpose_choice'><option value='' >None</option><option value='obs_selector__experiment__purpose'>A to Z</option><option value='-obs_selector__experiment__purpose'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_experiment_purpose" placeholder="Type Experiment Purpose"/>', 'checkbox_qb_experiment'), ('experiment_comments', "<select name='qb_experiment_comments_choice'><option value='' >None</option><option value='obs_selector__experiment__comments'>A to Z</option><option value='-obs_selector__experiment__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_experiment_comments" placeholder="Type Experiment Comments"/>', 'checkbox_qb_experiment')]
+		experiment_fields_list = [('experiment_name', "<select name='qb_experiment_name_choice'><option value='' >None</option><option value='experiment__name'>Ascending</option><option value='-experiment__name'>Descending</option></select>", '<input class="search-query" type="text" name="qb_experiment_name" placeholder="Type Experiment Name"/>', 'checkbox_qb_experiment'), ('experiment_field_name', "<select name='qb_experiment_field_name_choice'><option value='' >None</option><option value='experiment__field__field_name'>A to Z</option><option value='-experiment__field__field_name'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_experiment_field_name" placeholder="Type a Field Name"/>', 'checkbox_qb_experiment'), ('experiment_field_locality_city', "<select name='qb_experiment_field_locality_city_choice'><option value='' >None</option><option value='experiment__field__locality__city'>A to Z</option><option value='-experiment__field__locality__city'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_experiment_field_locality_city" placeholder="Type a Locality City"/>', 'checkbox_qb_experiment'), ('experiment_start_date', "<select name='qb_experiment_date_choice'><option value='' >None</option><option value='experiment__start_date'>Ascending</option><option value='-experiment__start_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_experiment_date" placeholder="Type an Experiment Date"/>', 'checkbox_qb_experiment'), ('experiment_purpose', "<select name='qb_experiment_purpose_choice'><option value='' >None</option><option value='experiment__purpose'>A to Z</option><option value='-experiment__purpose'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_experiment_purpose" placeholder="Type Experiment Purpose"/>', 'checkbox_qb_experiment'), ('experiment_comments', "<select name='qb_experiment_comments_choice'><option value='' >None</option><option value='experiment__comments'>A to Z</option><option value='-experiment__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_experiment_comments" placeholder="Type Experiment Comments"/>', 'checkbox_qb_experiment')]
 		query_builder_fields_list = list(chain(experiment_fields_list, query_builder_fields_list))
 	if 'Treatment' in selected_options:
-		treatments_fields_list = [('treatment_id', "<select name='qb_treatment_id_choice'><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_treatment_id" placeholder="Type a Treatment ID"/>', 'checkbox_qb_treatment'), ('treatment_type', "<select name='qb_treatment_type_choice'><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_treatment_type" placeholder="Type a Treatment Type"/>', 'checkbox_qb_treatment'), ('treatment_date', "<select name='qb_treatment_date_choice'><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_treatment_date" placeholder="Type Treatment Date"/>', 'checkbox_qb_treatment'), ('treatment_comments', "<select name='qb_treatment_comments_choice'><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_treatment_comments" placeholder="Type Treatment Comments"/>', 'checkbox_qb_treatment')]
+		treatments_fields_list = [('treatment_id', "<select name='qb_treatment_id_choice'><option value='' >None</option><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_treatment_id" placeholder="Type a Treatment ID"/>', 'checkbox_qb_treatment'), ('treatment_type', "<select name='qb_treatment_type_choice'><option value='' >None</option><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_treatment_type" placeholder="Type a Treatment Type"/>', 'checkbox_qb_treatment'), ('treatment_date', "<select name='qb_treatment_date_choice'><option value='' >None</option><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_treatment_date" placeholder="Type Treatment Date"/>', 'checkbox_qb_treatment'), ('treatment_comments', "<select name='qb_treatment_comments_choice'><option value='' >None</option><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_treatment_comments" placeholder="Type Treatment Comments"/>', 'checkbox_qb_treatment')]
 		query_builder_fields_list = list(chain(treatments_fields_list, query_builder_fields_list))
 	if 'ObsRow' in selected_options:
-		row_fields_list = [('row_id', "<select name='qb_row_id_choice'><option value='' >None</option><option value='row_id'>Ascending</option><option value='-row_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_id" placeholder="Type a Row ID"/>', 'checkbox_qb_row'), ('row_name', "<select name='qb_row_name_choice'><option value='' >None</option><option value='row_name'>A to Z</option><option value='-row_name'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_name" placeholder="Type a Row Name"/>', 'checkbox_qb_row'), ('row_field_name', "<select name='qb_row_field_name_choice'><option value='' >None</option><option value='field__field_name'>A to Z</option><option value='-field__field_name'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_field_name" placeholder="Type a Field Name"/>', 'checkbox_qb_row'), ('row_field_locality_city', "<select name='qb_row_field_locality_city_choice'><option value='' >None</option><option value='field__locality__city'>A to Z</option><option value='-field__locality__city'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_field_locality_city" placeholder="Type a Locality City"/>', 'checkbox_qb_row'), ('row_range_num', "<select name='qb_row_range_choice'><option value='' >None</option><option value='range_num'>Ascending</option><option value='-range_num'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_range" placeholder="Type a Range Num"/>', 'checkbox_qb_row'), ('row_plot', "<select name='qb_row_plot_choice'><option value='' >None</option><option value='plot'>A to Z</option><option value='-plot'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_plot" placeholder="Type a Plot"/>', 'checkbox_qb_row'), ('row_block', "<select name='qb_row_block_choice'><option value='' >None</option><option value='block'>A to Z</option><option value='-block'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_block" placeholder="Type a Block"/>', 'checkbox_qb_row'), ('row_rep', "<select name='qb_row_rep_choice'><option value='' >None</option><option value='rep'>A to Z</option><option value='-rep'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_rep" placeholder="Type a Rep"/>', 'checkbox_qb_row'), ('row_kernel_num', "<select name='qb_row_kernel_num_choice'><option value='' >None</option><option value='kernel_num'>Ascending</option><option value='-kernel_num'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_kernel_num" placeholder="Type Kernel Num"/>', 'checkbox_qb_row'), ('row_planting_date', "<select name='qb_row_planting_date_choice'><option value='' >None</option><option value='planting_date'>Ascending</option><option value='-planting_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_planting_date" placeholder="Type a Planting Date"/>', 'checkbox_qb_row'), ('row_harvest_date', "<select name='qb_row_harvest_date_choice'><option value='' >None</option><option value='harvest_date'>Ascending</option><option value='-harvest_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_harvest_date" placeholder="Type a Harvest Date"/>', 'checkbox_qb_row'), ('row_comments', "<select name='qb_row_comments_choice'><option value='' >None</option><option value='comments'>A to Z</option><option value='-comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_comments" placeholder="Type a Row Comment"/>', 'checkbox_qb_row')]
+		row_fields_list = [('row_id', "<select name='qb_row_id_choice'><option value='' >None</option><option value='obs_row__row_id'>Ascending</option><option value='-obs_row__row_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_id" placeholder="Type a Row ID"/>', 'checkbox_qb_row'), ('row_name', "<select name='qb_row_name_choice'><option value='' >None</option><option value='obs_row__row_name'>A to Z</option><option value='-obs_row__row_name'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_name" placeholder="Type a Row Name"/>', 'checkbox_qb_row'), ('row_field_name', "<select name='qb_row_field_name_choice'><option value='' >None</option><option value='field__field_name'>A to Z</option><option value='-field__field_name'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_field_name" placeholder="Type a Field Name"/>', 'checkbox_qb_row'), ('row_field_locality_city', "<select name='qb_row_field_locality_city_choice'><option value='' >None</option><option value='field__locality__city'>A to Z</option><option value='-field__locality__city'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_field_locality_city" placeholder="Type a Locality City"/>', 'checkbox_qb_row'), ('row_range_num', "<select name='qb_row_range_choice'><option value='' >None</option><option value='obs_row__range_num'>Ascending</option><option value='-obs_row__range_num'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_range" placeholder="Type a Range Num"/>', 'checkbox_qb_row'), ('row_plot', "<select name='qb_row_plot_choice'><option value='' >None</option><option value='obs_row__plot'>A to Z</option><option value='-obs_row__plot'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_plot" placeholder="Type a Plot"/>', 'checkbox_qb_row'), ('row_block', "<select name='qb_row_block_choice'><option value='' >None</option><option value='obs_row__block'>A to Z</option><option value='-obs_row__block'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_block" placeholder="Type a Block"/>', 'checkbox_qb_row'), ('row_rep', "<select name='qb_row_rep_choice'><option value='' >None</option><option value='obs_row__rep'>A to Z</option><option value='-obs_row__rep'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_rep" placeholder="Type a Rep"/>', 'checkbox_qb_row'), ('row_kernel_num', "<select name='qb_row_kernel_num_choice'><option value='' >None</option><option value='obs_row__kernel_num'>Ascending</option><option value='-obs_row__kernel_num'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_kernel_num" placeholder="Type Kernel Num"/>', 'checkbox_qb_row'), ('row_planting_date', "<select name='qb_row_planting_date_choice'><option value='' >None</option><option value='obs_row__planting_date'>Ascending</option><option value='-obs_row__planting_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_planting_date" placeholder="Type a Planting Date"/>', 'checkbox_qb_row'), ('row_harvest_date', "<select name='qb_row_harvest_date_choice'><option value='' >None</option><option value='obs_row__harvest_date'>Ascending</option><option value='-obs_row__harvest_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_harvest_date" placeholder="Type a Harvest Date"/>', 'checkbox_qb_row'), ('row_comments', "<select name='qb_row_comments_choice'><option value='' >None</option><option value='obs_row__comments'>A to Z</option><option value='-obs_row__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_comments" placeholder="Type a Row Comment"/>', 'checkbox_qb_row')]
 		query_builder_fields_list = list(chain(row_fields_list, query_builder_fields_list))
 	if 'ObsPlant' in selected_options:
-		plant_fields_list = [('plant_id', "<select name='qb_plant_id_choice'><option value='' >None</option><option value='plant_id'>Ascending</option><option value='-plant_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_plant_id" placeholder="Type a Plant ID"/>', 'checkbox_qb_plant'), ('plant_num', "<select name='qb_plant_num_choice'><option value=''>None</option><option value='plant_num'>Ascending</option><option value='-plant_num'>Descending</option></select>", '<input class="search-query" type="text" name="qb_plant_num" placeholder="Type a Plant Num"/>', 'checkbox_qb_plant'), ('plant_comments', "<select name='qb_plant_comments_choice'><option value='' >None</option><option value='comments'>A to Z</option><option value='-comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_plant_comments" placeholder="Type a Plant Comment"/>', 'checkbox_qb_plant')]
+		plant_fields_list = [('plant_id', "<select name='qb_plant_id_choice'><option value='' >None</option><option value='obs_plant__plant_id'>Ascending</option><option value='-obs_plant__plant_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_plant_id" placeholder="Type a Plant ID"/>', 'checkbox_qb_plant'), ('plant_num', "<select name='qb_plant_num_choice'><option value=''>None</option><option value='obs_plant__plant_num'>Ascending</option><option value='-obs_plant__plant_num'>Descending</option></select>", '<input class="search-query" type="text" name="qb_plant_num" placeholder="Type a Plant Num"/>', 'checkbox_qb_plant'), ('plant_comments', "<select name='qb_plant_comments_choice'><option value='' >None</option><option value='obs_plant__comments'>A to Z</option><option value='-obs_plant__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_plant_comments" placeholder="Type a Plant Comment"/>', 'checkbox_qb_plant')]
 		query_builder_fields_list = list(chain(plant_fields_list, query_builder_fields_list))
 	if 'ObsSample' in selected_options:
-		sample_fields_list = [('sample_id', "<select name='qb_sample_id_choice'><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_sample_id" placeholder="Type a Sample ID"/>', 'checkbox_qb_sample'), ('sample_type', "<select name='qb_sample_type_choice'><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_sample_type" placeholder="Type a Sample Type"/>', 'checkbox_qb_sample'), ('weight', "<select name='qb_sample_weight_choice'><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_sample_weight" placeholder="Type a Weight"/>', 'checkbox_qb_sample'), ('kernel_num', "<select name='qb_sample_kernel_num_choice'><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_sample_kernel_num" placeholder="Type Kernel Num"/>', 'checkbox_qb_sample'), ('sample_comments', "<select name='qb_sample_comments_choice'><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_sample_comments" placeholder="Type a Sample Comment"/>', 'checkbox_qb_sample')]
+		sample_fields_list = [('sample_id', "<select name='qb_sample_id_choice'><option value='' >None</option><option value='obs_sample__sample_id'>Ascending</option><option value='-obs_sample__sample_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_sample_id" placeholder="Type a Sample ID"/>', 'checkbox_qb_sample'), ('sample_type', "<select name='qb_sample_type_choice'><option value=''>None</option><option value='obs_sample__sample_type'>A to Z</option><option value='-obs_sample__sample_type'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_sample_type" placeholder="Type a Sample Type"/>', 'checkbox_qb_sample'), ('weight', "<select name='qb_sample_weight_choice'><option value='' >None</option><option value='obs_sample__weight'>Ascending</option><option value='-obs_sample__weight'>Descending</option></select>", '<input class="search-query" type="text" name="qb_sample_weight" placeholder="Type a Weight"/>', 'checkbox_qb_sample'), ('kernel_num', "<select name='qb_sample_kernel_num_choice'><option value='' >None</option><option value='obs_sample__kernel_num'>Ascending</option><option value='-obs_sample__kernel_num'>Descending</option></select>", '<input class="search-query" type="text" name="qb_sample_kernel_num" placeholder="Type Kernel Num"/>', 'checkbox_qb_sample'), ('sample_comments', "<select name='qb_sample_comments_choice'><option value='' >None</option><option value='obs_sample__comments'>A to Z</option><option value='-obs_sample__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_sample_comments" placeholder="Type a Sample Comment"/>', 'checkbox_qb_sample')]
 		query_builder_fields_list = list(chain(sample_fields_list, query_builder_fields_list))
 	if 'ObsEnv' in selected_options:
-		env_fields_list = [('environment_id', "<select name='qb_env_id_choice'><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_env_id" placeholder="Type an Environment ID"/>', 'checkbox_qb_env'), ('longitude', "<select name='qb_env_longitude_choice'><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_env_longitude" placeholder="Type a Longitude"/>', 'checkbox_qb_env'), ('latitude', "<select name='qb_env_latitude_choice'><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_env_latitude" placeholder="Type a Latitude"/>', 'checkbox_qb_env'), ('environment_comments', "<select name='qb_env_comments_choice'><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_env_comments" placeholder="Type Environment Comments"/>', 'checkbox_qb_env')]
+		env_fields_list = [('environment_id', "<select name='qb_env_id_choice'><option value='' >None</option><option value='obs_env__environment_id'>Ascending</option><option value='-obs_env__environment_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_env_id" placeholder="Type an Environment ID"/>', 'checkbox_qb_env'), ('longitude', "<select name='qb_env_longitude_choice'><option value=''>None</option><option value='obs_env__longitude'>Ascending</option><option value='-obs_env__longitude'>Descending</option></select>", '<input class="search-query" type="text" name="qb_env_longitude" placeholder="Type a Longitude"/>', 'checkbox_qb_env'), ('latitude', "<select name='qb_env_latitude_choice'><option value='' >None</option><option value='obs_env__latitude'>Ascending</option><option value='-obs_env__latitude'>Descending</option></select>", '<input class="search-query" type="text" name="qb_env_latitude" placeholder="Type a Latitude"/>', 'checkbox_qb_env'), ('environment_comments', "<select name='qb_env_comments_choice'><option value='' >None</option><option value='obs_env__comments'>A to Z</option><option value='-obs_env__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_env_comments" placeholder="Type Environment Comments"/>', 'checkbox_qb_env')]
 		query_builder_fields_list = list(chain(env_fields_list, query_builder_fields_list))
 
 	context_dict['selected_options'] = selected_options
@@ -1817,20 +1939,16 @@ def query_builder_options(request):
 def query_builder_fields(request):
 	context = RequestContext(request)
 	context_dict = {}
-	qb_ordered_row_results = []
-	qb_ordered_plant_results = []
-	qb_ordered_results = []
-	row_kwargs = {}
-	row_order = []
-	obs_kwargs = {}
-	obs_order = []
-	plant_kwargs = {}
-	plant_order = []
-	stock_kwargs = {}
-	stock_order = []
+	obs_tracker_ordered_results = []
+	measurement_ordered_results = []
+	obs_tracker_kwargs = {}
+	obs_tracker_order = []
 	measurement_kwargs = {}
 	measurement_order = []
+	measurement_fields = []
+	obs_tracker_fields = []
 	display_fields = []
+	obs_tracker_args = []
 
 	if request.POST.getlist('checkbox_qb_options', False):
 		qb_options = request.POST.getlist('checkbox_qb_options')
@@ -1838,275 +1956,92 @@ def query_builder_fields(request):
 		qb_options = None
 
 	if request.POST.getlist('checkbox_qb_measurement', False):
-		qb_measurement_fields = request.POST.getlist('checkbox_qb_measurement')
-		display_fields = list(chain(display_fields, qb_measurement_fields))
-	else:
-		qb_measurement_fields = []
-	if request.POST.getlist('checkbox_qb_experiment', False):
-		qb_experiment_fields = request.POST.getlist('checkbox_qb_experiment')
-		display_fields = list(chain(display_fields, qb_experiment_fields))
-	else:
-		qb_experiment_fields = []
-	if request.POST.getlist('checkbox_qb_treatment', False):
-		qb_treatment_fields = request.POST.getlist('checkbox_qb_treatment')
-		display_fields = list(chain(display_fields, qb_treatment_fields))
-	else:
-		qb_treatment_fields = []
-	if request.POST.getlist('checkbox_qb_row', False):
-		qb_row_fields = request.POST.getlist('checkbox_qb_row')
-		display_fields = list(chain(display_fields, qb_row_fields))
-	else:
-		qb_row_fields = []
-	if request.POST.getlist('checkbox_qb_plant', False):
-		qb_plant_fields = request.POST.getlist('checkbox_qb_plant')
-		display_fields = list(chain(display_fields, qb_plant_fields))
-	else:
-		qb_plant_fields = []
-	if request.POST.getlist('checkbox_qb_sample', False):
-		qb_sample_fields = request.POST.getlist('checkbox_qb_sample')
-		display_fields = list(chain(display_fields, qb_sample_fields))
-	else:
-		qb_sample_fields = []
-	if request.POST.getlist('checkbox_qb_env', False):
-		qb_env_fields = request.POST.getlist('checkbox_qb_env')
-		display_fields = list(chain(display_fields, qb_env_fields))
-	else:
-		qb_env_fields = []
-	if request.POST.getlist('checkbox_qb_stock', False):
-		qb_stock_fields = request.POST.getlist('checkbox_qb_stock')
-		display_fields = list(chain(display_fields, qb_stock_fields))
-	else:
-		qb_stock_fields = []
-
-	if 'ObsRow' in qb_options or 'ObsPlant' in qb_options or 'ObsSample' in qb_options or 'ObsEnv' in qb_options:
-		model_field_mapper = {'measurement_time':'time_of_measurement', 'measurement_value': 'value', 'measurement_comments': 'comments', 'measurement_parameter': 'measurement_parameter__parameter', 'measurement_parameter_type': 'measurement_parameter__parameter_type', 'measurement_protocol': 'measurement_parameter__protocol', 'measurement_unit_of_measure': 'measurement_parameter__unit_of_measure', 'measurement_trait_id_buckler': 'measurement_parameter__trait_id_buckler', 'experiment_name': 'obs_selector__experiment__name', 'experiment_field_name': 'obs_selector__experiment__field__field_name', 'experiment_field_locality_city': 'obs_selector__experiment__field__locality__city', 'experiment_start_date': 'obs_selector__experiment__start_date', 'experiment_purpose': 'obs_selector__experiment__purpose', 'experiment_comments': 'obs_selector__experiment__comments', 'row_id': 'row_id', 'row_name': 'row_name', 'row_field_name': 'field__field_name', 'row_field_locality_city': 'field__locality__city', 'row_range_num': 'range_num', 'row_plot': 'plot', 'row_block': 'block', 'row_rep': 'rep', 'row_kernel_num': 'kernel_num', 'row_planting_date': 'planting_date', 'row_harvest_date': 'harvest_date', 'row_comments': 'comments', 'plant_id': 'plant_id', 'plant_num': 'plant_num', 'plant_comments': 'comments', 'stock_seed_id': 'stock__seed_id', 'stock_seed_name': 'stock__seed_name', 'stock_cross_type': 'stock__cross_type', 'stock_pedigree': 'stock__pedigree', 'stock_status': 'stock__stock_status', 'stock_date': 'stock__stock_date', 'stock_inoculated': 'stock__inoculated', 'stock_comments': 'stock__comments', 'stock_genus': 'stock__passport__taxonomy__genus', 'stock_species': 'stock__passport__taxonomy__species', 'stock_population': 'stock__passport__taxonomy__population', 'stock_collection_date': 'stock__passport__collecting__collection_date', 'stock_collection_method': 'stock__passport__collecting__collection_method', 'stock_collection_comments': 'stock__passport__collecting__comments', 'stock_source_organization': 'stock__passport__people__organization'}
-
-		experiment_model_fields = []
-		if 'Experiment' in qb_options:
-			experiment_args = [('experiment_name', 'qb_experiment_name', 'qb_experiment_name_choice', 'obs_selector__experiment__name__contains'), ('experiment_field_name', 'qb_experiment_field_name', 'qb_experiment_field_name_choice', 'obs_selector__experiment__field__field_name__contains'), ('experiment_field_locality_city', 'qb_experiment_field_locality_city', 'qb_experiment_field_locality_city_choice', 'obs_selector__experiment__field__locality__city__contains'), ('experiment_start_date', 'qb_experiment_date', 'qb_experiment_date_choice', 'obs_selector__experiment__start_date__contains'), ('experiment_purpose', 'qb_experiment_purpose', 'qb_experiment_purpose_choice', 'obs_selector__experiment__purpose__contains'), ('experiment_comments', 'qb_experiment_comments', 'qb_experiment_comments_choice', 'obs_selector__experiment__comments__contains')]
-			for w,x,y,z in experiment_args:
-				if w in qb_experiment_fields:
-					experiment_model_fields.append(model_field_mapper[w])
-					obs_kwargs[z] = request.POST[x]
-					if request.POST[y] != '':
-						obs_order.append(request.POST[y])
-
-		stock_model_fields = []
-		if 'Stock' in qb_options:
-			stock_args = [('stock_seed_id', 'qb_stock_seed_id', 'qb_stock_seed_id_choice', 'stock__seed_id__contains'), ('stock_seed_name', 'qb_stock_seed_name', 'qb_stock_seed_name_choice', 'stock__seed_name__contains'), ('stock_cross_type', 'qb_stock_cross', 'qb_stock_cross_choice', 'stock__cross_type__contains'), ('stock_pedigree', 'qb_stock_pedigree', 'qb_stock_pedigree_choice', 'stock__pedigree__contains'), ('stock_status', 'qb_stock_status', 'qb_stock_status_choice', 'stock__stock_status__contains'), ('stock_date', 'qb_stock_date', 'qb_stock_date_choice', 'stock__stock_date__contains'), ('stock_inoculated', 'qb_stock_inoculated', '', 'stock__inoculated'), ('stock_comments', 'qb_stock_comments', 'qb_stock_comments_choice', 'stock__comments__contains'), ('stock_genus', 'qb_stock_genus', 'qb_stock_genus_choice', 'stock__passport__taxonomy__genus__contains'), ('stock_species', 'qb_stock_species', 'qb_stock_species_choice', 'stock__passport__taxonomy__species__contains'), ('stock_population', 'qb_stock_population', 'qb_stock_population_choice', 'stock__passport__taxonomy__population__contains'), ('stock_collection_date', 'qb_stock_collecting_date', 'qb_stock_collecting_date_choice', 'stock__passport__collecting__collection_date__contains'), ('stock_collection_method', 'qb_collecting_method', 'qb_collecting_method_choice', 'stock__passport__collecting__collection_method__contains'), ('stock_collection_comments', 'qb_stock_collecting_comments', 'qb_stock_collecting_comments_choice', 'stock__passport__collecting__comments__contains'), ('stock_source_organization', 'qb_stock_people_org', 'qb_stock_people_org_choice', 'stock__passport__people__organization__contains')]
-			for w,x,y,z in stock_args:
-				if w in qb_stock_fields:
-					stock_model_fields.append(model_field_mapper[w])
-					stock_kwargs[z] = request.POST[x]
-					if request.POST[y] != '':
-						stock_order.append(request.POST[y])
-
-		if 'Measurement' in qb_options:
-			measurement_args = [('measurement_time', 'qb_measurement_time', 'qb_measurement_time_choice', 'time_of_measurement__contains'), ('measurement_value', 'qb_measurement_value', 'qb_measurement_value_choice', 'value__contains'), ('measurement_comments', 'qb_measurement_comments', 'qb_measurement_comments_choice', 'comments__contains'), ('measurement_parameter', 'qb_measurement_parameter', 'qb_measurement_parameter_choice', 'measurement_parameter__parameter__contains'), ('measurement_parameter_type', 'qb_measurement_type', 'qb_measurement_type_choice', 'measurement_parameter__parameter_type__contains'), ('measurement_protocol', 'qb_measurement_protocol', 'qb_measurement_protocol_choice', 'measurement_parameter__protocol__contains'), ('measurement_unit_of_measure', 'qb_measurement_unit', 'qb_measurement_unit_choice', 'measurement_parameter__unit_of_measure__contains'), ('measurement_trait_id_buckler', 'qb_measurement_buckler', 'qb_measurement_buckler_choice', 'measurement_parameter__trait_id_buckler__contains')]
-			measurement_model_fields = []
-			for w,x,y,z in measurement_args:
-				if w in qb_measurement_fields:
-					measurement_model_fields.append(model_field_mapper[w])
-					measurement_kwargs[z] = request.POST[x]
-					if request.POST[y] != '':
-						measurement_order.append(request.POST[y])
-			measurement_model_fields.extend(experiment_model_fields)
-			qb_measurement_fields.extend(qb_experiment_fields)
-
-			if 'ObsRow' in qb_options:
-				row_model_fields = ['obs_selector_id']
-				row_args = [('row_id', 'qb_row_id', 'qb_row_id_choice', 'row_id__contains'), ('row_name', 'qb_row_name', 'qb_row_name_choice', 'row_name__contains'), ('row_field_name', 'qb_row_field_name', 'qb_row_field_name_choice', 'field__field_name__contains'), ('row_field_locality_city', 'qb_row_field_locality_city', 'qb_row_field_locality_city_choice', 'field__locality__city__contains'), ('row_range_num', 'qb_row_range', 'qb_row_range_choice', 'range_num__contains'), ('row_plot', 'qb_row_plot', 'qb_row_plot_choice', 'plot__contains'), ('row_block', 'qb_row_block', 'qb_row_block_choice', 'block__contains'), ('row_rep', 'qb_row_rep', 'qb_row_rep_choice', 'rep__contains'), ('row_kernel_num', 'qb_row_kernel_num', 'qb_row_kernel_num_choice', 'kernel_num__contains'), ('row_planting_date', 'qb_row_planting_date', 'qb_row_planting_date_choice', 'planting_date__contains'), ('row_harvest_date', 'qb_row_harvest_date', 'qb_row_harvest_date_choice', 'harvest_date__contains'), ('row_comments', 'qb_row_comments', 'qb_row_comments_choice', 'comments__contains')]
-				for w,x,y,z in row_args:
-					if w in qb_row_fields:
-						row_model_fields.append(model_field_mapper[w])
-						row_kwargs[z] = request.POST[x]
-						if request.POST[y] != '':
-							row_order.append(request.POST[y])
-				row_model_fields.extend(stock_model_fields)
-				kwargs = dict(chain(row_kwargs.items(), obs_kwargs.items(), stock_kwargs.items()))
-				order = list(chain(row_order, obs_order, stock_order))
-				query_builder_ordered_row_results = ObsRow.objects.filter(**kwargs).values(*row_model_fields).order_by(*order)
-
-				qb_measurement_results = []
-				for result in query_builder_ordered_row_results:
-					measurement_kwargs_obs = {}
-					measurement_kwargs_obs['obs_selector_id'] = result['obs_selector_id']
-					measurement_kwargs_q = dict(chain(measurement_kwargs_obs.items(), measurement_kwargs.items()))
-					try:
-						measurements = Measurement.objects.filter(**measurement_kwargs_q).values(*measurement_model_fields)
-						for m in measurements:
-							for f in qb_stock_fields:
-								m[f] = result[model_field_mapper[f]]
-							for f in qb_row_fields:
-								m[f] = result[model_field_mapper[f]]
-							for f in qb_measurement_fields:
-								m[f] = m[model_field_mapper[f]]
-							qb_measurement_results.append(m)
-					except Measurement.DoesNotExist:
-						pass
-				qb_ordered_row_results = qb_measurement_results
-				for order in measurement_order:
-					qb_ordered_row_results = sorted(qb_ordered_row_results, key=itemgetter(order))
-
-			if 'ObsPlant' in qb_options:
-				plant_model_fields = ['obs_selector_id']
-				plant_args = [('plant_id', 'qb_plant_id', 'qb_plant_id_choice', 'plant_id__contains'), ('plant_num', 'qb_plant_num', 'qb_plant_num_choice', 'plant_num__contains'), ('plant_comments', 'qb_plant_comments', 'qb_plant_comments_choice', 'plant_comments__contains')]
-				for w,x,y,z in plant_args:
-					if w in qb_plant_fields:
-						plant_model_fields.append(model_field_mapper[w])
-						plant_kwargs[z] = request.POST[x]
-						if request.POST[y] != '':
-							plant_order.append(request.POST[y])
-				plant_model_fields.extend(stock_model_fields)
-				kwargs = dict(chain(plant_kwargs.items(), obs_kwargs.items(), stock_kwargs.items()))
-				order = list(chain(plant_order, obs_order, stock_order))
-				query_builder_ordered_plant_results = ObsPlant.objects.filter(**kwargs).values(*plant_model_fields).order_by(*order)
-
-				qb_measurement_results = []
-				for result in query_builder_ordered_plant_results:
-					measurement_kwargs_obs = {}
-					measurement_kwargs_obs['obs_selector_id'] = result['obs_selector_id']
-					measurement_kwargs_q = dict(chain(measurement_kwargs_obs.items(), measurement_kwargs.items()))
-					try:
-						measurements = Measurement.objects.filter(**measurement_kwargs_q).values(*measurement_model_fields)
-						for m in measurements:
-							for f in qb_stock_fields:
-								m[f] = result[model_field_mapper[f]]
-							for f in qb_plant_fields:
-								m[f] = result[model_field_mapper[f]]
-							for f in qb_measurement_fields:
-								m[f] = m[model_field_mapper[f]]
-							qb_measurement_results.append(m)
-					except Measurement.DoesNotExist:
-						pass
-				qb_ordered_plant_results = qb_measurement_results
-				for order in measurement_order:
-					qb_ordered_plant_results = sorted(qb_ordered_plant_results, key=itemgetter(order))
-
-		else:
-			if 'ObsRow' in qb_options:
-				row_model_fields = []
-				row_args = [('row_id', 'qb_row_id', 'qb_row_id_choice', 'row_id__contains'), ('row_name', 'qb_row_name', 'qb_row_name_choice', 'row_name__contains'), ('row_field_name', 'qb_row_field_name', 'qb_row_field_name_choice', 'field__field_name__contains'), ('row_field_locality_city', 'qb_row_field_locality_city', 'qb_row_field_locality_city_choice', 'field__locality__city__contains'), ('row_range_num', 'qb_row_range', 'qb_row_range_choice', 'range_num__contains'), ('row_plot', 'qb_row_plot', 'qb_row_plot_choice', 'plot__contains'), ('row_block', 'qb_row_block', 'qb_row_block_choice', 'block__contains'), ('row_rep', 'qb_row_rep', 'qb_row_rep_choice', 'rep__contains'), ('row_kernel_num', 'qb_row_kernel_num', 'qb_row_kernel_num_choice', 'kernel_num__contains'), ('row_planting_date', 'qb_row_planting_date', 'qb_row_planting_date_choice', 'planting_date__contains'), ('row_harvest_date', 'qb_row_harvest_date', 'qb_row_harvest_date_choice', 'harvest_date__contains'), ('row_comments', 'qb_row_comments', 'qb_row_comments_choice', 'comments__contains')]
-				for w,x,y,z in row_args:
-					if w in qb_row_fields:
-						row_model_fields.append(model_field_mapper[w])
-						row_kwargs[z] = request.POST[x]
-						if request.POST[y] != '':
-							row_order.append(request.POST[y])
-				row_model_fields.extend(stock_model_fields)
-				row_model_fields.extend(experiment_model_fields)
-				kwargs = dict(chain(row_kwargs.items(), obs_kwargs.items(), stock_kwargs.items()))
-				order = list(chain(row_order, obs_order, stock_order))
-				qb_ordered_row_results = ObsRow.objects.filter(**kwargs).values(*row_model_fields).order_by(*order)
-
-				for result in qb_ordered_row_results:
-					for f in qb_stock_fields:
-						result[f] = result[model_field_mapper[f]]
-					for f in qb_row_fields:
-						result[f] = result[model_field_mapper[f]]
-					for f in qb_experiment_fields:
-						result[f] = result[model_field_mapper[f]]
-
-			if 'ObsPlant' in qb_options:
-				plant_model_fields = []
-				plant_args = [('plant_id', 'qb_plant_id', 'qb_plant_id_choice', 'plant_id__contains'), ('plant_num', 'qb_plant_num', 'qb_plant_num_choice', 'plant_num__contains'), ('plant_comments', 'qb_plant_comments', 'qb_plant_comments_choice', 'plant_comments__contains')]
-				for w,x,y,z in plant_args:
-					if w in qb_plant_fields:
-						plant_model_fields.append(model_field_mapper[w])
-						plant_kwargs[z] = request.POST[x]
-						if request.POST[y] != '':
-							plant_order.append(request.POST[y])
-				plant_model_fields.extend(stock_model_fields)
-				plant_model_fields.extend(experiment_model_fields)
-				kwargs = dict(chain(plant_kwargs.items(), obs_kwargs.items(), stock_kwargs.items()))
-				order = list(chain(plant_order, obs_order, stock_order))
-				qb_ordered_plant_results = ObsPlant.objects.filter(**kwargs).values(*plant_model_fields).order_by(*order)
-
-				for result in qb_ordered_plant_results:
-					for f in qb_stock_fields:
-						result[f] = result[model_field_mapper[f]]
-					for f in qb_row_fields:
-						result[f] = result[model_field_mapper[f]]
-					for f in qb_experiment_fields:
-						result[f] = result[model_field_mapper[f]]
-
-	elif 'Measurement' in qb_options:
-		model_field_mapper = {'measurement_time':'time_of_measurement', 'measurement_value': 'value', 'measurement_comments': 'comments', 'measurement_parameter': 'measurement_parameter__parameter', 'measurement_parameter_type': 'measurement_parameter__parameter_type', 'measurement_protocol': 'measurement_parameter__protocol', 'measurement_unit_of_measure': 'measurement_parameter__unit_of_measure', 'measurement_trait_id_buckler': 'measurement_parameter__trait_id_buckler', 'experiment_name': 'obs_selector__experiment__name', 'experiment_field_name': 'obs_selector__experiment__field__field_name', 'experiment_field_locality_city': 'obs_selector__experiment__field__locality__city', 'experiment_start_date': 'obs_selector__experiment__start_date', 'experiment_purpose': 'obs_selector__experiment__purpose', 'experiment_comments': 'obs_selector__experiment__comments', 'row_id': 'row_id', 'row_name': 'row_name', 'row_field_name': 'field__field_name', 'row_field_locality_city': 'field__locality__city', 'row_range_num': 'range_num', 'row_plot': 'plot', 'row_block': 'block', 'row_rep': 'rep', 'row_kernel_num': 'kernel_num', 'row_planting_date': 'planting_date', 'row_harvest_date': 'harvest_date', 'row_comments': 'comments', 'plant_id': 'plant_id', 'plant_num': 'plant_num', 'plant_comments': 'comments', 'stock_seed_id': 'stock__seed_id', 'stock_seed_name': 'stock__seed_name', 'stock_cross_type': 'stock__cross_type', 'stock_pedigree': 'stock__pedigree', 'stock_status': 'stock__stock_status', 'stock_date': 'stock__stock_date', 'stock_inoculated': 'stock__inoculated', 'stock_comments': 'stock__comments', 'stock_genus': 'stock__passport__taxonomy__genus', 'stock_species': 'stock__passport__taxonomy__species', 'stock_population': 'stock__passport__taxonomy__population', 'stock_collection_date': 'stock__passport__collecting__collection_date', 'stock_collection_method': 'stock__passport__collecting__collection_method', 'stock_collection_comments': 'stock__passport__collecting__comments', 'stock_source_organization': 'stock__passport__people__organization'}
-
+		measurement_fields = request.POST.getlist('checkbox_qb_measurement')
+		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_measurement')))
 		measurement_args = [('measurement_time', 'qb_measurement_time', 'qb_measurement_time_choice', 'time_of_measurement__contains'), ('measurement_value', 'qb_measurement_value', 'qb_measurement_value_choice', 'value__contains'), ('measurement_comments', 'qb_measurement_comments', 'qb_measurement_comments_choice', 'comments__contains'), ('measurement_parameter', 'qb_measurement_parameter', 'qb_measurement_parameter_choice', 'measurement_parameter__parameter__contains'), ('measurement_parameter_type', 'qb_measurement_type', 'qb_measurement_type_choice', 'measurement_parameter__parameter_type__contains'), ('measurement_protocol', 'qb_measurement_protocol', 'qb_measurement_protocol_choice', 'measurement_parameter__protocol__contains'), ('measurement_unit_of_measure', 'qb_measurement_unit', 'qb_measurement_unit_choice', 'measurement_parameter__unit_of_measure__contains'), ('measurement_trait_id_buckler', 'qb_measurement_buckler', 'qb_measurement_buckler_choice', 'measurement_parameter__trait_id_buckler__contains')]
+
+	if request.POST.getlist('checkbox_qb_experiment', False):
+		obs_tracker_fields =list(chain(obs_tracker_fields, request.POST.getlist('checkbox_qb_experiment')))
+		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_experiment')))
+		experiment_args = [('experiment_name', 'qb_experiment_name', 'qb_experiment_name_choice', 'experiment__name__contains'), ('experiment_field_name', 'qb_experiment_field_name', 'qb_experiment_field_name_choice', 'experiment__field__field_name__contains'), ('experiment_field_locality_city', 'qb_experiment_field_locality_city', 'qb_experiment_field_locality_city_choice', 'experiment__field__locality__city__contains'), ('experiment_start_date', 'qb_experiment_date', 'qb_experiment_date_choice', 'experiment__start_date__contains'), ('experiment_purpose', 'qb_experiment_purpose', 'qb_experiment_purpose_choice', 'experiment__purpose__contains'), ('experiment_comments', 'qb_experiment_comments', 'qb_experiment_comments_choice', 'experiment__comments__contains')]
+		obs_tracker_args.extend(experiment_args)
+
+	if request.POST.getlist('checkbox_qb_treatment', False):
+		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_treatment')))
+		experiment_args = [()]
+
+	if request.POST.getlist('checkbox_qb_row', False):
+		obs_tracker_fields = list(chain(obs_tracker_fields, request.POST.getlist('checkbox_qb_row')))
+		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_row')))
+		row_args = [('row_id', 'qb_row_id', 'qb_row_id_choice', 'obs_row__row_id__contains'), ('row_name', 'qb_row_name', 'qb_row_name_choice', 'obs_row__row_name__contains'), ('row_field_name', 'qb_row_field_name', 'qb_row_field_name_choice', 'field__field_name__contains'), ('row_field_locality_city', 'qb_row_field_locality_city', 'qb_row_field_locality_city_choice', 'field__locality__city__contains'), ('row_range_num', 'qb_row_range', 'qb_row_range_choice', 'obs_row__range_num__contains'), ('row_plot', 'qb_row_plot', 'qb_row_plot_choice', 'obs_row__plot__contains'), ('row_block', 'qb_row_block', 'qb_row_block_choice', 'obs_row__block__contains'), ('row_rep', 'qb_row_rep', 'qb_row_rep_choice', 'obs_row__rep__contains'), ('row_kernel_num', 'qb_row_kernel_num', 'qb_row_kernel_num_choice', 'obs_row__kernel_num__contains'), ('row_planting_date', 'qb_row_planting_date', 'qb_row_planting_date_choice', 'obs_row__planting_date__contains'), ('row_harvest_date', 'qb_row_harvest_date', 'qb_row_harvest_date_choice', 'obs_row__harvest_date__contains'), ('row_comments', 'qb_row_comments', 'qb_row_comments_choice', 'obs_row__comments__contains')]
+		obs_tracker_args.extend(row_args)
+
+	if request.POST.getlist('checkbox_qb_plant', False):
+		obs_tracker_fields = list(chain(obs_tracker_fields, request.POST.getlist('checkbox_qb_plant')))
+		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_plant')))
+		plant_args = [('plant_id', 'qb_plant_id', 'qb_plant_id_choice', 'obs_plant__plant_id__contains'), ('plant_num', 'qb_plant_num', 'qb_plant_num_choice', 'obs_plant__plant_num__contains'), ('plant_comments', 'qb_plant_comments', 'qb_plant_comments_choice', 'obs_plant__comments__contains')]
+		obs_tracker_args.extend(plant_args)
+
+	if request.POST.getlist('checkbox_qb_sample', False):
+		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_sample')))
+
+	if request.POST.getlist('checkbox_qb_env', False):
+		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_env')))
+
+	if request.POST.getlist('checkbox_qb_stock', False):
+		obs_tracker_fields = list(chain(obs_tracker_fields, request.POST.getlist('checkbox_qb_stock')))
+		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_stock')))
+		stock_args = [('stock_seed_id', 'qb_stock_seed_id', 'qb_stock_seed_id_choice', 'stock__seed_id__contains'), ('stock_seed_name', 'qb_stock_seed_name', 'qb_stock_seed_name_choice', 'stock__seed_name__contains'), ('stock_cross_type', 'qb_stock_cross', 'qb_stock_cross_choice', 'stock__cross_type__contains'), ('stock_pedigree', 'qb_stock_pedigree', 'qb_stock_pedigree_choice', 'stock__pedigree__contains'), ('stock_status', 'qb_stock_status', 'qb_stock_status_choice', 'stock__stock_status__contains'), ('stock_date', 'qb_stock_date', 'qb_stock_date_choice', 'stock__stock_date__contains'), ('stock_inoculated', 'qb_stock_inoculated', '', 'stock__inoculated'), ('stock_comments', 'qb_stock_comments', 'qb_stock_comments_choice', 'stock__comments__contains'), ('stock_genus', 'qb_stock_genus', 'qb_stock_genus_choice', 'stock__passport__taxonomy__genus__contains'), ('stock_species', 'qb_stock_species', 'qb_stock_species_choice', 'stock__passport__taxonomy__species__contains'), ('stock_population', 'qb_stock_population', 'qb_stock_population_choice', 'stock__passport__taxonomy__population__contains'), ('stock_collection_date', 'qb_stock_collecting_date', 'qb_stock_collecting_date_choice', 'stock__passport__collecting__collection_date__contains'), ('stock_collection_method', 'qb_collecting_method', 'qb_collecting_method_choice', 'stock__passport__collecting__collection_method__contains'), ('stock_collection_comments', 'qb_stock_collecting_comments', 'qb_stock_collecting_comments_choice', 'stock__passport__collecting__comments__contains'), ('stock_source_organization', 'qb_stock_people_org', 'qb_stock_people_org_choice', 'stock__passport__people__organization__contains')]
+		obs_tracker_args.extend(stock_args)
+
+	model_field_mapper = {'measurement_time':'time_of_measurement', 'measurement_value': 'value', 'measurement_comments': 'comments', 'measurement_parameter': 'measurement_parameter__parameter', 'measurement_parameter_type': 'measurement_parameter__parameter_type', 'measurement_protocol': 'measurement_parameter__protocol', 'measurement_unit_of_measure': 'measurement_parameter__unit_of_measure', 'measurement_trait_id_buckler': 'measurement_parameter__trait_id_buckler', 'experiment_name': 'experiment__name', 'experiment_field_name': 'experiment__field__field_name', 'experiment_field_locality_city': 'experiment__field__locality__city', 'experiment_start_date': 'experiment__start_date', 'experiment_purpose': 'experiment__purpose', 'experiment_comments': 'experiment__comments', 'row_id': 'obs_row__row_id', 'row_name': 'obs_row__row_name', 'row_field_name': 'field__field_name', 'row_field_locality_city': 'field__locality__city', 'row_range_num': 'obs_row__range_num', 'row_plot': 'obs_row__plot', 'row_block': 'obs_row__block', 'row_rep': 'obs_row__rep', 'row_kernel_num': 'obs_row__kernel_num', 'row_planting_date': 'obs_row__planting_date', 'row_harvest_date': 'obs_row__harvest_date', 'row_comments': 'obs_row__comments', 'plant_id': 'obs_plant__plant_id', 'plant_num': 'obs_plant__plant_num', 'plant_comments': 'obs_plant__comments', 'stock_seed_id': 'stock__seed_id', 'stock_seed_name': 'stock__seed_name', 'stock_cross_type': 'stock__cross_type', 'stock_pedigree': 'stock__pedigree', 'stock_status': 'stock__stock_status', 'stock_date': 'stock__stock_date', 'stock_inoculated': 'stock__inoculated', 'stock_comments': 'stock__comments', 'stock_genus': 'stock__passport__taxonomy__genus', 'stock_species': 'stock__passport__taxonomy__species', 'stock_population': 'stock__passport__taxonomy__population', 'stock_collection_date': 'stock__passport__collecting__collection_date', 'stock_collection_method': 'stock__passport__collecting__collection_method', 'stock_collection_comments': 'stock__passport__collecting__comments', 'stock_source_organization': 'stock__passport__people__organization'}
+
+	obs_tracker_model_fields = ['id']
+	for w,x,y,z in obs_tracker_args:
+		if w in obs_tracker_fields:
+			obs_tracker_model_fields.append(model_field_mapper[w])
+			obs_tracker_kwargs[z] = request.POST[x]
+			if request.POST[y] != '':
+				obs_tracker_order.append(request.POST[y])
+	try:
+		obs_tracker_ordered_results = ObsTracker.objects.filter(**obs_tracker_kwargs).values(*obs_tracker_model_fields).order_by(*obs_tracker_order)
+	except ObsTracker.DoesNotExist:
+		obs_tracker_ordered_results = None
+
+	if 'Measurement' in qb_options:
+		measurement_results = []
 		measurement_model_fields = []
 		for w,x,y,z in measurement_args:
-			if w in qb_measurement_fields:
+			if w in measurement_fields:
 				measurement_model_fields.append(model_field_mapper[w])
 				measurement_kwargs[z] = request.POST[x]
 				if request.POST[y] != '':
 					measurement_order.append(request.POST[y])
-
-		experiment_model_fields = []
-		if 'Experiment' in qb_options:
-			experiment_args = [('experiment_name', 'qb_experiment_name', 'qb_experiment_name_choice', 'obs_selector__experiment__name__contains'), ('experiment_field_name', 'qb_experiment_field_name', 'qb_experiment_field_name_choice', 'obs_selector__experiment__field__field_name__contains'), ('experiment_field_locality_city', 'qb_experiment_field_locality_city', 'qb_experiment_field_locality_city_choice', 'obs_selector__experiment__field__locality__city__contains'), ('experiment_start_date', 'qb_experiment_date', 'qb_experiment_date_choice', 'obs_selector__experiment__start_date__contains'), ('experiment_purpose', 'qb_experiment_purpose', 'qb_experiment_purpose_choice', 'obs_selector__experiment__purpose__contains'), ('experiment_comments', 'qb_experiment_comments', 'qb_experiment_comments_choice', 'obs_selector__experiment__comments__contains')]
-			for w,x,y,z in experiment_args:
-				if w in qb_experiment_fields:
-					experiment_model_fields.append(model_field_mapper[w])
-					obs_kwargs[z] = request.POST[x]
-					if request.POST[y] != '':
-						obs_order.append(request.POST[y])
-
-		measurement_model_fields.extend(experiment_model_fields)
-		qb_measurement_fields.extend(qb_experiment_fields)
-
-		if 'Stock' in qb_options:
-			qb_obs_measurements = []
-			stock_model_fields = ['obs_selector_id']
-			stock_args = [('stock_seed_id', 'qb_stock_seed_id', 'qb_stock_seed_id_choice', 'stock__seed_id__contains'), ('stock_seed_name', 'qb_stock_seed_name', 'qb_stock_seed_name_choice', 'stock__seed_name__contains'), ('stock_cross_type', 'qb_stock_cross', 'qb_stock_cross_choice', 'stock__cross_type__contains'), ('stock_pedigree', 'qb_stock_pedigree', 'qb_stock_pedigree_choice', 'stock__pedigree__contains'), ('stock_status', 'qb_stock_status', 'qb_stock_status_choice', 'stock__stock_status__contains'), ('stock_date', 'qb_stock_date', 'qb_stock_date_choice', 'stock__stock_date__contains'), ('stock_inoculated', 'qb_stock_inoculated', '', 'stock__inoculated'), ('stock_comments', 'qb_stock_comments', 'qb_stock_comments_choice', 'stock__comments__contains'), ('stock_genus', 'qb_stock_genus', 'qb_stock_genus_choice', 'stock__passport__taxonomy__genus__contains'), ('stock_species', 'qb_stock_species', 'qb_stock_species_choice', 'stock__passport__taxonomy__species__contains'), ('stock_population', 'qb_stock_population', 'qb_stock_population_choice', 'stock__passport__taxonomy__population__contains'), ('stock_collection_date', 'qb_stock_collecting_date', 'qb_stock_collecting_date_choice', 'stock__passport__collecting__collection_date__contains'), ('stock_collection_method', 'qb_collecting_method', 'qb_collecting_method_choice', 'stock__passport__collecting__collection_method__contains'), ('stock_collection_comments', 'qb_stock_collecting_comments', 'qb_stock_collecting_comments_choice', 'stock__passport__collecting__comments__contains'), ('stock_source_organization', 'qb_stock_people_org', 'qb_stock_people_org_choice', 'stock__passport__people__organization__contains')]
-			for w,x,y,z in stock_args:
-				if w in qb_stock_fields:
-					stock_model_fields.append(model_field_mapper[w])
-					stock_kwargs[z] = request.POST[x]
-					if request.POST[y] != '':
-						stock_order.append(request.POST[y])
-
-			kwargs = dict(chain(obs_kwargs.items(), stock_kwargs.items()))
-			order = list(chain(obs_order, stock_order))
-			obs_models = [ObsRow, ObsPlant, ObsSample]
-			for obs_model in obs_models:
-				qb_stock_measurements = obs_model.objects.filter(**kwargs).values(*stock_model_fields).order_by(*order)
-				qb_obs_measurements = list(chain(qb_obs_measurements, qb_stock_measurements))
-
-			qb_measurement_results = []
-			for result in qb_obs_measurements:
-				measurement_kwargs_obs = {}
-				measurement_kwargs_obs['obs_selector_id'] = result['obs_selector_id']
-				measurement_kwargs_q = dict(chain(measurement_kwargs_obs.items(), measurement_kwargs.items()))
-				try:
-					measurements = Measurement.objects.filter(**measurement_kwargs_q).values(*measurement_model_fields)
-					for m in measurements:
-						for f in qb_stock_fields:
-							m[f] = result[model_field_mapper[f]]
-						for f in qb_measurement_fields:
-							m[f] = m[model_field_mapper[f]]
-						qb_measurement_results.append(m)
-				except Measurement.DoesNotExist:
-					pass
-			qb_ordered_results = qb_measurement_results
-			for order in measurement_order:
-				qb_ordered_results = sorted(qb_ordered_results, key=itemgetter(order))
-
-		else:
-			kwargs = dict(chain(obs_kwargs.items(), measurement_kwargs.items()))
-			order = list(chain(obs_order, measurement_order))
-			measurements = Measurement.objects.filter(**kwargs).values(*measurement_model_fields).order_by(*order)
-			for m in measurements:
-				for f in qb_measurement_fields:
+		for result in obs_tracker_ordered_results:
+			measurement_kwargs['obs_tracker_id'] = result['id']
+			try:
+				measurement_results = Measurement.objects.filter(**measurement_kwargs).values(*measurement_model_fields)
+			except Measurement.DoesNotExist:
+				measurement_results = None
+			for m in measurement_results:
+				for f in obs_tracker_fields:
+					m[f] = result[model_field_mapper[f]]
+				for f in measurement_fields:
 					m[f] = m[model_field_mapper[f]]
-				qb_ordered_results.append(m)
+			measurement_ordered_results = list(chain(measurement_ordered_results, measurement_results))
+		for order in measurement_order:
+			measurement_ordered_results = sorted(measurement_ordered_results, key=itemgetter(order))
+		display_results = measurement_ordered_results
+	else:
+		for result in obs_tracker_ordered_results:
+			for f in obs_tracker_fields:
+				result[f] = result[model_field_mapper[f]]
+		display_results = obs_tracker_ordered_results
 
 	if 'qb_results_view' in request.POST:
 		context_dict['qb_options'] = qb_options
 		context_dict['display_fields'] = display_fields
-		context_dict['qb_ordered_row_results'] = qb_ordered_row_results
-		context_dict['qb_ordered_plant_results'] = qb_ordered_plant_results
-		context_dict['qb_ordered_results'] = qb_ordered_results
+		context_dict['display_results'] = display_results
 		context_dict['logged_in_user'] = request.user.username
 		return render_to_response('lab/query_builder_results.html', context_dict, context)
 
@@ -2115,7 +2050,7 @@ def query_builder_fields(request):
 		response['Content-Disposition'] = 'attachment; filename="query_builder_results.csv"'
 		writer = csv.writer(response)
 		writer.writerow(display_fields)
-		for value in qb_ordered_row_results:
+		for value in display_results:
 			value_write = []
 			for field in display_fields:
 				try:
@@ -2123,20 +2058,4 @@ def query_builder_fields(request):
 				except KeyError:
 					value_write.append('N/A')
 			writer.writerow(value_write)
-		for value in qb_ordered_plant_results:
-			value_write = []
-			for field in display_fields:
-				try:
-					value_write.append(value[field])
-				except KeyError:
-					value_write.append('N/A')
-			writer.writerow(value_write)
-		for value in qb_ordered_results:
-			value_write = []
-			for field in display_fields:
-				try:
-					value_write.append(value[field])
-				except KeyError:
-					value_write.append('N/A')
-			writer.writerow(value_write)
-		return response"""
+		return response

@@ -50,11 +50,13 @@
     </thead>
     <tbody>
       {% for t in obs_tracker %}
-      <tr>
-        <td><a href='/lab/field/{{t.field.id}}/'>{{ t.field.field_name }}</a></td>
-        <td>{{ t.field.field_num }}</td>
-        <td>{{ t.field.comments }}</td>
-      </tr>
+        {% if t.obs_entity_type == 'row' %}
+        <tr>
+          <td><a href='/lab/field/{{t.field.id}}/'>{{ t.field.field_name }}</a></td>
+          <td>{{ t.field.field_num }}</td>
+          <td>{{ t.field.comments }}</td>
+        </tr>
+        {% endif %}
       {% endfor %}
     </tbody>
   </table>
@@ -74,15 +76,17 @@
     </thead>
     <tbody>
       {% for t in obs_tracker %}
-      <tr>
-        <td><a href='/lab/stock/{{t.stock.id}}/'>{{ t.stock.seed_id }}</a></td>
-        <td>{{ t.stock.seed_name }}</td>
-        <td>{{ t.stock.cross_type }}</td>
-        <td>{{ t.stock.pedigree }}</td>
-        <td>{{ t.stock.stock_status }}</td>
-        <td>{{ t.stock.stock_date }}</td>
-        <td>{{ t.stock.comments }}</td>
-      </tr>
+        {% if t.obs_entity_type == 'row' %}
+          <tr>
+            <td><a href='/lab/stock/{{t.stock.id}}/'>{{ t.stock.seed_id }}</a></td>
+            <td>{{ t.stock.seed_name }}</td>
+            <td>{{ t.stock.cross_type }}</td>
+            <td>{{ t.stock.pedigree }}</td>
+            <td>{{ t.stock.stock_status }}</td>
+            <td>{{ t.stock.stock_date }}</td>
+            <td>{{ t.stock.comments }}</td>
+          </tr>
+        {% endif %}
       {% endfor %}
     </tbody>
   </table>

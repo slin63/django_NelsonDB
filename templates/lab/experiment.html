@@ -114,8 +114,8 @@
 									<div class="span7">
 										<h3>Isolates Collected</h3>
 										{% if isolate_data %}
-										<h5><a href='/lab/isolates/collected/{{experiment.name}}/'>View</a></h5>
-										<h5><a href='/lab/download/isolates/collected/{{experiment.name}}/'>Download</a></h5>
+										<h5><a href='/lab/data/isolates/{{experiment.name}}/'>View</a></h5>
+										<h5><a href='/lab/download/isolates/{{experiment.name}}/'>Download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}
@@ -133,7 +133,7 @@
 										<h3>Row Data</h3>
 										{% if row_data %}
 										<h5><a href='/lab/data/row/{{experiment.name}}/'>View</a></h5>
-										<h5><a href='/lab/download/data/row/{{experiment.name}}/'>Download</a></h5>
+										<h5><a href='/lab/download/row/{{experiment.name}}/'>Download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}
@@ -305,7 +305,7 @@
 										<h3>Measurement Data</h3>
 										{% if measurement_data %}
 										<h5><a href='/lab/data/measurement/{{experiment.name}}/'>View</a></h5>
-										<h5><a href='/lab/download/data/measurement/{{experiment.name}}/'>Download</a></h5>
+										<h5><a href='/lab/download/measurement/{{experiment.name}}/'>Download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}
@@ -323,7 +323,7 @@
 										<h3>Plant Data</h3>
 										{% if plant_data %}
 										<h5><a href='/lab/data/plant/{{experiment.name}}/'>View</a></h5>
-										<h5><a href='/lab/download/data/plant/{{experiment.name}}/'>Download</a></h5>
+										<h5><a href='/lab/download/plant/{{experiment.name}}/'>Download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}
