@@ -397,6 +397,8 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_plant_experiment'] = request.session.get('checkbox_plant_experiment')
 	if request.session.get('checkbox_tissue_experiment', None):
 		context_dict['checkbox_tissue_experiment'] = request.session.get('checkbox_tissue_experiment')
+	if request.session.get('checkbox_plate_experiment', None):
+		context_dict['checkbox_plate_experiment'] = request.session.get('checkbox_plate_experiment')
 	if request.session.get('checkbox_measurement_experiment', None):
 		context_dict['checkbox_measurement_experiment'] = request.session.get('checkbox_measurement_experiment')
 	return context_dict
@@ -1080,6 +1082,91 @@ def show_all_tissue_experiment(request):
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['tissue_experiment_list'] = tissue_experiment_list
 	return render_to_response('lab/tissue_experiment_list.html', context_dict, context)
+
+@login_required
+def plate_data_browse(request):
+	context = RequestContext(request)
+	context_dict = {}
+	plate_data = sort_plate_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['plate_data'] = plate_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/plate_data.html', context_dict, context)
+
+def sort_plate_data(request):
+	plate_data = {}
+	if request.session.get('checkbox_plate_experiment_id_list', None):
+		checkbox_plate_experiment_id_list = request.session.get('checkbox_plate_experiment_id_list')
+		for plate_experiment in checkbox_plate_experiment_id_list:
+			plates = ObsTracker.objects.filter(obs_entity_type='plate', experiment__id=plate_experiment)
+			plate_data = list(chain(plates, plate_data))
+	else:
+		plate_data = ObsTracker.objects.filter(obs_entity_type='plate')[:5000]
+	return plate_data
+
+@login_required
+def download_plate_data(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="selected_experiment_tissues.csv"'
+	plate_data = sort_plate_data(request)
+	writer = csv.writer(response)
+	writer.writerow(['Exp ID', 'Plate ID', 'Plate Name', 'Location', 'Date Plated', 'Contents', 'Rep', 'Plate Type', 'Plate Status', 'Comments'])
+	for row in plate_data:
+		writer.writerow([row.experiment, row.obs_plate.plate_id, row.obs_plate.plate_name, row.location, row.obs_plate.date, row.obs_plate.contents, row.obs_plate.rep, row.obs_plate.plate_type, row.obs_plate.plate_status, row.obs_plate.comments])
+	return response
+
+def suggest_plate_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	plate_experiment_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with = request.GET['suggestion']
+	else:
+		starts_with = request.POST['suggestion']
+	if starts_with:
+		plate_experiment_list = ObsTracker.objects.filter(obs_entity_type='plate', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
+	else:
+		plate_experiment_list = None
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['plate_experiment_list'] = plate_experiment_list
+	return render_to_response('lab/plate_experiment_list.html', context_dict, context)
+
+def select_plate_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	plant_data = []
+	checkbox_plate_experiment_name_list = []
+	checkbox_plate_experiment_list = request.POST.getlist('checkbox_plate_experiment')
+	for experiment_id in checkbox_plate_experiment_list:
+		experiment_name = Experiment.objects.filter(id=experiment_id).values('name')
+		checkbox_plate_experiment_name_list = list(chain(experiment_name, checkbox_plate_experiment_name_list))
+	request.session['checkbox_plate_experiment'] = checkbox_plate_experiment_name_list
+	request.session['checkbox_plate_experiment_id_list'] = checkbox_plate_experiment_list
+	plate_data = sort_plate_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['plate_data'] = plate_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/plate_data.html', context_dict, context)
+
+def checkbox_plate_data_clear(request):
+	context = RequestContext(request)
+	context_dict = {}
+	del request.session['checkbox_plate_experiment']
+	del request.session['checkbox_plate_experiment_id_list']
+	plate_data = sort_plate_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['plate_data'] = plate_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/plate_data.html', context_dict, context)
+
+def show_all_plate_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	plate_experiment_list = ObsTracker.objects.filter(obs_entity_type='plate').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['plate_experiment_list'] = plate_experiment_list
+	return render_to_response('lab/plate_experiment_list.html', context_dict, context)
 
 @login_required
 def plant_data_browse(request):
@@ -1929,6 +2016,9 @@ def query_builder_options(request):
 	if 'ObsEnv' in selected_options:
 		env_fields_list = [('environment_id', "<select name='qb_env_id_choice'><option value='' >None</option><option value='obs_env__environment_id'>Ascending</option><option value='-obs_env__environment_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_env_id" placeholder="Type an Environment ID"/>', 'checkbox_qb_env'), ('longitude', "<select name='qb_env_longitude_choice'><option value=''>None</option><option value='obs_env__longitude'>Ascending</option><option value='-obs_env__longitude'>Descending</option></select>", '<input class="search-query" type="text" name="qb_env_longitude" placeholder="Type a Longitude"/>', 'checkbox_qb_env'), ('latitude', "<select name='qb_env_latitude_choice'><option value='' >None</option><option value='obs_env__latitude'>Ascending</option><option value='-obs_env__latitude'>Descending</option></select>", '<input class="search-query" type="text" name="qb_env_latitude" placeholder="Type a Latitude"/>', 'checkbox_qb_env'), ('environment_comments', "<select name='qb_env_comments_choice'><option value='' >None</option><option value='obs_env__comments'>A to Z</option><option value='-obs_env__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_env_comments" placeholder="Type Environment Comments"/>', 'checkbox_qb_env')]
 		query_builder_fields_list = list(chain(env_fields_list, query_builder_fields_list))
+	if 'ObsTissue' in selected_options:
+		tissue_fields_list = [('tissue_id', "<select name='qb_tissue_id_choice'><option value='' >None</option><option value='obs_tissue__tissue_id'>Ascending</option><option value='-obs_tissue__tissue_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_tissue_id" placeholder="Type a Tissue ID"/>', 'checkbox_qb_tissue'), ('tissue_type', "<select name='qb_tissue_type_choice'><option value=''>None</option><option value='obs_tissue__tissue_type'>A to Z</option><option value='-obs_tissue__tissue_type'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_tissue_type" placeholder="Type a Tissue Type"/>', 'checkbox_qb_tissue'), ('tissue_name', "<select name='qb_tissue_name_choice'><option value='' >None</option><option value='obs_tissue__tissue_name'>A to Z</option><option value='-obs_tissue__tissue_name'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_tissue_name" placeholder="Type a Tissue Name"/>', 'checkbox_qb_tissue'), ('tissue_date_ground', "<select name='qb_tissue_date_ground_choice'><option value='' >None</option><option value='obs_tissue__date_ground'>Ascending</option><option value='-obs_tissue__date_ground'>Descending</option></select>", '<input class="search-query" type="text" name="qb_tissue_date_ground" placeholder="Type Date Ground"/>', 'checkbox_qb_tissue'), ('tissue_comments', "<select name='qb_tissue_comments_choice'><option value='' >None</option><option value='obs_tissue__comments'>A to Z</option><option value='-obs_tissue__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_tissue_comments" placeholder="Type a Tissue Comment"/>', 'checkbox_qb_tissue')]
+		query_builder_fields_list = list(chain(tissue_fields_list, query_builder_fields_list))
 
 	context_dict['selected_options'] = selected_options
 	context_dict['query_builder_fields_list'] = query_builder_fields_list
@@ -1975,12 +2065,21 @@ def query_builder_fields(request):
 		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_row')))
 		row_args = [('row_id', 'qb_row_id', 'qb_row_id_choice', 'obs_row__row_id__contains'), ('row_name', 'qb_row_name', 'qb_row_name_choice', 'obs_row__row_name__contains'), ('row_field_name', 'qb_row_field_name', 'qb_row_field_name_choice', 'field__field_name__contains'), ('row_field_locality_city', 'qb_row_field_locality_city', 'qb_row_field_locality_city_choice', 'field__locality__city__contains'), ('row_range_num', 'qb_row_range', 'qb_row_range_choice', 'obs_row__range_num__contains'), ('row_plot', 'qb_row_plot', 'qb_row_plot_choice', 'obs_row__plot__contains'), ('row_block', 'qb_row_block', 'qb_row_block_choice', 'obs_row__block__contains'), ('row_rep', 'qb_row_rep', 'qb_row_rep_choice', 'obs_row__rep__contains'), ('row_kernel_num', 'qb_row_kernel_num', 'qb_row_kernel_num_choice', 'obs_row__kernel_num__contains'), ('row_planting_date', 'qb_row_planting_date', 'qb_row_planting_date_choice', 'obs_row__planting_date__contains'), ('row_harvest_date', 'qb_row_harvest_date', 'qb_row_harvest_date_choice', 'obs_row__harvest_date__contains'), ('row_comments', 'qb_row_comments', 'qb_row_comments_choice', 'obs_row__comments__contains')]
 		obs_tracker_args.extend(row_args)
+		obs_entity_type = 'row'
 
-	if request.POST.getlist('checkbox_qb_plant', False):
+	elif request.POST.getlist('checkbox_qb_plant', False):
 		obs_tracker_fields = list(chain(obs_tracker_fields, request.POST.getlist('checkbox_qb_plant')))
 		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_plant')))
 		plant_args = [('plant_id', 'qb_plant_id', 'qb_plant_id_choice', 'obs_plant__plant_id__contains'), ('plant_num', 'qb_plant_num', 'qb_plant_num_choice', 'obs_plant__plant_num__contains'), ('plant_comments', 'qb_plant_comments', 'qb_plant_comments_choice', 'obs_plant__comments__contains')]
 		obs_tracker_args.extend(plant_args)
+		obs_entity_type = 'plant'
+
+	elif request.POST.getlist('checkbox_qb_tissue', False):
+		obs_tracker_fields = list(chain(obs_tracker_fields, request.POST.getlist('checkbox_qb_tissue')))
+		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_tissue')))
+		tissue_args = [('tissue_id', 'qb_tissue_id', 'qb_tissue_id_choice', 'obs_tissue__tissue_id__contains'), ('tissue_type', 'qb_tissue_type', 'qb_tissue_type_choice', 'obs_tissue__tissue_type__contains'), ('tissue_name', 'qb_tissue_name', 'qb_tissue_name_choice', 'obs_tissue__tissue_name__contains'), ('tissue_date_ground', 'qb_tissue_date_ground', 'qb_tissue_date_ground_choice', 'obs_tissue__date_ground__contains'), ('tissue_comments', 'qb_tissue_comments', 'qb_tissue_comments_choice', 'obs_tissue__comments__contains')]
+		obs_tracker_args.extend(tissue_args)
+		obs_entity_type = 'tissue'
 
 	if request.POST.getlist('checkbox_qb_sample', False):
 		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_sample')))
@@ -1994,7 +2093,7 @@ def query_builder_fields(request):
 		stock_args = [('stock_seed_id', 'qb_stock_seed_id', 'qb_stock_seed_id_choice', 'stock__seed_id__contains'), ('stock_seed_name', 'qb_stock_seed_name', 'qb_stock_seed_name_choice', 'stock__seed_name__contains'), ('stock_cross_type', 'qb_stock_cross', 'qb_stock_cross_choice', 'stock__cross_type__contains'), ('stock_pedigree', 'qb_stock_pedigree', 'qb_stock_pedigree_choice', 'stock__pedigree__contains'), ('stock_status', 'qb_stock_status', 'qb_stock_status_choice', 'stock__stock_status__contains'), ('stock_date', 'qb_stock_date', 'qb_stock_date_choice', 'stock__stock_date__contains'), ('stock_inoculated', 'qb_stock_inoculated', '', 'stock__inoculated'), ('stock_comments', 'qb_stock_comments', 'qb_stock_comments_choice', 'stock__comments__contains'), ('stock_genus', 'qb_stock_genus', 'qb_stock_genus_choice', 'stock__passport__taxonomy__genus__contains'), ('stock_species', 'qb_stock_species', 'qb_stock_species_choice', 'stock__passport__taxonomy__species__contains'), ('stock_population', 'qb_stock_population', 'qb_stock_population_choice', 'stock__passport__taxonomy__population__contains'), ('stock_collection_date', 'qb_stock_collecting_date', 'qb_stock_collecting_date_choice', 'stock__passport__collecting__collection_date__contains'), ('stock_collection_method', 'qb_collecting_method', 'qb_collecting_method_choice', 'stock__passport__collecting__collection_method__contains'), ('stock_collection_comments', 'qb_stock_collecting_comments', 'qb_stock_collecting_comments_choice', 'stock__passport__collecting__comments__contains'), ('stock_source_organization', 'qb_stock_people_org', 'qb_stock_people_org_choice', 'stock__passport__people__organization__contains')]
 		obs_tracker_args.extend(stock_args)
 
-	model_field_mapper = {'measurement_time':'time_of_measurement', 'measurement_value': 'value', 'measurement_comments': 'comments', 'measurement_parameter': 'measurement_parameter__parameter', 'measurement_parameter_type': 'measurement_parameter__parameter_type', 'measurement_protocol': 'measurement_parameter__protocol', 'measurement_unit_of_measure': 'measurement_parameter__unit_of_measure', 'measurement_trait_id_buckler': 'measurement_parameter__trait_id_buckler', 'experiment_name': 'experiment__name', 'experiment_field_name': 'experiment__field__field_name', 'experiment_field_locality_city': 'experiment__field__locality__city', 'experiment_start_date': 'experiment__start_date', 'experiment_purpose': 'experiment__purpose', 'experiment_comments': 'experiment__comments', 'row_id': 'obs_row__row_id', 'row_name': 'obs_row__row_name', 'row_field_name': 'field__field_name', 'row_field_locality_city': 'field__locality__city', 'row_range_num': 'obs_row__range_num', 'row_plot': 'obs_row__plot', 'row_block': 'obs_row__block', 'row_rep': 'obs_row__rep', 'row_kernel_num': 'obs_row__kernel_num', 'row_planting_date': 'obs_row__planting_date', 'row_harvest_date': 'obs_row__harvest_date', 'row_comments': 'obs_row__comments', 'plant_id': 'obs_plant__plant_id', 'plant_num': 'obs_plant__plant_num', 'plant_comments': 'obs_plant__comments', 'stock_seed_id': 'stock__seed_id', 'stock_seed_name': 'stock__seed_name', 'stock_cross_type': 'stock__cross_type', 'stock_pedigree': 'stock__pedigree', 'stock_status': 'stock__stock_status', 'stock_date': 'stock__stock_date', 'stock_inoculated': 'stock__inoculated', 'stock_comments': 'stock__comments', 'stock_genus': 'stock__passport__taxonomy__genus', 'stock_species': 'stock__passport__taxonomy__species', 'stock_population': 'stock__passport__taxonomy__population', 'stock_collection_date': 'stock__passport__collecting__collection_date', 'stock_collection_method': 'stock__passport__collecting__collection_method', 'stock_collection_comments': 'stock__passport__collecting__comments', 'stock_source_organization': 'stock__passport__people__organization'}
+	model_field_mapper = {'measurement_time':'time_of_measurement', 'measurement_value': 'value', 'measurement_comments': 'comments', 'measurement_parameter': 'measurement_parameter__parameter', 'measurement_parameter_type': 'measurement_parameter__parameter_type', 'measurement_protocol': 'measurement_parameter__protocol', 'measurement_unit_of_measure': 'measurement_parameter__unit_of_measure', 'measurement_trait_id_buckler': 'measurement_parameter__trait_id_buckler', 'experiment_name': 'experiment__name', 'experiment_field_name': 'experiment__field__field_name', 'experiment_field_locality_city': 'experiment__field__locality__city', 'experiment_start_date': 'experiment__start_date', 'experiment_purpose': 'experiment__purpose', 'experiment_comments': 'experiment__comments', 'row_id': 'obs_row__row_id', 'row_name': 'obs_row__row_name', 'row_field_name': 'field__field_name', 'row_field_locality_city': 'field__locality__city', 'row_range_num': 'obs_row__range_num', 'row_plot': 'obs_row__plot', 'row_block': 'obs_row__block', 'row_rep': 'obs_row__rep', 'row_kernel_num': 'obs_row__kernel_num', 'row_planting_date': 'obs_row__planting_date', 'row_harvest_date': 'obs_row__harvest_date', 'row_comments': 'obs_row__comments', 'plant_id': 'obs_plant__plant_id', 'plant_num': 'obs_plant__plant_num', 'plant_comments': 'obs_plant__comments', 'stock_seed_id': 'stock__seed_id', 'stock_seed_name': 'stock__seed_name', 'stock_cross_type': 'stock__cross_type', 'stock_pedigree': 'stock__pedigree', 'stock_status': 'stock__stock_status', 'stock_date': 'stock__stock_date', 'stock_inoculated': 'stock__inoculated', 'stock_comments': 'stock__comments', 'stock_genus': 'stock__passport__taxonomy__genus', 'stock_species': 'stock__passport__taxonomy__species', 'stock_population': 'stock__passport__taxonomy__population', 'stock_collection_date': 'stock__passport__collecting__collection_date', 'stock_collection_method': 'stock__passport__collecting__collection_method', 'stock_collection_comments': 'stock__passport__collecting__comments', 'stock_source_organization': 'stock__passport__people__organization', 'tissue_id': 'obs_tissue__tissue_id', 'tissue_type': 'obs_tissue__tissue_type', 'tissue_name': 'obs_tissue__tissue_name', 'tissue_date_ground': 'obs_tissue__date_ground', 'tissue_comments': 'obs_tissue__comments'}
 
 	obs_tracker_model_fields = ['id']
 	for w,x,y,z in obs_tracker_args:
@@ -2003,6 +2102,7 @@ def query_builder_fields(request):
 			obs_tracker_kwargs[z] = request.POST[x]
 			if request.POST[y] != '':
 				obs_tracker_order.append(request.POST[y])
+	obs_tracker_kwargs['obs_entity_type'] = obs_entity_type
 	try:
 		obs_tracker_ordered_results = ObsTracker.objects.filter(**obs_tracker_kwargs).values(*obs_tracker_model_fields).order_by(*obs_tracker_order)
 	except ObsTracker.DoesNotExist:

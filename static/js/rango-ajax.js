@@ -191,6 +191,32 @@ $('#show_all_plant_experiment').click(function(){
 	});
 });
 
+$('#plate_experimentsuggestion').keyup(function(){
+	var query;
+	query = $(this).val();
+	$.get('/lab/data/plate/suggest_plate_experiment/', {suggestion: query}, function(data){
+		$('#plate_experiment').html(data);
+		$('#selected_plate_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
+$('#show_all_plate_experiment').click(function(){
+	$.get('/lab/data/plate/show_all_experiment/', {}, function(data){
+		$('#plate_experiment').html(data);
+		$('#selected_plate_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
 $('#measurement_experimentsuggestion').keyup(function(){
 	var query;
 	query = $(this).val();
@@ -237,6 +263,12 @@ $('#clear_row_experiment').click(function(){
 
 $('#clear_tissue_experiment').click(function(){
 	$.get('/lab/data/tissue/checkbox_clear/', {}, function(data){
+		$('body').html(data);
+	});
+});
+
+$('#clear_plate_experiment').click(function(){
+	$.get('/lab/data/plate/checkbox_clear/', {}, function(data){
 		$('body').html(data);
 	});
 });
