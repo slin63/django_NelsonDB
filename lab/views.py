@@ -423,7 +423,7 @@ def show_all_seedinv_taxonomy(request):
 		checkbox_pedigree_list = request.session.get('checkbox_pedigree')
 		for pedigree in checkbox_pedigree_list:
 			taxonomy = Stock.objects.filter(pedigree=pedigree).values('pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()
-			taxonomy_list = list(chain(taxonomy, taxonomy_list))[:5000]
+			taxonomy_list = list(chain(taxonomy, taxonomy_list))[:2000]
 	else:
 		taxonomy_list = Taxonomy.objects.filter(common_name='Maize')
 	context_dict = checkbox_session_variable_check(request)
@@ -438,9 +438,9 @@ def show_all_seedinv_pedigree(request):
 		checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
 		for taxonomy in checkbox_taxonomy_list:
 			pedigree = Stock.objects.filter(passport__taxonomy__population=taxonomy).values('pedigree', 'passport__taxonomy__population').distinct()
-			pedigree_list = list(chain(pedigree, pedigree_list))[:5000]
+			pedigree_list = list(chain(pedigree, pedigree_list))[:2000]
 	else:
-		pedigree_list = Stock.objects.all().values('pedigree').distinct()[:5000]
+		pedigree_list = Stock.objects.all().values('pedigree').distinct()[:2000]
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['pedigree_list'] = pedigree_list
 	return render_to_response('lab/seed_pedigree_list.html', context_dict, context)
@@ -459,9 +459,9 @@ def suggest_pedigree(request):
 			checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
 			for taxonomy in checkbox_taxonomy_list:
 				pedigree = Stock.objects.filter(pedigree__contains=starts_with, passport__taxonomy__population=taxonomy).values('pedigree', 'passport__taxonomy__population').distinct()
-				pedigree_list = list(chain(pedigree, pedigree_list))[:5000]
+				pedigree_list = list(chain(pedigree, pedigree_list))[:2000]
 		else:
-			pedigree_list = Stock.objects.filter(pedigree__contains=starts_with).values('pedigree').distinct()[:5000]
+			pedigree_list = Stock.objects.filter(pedigree__contains=starts_with).values('pedigree').distinct()[:2000]
 	else:
 		pedigree_list = None
 	context_dict = checkbox_session_variable_check(request)
@@ -482,9 +482,9 @@ def suggest_taxonomy(request):
 			checkbox_pedigree_list = request.session.get('checkbox_pedigree')
 			for pedigree in checkbox_pedigree_list:
 				taxonomy = Stock.objects.filter(pedigree=pedigree, passport__taxonomy__population__contains=starts_with).values('pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()
-				taxonomy_list = list(chain(taxonomy, taxonomy_list))[:5000]
+				taxonomy_list = list(chain(taxonomy, taxonomy_list))[:2000]
 		else:
-			taxonomy_list = Taxonomy.objects.filter(population__contains=starts_with, common_name='Maize')[:5000]
+			taxonomy_list = Taxonomy.objects.filter(population__contains=starts_with, common_name='Maize')[:2000]
 	else:
 		taxonomy_list = None
 	context_dict = checkbox_session_variable_check(request)
@@ -667,7 +667,7 @@ def checkbox_isolate_sort(request):
 				isolates = Isolate.objects.filter(disease_info__id=disease_id)
 				selected_isolates = list(chain(selected_isolates, isolates))
 		else:
-			selected_isolates = Isolate.objects.all()[:5000]
+			selected_isolates = Isolate.objects.all()[:2000]
 	return selected_isolates
 
 def show_all_isolate_taxonomy(request):
@@ -680,7 +680,7 @@ def show_all_isolate_taxonomy(request):
 			taxonomy = Isolate.objects.filter(disease_info__id=disease_id).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__genus', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa', 'passport__taxonomy__species').distinct()[:1000]
 			isolate_taxonomy_list = list(chain(taxonomy, isolate_taxonomy_list))
 	else:
-		isolate_taxonomy_list = Taxonomy.objects.filter(common_name='Isolate')[:1000]
+		isolate_taxonomy_list = Taxonomy.objects.filter(common_name='Isolate')[:2000]
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['isolate_taxonomy_list'] = isolate_taxonomy_list
 	return render_to_response('lab/isolate_taxonomy_list.html', context_dict, context)
@@ -692,10 +692,10 @@ def show_all_isolate_disease(request):
 	if request.session.get('checkbox_isolate_taxonomy', None):
 		checkbox_isolate_taxonomy = request.session.get('checkbox_isolate_taxonomy_id')
 		for taxonomy_id in checkbox_isolate_taxonomy:
-			disease = Isolate.objects.filter(passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()[:1000]
+			disease = Isolate.objects.filter(passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()[:2000]
 			isolate_disease_list = list(chain(disease, isolate_disease_list))
 	else:
-		isolate_disease_list = DiseaseInfo.objects.all()[:1000]
+		isolate_disease_list = DiseaseInfo.objects.all()[:2000]
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['isolate_disease_list'] = isolate_disease_list
 	return render_to_response('lab/isolate_disease_list.html', context_dict, context)
@@ -713,10 +713,10 @@ def suggest_isolate_taxonomy(request):
 		if request.session.get('checkbox_isolate_disease', None):
 			checkbox_isolate_disease = request.session.get('checkbox_isolate_disease_id')
 			for disease_id in checkbox_isolate_disease:
-				taxonomy = Isolate.objects.filter(disease_info__id=disease_id, passport__taxonomy__genus__contains=starts_with).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__genus', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa', 'passport__taxonomy__species').distinct()[:1000]
+				taxonomy = Isolate.objects.filter(disease_info__id=disease_id, passport__taxonomy__genus__contains=starts_with).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__genus', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa', 'passport__taxonomy__species').distinct()[:2000]
 				isolate_taxonomy_list = list(chain(taxonomy, isolate_taxonomy_list))
 		else:
-			isolate_taxonomy_list = Taxonomy.objects.filter(genus__contains=starts_with, common_name='Isolate')[:1000]
+			isolate_taxonomy_list = Taxonomy.objects.filter(genus__contains=starts_with, common_name='Isolate')[:2000]
 	else:
 		isolate_taxonomy_list = None
 	context_dict = checkbox_session_variable_check(request)
@@ -736,10 +736,10 @@ def suggest_isolate_disease(request):
 		if request.session.get('checkbox_isolate_taxonomy', None):
 			checkbox_isolate_taxonomy = request.session.get('checkbox_isolate_taxonomy_id')
 			for taxonomy_id in checkbox_isolate_taxonomy:
-				disease = Isolate.objects.filter(disease_info__common_name__contains=starts_with, passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()[:1000]
+				disease = Isolate.objects.filter(disease_info__common_name__contains=starts_with, passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()[:2000]
 				isolate_disease_list = list(chain(disease, isolate_disease_list))
 		else:
-			isolate_disease_list = DiseaseInfo.objects.filter(common_name__contains=starts_with)[:1000]
+			isolate_disease_list = DiseaseInfo.objects.filter(common_name__contains=starts_with)[:2000]
 	else:
 		isolate_disease_list = None
 	context_dict = checkbox_session_variable_check(request)
@@ -934,7 +934,7 @@ def suggest_row_experiment(request):
 	else:
 		starts_with = request.POST['suggestion']
 	if starts_with:
-		row_experiment_list = ObsTracker.objects.filter(obs_entity_type='row', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
+		row_experiment_list = ObsTracker.objects.filter(obs_entity_type='row', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
 	else:
 		row_experiment_list = None
 	context_dict = checkbox_session_variable_check(request)
@@ -974,7 +974,7 @@ def checkbox_row_data_clear(request):
 def show_all_row_experiment(request):
 	context = RequestContext(request)
 	context_dict = {}
-	row_experiment_list = ObsTracker.objects.filter(obs_entity_type='row').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
+	row_experiment_list = ObsTracker.objects.filter(obs_entity_type='row').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['row_experiment_list'] = row_experiment_list
 	return render_to_response('lab/row_experiment_list.html', context_dict, context)
@@ -997,7 +997,7 @@ def sort_samples_data(request):
 			samples = ObsTracker.objects.filter(obs_entity_type='sample', experiment__id=samples_experiment)
 			samples_data = list(chain(samples, samples_data))
 	else:
-		samples_data = ObsTracker.objects.filter(obs_entity_type='sample')[:5000]
+		samples_data = ObsTracker.objects.filter(obs_entity_type='sample')[:2000]
 	return samples_data
 
 @login_required
@@ -1018,7 +1018,7 @@ def sort_tissue_data(request):
 			tissues = ObsTracker.objects.filter(obs_entity_type='tissue', experiment__id=tissue_experiment)
 			tissue_data = list(chain(tissues, tissue_data))
 	else:
-		tissue_data = ObsTracker.objects.filter(obs_entity_type='tissue')[:5000]
+		tissue_data = ObsTracker.objects.filter(obs_entity_type='tissue')[:2000]
 	return tissue_data
 
 @login_required
@@ -1042,7 +1042,7 @@ def suggest_tissue_experiment(request):
 	else:
 		starts_with = request.POST['suggestion']
 	if starts_with:
-		tissue_experiment_list = ObsTracker.objects.filter(obs_entity_type='tissue', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
+		tissue_experiment_list = ObsTracker.objects.filter(obs_entity_type='tissue', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
 	else:
 		tissue_experiment_list = None
 	context_dict = checkbox_session_variable_check(request)
@@ -1080,7 +1080,7 @@ def checkbox_tissue_data_clear(request):
 def show_all_tissue_experiment(request):
 	context = RequestContext(request)
 	context_dict = {}
-	tissue_experiment_list = ObsTracker.objects.filter(obs_entity_type='tissue').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
+	tissue_experiment_list = ObsTracker.objects.filter(obs_entity_type='tissue').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['tissue_experiment_list'] = tissue_experiment_list
 	return render_to_response('lab/tissue_experiment_list.html', context_dict, context)
@@ -1103,7 +1103,7 @@ def sort_plate_data(request):
 			plates = ObsTracker.objects.filter(obs_entity_type='plate', experiment__id=plate_experiment)
 			plate_data = list(chain(plates, plate_data))
 	else:
-		plate_data = ObsTracker.objects.filter(obs_entity_type='plate')[:5000]
+		plate_data = ObsTracker.objects.filter(obs_entity_type='plate')[:2000]
 	return plate_data
 
 @login_required
@@ -1127,7 +1127,7 @@ def suggest_plate_experiment(request):
 	else:
 		starts_with = request.POST['suggestion']
 	if starts_with:
-		plate_experiment_list = ObsTracker.objects.filter(obs_entity_type='plate', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
+		plate_experiment_list = ObsTracker.objects.filter(obs_entity_type='plate', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
 	else:
 		plate_experiment_list = None
 	context_dict = checkbox_session_variable_check(request)
@@ -1165,7 +1165,7 @@ def checkbox_plate_data_clear(request):
 def show_all_plate_experiment(request):
 	context = RequestContext(request)
 	context_dict = {}
-	plate_experiment_list = ObsTracker.objects.filter(obs_entity_type='plate').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
+	plate_experiment_list = ObsTracker.objects.filter(obs_entity_type='plate').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['plate_experiment_list'] = plate_experiment_list
 	return render_to_response('lab/plate_experiment_list.html', context_dict, context)
@@ -1212,7 +1212,7 @@ def suggest_well_experiment(request):
 	else:
 		starts_with = request.POST['suggestion']
 	if starts_with:
-		well_experiment_list = ObsTracker.objects.filter(obs_entity_type='well', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
+		well_experiment_list = ObsTracker.objects.filter(obs_entity_type='well', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
 	else:
 		well_experiment_list = None
 	context_dict = checkbox_session_variable_check(request)
@@ -1250,7 +1250,7 @@ def checkbox_well_data_clear(request):
 def show_all_well_experiment(request):
 	context = RequestContext(request)
 	context_dict = {}
-	well_experiment_list = ObsTracker.objects.filter(obs_entity_type='well').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
+	well_experiment_list = ObsTracker.objects.filter(obs_entity_type='well').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['well_experiment_list'] = well_experiment_list
 	return render_to_response('lab/well_experiment_list.html', context_dict, context)
@@ -1273,7 +1273,7 @@ def sort_plant_data(request):
 			plants = ObsTracker.objects.filter(obs_entity_type='plant', experiment__id=plant_experiment)
 			plant_data = list(chain(plants, plant_data))
 	else:
-		plant_data = ObsTracker.objects.filter(obs_entity_type='plant')[:5000]
+		plant_data = ObsTracker.objects.filter(obs_entity_type='plant')[:2000]
 	return plant_data
 
 @login_required
@@ -1297,7 +1297,7 @@ def suggest_plant_experiment(request):
 	else:
 		starts_with = request.POST['suggestion']
 	if starts_with:
-		plant_experiment_list = ObsTracker.objects.filter(obs_entity_type='plant', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
+		plant_experiment_list = ObsTracker.objects.filter(obs_entity_type='plant', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
 	else:
 		plant_experiment_list = None
 	context_dict = checkbox_session_variable_check(request)
@@ -1335,7 +1335,7 @@ def checkbox_plant_data_clear(request):
 def show_all_plant_experiment(request):
 	context = RequestContext(request)
 	context_dict = {}
-	plant_experiment_list = ObsTracker.objects.filter(obs_entity_type='plant').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:1000]
+	plant_experiment_list = ObsTracker.objects.filter(obs_entity_type='plant').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['plant_experiment_list'] = plant_experiment_list
 	return render_to_response('lab/plant_experiment_list.html', context_dict, context)
@@ -1386,7 +1386,7 @@ def sort_measurement_data(request):
 			measurements = Measurement.objects.filter(obs_tracker__experiment__id=measurement_experiment)
 			measurement_data = list(chain(measurements, measurement_data))
 	else:
-		measurement_data = Measurement.objects.all()[:5000]
+		measurement_data = Measurement.objects.all()[:2000]
 	for data in measurement_data:
 		data = make_obs_tracker_info(data.obs_tracker)
 	return measurement_data
@@ -1412,7 +1412,7 @@ def suggest_measurement_experiment(request):
 	else:
 		starts_with = request.POST['suggestion']
 	if starts_with:
-		measurement_experiment_list = Measurement.objects.filter(obs_tracker__experiment__name__contains=starts_with).values('obs_tracker__experiment__name', 'obs_tracker__experiment__field__field_name', 'obs_tracker__experiment__field__id', 'obs_tracker__experiment__id').distinct()[:1000]
+		measurement_experiment_list = Measurement.objects.filter(obs_tracker__experiment__name__contains=starts_with).values('obs_tracker__experiment__name', 'obs_tracker__experiment__field__field_name', 'obs_tracker__experiment__field__id', 'obs_tracker__experiment__id').distinct()[:2000]
 	else:
 		measurement_experiment_list = None
 	context_dict = checkbox_session_variable_check(request)
@@ -1450,7 +1450,7 @@ def checkbox_measurement_data_clear(request):
 def show_all_measurement_experiment(request):
 	context = RequestContext(request)
 	context_dict = {}
-	measurement_experiment_list = Measurement.objects.all().values('obs_tracker__experiment__name', 'obs_tracker__experiment__field__field_name', 'obs_tracker__experiment__field__id', 'obs_tracker__experiment__id').distinct()[:1000]
+	measurement_experiment_list = Measurement.objects.all().values('obs_tracker__experiment__name', 'obs_tracker__experiment__field__field_name', 'obs_tracker__experiment__field__id', 'obs_tracker__experiment__id').distinct()[:2000]
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['measurement_experiment_list'] = measurement_experiment_list
 	return render_to_response('lab/measurement_experiment_list.html', context_dict, context)
@@ -2053,7 +2053,7 @@ def seed_id_search(request):
 	else:
 		starts_with = request.POST['suggestion']
 	if starts_with:
-		seed_id_list = Stock.objects.filter(seed_id__contains=starts_with)[:1000]
+		seed_id_list = Stock.objects.filter(seed_id__contains=starts_with)[:2000]
 	else:
 		seed_id_list = None
 	context_dict = checkbox_session_variable_check(request)
