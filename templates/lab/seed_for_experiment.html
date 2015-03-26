@@ -6,9 +6,7 @@
   <h1>Experiment: <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h1>
 </div>
 
-{% if collected_stock_data %}
-  <hr>
-  <h2>Seed Stocks Collected</h2><br/>
+  <h2>Seed Stocks Used</h2><br/>
 
   <form id="select_stocks_form" method="post" action="/lab/seed_inventory/select_stocks/">
     {% csrf_token %}
@@ -28,18 +26,18 @@
       </tr>
       </thead>
       <tbody>
-      {% for t in collected_stock_data %}
+      {% for row in stock_for_experiment %}
       <tr>
-        <td><input type="checkbox" name="checkbox_stock" value="{{ t.target_obs.stock.id }}"></td>
-        <td><a href='/lab/stock/{{t.target_obs.stock.id}}/'>{{ t.target_obs.stock.seed_id }}</a></td>
-        <td>{{ t.target_obs.stock.seed_name }}</td>
-        <td>{{ t.target_obs.stock.cross_type }}</td>
-        <td>{{ t.target_obs.stock.pedigree }}</td>
-        <td>{{ t.target_obs.stock.passport.taxonomy.population }}</td>
-        <td>{{ t.target_obs.stock.stock_status }}</td>
-        <td>{{ t.target_obs.stock.inoculated }}</td>
-        <td><a href='/lab/profile/{{ t.target_obs.stock.passport.collecting.user.username }}/'>{{ t.target_obs.stock.passport.collecting.user.username }}</a></td>
-        <td>{{ t.target_obs.stock.comments }}</td>
+        <td><input type="checkbox" name="checkbox_stock" value="{{ row.stock.id }}"></td>
+        <td><a href='/lab/stock/{{row.stock.id}}/'>{{ row.stock.seed_id }}</a></td>
+        <td>{{ row.stock.seed_name }}</td>
+        <td>{{ row.stock.cross_type }}</td>
+        <td>{{ row.stock.pedigree }}</td>
+        <td>{{ row.stock.passport.taxonomy.population }}</td>
+        <td>{{ row.stock.stock_status }}</td>
+        <td>{{ row.stock.inoculated }}</td>
+        <td><a href='/lab/profile/{{ row.stock.passport.collecting.user.username }}/'>{{ row.stock.passport.collecting.user.username }}</a></td>
+        <td>{{ row.stock.comments }}</td>
       </tr>
       {% endfor %}
       </tbody>
@@ -47,7 +45,5 @@
     <br/>
     <input class="btn btn-primary" type="submit" name="submit" value="Search Inventory for Selected Stocks"/>
   </form>
-
-{% endif %}
 
 {% endblock %}

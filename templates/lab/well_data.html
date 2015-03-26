@@ -1,0 +1,86 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Well Data{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Well Data</h1>
+</div>
+  <br />
+  <div class="container-fluid">
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <div class="row-fluid">
+        <div class="span3">
+          <ul class="nav nav-list">
+            <li class="nav-header">Select Experiments</li>
+            <form>
+              <label></label>
+              <li><input  class="search-query" type="text" name="well_experimentsuggestion" id="well_experimentsuggestion" placeholder="Type Experiment (e.g. 08PN)"/></li>
+            </form>
+          </ul>
+        </div>
+        <div class="span3 offset1">
+          <button class="btn btn-info" id="show_all_well_experiment" name="show_all_well_experiment" type="submit">Show All Experiments</button>
+        </div>
+        {% if checkbox_well_experiment %}
+        <div class="span2 offset3">
+          <button class="btn btn-warning" id="clear_well_experiment" name="clear_well_experiment" type="submit">Clear Experiments</button>
+        </div>
+        {% endif %}
+      </div>
+      <div id="well_experiment">
+        {% include 'lab/well_experiment_list.html' with well_experiment_list=well_experiment_list %}
+      </div>
+      {% if checkbox_well_experiment %}
+        <hr>
+        <h5>Selected Experiments</h5>
+        {% for exp in checkbox_row_experiment %}
+          <li>{{ exp.name }}</li>
+        {% endfor %}
+      {% endif %}
+    </div><br/>
+
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <h2>Well Data</h2><br/>
+        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+          <tr>
+            <th>Exp</th>
+            <th>Well ID</th>
+            <th>Well</th>
+            <th>Inventory</th>
+            <th>Tube Label</th>
+            <th>Comments</th>
+            <th>Plate ID</th>
+            <th>Row ID</th>
+            <th>Plant ID</th>
+            <th>Tissue ID</th>
+            <th>Seed ID</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for data in well_data %}
+          <tr>
+            <td><a href='/lab/experiment/{{data.experiment.name}}/'>{{data.experiment.name}}</a></td>
+            <td><a href='/lab/well/{{data.obs_well.id}}/'>{{data.obs_well.well_id}}</a></td>
+            <td>{{data.obs_well.well}}</td>
+            <td>{{data.obs_well.well_inventory}}</td>
+            <td>{{data.obs_well.tube_label}}</td>
+            <td>{{data.obs_well.comments}}</td>
+            <td><a href='/lab/plate/{{data.obs_plate.id}}/'>{{data.obs_plate.plate_id}}</a></td>
+            <td><a href='/lab/row/{{data.obs_row.id}}/'>{{data.obs_row.row_id}}</a></td>
+            <td><a href='/lab/plant/{{data.obs_plant.id}}/'>{{data.obs_plant.plant_id}}</a></td>
+            <td><a href='/lab/tissue/{{data.obs_tissue.id}}/'>{{data.obs_tissue.tissue_id}}</a></td>
+            <td><a href='/lab/stock/{{data.stock.id}}/'>{{data.stock.seed_id}}</a></td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <br/>
+      <form action='/lab/download/data/well/'>
+        <input class="btn btn-primary" type="submit" name="submit" value="Download Data"/>
+      </form>
+    </div><br/><br/>
+  </div>
+
+
+{% endblock %}

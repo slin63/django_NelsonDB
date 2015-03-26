@@ -41,8 +41,6 @@
 
     <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
       <h2>Row Data</h2><br/>
-      <form id="select_stocks_form" method="post" action="/lab/download/rows/">
-        {% csrf_token %}
         <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
           <tr>
@@ -64,25 +62,26 @@
           <tbody>
           {% for data in row_data %}
           <tr>
-            <td><a href='/lab/experiment/{{data.obs_selector.experiment.name}}/'>{{data.obs_selector.experiment.name}}</a></td>
-            <td><a href='/lab/row/{{data.id}}/'>{{data.row_id}}</a></td>
-            <td>{{data.row_name}}</td>
+            <td><a href='/lab/experiment/{{data.experiment.name}}/'>{{data.experiment.name}}</a></td>
+            <td><a href='/lab/row/{{data.obs_row.id}}/'>{{data.obs_row.row_id}}</a></td>
+            <td>{{data.obs_row.row_name}}</td>
             <td><a href='/lab/field/{{data.field.id}}/'>{{data.field.field_name}}</a></td>
             <td><a href='/lab/stock/{{data.stock.id}}/'>{{data.stock.seed_id}}</a></td>
-            <td>{{data.range_num}}</td>
-            <td>{{data.plot}}</td>
-            <td>{{data.block}}</td>
-            <td>{{data.rep}}</td>
-            <td>{{data.kernel_num}}</td>
-            <td>{{data.planting_date}}</td>
-            <td>{{data.harvest_date}}</td>
-            <td>{{data.comments}}</td>
+            <td>{{data.obs_row.range_num}}</td>
+            <td>{{data.obs_row.plot}}</td>
+            <td>{{data.obs_row.block}}</td>
+            <td>{{data.obs_row.rep}}</td>
+            <td>{{data.obs_row.kernel_num}}</td>
+            <td>{{data.obs_row.planting_date}}</td>
+            <td>{{data.obs_row.harvest_date}}</td>
+            <td>{{data.obs_row.comments}}</td>
           </tr>
           {% endfor %}
           </tbody>
         </table>
         <br/>
-        <input class="btn btn-primary" type="submit" name="submit" value="Export Data"/>
+      <form action='/lab/download/data/row/'>
+        <input class="btn btn-primary" type="submit" name="submit" value="Download Data"/>
       </form>
     </div><br/><br/>
   </div>
