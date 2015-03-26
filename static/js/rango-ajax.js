@@ -217,6 +217,32 @@ $('#show_all_plate_experiment').click(function(){
 	});
 });
 
+$('#well_experimentsuggestion').keyup(function(){
+	var query;
+	query = $(this).val();
+	$.get('/lab/data/well/suggest_well_experiment/', {suggestion: query}, function(data){
+		$('#well_experiment').html(data);
+		$('#selected_well_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
+$('#show_all_well_experiment').click(function(){
+	$.get('/lab/data/well/show_all_experiment/', {}, function(data){
+		$('#well_experiment').html(data);
+		$('#selected_well_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
 $('#measurement_experimentsuggestion').keyup(function(){
 	var query;
 	query = $(this).val();
@@ -269,6 +295,12 @@ $('#clear_tissue_experiment').click(function(){
 
 $('#clear_plate_experiment').click(function(){
 	$.get('/lab/data/plate/checkbox_clear/', {}, function(data){
+		$('body').html(data);
+	});
+});
+
+$('#clear_well_experiment').click(function(){
+	$.get('/lab/data/well/checkbox_clear/', {}, function(data){
 		$('body').html(data);
 	});
 });
