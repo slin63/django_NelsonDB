@@ -1,0 +1,53 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Tissue Data{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Tissue Data</h1>
+</div>
+  <br />
+  <div class="container-fluid">
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      {% if experiment_name %}
+      <h2>Tissue Data from <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h2><br/>
+        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+          <tr>
+            <th>Tissue ID</th>
+            <th>Tissue Type</th>
+            <th>Tissue Name</th>
+            <th>Date Ground</th>
+            <th>Comments</th>
+            <th>Plate ID</th>
+            <th>Row ID</th>
+            <th>Plant ID</th>
+            <th>Seed ID</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for data in tissue_data %}
+          <tr>
+            <td><a href='/lab/tissue/{{data.obs_tissue.id}}/'>{{data.obs_tissue.tissue_id}}</a></td>
+            <td>{{data.obs_tissue.tissue_type}}</td>
+            <td>{{data.obs_tissue.tissue_name}}</td>
+            <td>{{data.obs_tissue.date_ground}}</td>
+            <td>{{data.obs_tissue.comments}}</td>
+            <td><a href='/lab/plate/{{data.obs_plate.id}}/'>{{data.obs_plate.plate_id}}</a></td>
+            <td><a href='/lab/row/{{data.obs_row.id}}/'>{{data.obs_row.row_id}}</a></td>
+            <td><a href='/lab/plant/{{data.obs_plant.id}}/'>{{data.obs_plant.plant_id}}</a></td>
+            <td><a href='/lab/stock/{{data.stock.id}}/'>{{data.stock.seed_id}}</a></td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <br/>
+      <form action='/lab/download/tissue/{{experiment_name}}/'>
+        <input class="btn btn-primary" type="submit" name="submit" value="Download Data"/>
+      </form>
+      {% endif %}
+
+    </div><br/><br/>
+  </div>
+
+
+{% endblock %}

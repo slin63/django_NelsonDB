@@ -1029,7 +1029,7 @@ def download_tissue_data(request):
 	writer = csv.writer(response)
 	writer.writerow(['Exp ID', 'Tissue ID', 'Tissue Type', 'Tissue Name', 'Date Ground', 'Comments', 'Row ID', 'Plant ID', 'Plate ID', 'Seed ID'])
 	for row in tissue_data:
-		writer.writerow([row.experiment, row.obs_tissue, row.obs_tissue.tissue_type, row.obs_tissue.tissue_name, row.obs_tissue.date_ground, row.obs_tissue.comments, row.obs_row.row_id, row.obs_plant.plant_id, row.obs_plate.plate_id, row.stock.seed_id])
+		writer.writerow([row.experiment, row.obs_tissue.tissue_id, row.obs_tissue.tissue_type, row.obs_tissue.tissue_name, row.obs_tissue.date_ground, row.obs_tissue.comments, row.obs_row.row_id, row.obs_plant.plant_id, row.obs_plate.plate_id, row.stock.seed_id])
 	return response
 
 def suggest_tissue_experiment(request):
@@ -1084,6 +1084,34 @@ def show_all_tissue_experiment(request):
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['tissue_experiment_list'] = tissue_experiment_list
 	return render_to_response('lab/tissue_experiment_list.html', context_dict, context)
+
+def find_tissue_from_experiment(experiment_name):
+	try:
+		tissue_data = ObsTracker.objects.filter(obs_entity_type='tissue', experiment__name=experiment_name)
+	except ObsTracker.DoesNotExist:
+		tissue_data = None
+	return tissue_data
+
+@login_required
+def tissue_data_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	tissue_data = find_tissue_from_experiment(experiment_name)
+	context_dict['tissue_data'] = tissue_data
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/tissue_experiment_data.html', context_dict, context)
+
+@login_required
+def download_tissue_experiment(request, experiment_name):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="%s_tissues.csv"' % (experiment_name)
+	tissue_data = find_tissue_from_experiment(experiment_name)
+	writer = csv.writer(response)
+	writer.writerow(['Tissue ID', 'Tissue Type', 'Tissue Name', 'Date Ground', 'Comments', 'Row ID', 'Plant ID', 'Plate ID', 'Seed ID'])
+	for row in tissue_data:
+		writer.writerow([row.obs_tissue.tissue_id, row.obs_tissue.tissue_type, row.obs_tissue.tissue_name, row.obs_tissue.date_ground, row.obs_tissue.comments, row.obs_row.row_id, row.obs_plant.plant_id, row.obs_plate.plate_id, row.stock.seed_id])
+	return response
 
 @login_required
 def plate_data_browse(request):
@@ -1254,6 +1282,34 @@ def show_all_well_experiment(request):
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['well_experiment_list'] = well_experiment_list
 	return render_to_response('lab/well_experiment_list.html', context_dict, context)
+
+def find_well_from_experiment(experiment_name):
+	try:
+		well_data = ObsTracker.objects.filter(obs_entity_type='well', experiment__name=experiment_name)
+	except ObsTracker.DoesNotExist:
+		well_data = None
+	return well_data
+
+@login_required
+def well_data_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	well_data = find_well_from_experiment(experiment_name)
+	context_dict['well_data'] = well_data
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/well_experiment_data.html', context_dict, context)
+
+@login_required
+def download_well_experiment(request, experiment_name):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="%s_wells.csv"' % (experiment_name)
+	well_data = find_well_from_experiment(experiment_name)
+	writer = csv.writer(response)
+	writer.writerow(['Well ID', 'Well', 'Well Inventory', 'Tube Label', 'Comments', 'Plate ID', 'Row ID', 'Plant ID', 'Tissue ID', 'Seed ID'])
+	for row in well_data:
+		writer.writerow([row.obs_well.well_id, row.obs_well.well, row.obs_well.well_inventory, row.obs_well.tube_label, row.obs_well.comments, row.obs_plate.plate_id, row.obs_row.row_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.stock.seed_id])
+	return response
 
 @login_required
 def plant_data_browse(request):

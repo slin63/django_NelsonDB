@@ -209,7 +209,7 @@
 										<h3>Tissue Data</h3>
 										{% if tissue_data %}
 										<h5><a href='/lab/data/tissue/{{experiment.name}}/'>View</a></h5>
-										<h5><a href='/lab/download/data/tissue/{{experiment.name}}/'>Download</a></h5>
+										<h5><a href='/lab/download/tissue/{{experiment.name}}/'>Download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}
@@ -247,7 +247,7 @@
 										<h3>Well Data</h3>
 										{% if well_data %}
 										<h5><a href='/lab/data/well/{{experiment.name}}/'>View</a></h5>
-										<h5><a href='/lab/download/data/well/{{experiment.name}}/'>Download</a></h5>
+										<h5><a href='/lab/download/well/{{experiment.name}}/'>Download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}
