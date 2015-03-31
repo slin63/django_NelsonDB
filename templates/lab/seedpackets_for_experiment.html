@@ -6,18 +6,20 @@
   <h1>Experiment: <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h1>
 </div>
 
-{% if seed_packet_list %}
+{% if stockpackets %}
   <hr>
-  <h2>Seed Packets {{packet_type}} for <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h2><br/>
+  <h2>Seed Packets {{packet_type}} For <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h2><br/>
 
     <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
       <thead>
       <tr>
         <th>Seed ID</th>
+        <th>Seed Name</th>
         <th>Cross Type</th>
         <th>Pedigree</th>
         <th>Population</th>
         <th>Status</th>
+        <th>Inoculated</th>
         <th>Seed Comments</th>
         <th>Weight (g)</th>
         <th>Num Seeds</th>
@@ -26,13 +28,15 @@
       </tr>
       </thead>
       <tbody>
-      {% for row in seed_packet_list %}
+      {% for row in stockpackets %}
       <tr>
         <td><a href='/lab/stock/{{row.stock.id}}/'>{{ row.stock.seed_id }}</a></td>
+        <td>{{ row.stock.seed_name }}</td>
         <td>{{ row.stock.cross_type }}</td>
         <td>{{ row.stock.pedigree }}</td>
         <td>{{ row.stock.passport.taxonomy.population }}</td>
         <td>{{ row.stock.stock_status }}</td>
+        <td>{{ row.stock.inoculated }}</td>
         <td>{{ row.stock.comments }}</td>
         <td>{{ row.weight }}</td>
         <td>{{ row.num_seeds }}</td>
@@ -46,7 +50,7 @@
   </form>
 {% else %}
   <hr>
-  <h2>No Seed Packets Planted Inventoried For <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h2><br/>
+  <h2>No Seed Packets {{packet_type}} Inventoried For <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h2><br/>
 {% endif %}
 
 {% endblock %}

@@ -15,8 +15,34 @@
           <table id="query_builder_options_1" class="table table-striped table-bordered" cellspacing="0" width="50%">
             <thead>
               <tr>
+                <th>Observation Unit of Interest</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <select name='obs_entity_type'>
+                    <option value='row'>Row</option>
+                    <option value='plant'>Plant</option>
+                    <option value='well'>Well</option>
+                    <option value='tissue'>Tissue</option>
+                    <option value='plate'>Plate</option>
+                    <option value='dna'>DNA</option>
+                    <option value='culture'>Culture</option>
+                    <option value='microbe'>Microbe</option>
+                    <option value='env'>Environment</option>
+                    <option value='sample'>Samples</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table id="query_builder_options_2" class="table table-striped table-bordered" cellspacing="0" width="50%">
+            <thead>
+              <tr>
                 <th>Data Types</th>
-                <th>Select</th>
+                <th>Select Relevant</th>
               </tr>
             </thead>
             <tbody>
@@ -38,6 +64,7 @@
                 <td><input type="checkbox" name="checkbox_qbo" value="Treatment"></td>
               </tr>
                 -->
+
               <tr>
                 <td>Rows</a></td>
                 <td><input type="checkbox" name="checkbox_qbo" value="ObsRow"></td>
@@ -46,12 +73,24 @@
                 <td>Plants</a></td>
                 <td><input type="checkbox" name="checkbox_qbo" value="ObsPlant"></td>
               </tr>
-              <!--
               <tr>
-                <td>Samples</a></td>
-                <td><input type="checkbox" name="checkbox_qbo" value="ObsSample"></td>
+                <td>Tissues</a></td>
+                <td><input type="checkbox" name="checkbox_qbo" value="ObsTissue"></td>
               </tr>
               <tr>
+                <td>Wells</a></td>
+                <td><input type="checkbox" name="checkbox_qbo" value="ObsWell"></td>
+              </tr>
+              <tr>
+                <td>Plates</a></td>
+                <td><input type="checkbox" name="checkbox_qbo" value="ObsPlate"></td>
+              </tr>
+              <!--
+              <tr>
+              <td>Samples</a></td>
+              <td><input type="checkbox" name="checkbox_qbo" value="ObsSample"></td>
+                </tr>
+                <tr>
                 <td>Environments</a></td>
                 <td><input type="checkbox" name="checkbox_qbo" value="ObsEnv"></td>
               </tr>

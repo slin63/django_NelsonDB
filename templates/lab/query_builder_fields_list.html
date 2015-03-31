@@ -15,6 +15,7 @@
         <tbody>
           {% for opt in selected_options %}
             <input type="hidden" name="checkbox_qb_options" value={{opt}}>
+            <input type="hidden" name="obs_entity_type" value={{obs_entity_type}}>
           {% endfor %}
           {% for x,y,z,a in query_builder_fields_list %}
             <tr>

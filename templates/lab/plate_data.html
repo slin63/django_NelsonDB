@@ -1,0 +1,84 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Plate Data{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Plate Data</h1>
+</div>
+  <br />
+  <div class="container-fluid">
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <div class="row-fluid">
+        <div class="span3">
+          <ul class="nav nav-list">
+            <li class="nav-header">Select Experiments</li>
+            <form>
+              <label></label>
+              <li><input  class="search-query" type="text" name="plate_experimentsuggestion" id="plate_experimentsuggestion" placeholder="Type Experiment (e.g. 08PN)"/></li>
+            </form>
+          </ul>
+        </div>
+        <div class="span3 offset1">
+          <button class="btn btn-info" id="show_all_plate_experiment" name="show_all_plate_experiment" type="submit">Show All Experiments</button>
+        </div>
+        {% if checkbox_plate_experiment %}
+        <div class="span2 offset3">
+          <button class="btn btn-warning" id="clear_plate_experiment" name="clear_plate_experiment" type="submit">Clear Experiments</button>
+        </div>
+        {% endif %}
+      </div>
+      <div id="plate_experiment">
+        {% include 'lab/plate_experiment_list.html' with plate_experiment_list=plate_experiment_list %}
+      </div>
+      {% if checkbox_plate_experiment %}
+        <hr>
+        <h5>Selected Experiments</h5>
+        {% for exp in checkbox_row_experiment %}
+          <li>{{ exp.name }}</li>
+        {% endfor %}
+      {% endif %}
+    </div><br/>
+
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <h2>Plate Data</h2><br/>
+        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+          <tr>
+            <th>Exp</th>
+            <th>Plate ID</th>
+            <th>Plate Name</th>
+            <th>Location</th>
+            <th>Date Plated</th>
+            <th>Contents</th>
+            <th>Rep</th>
+            <th>Plate Type</th>
+            <th>Plate Status</th>
+            <th>Comments</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for data in plate_data %}
+          <tr>
+            <td><a href='/lab/experiment/{{data.experiment.name}}/'>{{data.experiment.name}}</a></td>
+            <td><a href='/lab/plate/{{data.obs_plate.id}}/'>{{data.obs_plate.plate_id}}</a></td>
+            <td>{{data.obs_plate.plate_name}}</td>
+            <td><a href='/lab/location/{{data.location.id}}/'>{{data.location}}</a></td>
+            <td>{{data.obs_plate.date}}</td>
+            <td>{{data.obs_plate.contents}}</td>
+            <td>{{data.obs_plate.rep}}</td>
+            <td>{{data.obs_plate.plate_type}}</td>
+            <td>{{data.obs_plate.plate_status}}</td>
+            <td>{{data.obs_plate.comments}}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <br/>
+      <form action='/lab/download/data/plate/'>
+        <input class="btn btn-primary" type="submit" name="submit" value="Download Data"/>
+      </form>
+    </div><br/><br/>
+  </div>
+
+
+{% endblock %}

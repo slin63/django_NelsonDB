@@ -12,9 +12,9 @@
       <tbody>
         {% for row in row_experiment_list %}
           <tr>
-            <td><input type="checkbox" name="checkbox_row_experiment" value="{{ row.obs_selector__experiment__id }}"></td>
-            <td><a href='/lab/experiment/{{ row.obs_selector__experiment__name }}/'>{{ row.obs_selector__experiment__name }}</a></td>
-            <td><a href='/lab/field/{{row.obs_selector__experiment__field__id}}/'>{{ row.obs_selector__experiment__field__field_name }}</a></td>
+            <td><input type="checkbox" name="checkbox_row_experiment" value="{{ row.experiment__id }}"></td>
+            <td><a href='/lab/experiment/{{ row.experiment__name }}/'>{{ row.experiment__name }}</a></td>
+            <td><a href='/lab/field/{{row.experiment__field__id}}/'>{{ row.experiment__field__field_name }}</a></td>
           </tr>
         {% endfor %}
       </tbody>

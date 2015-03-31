@@ -1,7 +1,7 @@
-{% if plant_experiment_list %}
-  <form id="select_plant_experiment_form" method="post" action="/lab/data/plant/select_plant_experiment/">
+{% if plate_experiment_list %}
+  <form id="select_plate_experiment_form" method="post" action="/lab/data/plate/select_plate_experiment/">
     {% csrf_token %}
-    <table id="selected_plant_experiment" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <table id="selected_plate_experiment" class="table table-striped table-bordered" cellspacing="0" width="100%">
       <thead>
       <tr>
         <th>Select</th>
@@ -10,9 +10,9 @@
       </tr>
       </thead>
       <tbody>
-        {% for row in plant_experiment_list %}
+        {% for row in plate_experiment_list %}
           <tr>
-            <td><input type="checkbox" name="checkbox_plant_experiment" value="{{ row.experiment__id }}"></td>
+            <td><input type="checkbox" name="checkbox_plate_experiment" value="{{ row.experiment__id }}"></td>
             <td><a href='/lab/experiment/{{ row.experiment__name }}/'>{{ row.experiment__name }}</a></td>
             <td><a href='/lab/field/{{row.experiment__field__id}}/'>{{ row.experiment__field__field_name }}</a></td>
           </tr>
