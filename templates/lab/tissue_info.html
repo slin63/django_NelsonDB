@@ -1,0 +1,65 @@
+{% extends 'lab/base.html' %}
+{% block title %}Tissue Info{% endblock %}
+{% block body_block %}
+
+{% if tissue_info %}
+  <div class="hero-unit">
+    <h1>Tissue Info: <a href='/lab/tissue/{{tissue_info.id}}/'>{{tissue_info.tissue_id}}</a></h1>
+  </div>
+
+  <h2>Tissue</h2>
+  <table id="single_tissue_info" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th>Tissue ID</th>
+        <th>Tissue Type</th>
+        <th>Tissue Name</th>
+        <th>Date Ground</th>
+        <th>Comments</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href='/lab/tissue/{{tissue_info.id}}/'>{{ tissue_info.tissue_id }}</a></td>
+        <td>{{ tissue_info.tissue_type }}</td>
+        <td>{{ tissue_info.tissue_name }}</td>
+        <td>{{ tissue_info.date_ground }}</td>
+        <td>{{ tissue_info.comments }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  {% if obs_tracker %}
+  <h2>Plate Used For</h2>
+  <table class="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th>Obs Type</th>
+        <th>Obs ID</th>
+        <th>Experiment</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in obs_tracker %}
+      <tr>
+        <td>{{ t.obs_entity_type }}</td>
+        <td><a href='{{ t.obs_id_url }}'>{{ t.obs_id }}</a></td>
+        <td><a href='/lab/experiment/{{t.experiment}}/'>{{ t.experiment }}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <hr>
+  <h2><small>Not Used In Any Data!</small></h2>
+  <hr>
+  {% endif %}
+
+{% else %}
+  <div class="hero-unit">
+    <h1>Tissue Info: <a href='/lab/'>Not Found!</a></h1>
+  </div>
+  <h2>No Tissue Info Found!</h2>
+{% endif %}
+
+{% endblock %}

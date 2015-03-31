@@ -401,6 +401,8 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_plate_experiment'] = request.session.get('checkbox_plate_experiment')
 	if request.session.get('checkbox_well_experiment', None):
 		context_dict['checkbox_well_experiment'] = request.session.get('checkbox_well_experiment')
+	if request.session.get('checkbox_dna_experiment', None):
+		context_dict['checkbox_dna_experiment'] = request.session.get('checkbox_dna_experiment')
 	if request.session.get('checkbox_culture_experiment', None):
 		context_dict['checkbox_culture_experiment'] = request.session.get('checkbox_culture_experiment')
 	if request.session.get('checkbox_measurement_experiment', None):
@@ -1568,6 +1570,119 @@ def download_culture_experiment(request, experiment_name):
 	return response
 
 @login_required
+def dna_data_browse(request):
+	context = RequestContext(request)
+	context_dict = {}
+	dna_data = sort_dna_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['dna_data'] = dna_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/dna_data.html', context_dict, context)
+
+def sort_dna_data(request):
+	dna_data = {}
+	if request.session.get('checkbox_dna_experiment_id_list', None):
+		checkbox_dna_experiment_id_list = request.session.get('checkbox_dna_experiment_id_list')
+		for dna_experiment in checkbox_dna_experiment_id_list:
+			dna = ObsTracker.objects.filter(obs_entity_type='dna', experiment__id=dna_experiment)
+			dna_data = list(chain(dna, dna_data))
+	else:
+		dna_data = ObsTracker.objects.filter(obs_entity_type='dna')[:2000]
+	return dna_data
+
+@login_required
+def download_dna_data(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="selected_experiment_wells.csv"'
+	dna_data = sort_dna_data(request)
+	writer = csv.writer(response)
+	writer.writerow(['Exp ID', 'DNA ID', 'Extraction Method', 'Date', 'Tube ID', 'Tube Type', 'Comments', 'Well ID', 'Plate ID', 'Plant ID', 'Tissue ID', 'Row ID', 'Seed ID', 'Username'])
+	for row in dna_data:
+		writer.writerow([row.experiment, row.obs_dna.dna_id, row.obs_dna.extraction_method, row.obs_dna.date, row.obs_dna.tube_id, row.obs_dna.tube_type, row.obs_dna.comments, row.obs_well.well_id, row.obs_plate.plate_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.obs_row.row_id, row.stock.seed_id, row.user])
+	return response
+
+def suggest_dna_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	dna_experiment_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with = request.GET['suggestion']
+	else:
+		starts_with = request.POST['suggestion']
+	if starts_with:
+		dna_experiment_list = ObsTracker.objects.filter(obs_entity_type='dna', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
+	else:
+		dna_experiment_list = None
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['dna_experiment_list'] = dna_experiment_list
+	return render_to_response('lab/dna_experiment_list.html', context_dict, context)
+
+def select_dna_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	dna_data = []
+	checkbox_dna_experiment_name_list = []
+	checkbox_dna_experiment_list = request.POST.getlist('checkbox_dna_experiment')
+	for experiment_id in checkbox_dna_experiment_list:
+		experiment_name = Experiment.objects.filter(id=experiment_id).values('name')
+		checkbox_dna_experiment_name_list = list(chain(experiment_name, checkbox_dna_experiment_name_list))
+	request.session['checkbox_dna_experiment'] = checkbox_dna_experiment_name_list
+	request.session['checkbox_dna_experiment_id_list'] = checkbox_dna_experiment_list
+	dna_data = sort_dna_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['dna_data'] = dna_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/dna_data.html', context_dict, context)
+
+def checkbox_dna_data_clear(request):
+	context = RequestContext(request)
+	context_dict = {}
+	del request.session['checkbox_dna_experiment']
+	del request.session['checkbox_dna_experiment_id_list']
+	dna_data = sort_dna_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['dna_data'] = dna_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/dna_data.html', context_dict, context)
+
+def show_all_dna_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	dna_experiment_list = ObsTracker.objects.filter(obs_entity_type='dna').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['dna_experiment_list'] = well_experiment_list
+	return render_to_response('lab/dna_experiment_list.html', context_dict, context)
+
+def find_dna_from_experiment(experiment_name):
+	try:
+		dna_data = ObsTracker.objects.filter(obs_entity_type='dna', experiment__name=experiment_name)
+	except ObsTracker.DoesNotExist:
+		dna_data = None
+	return dna_data
+
+@login_required
+def dna_data_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	dna_data = find_dna_from_experiment(experiment_name)
+	context_dict['dna_data'] = dna_data
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/dna_experiment_data.html', context_dict, context)
+
+@login_required
+def download_dna_experiment(request, experiment_name):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="%s_dna.csv"' % (experiment_name)
+	dna_data = find_dna_from_experiment(experiment_name)
+	writer = csv.writer(response)
+	writer.writerow(['DNA ID', 'Extraction Method', 'Date', 'Tube ID', 'Tube Type', 'Comments', 'Well ID', 'Plate ID', 'Plant ID', 'Tissue ID', 'Row ID', 'Seed ID', 'Username'])
+	for row in dna_data:
+		writer.writerow([row.obs_dna.dna_id, row.obs_dna.extraction_method, row.obs_dna.date, row.obs_dna.tube_id, row.obs_dna.tube_type, row.obs_dna.comments, row.obs_well.well_id, row.obs_plate.plate_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.obs_row.row_id, row.stock.seed_id, row.user])
+	return response
+
+@login_required
 def measurement_data_browse(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -1859,31 +1974,68 @@ def download_isolates_experiment(request, experiment_name):
 def make_obs_tracker_info(tracker):
 	obs_entity_type = tracker.obs_entity_type
 	if obs_entity_type == 'stock':
-		obs_tracker_id_info = [tracker.stock.seed_id, obs_entity_type, tracker.stock_id]
+		try:
+			obs_tracker_id_info = [tracker.stock.seed_id, obs_entity_type, tracker.stock_id]
+		except Stock.DoesNotExist:
+			obs_tracker_id_info = ['No Stock', obs_entity_type, 1]
 	if obs_entity_type == 'isolate':
-		obs_tracker_id_info = [tracker.isolate.isolate_id, obs_entity_type, tracker.isolate_id]
+		try:
+			obs_tracker_id_info = [tracker.isolate.isolate_id, obs_entity_type, tracker.isolate_id]
+		except Isolate.DoesNotExist:
+			obs_tracker_id_info = ['No Isolate', obs_entity_type, 1]
 	if obs_entity_type == 'row':
-		obs_tracker_id_info = [tracker.obs_row.row_id, obs_entity_type, tracker.obs_row_id]
+		try:
+			obs_tracker_id_info = [tracker.obs_row.row_id, obs_entity_type, tracker.obs_row_id]
+		except ObsRow.DoesNotExist:
+			obs_tracker_id_info = ['No Row', obs_entity_type, 1]
 	if obs_entity_type == 'plant':
-		obs_tracker_id_info = [tracker.obs_plant.plant_id, obs_entity_type, tracker.obs_plant_id]
+		try:
+			obs_tracker_id_info = [tracker.obs_plant.plant_id, obs_entity_type, tracker.obs_plant_id]
+		except ObsPlant.DoesNotExist:
+			obs_tracker_id_info = ['No Plant', obs_entity_type, 1]
 	if obs_entity_type == 'culture':
-		obs_tracker_id_info = [tracker.obs_culture.culture_id, obs_entity_type, tracker.obs_culture_id]
+		try:
+			obs_tracker_id_info = [tracker.obs_culture.culture_id, obs_entity_type, tracker.obs_culture_id]
+		except ObsCulture.DoesNotExist:
+			obs_tracker_id_info = ['No Culture', obs_entity_type, 1]
 	if obs_entity_type == 'dna':
-		obs_tracker_id_info = [tracker.obs_dna.dna_id, obs_entity_type, tracker.obs_dna_id]
+		try:
+			obs_tracker_id_info = [tracker.obs_dna.dna_id, obs_entity_type, tracker.obs_dna_id]
+		except ObsDNA.DoesNotExist:
+			obs_tracker_id_info = ['No DNA', obs_entity_type, 1]
 	if obs_entity_type == 'microbe':
-		obs_tracker_id_info = [tracker.obs_microbe.microbe_id, obs_entity_type, tracker.obs_microbe_id]
+		try:
+			obs_tracker_id_info = [tracker.obs_microbe.microbe_id, obs_entity_type, tracker.obs_microbe_id]
+		except ObsMicrobe.DoesNotExist:
+			obs_tracker_id_info = ['No Microbe', obs_entity_type, 1]
 	if obs_entity_type == 'plate':
-		obs_tracker_id_info = [tracker.obs_plate.plate_id, obs_entity_type, tracker.obs_plate_id]
+		try:
+			obs_tracker_id_info = [tracker.obs_plate.plate_id, obs_entity_type, tracker.obs_plate_id]
+		except ObsPlate.DoesNotExist:
+			obs_tracker_id_info = ['No Plate', obs_entity_type, 1]
 	if obs_entity_type == 'well':
-		obs_tracker_id_info = [tracker.obs_well.well_id, obs_entity_type, tracker.obs_well_id]
+		try:
+			obs_tracker_id_info = [tracker.obs_well.well_id, obs_entity_type, tracker.obs_well_id]
+		except ObsWell.DoesNotExist:
+			obs_tracker_id_info = ['No Well', obs_entity_type, 1]
 	if obs_entity_type == 'tissue':
-		obs_tracker_id_info = [tracker.obs_tissue.tissue_id, obs_entity_type, tracker.obs_tissue_id]
+		try:
+			obs_tracker_id_info = [tracker.obs_tissue.tissue_id, obs_entity_type, tracker.obs_tissue_id]
+		except ObsTissue.DoesNotExist:
+			obs_tracker_id_info = ['No Tissue', obs_entity_type, 1]
 	if obs_entity_type == 'culture':
-		obs_tracker_id_info = [tracker.obs_culture.microbe_id, obs_entity_type, tracker.obs_culture_id]
+		try:
+			obs_tracker_id_info = [tracker.obs_culture.culture_id, obs_entity_type, tracker.obs_culture_id]
+		except ObsCulture.DoesNotExist:
+			obs_tracker_id_info = ['No Culture', obs_entity_type, 1]
 	if obs_entity_type == 'sample':
-		obs_tracker_id_info = [tracker.obs_sample.sample_id, obs_entity_type, tracker.obs_sample_id]
+		try:
+			obs_tracker_id_info = [tracker.obs_sample.sample_id, obs_entity_type, tracker.obs_sample_id]
+		except ObsSample.DoesNotExist:
+			obs_tracker_id_info = ['No Stock', obs_entity_type, 1]
+
 	tracker.obs_id = obs_tracker_id_info[0]
-	tracker.obs_id_url = '/lab/%s/%d/' % (obs_tracker_id_info[1], obs_tracker_id_info[2])
+	tracker.obs_id_url = '/lab/%s/%s/' % (obs_tracker_id_info[1], obs_tracker_id_info[2])
 	return tracker
 
 def get_obs_tracker(obs_type, obs_id):
@@ -1931,6 +2083,81 @@ def single_row_info(request, obs_row_id):
 	context_dict['obs_tracker'] = obs_tracker
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/row_info.html', context_dict, context)
+
+@login_required
+def single_plant_info(request, obs_plant_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		plant_info = ObsPlant.objects.get(id=obs_plant_id)
+	except ObsPlant.DoesNotExist:
+		plant_info = None
+	if plant_info is not None:
+		obs_tracker = get_obs_tracker('obs_plant_id', obs_plant_id)
+	context_dict['plant_info'] = plant_info
+	context_dict['obs_tracker'] = obs_tracker
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/plant_info.html', context_dict, context)
+
+@login_required
+def single_plate_info(request, obs_plate_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		plate_info = ObsPlate.objects.get(id=obs_plate_id)
+	except ObsPlate.DoesNotExist:
+		plate_info = None
+	if plate_info is not None:
+		obs_tracker = get_obs_tracker('obs_plate_id', obs_plate_id)
+	context_dict['plate_info'] = plate_info
+	context_dict['obs_tracker'] = obs_tracker
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/plate_info.html', context_dict, context)
+
+@login_required
+def single_well_info(request, obs_well_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		well_info = ObsWell.objects.get(id=obs_well_id)
+	except ObsWell.DoesNotExist:
+		well_info = None
+	if well_info is not None:
+		obs_tracker = get_obs_tracker('obs_well_id', obs_well_id)
+	context_dict['well_info'] = well_info
+	context_dict['obs_tracker'] = obs_tracker
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/well_info.html', context_dict, context)
+
+@login_required
+def single_tissue_info(request, obs_tissue_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		tissue_info = ObsTissue.objects.get(id=obs_tissue_id)
+	except ObsTissue.DoesNotExist:
+		tissue_info = None
+	if tissue_info is not None:
+		obs_tracker = get_obs_tracker('obs_tissue_id', obs_tissue_id)
+	context_dict['tissue_info'] = tissue_info
+	context_dict['obs_tracker'] = obs_tracker
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/tissue_info.html', context_dict, context)
+
+@login_required
+def single_culture_info(request, obs_culture_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		culture_info = ObsCulture.objects.get(id=obs_culture_id)
+	except ObsCulture.DoesNotExist:
+		culture_info = None
+	if culture_info is not None:
+		obs_tracker = get_obs_tracker('obs_culture_id', obs_culture_id)
+	context_dict['culture_info'] = culture_info
+	context_dict['obs_tracker'] = obs_tracker
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/culture_info.html', context_dict, context)
 
 """
 @login_required
@@ -2313,6 +2540,12 @@ def query_builder_options(request):
 	if 'ObsWell' in selected_options:
 		well_fields_list = [('well_id', "<select name='qb_well_id_choice'><option value='' >None</option><option value='obs_well__well_id'>Ascending</option><option value='-obs_well__well_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_well_id" placeholder="Type a Well ID"/>', 'checkbox_qb_well'), ('well_well', "<select name='qb_well_well_choice'><option value=''>None</option><option value='obs_well__well'>A to Z</option><option value='-obs_well__well'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_well_well" placeholder="Type a Well"/>', 'checkbox_qb_well'), ('well_inventory', "<select name='qb_well_inventory_choice'><option value='' >None</option><option value='obs_well__well_inventory'>A to Z</option><option value='-obs_well__well_inventory'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_well_inventory" placeholder="Type a Well Inventory"/>', 'checkbox_qb_well'), ('well_tube_label', "<select name='qb_well_tube_label_choice'><option value='' >None</option><option value='obs_well__tube_label'>Ascending</option><option value='-obs_well__tube_label'>Descending</option></select>", '<input class="search-query" type="text" name="qb_well_tube_label" placeholder="Type Tube Label"/>', 'checkbox_qb_well'), ('well_comments', "<select name='qb_well_comments_choice'><option value='' >None</option><option value='obs_well__comments'>A to Z</option><option value='-obs_well__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_well_comments" placeholder="Type a Well Comment"/>', 'checkbox_qb_well')]
 		query_builder_fields_list = list(chain(well_fields_list, query_builder_fields_list))
+	if 'ObsDNA' in selected_options:
+		dna_fields_list = [('dna_id', "<select name='qb_dna_id_choice'><option value='' >None</option><option value='obs_dna__dna_id'>Ascending</option><option value='-obs_dna__dna_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_dna_id" placeholder="Type a DNA ID"/>', 'checkbox_qb_dna'), ('dna_extraction_method', "<select name='qb_dna_extraction_method_choice'><option value=''>None</option><option value='obs_dna__extraction_method'>A to Z</option><option value='-obs_dna__extraction_method'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_dna_extraction_method" placeholder="Type a DNA Extraction"/>', 'checkbox_qb_dna'), ('dna_date', "<select name='qb_dna_date_choice'><option value='' >None</option><option value='obs_dna__date'>A to Z</option><option value='-obs_dna__date'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_dna_date" placeholder="Type a DNA Date"/>', 'checkbox_qb_dna'), ('dna_tube_id', "<select name='qb_dna_tube_id_choice'><option value='' >None</option><option value='obs_dna__tube_id'>Ascending</option><option value='-obs_dna__tube_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_dna_tube_id" placeholder="Type DNA Tube ID"/>', 'checkbox_qb_dna'), ('dna_tube_type', "<select name='qb_dna_tube_type_choice'><option value='' >None</option><option value='obs_dna__tube_type'>Ascending</option><option value='-obs_dna__tube_type'>Descending</option></select>", '<input class="search-query" type="text" name="qb_dna_tube_type" placeholder="Type DNA Tube Type"/>', 'checkbox_qb_dna'), ('dna_comments', "<select name='qb_dna_comments_choice'><option value='' >None</option><option value='obs_dna__comments'>A to Z</option><option value='-obs_dna__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_dna_comments" placeholder="Type a DNA Comment"/>', 'checkbox_qb_dna')]
+		query_builder_fields_list = list(chain(dna_fields_list, query_builder_fields_list))
+	if 'ObsCulture' in selected_options:
+		culture_fields_list = [('culture_id', "<select name='qb_culture_id_choice'><option value='' >None</option><option value='obs_culture__culture_id'>Ascending</option><option value='-obs_culture__culture_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_culture_id" placeholder="Type a Culture ID"/>', 'checkbox_qb_culture'), ('culture_name', "<select name='qb_culture_name_choice'><option value=''>None</option><option value='obs_culture__culture_name'>A to Z</option><option value='-obs_culture__culture_name'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_culture_name" placeholder="Type a Culture Name"/>', 'checkbox_qb_culture'), ('culture_microbe_type', "<select name='qb_culture_microbe_type_choice'><option value='' >None</option><option value='obs_culture__microbe_type'>A to Z</option><option value='-obs_culture__microbe_type'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_culture_microbe_type" placeholder="Type a Culture Microbe Type"/>', 'checkbox_qb_culture'), ('culture_plating_cycle', "<select name='qb_culture_plating_cycle_choice'><option value='' >None</option><option value='obs_culture__plating_cycle'>Ascending</option><option value='-obs_culture__plating_cycle'>Descending</option></select>", '<input class="search-query" type="text" name="qb_culture_plating_cycle" placeholder="Type Culture Plating Cycle"/>', 'checkbox_qb_culture'), ('culture_dilution', "<select name='qb_culture_dilution_choice'><option value='' >None</option><option value='obs_culture__dilution'>Ascending</option><option value='-obs_culture__dilution'>Descending</option></select>", '<input class="search-query" type="text" name="qb_culture_dilution" placeholder="Type a Culture Dilution"/>', 'checkbox_qb_culture'), ('culture_dilution', "<select name='qb_culture_dilution_choice'><option value='' >None</option><option value='obs_culture__dilution'>Ascending</option><option value='-obs_culture__dilution'>Descending</option></select>", '<input class="search-query" type="text" name="qb_culture_dilution" placeholder="Type a Culture Dilution"/>', 'checkbox_qb_culture'), ('culture_dilution', "<select name='qb_culture_dilution_choice'><option value='' >None</option><option value='obs_culture__dilution'>Ascending</option><option value='-obs_culture__dilution'>Descending</option></select>", '<input class="search-query" type="text" name="qb_culture_dilution" placeholder="Type a Culture Dilution"/>', 'checkbox_qb_culture'), ('culture_dilution', "<select name='qb_culture_dilution_choice'><option value='' >None</option><option value='obs_culture__dilution'>Ascending</option><option value='-obs_culture__dilution'>Descending</option></select>", '<input class="search-query" type="text" name="qb_culture_dilution" placeholder="Type a Culture Dilution"/>', 'checkbox_qb_culture'), ('culture_image_filename', "<select name='qb_culture_image_filename_choice'><option value='' >None</option><option value='obs_culture__image_filename'>Ascending</option><option value='-obs_culture__image_filename'>Descending</option></select>", '<input class="search-query" type="text" name="qb_culture_image_filename" placeholder="Type a Culture Image File"/>', 'checkbox_qb_culture'), ('culture_comments', "<select name='qb_culture_comments_choice'><option value='' >None</option><option value='obs_culture__comments'>Ascending</option><option value='-obs_culture__comments'>Descending</option></select>", '<input class="search-query" type="text" name="qb_culture_comments" placeholder="Type a Culture Comment"/>', 'checkbox_qb_culture'), ('culture_medium_name', "<select name='qb_culture_medium_name_choice'><option value='' >None</option><option value='obs_culture__medium__media_name'>Ascending</option><option value='-obs_culture__medium__media_name'>Descending</option></select>", '<input class="search-query" type="text" name="qb_culture_medium_name" placeholder="Type a Culture Medium Name"/>', 'checkbox_qb_culture'), ('culture_medium_type', "<select name='qb_culture_medium_type_choice'><option value='' >None</option><option value='obs_culture__medium__media_type'>Ascending</option><option value='-obs_culture__medium__media_type'>Descending</option></select>", '<input class="search-query" type="text" name="qb_culture_medium_type" placeholder="Type a Culture Medium Type"/>', 'checkbox_qb_culture'), ('culture_medium_description', "<select name='qb_culture_medium_description_choice'><option value='' >None</option><option value='obs_culture__medium__media_description'>Ascending</option><option value='-obs_culture__medium__media_description'>Descending</option></select>", '<input class="search-query" type="text" name="qb_culture_medium_description" placeholder="Type a Culture Medium Description"/>', 'checkbox_qb_culture'), ('culture_medium_preparation', "<select name='qb_culture_medium_preparation_choice'><option value='' >None</option><option value='obs_culture__medium__media_preparation'>Ascending</option><option value='-obs_culture__medium__media_preparation'>Descending</option></select>", '<input class="search-query" type="text" name="qb_culture_medium_preparation" placeholder="Type a Culture Media Prep"/>', 'checkbox_qb_culture'), ('culture_medium_comments', "<select name='qb_culture_medium_comments_choice'><option value='' >None</option><option value='obs_culture__medium__comments'>Ascending</option><option value='-obs_culture__medium__comments'>Descending</option></select>", '<input class="search-query" type="text" name="qb_culture_medium_comments" placeholder="Type a Culture Medium Comment"/>', 'checkbox_qb_culture'), ('culture_medium_citation_type', "<select name='qb_culture_medium_citation_type_choice'><option value='' >None</option><option value='obs_culture__medium__citation__citation_type'>Ascending</option><option value='-obs_culture__medium__citation__citation_type'>Descending</option></select>", '<input class="search-query" type="text" name="qb_culture_medium_citation_type" placeholder="Type a Culture Medium Citation Type"/>', 'checkbox_qb_culture'), ('culture_medium_citation_title', "<select name='qb_culture_medium_citation_title_choice'><option value='' >None</option><option value='obs_culture__medium__citation__title'>A to Z</option><option value='-obs_culture__medium__citation__title'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_culture_medium_citation_title" placeholder="Type a Culture Medium Citation Title"/>', 'checkbox_qb_culture'), ('culture_medium_citation_url', "<select name='qb_culture_medium_citation_url_choice'><option value='' >None</option><option value='obs_culture__medium__citation__url'>A to Z</option><option value='-obs_culture__medium__citation__url'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_culture_medium_citation_url" placeholder="Type a Culture Medium Citation URL"/>', 'checkbox_qb_culture'), ('culture_medium_citation_pubmed', "<select name='qb_culture_medium_citation_pubmed_choice'><option value='' >None</option><option value='obs_culture__medium__citation__pubmed_id'>A to Z</option><option value='-obs_culture__medium__citation__pubmed_id>Z to A</option></select>", '<input class="search-query" type="text" name="qb_culture_medium_citation_pubmed" placeholder="Type a Culture Medium Citation Pubmed/>', 'checkbox_qb_culture'), ('culture_medium_citation_comments', "<select name='qb_culture_medium_citation_comments_choice'><option value='' >None</option><option value='obs_culture__medium__citation__comments'>A to Z</option><option value='-obs_culture__medium__citation__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_culture_medium_citation_comments" placeholder="Type a Culture Medium Citation Comment/>', 'checkbox_qb_culture')]
+		query_builder_fields_list = list(chain(dna_fields_list, query_builder_fields_list))
 
 	context_dict['selected_options'] = selected_options
 	context_dict['obs_entity_type'] = obs_entity_type
@@ -2387,6 +2620,18 @@ def query_builder_fields(request):
 		well_args = [('well_id', 'qb_well_id', 'qb_well_id_choice', 'obs_well__well_id__contains'), ('well_well', 'qb_well_well', 'qb_well_well_choice', 'obs_well__well__contains'), ('well_inventory', 'qb_well_inventory', 'qb_well_inventory_choice', 'obs_well__well_inventory__contains'), ('well_tube_label', 'qb_well_tube_label', 'qb_well_tube_label_choice', 'obs_well__tube_label__contains'), ('well_comments', 'qb_well_comments', 'qb_well_comments_choice', 'obs_well__comments__contains')]
 		obs_tracker_args.extend(well_args)
 
+	if request.POST.getlist('checkbox_qb_culture', False):
+		obs_tracker_fields = list(chain(obs_tracker_fields, request.POST.getlist('checkbox_qb_culture')))
+		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_culture')))
+		culture_args = [('culture_id', 'qb_culture_id', 'qb_culture_id_choice', 'obs_culture__culture_id__contains'), ('culture_name', 'qb_culture_name', 'qb_culture_name_choice', 'obs_culture__culture_name__contains'), ('culture_microbe_type', 'qb_culture_microbe_type', 'qb_culture_microbe_type_choice', 'obs_culture__microbe_type__contains'), ('culture_plating_cycle', 'qb_culture_plating_cycle', 'qb_culture_plating_cycle_choice', 'obs_well__plating_cycle__contains'), ('culture_dilution', 'qb_culture_dilution', 'qb_culture_dilution_choice', 'obs_culture__dilution__contains'), ('culture_image_filename', 'qb_culture_image_filename', 'qb_culture_image_filename_choice', 'obs_culture__image_filename__contains'), ('culture_comments', 'qb_culture_comments', 'qb_culture_comments_choice', 'obs_culture__comments__contains'), ('culture_medium_name', 'qb_culture_medium_name', 'qb_culture_medium_name_choice', 'obs_culture__medium__media_name__contains'), ('culture_medium_type', 'qb_culture_medium_type', 'qb_culture_medium_type_choice', 'obs_culture__medium__media_type__contains'), ('culture_medium_description', 'qb_culture_medium_description', 'qb_culture_medium_description_choice', 'obs_culture__medium__media_description__contains'), ('culture_medium_preparation', 'qb_culture_medium_preparation', 'qb_culture_medium_preparation_choice', 'obs_culture__medium__media_preparation__contains'), ('culture_medium_comments', 'qb_culture_medium_comments', 'qb_culture_medium_comments_choice', 'obs_culture__medium__comments__contains'), ('culture_medium_citation_type', 'qb_culture_medium_citation_type', 'qb_culture_medium_citation_type_choice', 'obs_culture__medium__citation__citation_type__contains'), ('culture_medium_citation_title', 'qb_culture_medium_citation_title', 'qb_culture_medium_citation_title', 'obs_culture__medium__citation__title__contains'), ('culture_medium_citation_url', 'qb_culture_medium_citation_url', 'qb_culture_medium_citation_url_choice', 'obs_culture__medium__citation__title__contains'), ('culture_medium_citation_url', 'qb_culture_medium_citation_url', 'qb_culture_medium_citation_url_choice', 'obs_culture__medium__citation__url__contains'), ('culture_medium_citation_pubmed', 'qb_culture_medium_citation_pubmed', 'qb_culture_medium_citation_pubmed_choice', 'obs_culture__medium__citation__pubmed_id__contains'), ('culture_medium_citation_comments', 'qb_culture_medium_citation_comments', 'qb_culture_medium_citation_comments_choice', 'obs_culture__medium__citation__comments__contains')]
+		obs_tracker_args.extend(culture_args)
+
+	if request.POST.getlist('checkbox_qb_dna', False):
+		obs_tracker_fields = list(chain(obs_tracker_fields, request.POST.getlist('checkbox_qb_dna')))
+		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_dna')))
+		dna_args = [('dna_id', 'qb_dna_id', 'qb_dna_id_choice', 'obs_dna__dna_id__contains'), ('dna_extraction_method', 'qb_dna_extraction_method', 'qb_dna_extraction_method_choice', 'obs_dna__extraction_method__contains'), ('dna_date', 'qb_dna_date', 'qb_dna_date_choice', 'obs_dna__date__contains'), ('dna_tube_id', 'qb_dna_tube_id', 'qb_dna_tube_id_choice', 'obs_dna__tube_id__contains'), ('dna_tube_type', 'qb_dna_tube_type', 'qb_dna_tube_type_choice', 'obs_dna__tube_type__contains'), ('dna_comments', 'qb_dna_comments_type', 'qb_dna_comments_choice', 'obs_dna__comments__contains')]
+		obs_tracker_args.extend(dna_args)
+
 	if request.POST.getlist('checkbox_qb_sample', False):
 		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_sample')))
 
@@ -2399,7 +2644,7 @@ def query_builder_fields(request):
 		stock_args = [('stock_seed_id', 'qb_stock_seed_id', 'qb_stock_seed_id_choice', 'stock__seed_id__contains'), ('stock_seed_name', 'qb_stock_seed_name', 'qb_stock_seed_name_choice', 'stock__seed_name__contains'), ('stock_cross_type', 'qb_stock_cross', 'qb_stock_cross_choice', 'stock__cross_type__contains'), ('stock_pedigree', 'qb_stock_pedigree', 'qb_stock_pedigree_choice', 'stock__pedigree__contains'), ('stock_status', 'qb_stock_status', 'qb_stock_status_choice', 'stock__stock_status__contains'), ('stock_date', 'qb_stock_date', 'qb_stock_date_choice', 'stock__stock_date__contains'), ('stock_inoculated', 'qb_stock_inoculated', '', 'stock__inoculated'), ('stock_comments', 'qb_stock_comments', 'qb_stock_comments_choice', 'stock__comments__contains'), ('stock_genus', 'qb_stock_genus', 'qb_stock_genus_choice', 'stock__passport__taxonomy__genus__contains'), ('stock_species', 'qb_stock_species', 'qb_stock_species_choice', 'stock__passport__taxonomy__species__contains'), ('stock_population', 'qb_stock_population', 'qb_stock_population_choice', 'stock__passport__taxonomy__population__contains'), ('stock_collection_date', 'qb_stock_collecting_date', 'qb_stock_collecting_date_choice', 'stock__passport__collecting__collection_date__contains'), ('stock_collection_method', 'qb_collecting_method', 'qb_collecting_method_choice', 'stock__passport__collecting__collection_method__contains'), ('stock_collection_comments', 'qb_stock_collecting_comments', 'qb_stock_collecting_comments_choice', 'stock__passport__collecting__comments__contains'), ('stock_source_organization', 'qb_stock_people_org', 'qb_stock_people_org_choice', 'stock__passport__people__organization__contains')]
 		obs_tracker_args.extend(stock_args)
 
-	model_field_mapper = {'measurement_time':'time_of_measurement', 'measurement_value': 'value', 'measurement_comments': 'comments', 'measurement_parameter': 'measurement_parameter__parameter', 'measurement_parameter_type': 'measurement_parameter__parameter_type', 'measurement_protocol': 'measurement_parameter__protocol', 'measurement_unit_of_measure': 'measurement_parameter__unit_of_measure', 'measurement_trait_id_buckler': 'measurement_parameter__trait_id_buckler', 'experiment_name': 'experiment__name', 'experiment_field_name': 'experiment__field__field_name', 'experiment_field_locality_city': 'experiment__field__locality__city', 'experiment_start_date': 'experiment__start_date', 'experiment_purpose': 'experiment__purpose', 'experiment_comments': 'experiment__comments', 'row_id': 'obs_row__row_id', 'row_name': 'obs_row__row_name', 'row_field_name': 'field__field_name', 'row_field_locality_city': 'field__locality__city', 'row_range_num': 'obs_row__range_num', 'row_plot': 'obs_row__plot', 'row_block': 'obs_row__block', 'row_rep': 'obs_row__rep', 'row_kernel_num': 'obs_row__kernel_num', 'row_planting_date': 'obs_row__planting_date', 'row_harvest_date': 'obs_row__harvest_date', 'row_comments': 'obs_row__comments', 'plant_id': 'obs_plant__plant_id', 'plant_num': 'obs_plant__plant_num', 'plant_comments': 'obs_plant__comments', 'stock_seed_id': 'stock__seed_id', 'stock_seed_name': 'stock__seed_name', 'stock_cross_type': 'stock__cross_type', 'stock_pedigree': 'stock__pedigree', 'stock_status': 'stock__stock_status', 'stock_date': 'stock__stock_date', 'stock_inoculated': 'stock__inoculated', 'stock_comments': 'stock__comments', 'stock_genus': 'stock__passport__taxonomy__genus', 'stock_species': 'stock__passport__taxonomy__species', 'stock_population': 'stock__passport__taxonomy__population', 'stock_collection_date': 'stock__passport__collecting__collection_date', 'stock_collection_method': 'stock__passport__collecting__collection_method', 'stock_collection_comments': 'stock__passport__collecting__comments', 'stock_source_organization': 'stock__passport__people__organization', 'tissue_id': 'obs_tissue__tissue_id', 'tissue_type': 'obs_tissue__tissue_type', 'tissue_name': 'obs_tissue__tissue_name', 'tissue_date_ground': 'obs_tissue__date_ground', 'tissue_comments': 'obs_tissue__comments', 'plate_id': 'obs_plate__plate_id', 'plate_name': 'obs_plate__plate_name', 'plate_date': 'obs_plate__date', 'plate_contents': 'obs_plate__contents', 'plate_rep': 'obs_plate__rep', 'plate_type': 'obs_plate__plate_type', 'plate_status': 'obs_plate__plate_status', 'plate_comments': 'obs_plate__comments', 'well_id': 'obs_well__well_id', 'well_well': 'obs_well__well', 'well_inventory': 'obs_well__well_inventory', 'well_tube_label': 'obs_well__tube_label', 'well_comments': 'obs_well__comments'}
+	model_field_mapper = {'measurement_time':'time_of_measurement', 'measurement_value': 'value', 'measurement_comments': 'comments', 'measurement_parameter': 'measurement_parameter__parameter', 'measurement_parameter_type': 'measurement_parameter__parameter_type', 'measurement_protocol': 'measurement_parameter__protocol', 'measurement_unit_of_measure': 'measurement_parameter__unit_of_measure', 'measurement_trait_id_buckler': 'measurement_parameter__trait_id_buckler', 'experiment_name': 'experiment__name', 'experiment_field_name': 'experiment__field__field_name', 'experiment_field_locality_city': 'experiment__field__locality__city', 'experiment_start_date': 'experiment__start_date', 'experiment_purpose': 'experiment__purpose', 'experiment_comments': 'experiment__comments', 'row_id': 'obs_row__row_id', 'row_name': 'obs_row__row_name', 'row_field_name': 'field__field_name', 'row_field_locality_city': 'field__locality__city', 'row_range_num': 'obs_row__range_num', 'row_plot': 'obs_row__plot', 'row_block': 'obs_row__block', 'row_rep': 'obs_row__rep', 'row_kernel_num': 'obs_row__kernel_num', 'row_planting_date': 'obs_row__planting_date', 'row_harvest_date': 'obs_row__harvest_date', 'row_comments': 'obs_row__comments', 'plant_id': 'obs_plant__plant_id', 'plant_num': 'obs_plant__plant_num', 'plant_comments': 'obs_plant__comments', 'stock_seed_id': 'stock__seed_id', 'stock_seed_name': 'stock__seed_name', 'stock_cross_type': 'stock__cross_type', 'stock_pedigree': 'stock__pedigree', 'stock_status': 'stock__stock_status', 'stock_date': 'stock__stock_date', 'stock_inoculated': 'stock__inoculated', 'stock_comments': 'stock__comments', 'stock_genus': 'stock__passport__taxonomy__genus', 'stock_species': 'stock__passport__taxonomy__species', 'stock_population': 'stock__passport__taxonomy__population', 'stock_collection_date': 'stock__passport__collecting__collection_date', 'stock_collection_method': 'stock__passport__collecting__collection_method', 'stock_collection_comments': 'stock__passport__collecting__comments', 'stock_source_organization': 'stock__passport__people__organization', 'tissue_id': 'obs_tissue__tissue_id', 'tissue_type': 'obs_tissue__tissue_type', 'tissue_name': 'obs_tissue__tissue_name', 'tissue_date_ground': 'obs_tissue__date_ground', 'tissue_comments': 'obs_tissue__comments', 'plate_id': 'obs_plate__plate_id', 'plate_name': 'obs_plate__plate_name', 'plate_date': 'obs_plate__date', 'plate_contents': 'obs_plate__contents', 'plate_rep': 'obs_plate__rep', 'plate_type': 'obs_plate__plate_type', 'plate_status': 'obs_plate__plate_status', 'plate_comments': 'obs_plate__comments', 'well_id': 'obs_well__well_id', 'well_well': 'obs_well__well', 'well_inventory': 'obs_well__well_inventory', 'well_tube_label': 'obs_well__tube_label', 'well_comments': 'obs_well__comments', 'culture_id': 'obs_culture__culture_id', 'culture_name': 'obs_culture__culture_name', 'culture_microbe_type': 'obs_culture__microbe_type', 'culture_plating_cycle': 'obs_culture__plating_cycle', 'culture_dilution': 'obs_culture__dilution', 'culture_image_filename': 'obs_culture__image_filename', 'culture_comments': 'obs_culture__comments', 'culture_medium_type': 'obs_culture__medium__media_type', 'culture_medium_name': 'obs_culture__medium__media_name', 'culture_medium_description': 'obs_culture__medium__media_description', 'culture_medium_preparation': 'obs_culture__medium__media_preparation', 'culture_medium_comments': 'obs_culture__medium__comments', 'culture_medium_citation_type': 'obs_culture__medium__citation__citation_type', 'culture_medium_citation_title': 'obs_culture__medium__citation__title', 'culture_medium_citation_url': 'obs_culture__medium__citation__url', 'culture_medium_citation_pubmed': 'obs_culture__medium__citation__pubmed_id', 'culture_medium_citation_comments': 'obs_culture__medium__citation__comments', 'dna_id': 'obs_dna__dna_id', 'dna_extraction_method': 'obs_dna__extraction_method', 'dna_date': 'obs_dna__date', 'dna_tube_id': 'obs_dna__tube_id', 'dna_tube_type': 'obs_dna__tube_type', 'dna_comments': 'obs_dna__comments'}
 
 	obs_tracker_model_fields = ['id']
 	for w,x,y,z in obs_tracker_args:

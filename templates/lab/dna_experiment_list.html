@@ -1,7 +1,7 @@
-{% if culture_experiment_list %}
-  <form id="select_culture_experiment_form" method="post" action="/lab/data/culture/select_culture_experiment/">
+{% if dna_experiment_list %}
+  <form id="select_dna_experiment_form" method="post" action="/lab/data/dna/select_dna_experiment/">
     {% csrf_token %}
-    <table id="selected_culture_experiment" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <table id="selected_dna_experiment" class="table table-striped table-bordered" cellspacing="0" width="100%">
       <thead>
       <tr>
         <th>Select</th>
@@ -10,9 +10,9 @@
       </tr>
       </thead>
       <tbody>
-        {% for row in culture_experiment_list %}
+        {% for row in dna_experiment_list %}
           <tr>
-            <td><input type="checkbox" name="checkbox_culture_experiment" value="{{ row.experiment__id }}"></td>
+            <td><input type="checkbox" name="checkbox_dna_experiment" value="{{ row.experiment__id }}"></td>
             <td><a href='/lab/experiment/{{ row.experiment__name }}/'>{{ row.experiment__name }}</a></td>
             <td><a href='/lab/field/{{row.experiment__field__id}}/'>{{ row.experiment__field__field_name }}</a></td>
           </tr>

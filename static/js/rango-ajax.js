@@ -217,6 +217,32 @@ $('#show_all_plant_experiment').click(function(){
 	});
 });
 
+$('#dna_experimentsuggestion').keyup(function(){
+	var query;
+	query = $(this).val();
+	$.get('/lab/data/dna/suggest_dna_experiment/', {suggestion: query}, function(data){
+		$('#dna_experiment').html(data);
+		$('#selected_dna_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
+$('#show_all_dna_experiment').click(function(){
+	$.get('/lab/data/dna/show_all_experiment/', {}, function(data){
+		$('#dna_experiment').html(data);
+		$('#selected_dna_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
 $('#plate_experimentsuggestion').keyup(function(){
 	var query;
 	query = $(this).val();
