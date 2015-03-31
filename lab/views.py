@@ -401,6 +401,8 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_plate_experiment'] = request.session.get('checkbox_plate_experiment')
 	if request.session.get('checkbox_well_experiment', None):
 		context_dict['checkbox_well_experiment'] = request.session.get('checkbox_well_experiment')
+	if request.session.get('checkbox_culture_experiment', None):
+		context_dict['checkbox_culture_experiment'] = request.session.get('checkbox_culture_experiment')
 	if request.session.get('checkbox_measurement_experiment', None):
 		context_dict['checkbox_measurement_experiment'] = request.session.get('checkbox_measurement_experiment')
 	return context_dict
@@ -1198,6 +1200,34 @@ def show_all_plate_experiment(request):
 	context_dict['plate_experiment_list'] = plate_experiment_list
 	return render_to_response('lab/plate_experiment_list.html', context_dict, context)
 
+def find_plate_from_experiment(experiment_name):
+	try:
+		plate_data = ObsTracker.objects.filter(obs_entity_type='plate', experiment__name=experiment_name)
+	except ObsTracker.DoesNotExist:
+		plate_data = None
+	return plate_data
+
+@login_required
+def plate_data_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	plate_data = find_plate_from_experiment(experiment_name)
+	context_dict['plate_data'] = plate_data
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/plate_experiment_data.html', context_dict, context)
+
+@login_required
+def download_plate_experiment(request, experiment_name):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="%s_plates.csv"' % (experiment_name)
+	plate_data = find_plate_from_experiment(experiment_name)
+	writer = csv.writer(response)
+	writer.writerow(['Plate ID', 'Plate Name', 'Date Plate', 'Contents', 'Rep', 'Plate Type', 'Plate Status', 'Plate Comments'])
+	for row in plate_data:
+		writer.writerow([row.obs_plate.plate_id, row.obs_plate.plate_name, row.obs_plate.date, row.obs_plate.contents, row.obs_plate.rep, row.obs_plate.plate_type, row.obs_plate.plate_status, row.obs_plate.comments])
+	return response
+
 @login_required
 def well_data_browse(request):
 	context = RequestContext(request)
@@ -1422,6 +1452,119 @@ def download_plant_experiment(request, experiment_name):
 	writer.writerow(['Plant ID', 'Plant Num', 'Row ID', 'Stock ID', 'Comments'])
 	for row in plant_data:
 		writer.writerow([row.obs_plant.plant_id, row.obs_plant.plant_num, row.obs_row.row_id, row.stock.seed_id, row.obs_plant.comments])
+	return response
+
+@login_required
+def culture_data_browse(request):
+	context = RequestContext(request)
+	context_dict = {}
+	culture_data = sort_culture_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['culture_data'] = culture_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/culture_data.html', context_dict, context)
+
+def sort_culture_data(request):
+	culture_data = {}
+	if request.session.get('checkbox_culture_experiment_id_list', None):
+		checkbox_culture_experiment_id_list = request.session.get('checkbox_culture_experiment_id_list')
+		for culture_experiment in checkbox_culture_experiment_id_list:
+			cultures = ObsTracker.objects.filter(obs_entity_type='culture', experiment__id=culture_experiment)
+			culture_data = list(chain(cultures, culture_data))
+	else:
+		culture_data = ObsTracker.objects.filter(obs_entity_type='culture')[:2000]
+	return culture_data
+
+@login_required
+def download_culture_data(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="selected_experiment_cultures.csv"'
+	culture_data = sort_culture_data(request)
+	writer = csv.writer(response)
+	writer.writerow(['Exp ID', 'Culture ID', 'Culture Name', 'Microbe Type', 'Plating Cycle', 'Dilution', 'Image', 'Comments', 'Medium ID', 'Tissue ID', 'Plant ID', 'Row ID', 'Seed ID', 'Username'])
+	for row in culture_data:
+		writer.writerow([row.experiment, row.obs_culture.culture_id, row.obs_culture.culture_name, row.obs_culture.microbe_type, row.obs_culture.plating_cycle, row.obs_culture.dilution, row.obs_culture.image_filename, row.obs_culture.comments, row.medium.medium_id, row.obs_tissue.tissue_id, row.obs_row.row_id, row.stock.seed_id, row.user])
+	return response
+
+def suggest_culture_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	culture_experiment_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with = request.GET['suggestion']
+	else:
+		starts_with = request.POST['suggestion']
+	if starts_with:
+		culture_experiment_list = ObsTracker.objects.filter(obs_entity_type='culture', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
+	else:
+		culture_experiment_list = None
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['culture_experiment_list'] = culture_experiment_list
+	return render_to_response('lab/culture_experiment_list.html', context_dict, context)
+
+def select_culture_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	culture_data = []
+	checkbox_culture_experiment_name_list = []
+	checkbox_culture_experiment_list = request.POST.getlist('checkbox_culture_experiment')
+	for experiment_id in checkbox_culture_experiment_list:
+		experiment_name = Experiment.objects.filter(id=experiment_id).values('name')
+		checkbox_culture_experiment_name_list = list(chain(experiment_name, checkbox_culture_experiment_name_list))
+	request.session['checkbox_culture_experiment'] = checkbox_culture_experiment_name_list
+	request.session['checkbox_culture_experiment_id_list'] = checkbox_culture_experiment_list
+	culture_data = sort_culture_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['culture_data'] = culture_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/culture_data.html', context_dict, context)
+
+def checkbox_culture_data_clear(request):
+	context = RequestContext(request)
+	context_dict = {}
+	del request.session['checkbox_culture_experiment']
+	del request.session['checkbox_culture_experiment_id_list']
+	culture_data = sort_culture_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['culture_data'] = culture_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/culture_data.html', context_dict, context)
+
+def show_all_culture_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	culture_experiment_list = ObsTracker.objects.filter(obs_entity_type='culture').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['culture_experiment_list'] = culture_experiment_list
+	return render_to_response('lab/culture_experiment_list.html', context_dict, context)
+
+def find_culture_from_experiment(experiment_name):
+	try:
+		culture_data = ObsTracker.objects.filter(obs_entity_type='culture', experiment__name=experiment_name)
+	except ObsTracker.DoesNotExist:
+		culture_data = None
+	return culture_data
+
+@login_required
+def culture_data_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	culture_data = find_culture_from_experiment(experiment_name)
+	context_dict['culture_data'] = culture_data
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/culture_experiment_data.html', context_dict, context)
+
+@login_required
+def download_culture_experiment(request, experiment_name):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="%s_cultures.csv"' % (experiment_name)
+	culture_data = find_culture_from_experiment(experiment_name)
+	writer = csv.writer(response)
+	writer.writerow(['Culture ID', 'Culture Name', 'Microbe Type', 'Plating Cycle', 'Dilution', 'Image', 'Comments', 'Medium ID', 'Tissue ID', 'Plant ID', 'Row ID', 'Seed ID', 'Username'])
+	for row in culture_data:
+		writer.writerow([row.obs_culture.culture_id, row.obs_culture.culture_name, row.obs_culture.microbe_type, row.obs_culture.plating_cycle, row.obs_culture.dilution, row.obs_culture.image_filename, row.obs_culture.comments, row.medium.medium_id, row.obs_tissue.tissue_id, row.obs_plant.plant_id, row.obs_row.row_id, row.stock.seed_id, row.user])
 	return response
 
 @login_required

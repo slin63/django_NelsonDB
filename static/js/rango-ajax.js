@@ -165,6 +165,32 @@ $('#show_all_tissue_experiment').click(function(){
 	});
 });
 
+$('#culture_experimentsuggestion').keyup(function(){
+	var query;
+	query = $(this).val();
+	$.get('/lab/data/culture/suggest_culture_experiment/', {suggestion: query}, function(data){
+		$('#culture_experiment').html(data);
+		$('#selected_culture_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
+$('#show_all_culture_experiment').click(function(){
+	$.get('/lab/data/culture/show_all_experiment/', {}, function(data){
+		$('#culture_experiment').html(data);
+		$('#selected_culture_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
 $('#plant_experimentsuggestion').keyup(function(){
 	var query;
 	query = $(this).val();

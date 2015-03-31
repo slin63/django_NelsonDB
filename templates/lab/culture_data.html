@@ -1,0 +1,92 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Culture Data{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Culture Data</h1>
+</div>
+  <br />
+  <div class="container-fluid">
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <div class="row-fluid">
+        <div class="span3">
+          <ul class="nav nav-list">
+            <li class="nav-header">Select Experiments</li>
+            <form>
+              <label></label>
+              <li><input  class="search-query" type="text" name="culture_experimentsuggestion" id="culture_experimentsuggestion" placeholder="Type Experiment (e.g. 08PN)"/></li>
+            </form>
+          </ul>
+        </div>
+        <div class="span3 offset1">
+          <button class="btn btn-info" id="show_all_culture_experiment" name="show_all_culture_experiment" type="submit">Show All Experiments</button>
+        </div>
+        {% if checkbox_culture_experiment %}
+        <div class="span2 offset3">
+          <button class="btn btn-warning" id="clear_culture_experiment" name="clear_culture_experiment" type="submit">Clear Experiments</button>
+        </div>
+        {% endif %}
+      </div>
+      <div id="culture_experiment">
+        {% include 'lab/culture_experiment_list.html' with culture_experiment_list=culture_experiment_list %}
+      </div>
+      {% if checkbox_culture_experiment %}
+        <hr>
+        <h5>Selected Experiments</h5>
+        {% for exp in checkbox_row_experiment %}
+          <li>{{ exp.name }}</li>
+        {% endfor %}
+      {% endif %}
+    </div><br/>
+
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <h2>Culture Data</h2><br/>
+        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+          <tr>
+            <th>Exp</th>
+            <th>Culture ID</th>
+            <th>Culture Name</th>
+            <th>Microbe Type</th>
+            <th>Plating Cycle</th>
+            <th>Dilution</th>
+            <th>Image</th>
+            <th>Comments</th>
+            <th>Medium ID</th>
+            <th>Tissue ID</th>
+            <th>Plant ID</th>
+            <th>Row ID</th>
+            <th>Seed ID</th>
+            <th>Username</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for data in culture_data %}
+          <tr>
+            <td><a href='/lab/experiment/{{data.experiment.name}}/'>{{data.experiment.name}}</a></td>
+            <td><a href='/lab/culture/{{data.obs_culture.id}}/'>{{data.obs_culture.culture_id}}</a></td>
+            <td>{{data.obs_culture.culture_name}}</td>
+            <td>{{data.obs_culture.microbe_type}}</td>
+            <td>{{data.obs_culture.plating_cycle}}</td>
+            <td>{{data.obs_culture.dilution}}</td>
+            <td>{{data.obs_culture.image_filename}}</td>
+            <td>{{data.obs_culture.comments}}</td>
+            <td><a href='/lab/medium/{{data.medium.id}}/'>{{data.medium.medium_id}}</a></td>
+            <td><a href='/lab/tissue/{{data.obs_tissue.id}}/'>{{data.obs_tissue.tissue_id}}</a></td>
+            <td><a href='/lab/plant/{{data.obs_plant.id}}/'>{{data.obs_plant.plant_id}}</a></td>
+            <td><a href='/lab/row/{{data.obs_row.id}}/'>{{data.obs_row.row_id}}</a></td>
+            <td><a href='/lab/stock/{{data.stock.id}}/'>{{data.stock.seed_id}}</a></td>
+            <td><a href='/lab/profile/{{data.user.username}}/'>{{data.user.username}}</a></td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <br/>
+      <form action='/lab/download/data/culture/'>
+        <input class="btn btn-primary" type="submit" name="submit" value="Download Data"/>
+      </form>
+    </div><br/><br/>
+  </div>
+
+
+{% endblock %}
