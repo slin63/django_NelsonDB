@@ -1,0 +1,22 @@
+{% extends "lab/base.html" %}
+
+{% block title %}Locality{% endblock %}
+
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Locality<h1>
+{% if locality_info %}
+  <br/>
+  <h2>City: {{ locality_info.city }}</h2>
+
+  <p>State: {{locality_info.state}}</p>
+  <p>Country: {{locality_info.country}}</p>
+  <p>Zipcode: {{locality_info.zipcode}}</p>
+
+{% else %}
+  <br/>
+  <h2>Locality Does Not Exist</h2>
+{% endif %}
+</div>
+
+{% endblock %}

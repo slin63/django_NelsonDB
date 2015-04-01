@@ -1,0 +1,30 @@
+{% extends "lab/base.html" %}
+
+{% block title %}Location{% endblock %}
+
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Location<h1>
+{% if location_info %}
+  <br/>
+  <h2>Location Name: {{ location_info.location_name }}</h2>
+
+  <p>Building Name: {{location_info.building_name}}</p>
+  <p>Room: {{location_info.room}}</p>
+  <p>Shelf: {{location_info.shelf}}</p>
+  <p>Column: {{location_info.column}}</p>
+  <p>Box Name: {{location_info.box_name}}</p>
+  <p>Comments: {{location_info.comments}}</p>
+  <p>Locality City: {{location_info.locality.city}}</p>
+  <p>Locality State: {{location_info.locality.state}}</p>
+  <p>Locality Country: {{location_info.locality.country}}</p>
+  <p>Locality Zipcode: {{location_info.locality.zipcode}}</p>
+
+
+{% else %}
+  <br/>
+  <h2>Location Does Not Exist</h2>
+{% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "lab/base.html" %}
+
+{% block title %}Taxonomy{% endblock %}
+
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Taxonomy<h1>
+{% if taxonomy_info %}
+  <br/>
+  <h2>Genus: {{ taxonomy_info.genus }}</h2>
+
+  <p>Species: {{taxonomy_info.species}}</p>
+  <p>Population: {{taxonomy_info.population}}</p>
+  <p>Common Name: {{taxonomy_info.common_name}}</p>
+  <p>Alias: {{taxonomy_info.alias}}</p>
+  <p>Race: {{taxonomy_info.race}}</p>
+  <p>Subtaxa: {{taxonomy_info.subtaxa}}</p>
+
+{% else %}
+  <br/>
+  <h2>Taxonomy Does Not Exist</h2>
+{% endif %}
+</div>
+
+{% endblock %}

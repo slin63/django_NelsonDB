@@ -1,0 +1,29 @@
+{% extends "lab/base.html" %}
+
+{% block title %}Medium{% endblock %}
+
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Medium<h1>
+{% if medium_info %}
+  <br/>
+  <h2>Name: {{ medium_info.media_name }}</h2>
+
+  <p>Type: {{medium_info.media_type}}</p>
+  <p>Description: {{medium_info.media_description}}</p>
+  <p>Preparation: {{medium_info.media_preparation}}</p>
+  <p>Comments: {{medium_info.comments}}</p>
+  <p>Citation Type: {{medium_info.citation.citation_type}}</p>
+  <p>Citation Title: {{medium_info.citation.title}}</p>
+  <p>Citation URL: {{medium_info.citation.url}}</p>
+  <p>Citation Pubmed ID: {{medium_info.citation.pubmed_id}}</p>
+  <p>Citation Comments: {{medium_info.citation.comments}}</p>
+
+
+{% else %}
+  <br/>
+  <h2>Medium Does Not Exist</h2>
+{% endif %}
+</div>
+
+{% endblock %}

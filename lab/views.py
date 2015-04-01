@@ -810,7 +810,7 @@ def select_isolates(request):
 	return render_to_response('lab/isolate.html', context_dict, context)
 
 @login_required
-def disease_info(request, disease_id):
+def single_disease_info(request, disease_id):
 	context = RequestContext(request)
 	context_dict = {}
 	try:
@@ -822,7 +822,7 @@ def disease_info(request, disease_id):
 	return render_to_response('lab/disease_info.html', context_dict, context)
 
 @login_required
-def field_info(request, field_id):
+def single_field_info(request, field_id):
 	context = RequestContext(request)
 	context_dict = {}
 	try:
@@ -834,7 +834,7 @@ def field_info(request, field_id):
 	return render_to_response('lab/field.html', context_dict, context)
 
 @login_required
-def measurement_parameter(request, parameter_id):
+def single_parameter_info(request, parameter_id):
 	context = RequestContext(request)
 	context_dict = {}
 	try:
@@ -844,6 +844,54 @@ def measurement_parameter(request, parameter_id):
 	context_dict['parameter_info'] = parameter_info
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/measurement_parameter.html', context_dict, context)
+
+@login_required
+def single_medium_info(request, medium_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		medium_info = Medium.objects.get(id=medium_id)
+	except MeasurementParameter.DoesNotExist:
+		medium_info = None
+	context_dict['medium_info'] = medium_info
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/medium.html', context_dict, context)
+
+@login_required
+def single_location_info(request, location_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		location_info = Location.objects.get(id=location_id)
+	except MeasurementParameter.DoesNotExist:
+		location_info = None
+	context_dict['location_info'] = location_info
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/location.html', context_dict, context)
+
+@login_required
+def single_locality_info(request, locality_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		locality_info = Locality.objects.get(id=locality_id)
+	except MeasurementParameter.DoesNotExist:
+		locality_info = None
+	context_dict['locality_info'] = locality_info
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/locality.html', context_dict, context)
+
+@login_required
+def single_taxonomy_info(request, taxonomy_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		taxonomy_info = Taxonomy.objects.get(id=taxonomy_id)
+	except MeasurementParameter.DoesNotExist:
+		taxonomy_info = None
+	context_dict['taxonomy_info'] = taxonomy_info
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/taxonomy.html', context_dict, context)
 
 @login_required
 def browse_medium_data(request):
