@@ -3,7 +3,7 @@ import csv
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsTracker, ObsTrackerSource, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue
+from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsTracker, ObsTrackerSource, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication
 from genetics.models import GWASExperimentSet
 from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm
 from django.contrib.auth import authenticate, login, logout
@@ -156,6 +156,7 @@ def error_prelim(request, error_message):
 	context_dict = {'errormessage': error_message}
 	return render_to_response('lab/error_prelim.html', context_dict, context)
 
+@login_required
 def register(request):
 	context = RequestContext(request)
 	registered = False
@@ -843,6 +844,85 @@ def measurement_parameter(request, parameter_id):
 	context_dict['parameter_info'] = parameter_info
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/measurement_parameter.html', context_dict, context)
+
+@login_required
+def browse_medium_data(request):
+	context = RequestContext(request)
+	context_dict = {}
+	medium_data = Medium.objects.all()
+	context_dict['medium_data'] = medium_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/medium_data.html', context_dict, context)
+
+@login_required
+def browse_parameter_data(request):
+	context = RequestContext(request)
+	context_dict = {}
+	parameter_data = MeasurementParameter.objects.all()
+	context_dict['parameter_data'] = parameter_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/parameter_data.html', context_dict, context)
+
+@login_required
+def browse_location_data(request):
+	context = RequestContext(request)
+	context_dict = {}
+	location_data = Location.objects.all().exclude(location_name='')
+	context_dict['location_data'] = location_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/location_data.html', context_dict, context)
+
+@login_required
+def browse_locality_data(request):
+	context = RequestContext(request)
+	context_dict = {}
+	locality_data = Locality.objects.all()
+	context_dict['locality_data'] = locality_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/locality_data.html', context_dict, context)
+
+@login_required
+def browse_field_data(request):
+	context = RequestContext(request)
+	context_dict = {}
+	field_data = Field.objects.all()
+	context_dict['field_data'] = field_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/field_data.html', context_dict, context)
+
+@login_required
+def browse_disease_info_data(request):
+	context = RequestContext(request)
+	context_dict = {}
+	disease_data = DiseaseInfo.objects.all()
+	context_dict['disease_data'] = disease_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/disease_data.html', context_dict, context)
+
+@login_required
+def browse_taxonomy_data(request):
+	context = RequestContext(request)
+	context_dict = {}
+	taxonomy_data = Taxonomy.objects.filter().exclude(genus='').exclude(genus=0)
+	context_dict['taxonomy_data'] = taxonomy_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/taxonomy_data.html', context_dict, context)
+
+@login_required
+def browse_publication_data(request):
+	context = RequestContext(request)
+	context_dict = {}
+	publication_data = Publication.objects.filter()
+	context_dict['publication_data'] = publication_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/publication_data.html', context_dict, context)
+
+@login_required
+def browse_downloads(request):
+	context = RequestContext(request)
+	context_dict = {}
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/downloads.html', context_dict, context)
 
 @login_required
 def new_experiment(request):

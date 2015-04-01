@@ -1,0 +1,48 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Medium Data{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Medium Data</h1>
+</div>
+
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <h2>Medium Data</h2><br/>
+        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+          <tr>
+            <th>Media Name</th>
+            <th>Media Type</th>
+            <th>Description</th>
+            <th>Preparation</th>
+            <th>Comments</th>
+            <th>Citation Type</th>
+            <th>Citation Title</th>
+            <th>Citation URL</th>
+            <th>Citation Pubmed ID</th>
+            <th>Citation Comments</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for data in medium_data %}
+          <tr>
+            <td><a href='/lab/medium/{{data.id}}/'>{{data.media_name}}</a></td>
+            <td>{{data.media_type}}</td>
+            <td>{{data.media_description}}</td>
+            <td>{{data.media_preparation}}</td>
+            <td>{{data.comments}}</td>
+            <td>{{data.citation.citation_type}}</td>
+            <td>{{data.citation.title}}</td>
+            <td>{{data.citation.url}}</td>
+            <td>{{data.citation.pubmed_id}}</td>
+            <td>{{data.citation.comments}}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        
+    </div><br/><br/>
+  </div>
+
+
+{% endblock %}

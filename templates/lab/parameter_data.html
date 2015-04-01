@@ -1,0 +1,38 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Measurement Parameter Data{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Measurement Parameter Data</h1>
+</div>
+
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <h2>Measurement Parameter Data</h2><br/>
+        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Parameter Type</th>
+            <th>Units</th>
+            <th>Protocol</th>
+            <th>Trait ID Buckler</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for data in parameter_data %}
+          <tr>
+            <td><a href='/lab/measurement_parameter/{{data.id}}/'>{{data.parameter}}</a></td>
+            <td>{{data.parameter_type}}</td>
+            <td>{{data.unit_of_measure}}</td>
+            <td>{{data.protocol}}</td>
+            <td>{{data.trait_id_buckler}}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+    </div><br/><br/>
+  </div>
+
+
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Location Data{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Location Data</h1>
+</div>
+
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <h2>Location Data</h2><br/>
+        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+          <tr>
+            <th>Location Name</th>
+            <th>Building Name</th>
+            <th>Room</th>
+            <th>Shelf</th>
+            <th>Column</th>
+            <th>Box Name</th>
+            <th>Comments</th>
+            <th>Locality City</th>
+            <th>Locality State</th>
+            <th>Locality Country</th>
+            <th>Locality Zipcode</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for data in location_data %}
+          <tr>
+            <td><a href='/lab/location/{{data.id}}/'>{{data.location_name}}</a></td>
+            <td>{{data.building_name}}</td>
+            <td>{{data.room}}</td>
+            <td>{{data.shelf}}</td>
+            <td>{{data.column}}</td>
+            <td>{{data.box_name}}</td>
+            <td>{{data.comments}}</td>
+            <td>{{data.locality.city}}</td>
+            <td>{{data.locality.state}}</td>
+            <td>{{data.locality.country}}</td>
+            <td>{{data.locality.zipcode}}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+    </div><br/><br/>
+  </div>
+
+
+{% endblock %}

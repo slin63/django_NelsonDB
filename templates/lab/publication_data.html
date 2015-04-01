@@ -1,0 +1,38 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Publication Data{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Publication Data</h1>
+</div>
+
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <h2>Publication Data</h2><br/>
+        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+          <tr>
+            <th>Publisher</th>
+            <th>Title of Paper</th>
+            <th>Date</th>
+            <th>Publication Info</th>
+            <th>Username</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for data in publication_data %}
+          <tr>
+            <td>{{data.publisher}}</td>
+            <td>{{data.name_of_paper}}</td>
+            <td>{{data.publish_date}}</td>
+            <td>{{data.publication_info}}</td>
+            <td><a href='/lab/profile/{{data.user}}/'>{{data.user}}</a></td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+    </div><br/><br/>
+  </div>
+
+
+{% endblock %}

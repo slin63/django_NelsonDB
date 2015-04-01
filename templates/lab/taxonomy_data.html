@@ -1,0 +1,42 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Taxonomy Data{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Taxonomy Data</h1>
+</div>
+
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <h2>Taxonomy Data</h2><br/>
+        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+          <tr>
+            <th>Genus</th>
+            <th>Species</th>
+            <th>Population</th>
+            <th>Common Name</th>
+            <th>Alias</th>
+            <th>Race</th>
+            <th>Subtaxa</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for data in taxonomy_data %}
+          <tr>
+            <td><a href='/lab/taxonomy/{{data.id}}/'>{{data.genus}}</a></td>
+            <td>{{data.species}}</td>
+            <td>{{data.population}}</td>
+            <td>{{data.common_name}}</td>
+            <td>{{data.alias}}</td>
+            <td>{{data.race}}</td>
+            <td>{{data.subtaxa}}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+    </div><br/><br/>
+  </div>
+
+
+{% endblock %}
