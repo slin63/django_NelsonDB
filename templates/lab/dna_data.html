@@ -52,9 +52,11 @@
             <th>Tube Type</th>
             <th>Comments</th>
             <th>Well ID</th>
+            <!--
             <th>Plate ID</th>
             <th>Row ID</th>
             <th>Plant ID</th>
+          -->
             <th>Tissue ID</th>
             <th>Seed ID</th>
             <th>Username</th>
@@ -71,9 +73,11 @@
             <td>{{data.obs_dna.tube_type}}</td>
             <td>{{data.obs_dna.comments}}</td>
             <td><a href='/lab/well/{{data.obs_well.id}}/'>{{data.obs_well.well_id}}</a></td>
+            <!--
             <td><a href='/lab/plate/{{data.obs_plate.id}}/'>{{data.obs_plate.plate_id}}</a></td>
             <td><a href='/lab/row/{{data.obs_row.id}}/'>{{data.obs_row.row_id}}</a></td>
             <td><a href='/lab/plant/{{data.obs_plant.id}}/'>{{data.obs_plant.plant_id}}</a></td>
+          -->
             <td><a href='/lab/tissue/{{data.obs_tissue.id}}/'>{{data.obs_tissue.tissue_id}}</a></td>
             <td><a href='/lab/stock/{{data.stock.id}}/'>{{data.stock.seed_id}}</a></td>
             <td><a href='/lab/profile/{{data.user}}/'>{{data.user}}</a></td>
