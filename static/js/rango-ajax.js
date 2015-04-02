@@ -357,6 +357,18 @@ $('#clear_well_experiment').click(function(){
 	});
 });
 
+$('#clear_culture_experiment').click(function(){
+	$.get('/lab/data/culture/checkbox_clear/', {}, function(data){
+		$('body').html(data);
+	});
+});
+
+$('#clear_dna_experiment').click(function(){
+	$.get('/lab/data/dna/checkbox_clear/', {}, function(data){
+		$('body').html(data);
+	});
+});
+
 $('#legacypedigreesuggestion').keyup(function(){
 				var query;
 				query = $(this).val();
