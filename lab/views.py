@@ -2287,6 +2287,21 @@ def single_culture_info(request, obs_culture_id):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/culture_info.html', context_dict, context)
 
+@login_required
+def single_dna_info(request, obs_dna_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		dna_info = ObsDNA.objects.get(id=obs_dna_id)
+	except ObsDNA.DoesNotExist:
+		dna_info = None
+	if dna_info is not None:
+		obs_tracker = get_obs_tracker('obs_dna_id', obs_dna_id)
+	context_dict['dna_info'] = dna_info
+	context_dict['obs_tracker'] = obs_tracker
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/dna_info.html', context_dict, context)
+
 """
 @login_required
 def log_data_online(request, data_type):
