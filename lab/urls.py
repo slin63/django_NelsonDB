@@ -168,4 +168,6 @@ urlpatterns = patterns('',
     url(r'^query/options/$', views.query_builder_options, name='query_builder_options'),
     url(r'^query/fields/$', views.query_builder_fields, name='query_builder_fields'),
     url(r'^query/$', views.query_builder, name='query_builder'),
+
+    url(r'^mycotoxin/templates/$', views.mycotoxin_templates, name='mycotoxin_templates'),
     )

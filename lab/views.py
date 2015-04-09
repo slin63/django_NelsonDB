@@ -2630,6 +2630,14 @@ def seed_id_search(request):
 	return render_to_response('lab/seed_id_search_list.html', context_dict, context)
 
 @login_required
+def mycotoxin_templates(request):
+	context = RequestContext(request)
+	context_dict = {}
+
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/mycotoxin_templates.html', context_dict, context)
+
+@login_required
 def query_builder(request):
 	context = RequestContext(request)
 	context_dict = {}
