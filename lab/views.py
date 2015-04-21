@@ -3,7 +3,7 @@ import csv
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsTracker, ObsTrackerSource, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication
+from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation
 from genetics.models import GWASExperimentSet
 from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm
 from django.contrib.auth import authenticate, login, logout
@@ -116,6 +116,12 @@ def about_help(request):
 	context_dict = {}
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/help.html', context_dict, context)
+
+def about_odk(request):
+	context = RequestContext(request)
+	context_dict = {}
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/odk.html', context_dict, context)
 
 def about_collaborators(request):
 	context = RequestContext(request)
@@ -2106,61 +2112,73 @@ def make_obs_tracker_info(tracker):
 			obs_tracker_id_info = [tracker.stock.seed_id, obs_entity_type, tracker.stock_id]
 		except Stock.DoesNotExist:
 			obs_tracker_id_info = ['No Stock', obs_entity_type, 1]
-	if obs_entity_type == 'isolate':
+	elif obs_entity_type == 'isolate':
 		try:
 			obs_tracker_id_info = [tracker.isolate.isolate_id, obs_entity_type, tracker.isolate_id]
 		except Isolate.DoesNotExist:
 			obs_tracker_id_info = ['No Isolate', obs_entity_type, 1]
-	if obs_entity_type == 'row':
+	elif obs_entity_type == 'row':
 		try:
 			obs_tracker_id_info = [tracker.obs_row.row_id, obs_entity_type, tracker.obs_row_id]
 		except ObsRow.DoesNotExist:
 			obs_tracker_id_info = ['No Row', obs_entity_type, 1]
-	if obs_entity_type == 'plant':
+	elif obs_entity_type == 'plant':
 		try:
 			obs_tracker_id_info = [tracker.obs_plant.plant_id, obs_entity_type, tracker.obs_plant_id]
 		except ObsPlant.DoesNotExist:
 			obs_tracker_id_info = ['No Plant', obs_entity_type, 1]
-	if obs_entity_type == 'culture':
+	elif obs_entity_type == 'culture':
 		try:
 			obs_tracker_id_info = [tracker.obs_culture.culture_id, obs_entity_type, tracker.obs_culture_id]
 		except ObsCulture.DoesNotExist:
 			obs_tracker_id_info = ['No Culture', obs_entity_type, 1]
-	if obs_entity_type == 'dna':
+	elif obs_entity_type == 'dna':
 		try:
 			obs_tracker_id_info = [tracker.obs_dna.dna_id, obs_entity_type, tracker.obs_dna_id]
 		except ObsDNA.DoesNotExist:
 			obs_tracker_id_info = ['No DNA', obs_entity_type, 1]
-	if obs_entity_type == 'microbe':
+	elif obs_entity_type == 'microbe':
 		try:
 			obs_tracker_id_info = [tracker.obs_microbe.microbe_id, obs_entity_type, tracker.obs_microbe_id]
 		except ObsMicrobe.DoesNotExist:
 			obs_tracker_id_info = ['No Microbe', obs_entity_type, 1]
-	if obs_entity_type == 'plate':
+	elif obs_entity_type == 'plate':
 		try:
 			obs_tracker_id_info = [tracker.obs_plate.plate_id, obs_entity_type, tracker.obs_plate_id]
 		except ObsPlate.DoesNotExist:
 			obs_tracker_id_info = ['No Plate', obs_entity_type, 1]
-	if obs_entity_type == 'well':
+	elif obs_entity_type == 'well':
 		try:
 			obs_tracker_id_info = [tracker.obs_well.well_id, obs_entity_type, tracker.obs_well_id]
 		except ObsWell.DoesNotExist:
 			obs_tracker_id_info = ['No Well', obs_entity_type, 1]
-	if obs_entity_type == 'tissue':
+	elif obs_entity_type == 'tissue':
 		try:
 			obs_tracker_id_info = [tracker.obs_tissue.tissue_id, obs_entity_type, tracker.obs_tissue_id]
 		except ObsTissue.DoesNotExist:
 			obs_tracker_id_info = ['No Tissue', obs_entity_type, 1]
-	if obs_entity_type == 'culture':
+	elif obs_entity_type == 'culture':
 		try:
 			obs_tracker_id_info = [tracker.obs_culture.culture_id, obs_entity_type, tracker.obs_culture_id]
 		except ObsCulture.DoesNotExist:
 			obs_tracker_id_info = ['No Culture', obs_entity_type, 1]
-	if obs_entity_type == 'sample':
+	elif obs_entity_type == 'sample':
 		try:
 			obs_tracker_id_info = [tracker.obs_sample.sample_id, obs_entity_type, tracker.obs_sample_id]
 		except ObsSample.DoesNotExist:
 			obs_tracker_id_info = ['No Stock', obs_entity_type, 1]
+	elif obs_entity_type == 'extract':
+		try:
+			obs_tracker_id_info = [tracker.obs_extract.extract_id, obs_entity_type, tracker.obs_extract_id]
+		except ObsExtract.DoesNotExist:
+			obs_tracker_id_info = ['No Extract', obs_entity_type, 1]
+	elif obs_entity_type == 'maize':
+		try:
+			obs_tracker_id_info = [tracker.maize_sample.maize_id, obs_entity_type, tracker.maize_sample_id]
+		except MaizeSample.DoesNotExist:
+			obs_tracker_id_info = ['No Maize Sample', obs_entity_type, 1]
+	else:
+		obs_tracker_id_info = ['None', 'No Type', 1]
 
 	tracker.obs_id = obs_tracker_id_info[0]
 	tracker.obs_id_url = '/lab/%s/%s/' % (obs_tracker_id_info[1], obs_tracker_id_info[2])
@@ -2226,6 +2244,51 @@ def single_plant_info(request, obs_plant_id):
 	context_dict['obs_tracker'] = obs_tracker
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/plant_info.html', context_dict, context)
+
+@login_required
+def single_maize_info(request, maize_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		maize_info = MaizeSample.objects.get(id=maize_id)
+	except MaizeSample.DoesNotExist:
+		maize_info = None
+	if maize_info is not None:
+		obs_tracker = get_obs_tracker('maize_sample_id', maize_id)
+	context_dict['maize_info'] = maize_info
+	context_dict['obs_tracker'] = obs_tracker
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/maize_info.html', context_dict, context)
+
+@login_required
+def single_sample_info(request, obs_sample_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		sample_info = ObsSample.objects.get(id=obs_sample_id)
+	except ObsSample.DoesNotExist:
+		sample_info = None
+	if sample_info is not None:
+		obs_tracker = get_obs_tracker('obs_sample_id', obs_sample_id)
+	context_dict['sample_info'] = sample_info
+	context_dict['obs_tracker'] = obs_tracker
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/sample_info.html', context_dict, context)
+
+@login_required
+def single_extract_info(request, obs_extract_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		extract_info = ObsExtract.objects.get(id=obs_extract_id)
+	except ObsExtract.DoesNotExist:
+		extract_info = None
+	if extract_info is not None:
+		obs_tracker = get_obs_tracker('obs_extract_id', obs_extract_id)
+	context_dict['extract_info'] = extract_info
+	context_dict['obs_tracker'] = obs_tracker
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/extract_info.html', context_dict, context)
 
 @login_required
 def single_plate_info(request, obs_plate_id):
@@ -2853,3 +2916,54 @@ def query_builder_fields(request):
 					value_write.append('N/A')
 			writer.writerow(value_write)
 		return response
+
+@login_required
+def maize_data_keyword_browse(request, keyword):
+	context = RequestContext(request)
+	context_dict = {}
+	if keyword == 'mycotoxin':
+		maize_data = ObsTracker.objects.filter(obs_entity_type='maize', experiment__name='15RK')
+	context_dict['maize_data'] = maize_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/maize_data.html', context_dict, context)
+
+@login_required
+def sample_data_keyword_browse(request, keyword):
+	context = RequestContext(request)
+	context_dict = {}
+	if keyword == 'mycotoxin':
+		samples_data = ObsTracker.objects.filter(obs_entity_type='sample', experiment__name='15RK')
+	context_dict['samples_data'] = samples_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/samples_data.html', context_dict, context)
+
+@login_required
+def separation_data_keyword_browse(request, keyword):
+	context = RequestContext(request)
+	context_dict = {}
+	if keyword == 'mycotoxin':
+		separation_data = Separation.objects.all()
+	context_dict['separation_data'] = separation_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/separation_data.html', context_dict, context)
+
+@login_required
+def extract_data_keyword_browse(request, keyword):
+	context = RequestContext(request)
+	context_dict = {}
+	if keyword == 'mycotoxin':
+		extract_data = ObsTracker.objects.filter(obs_entity_type='extract', experiment__name='15RK')
+	context_dict['extract_data'] = extract_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/extract_data.html', context_dict, context)
+
+@login_required
+def measurement_data_keyword_browse(request, keyword):
+	context = RequestContext(request)
+	context_dict = {}
+	measurement_data = Measurement.objects.filter(obs_tracker__experiment__name='15RK')
+	for m in measurement_data:
+		m = make_obs_tracker_info(m.obs_tracker)
+	context_dict['measurement_data'] = measurement_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/measurement_data.html', context_dict, context)

@@ -134,6 +134,17 @@ class ObsPlant(models.Model):
   def __unicode__(self):
     return self.plant_id
 
+class ObsSample(models.Model):
+	sample_id = models.CharField(max_length=200, unique=True)
+	sample_type = models.CharField(max_length=200, blank=True)
+	weight = models.CharField(max_length=200, blank=True)
+	kernel_num = models.CharField(max_length=200, blank=True)
+	photo = models.CharField(max_length=200, blank=True)
+	comments = models.CharField(max_length=1000, blank=True)
+
+	def __unicode__(self):
+		return self.sample_id
+
 class Separation(models.Model):
 	obs_sample = models.ForeignKey(ObsSample)
 	separation_type = models.CharField(max_length=200, blank=True)
@@ -150,17 +161,6 @@ class Separation(models.Model):
 
 	def __unicode__(self):
 		return self.separation_type
-
-class ObsSample(models.Model):
-	sample_id = models.CharField(max_length=200, unique=True)
-	sample_type = models.CharField(max_length=200, blank=True)
-	weight = models.CharField(max_length=200, blank=True)
-	kernel_num = models.CharField(max_length=200, blank=True)
-	photo = models.CharField(max_length=200, blank=True)
-	comments = models.CharField(max_length=1000, blank=True)
-
-	def __unicode__(self):
-		return self.sample_id
 
 class ObsExtract(models.Model):
 	extract_id = models.CharField(max_length=200, unique=True)

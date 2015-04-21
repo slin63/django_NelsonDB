@@ -1,0 +1,75 @@
+{% extends 'lab/base.html' %}
+{% block title %}Maize Sample Info{% endblock %}
+{% block body_block %}
+
+{% if maize_info %}
+  <div class="hero-unit">
+    <h1>Maize Sample Info: <a href='/lab/maize/{{maize_info.id}}/'>{{maize_info.maize_id}}</a></h1>
+  </div>
+
+  <h2>Maize Sample</h2>
+  <table id="maize_sample_info" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th>Maize ID</th>
+        <th>Type of Source</th>
+        <th>Source</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Country</th>
+        <th>Weight</th>
+        <th>Description</th>
+        <th>Photo</th>
+        <th>Comments</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href='/lab/maize/{{maize_info.id}}/'>{{ maize_info.maize_id }}</a></td>
+        <td>{{ maize_info.type_of_source }}</td>
+        <td>{{ maize_info.sample_source }}</td>
+        <td>{{ maize_info.locality.city }}</td>
+        <td>{{ maize_info.locality.state }}</td>
+        <td>{{ maize_info.locality.country }}</td>
+        <td>{{ maize_info.weight }}</td>
+        <td>{{ maize_info.description }}</td>
+        <td>{{ maize_info.photo }}</td>
+        <td>{{ maize_info.comments }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  {% if obs_tracker %}
+  <h2>Maize Sample Used For</h2>
+  <table class="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th>Obs Type</th>
+        <th>Obs ID</th>
+        <th>Experiment</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in obs_tracker %}
+      <tr>
+        <td>{{ t.obs_entity_type }}</td>
+        <td><a href='{{ t.obs_id_url }}'>{{ t.obs_id }}</a></td>
+        <td><a href='/lab/experiment/{{t.experiment}}/'>{{ t.experiment }}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <hr>
+  <h2><small>Not Used In Any Data!</small></h2>
+  <hr>
+  {% endif %}
+
+{% else %}
+  <div class="hero-unit">
+    <h1>Maize Sample Info: <a href='/lab/'>Not Found!</a></h1>
+  </div>
+  <h2>No Maize Sample Info Found!</h2>
+{% endif %}
+
+{% endblock %}

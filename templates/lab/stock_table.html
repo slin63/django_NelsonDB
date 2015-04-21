@@ -15,7 +15,9 @@
           <th>Population</th>
           <th>Status</th>
           <th>Collector</th>
+          <!--
           <th>Passport</th>
+        -->
           <th>Comments</th>
         </tr>
         </thead>
@@ -29,7 +31,9 @@
           <td>{{ stock.passport.taxonomy.population }}</td>
           <td>{{ stock.stock_status }}</td>
           <td><a href='/lab/profile/{{ stock.passport.collecting.user.username }}/'>{{ stock.passport.collecting.user.username }}</a></td>
+          <!--
           <td><a href='/lab/passport/{{ stock.passport.id }}/'>{{ stock.passport.id }}</a></td>
+        -->
           <td>{{ stock.comments }}</td>
         </tr>
         {% endfor %}
