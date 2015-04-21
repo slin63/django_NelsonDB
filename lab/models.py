@@ -139,10 +139,39 @@ class ObsSample(models.Model):
 	sample_type = models.CharField(max_length=200, blank=True)
 	weight = models.CharField(max_length=200, blank=True)
 	kernel_num = models.CharField(max_length=200, blank=True)
+	photo = models.CharField(max_length=200, blank=True)
 	comments = models.CharField(max_length=1000, blank=True)
 
 	def __unicode__(self):
 		return self.sample_id
+
+class Separation(models.Model):
+	obs_sample = models.ForeignKey(ObsSample)
+	separation_type = models.CharField(max_length=200, blank=True)
+	apparatus = models.CharField(max_length=200, blank=True)
+	SG = models.CharField(max_length=200, blank=True)
+	light_weight = models.CharField(max_length=200, blank=True)
+	intermediate_weight = models.CharField(max_length=200, blank=True)
+	heavy_weight = models.CharField(max_length=200, blank=True)
+	light_percent = models.CharField(max_length=200, blank=True)
+	intermediate_percent = models.CharField(max_length=200, blank=True)
+	heavy_percent = models.CharField(max_length=200, blank=True)
+	operating_factor = models.CharField(max_length=200, blank=True)
+	comments = models.CharField(max_length=1000, blank=True)
+
+	def __unicode__(self):
+		return self.separation_type
+
+class ObsExtract(models.Model):
+	extract_id = models.CharField(max_length=200, unique=True)
+	weight = models.CharField(max_length=200, blank=True)
+	rep = models.CharField(max_length=200, blank=True)
+	grind_method = models.CharField(max_length=200, blank=True)
+	solvent = models.CharField(max_length=200, blank=True)
+	comments = models.CharField(max_length=1000, blank=True)
+
+	def __unicode__(self):
+		return self.extract_id
 
 class ObsEnv(models.Model):
 	environment_id = models.CharField(max_length=200, unique=True)
@@ -262,6 +291,19 @@ class Stock(models.Model):
   def __unicode__(self):
       return self.seed_id
 
+class MaizeSample(models.Model):
+  locality = models.ForeignKey(Locality)
+  maize_id = models.CharField(max_length=200, unique=True)
+  type_of_source = models.CharField(max_length=200, blank=True)
+  sample_source = models.CharField(max_length=200, blank=True)
+  weight = models.CharField(max_length=200, blank=True)
+  description = models.CharField(max_length=200, blank=True)
+  photo = models.CharField(max_length=200, blank=True)
+  comments = models.CharField(max_length=1000, blank=True)
+
+  def __unicode__(self):
+      return self.maize_id
+
 class DiseaseInfo(models.Model):
   common_name = models.CharField(max_length=200, unique=True)
   abbrev = models.CharField(max_length=200, blank=True)
@@ -317,21 +359,23 @@ class UploadQueue(models.Model):
 class ObsTracker(models.Model):
 	obs_entity_type = models.CharField(max_length=200)
 	user = models.ForeignKey(User)
-	location = models.ForeignKey(Location)
-	experiment = models.ForeignKey(Experiment)
-	field = models.ForeignKey(Field)
-	isolate = models.ForeignKey(Isolate)
-	stock = models.ForeignKey(Stock)
-	obs_culture = models.ForeignKey(ObsCulture)
-	obs_dna = models.ForeignKey(ObsDNA)
-	obs_microbe = models.ForeignKey(ObsMicrobe)
-	obs_plant = models.ForeignKey(ObsPlant)
-	obs_plate = models.ForeignKey(ObsPlate)
-	obs_row = models.ForeignKey(ObsRow)
-	obs_sample = models.ForeignKey(ObsSample)
-	obs_tissue = models.ForeignKey(ObsTissue)
-	obs_well = models.ForeignKey(ObsWell)
-	obs_env = models.ForeignKey(ObsEnv)
+	location = models.ForeignKey(Location, default='1')
+	experiment = models.ForeignKey(Experiment, default='1')
+	field = models.ForeignKey(Field, default='1')
+	isolate = models.ForeignKey(Isolate, default='1')
+	stock = models.ForeignKey(Stock, default='1')
+	maize_sample = models.ForeignKey(MaizeSample, default='1')
+	obs_culture = models.ForeignKey(ObsCulture, default='1')
+	obs_dna = models.ForeignKey(ObsDNA, default='1')
+	obs_microbe = models.ForeignKey(ObsMicrobe, default='1')
+	obs_plant = models.ForeignKey(ObsPlant, default='1')
+	obs_plate = models.ForeignKey(ObsPlate, default='1')
+	obs_row = models.ForeignKey(ObsRow, default='1')
+	obs_sample = models.ForeignKey(ObsSample, default='1')
+	obs_tissue = models.ForeignKey(ObsTissue, default='1')
+	obs_well = models.ForeignKey(ObsWell, default='1')
+	obs_env = models.ForeignKey(ObsEnv, default='1')
+	obs_extract = models.ForeignKey(ObsExtract, default='1')
 
 	def __unicode__(self):
 		return self.entity_type

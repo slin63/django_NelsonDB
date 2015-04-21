@@ -1,0 +1,57 @@
+
+{% extends 'lab/base.html' %}
+{% block title %}Open Data Kit{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+<h1>Open Data Kit</h1>
+</div>
+
+<div class="container-fluid">
+  <div class="container-fluid">
+  <div class="row">
+    <div class="span6">
+      <h3>NelsonLab ODK</h3>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='http://build.opendatakit.org/'>Build</a></p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='https://opendatakit.org/use/collect/'>Collect</a></p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='https://nelsonlab-91420.appspot.com'>Aggregate</a></p>
+      <hr>
+
+      <h3>About ODK</h3>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='https://opendatakit.org/'>Open Data Kit</a> is a powerful, open-source suite of tools that helps organizations manage mobile data collection. ODK began as a <a href='http://google.org/'>google.org</a> sponsored project in April 2008 under the direction of <a href='http://homes.cs.washington.edu/~gaetano/'>Gaetano Borriello</a> at Google’s Seattle offices. Today its core developers are researchers at the University of Washington’s <a href='http://www.cs.washington.edu/'>Department of Computer Science and Engineering</a>.</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;During mobile data collection, it is often difficult to maintain the <a href='http://en.wikipedia.org/wiki/Data_integrity'>integrity</a> and <a href='http://en.wikipedia.org/wiki/Data_quality'>quality</a> of data. To assist, a mobile device such as a smartphone or tablet could store custom questionnaire forms to guide the user in a step-by-step process. The completed forms can then be synced to a common database.</p>
+      <br/><p><b>ODK solves this using three tools:</b></p><br/>
+      <h4>1.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='http://build.opendatakit.org/'>Build</a> allows you to make custom forms using a simple interface.</h4>
+      <ul>
+        <li>To begin create an account on the Build website</li>
+        <li>The text box in the top left corner is where the form is named.</li>
+        <li>On the bottom of the screen are the form field types that can be added. They are: Text, Numeric, Date, Location (GPS coordinates taken using the mobile device), Media (pictures, video, or sound taken using the mobile device), Barcode, Choose One, Select Multiple, and Metadata.</li>
+        <li>Once a field type is selected, the user can customize the question using the toolbar on the right side. Hints can be set, as well as if the field is required or not.</li>
+        <li>Once the form is completed, it can be saved using File -> Save Form As.</li>
+        <li>The form needs to be published to the Aggregate database using File -> Publish to Aggregate. The Aggregate Instance URL is http://nelsonlab-91420.appspot.com/</li>
+      </ul>
+      <br/>
+
+      <h4>2.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='https://opendatakit.org/use/collect/'>ODK Collect</a> is an <a href='http://en.wikipedia.org/wiki/Android_%28operating_system%29'>Android application</a> for your smartphone/tablet.</h4>
+      <ul>
+        <li>To begin, the application can be downloaded through Google Play on the mobile device.</li>
+        <li>First, you need to point your phone to the lab’s Aggregate instance. To do this, go to the General Settings -> Configure Platform Settings. The URL is http://nelsonlab-91420.appspot.com/. For the username and password, please contact <a href='mailto:nm529@cornell.edu'>nm529@cornell.edu</a> for credentials.</li>
+        <li>On the main menu, click “Get Blank Form”. The available forms will appear. Select the forms of interest and click “Get Selected”.</li>
+        <li>To begin collecting data, click “Fill Blank Form” and select the form of interest. Simply answer the questions and swipe left to go on to the next question.</li>
+        <li>The form is saved and can be edited by clicking “Edit Saved Form” on the main menu.</li>
+        <li>Once the form is complete, click “Send Finalized Form”. This will sync the data with the Aggregate database.</li>
+      </ul>
+      <br>
+
+      <h4>3.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='https://opendatakit.org/use/aggregate/'>Aggregate</a> is ODK’s server and database. The NelsonLab instance is hosted using Google Cloud at <a href='http://nelsonlab-91420.appspot.com/'>http://nelsonlab-91420.appspot.com/</a>.</h4>
+      <ul>
+        <li>For access contact <a href='mailto:nm529@cornell.edu'>nm529@cornell.edu</a> for credentials.</li>
+        <li>There are three tabs: Submissions, Form Management, and Site Admin.</li>
+        <li>The Submissions tab is where all the data is displayed. The data is separated by form name. The data can be exported and sometimes visualized on screen. The map visualization automatically maps coordinate locations on a Google map.</li>
+        <li>The Form Management tab shows the forms that are currently available. They can be deactivated, deleted, edited, etc. from here.</li>
+        <li>The Site Admin tab is where users and their permissions are defined.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

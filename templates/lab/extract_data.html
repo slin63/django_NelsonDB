@@ -1,0 +1,49 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Extract Data{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Extract Data</h1>
+</div>
+  <br />
+  <div class="container-fluid">
+
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <h2>Extract Data</h2><br/>
+        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+          <tr>
+            <th>Exp</th>
+            <th>Extract ID</th>
+            <th>Fraction</th>
+            <th>Weight (g)</th>
+            <th>Rep</th>
+            <th>Grind Method</th>
+            <th>Solvent</th>
+            <th>Comments</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for data in extract_data %}
+          <tr>
+            <td><a href='/lab/experiment/{{data.experiment.name}}/'>{{data.experiment.name}}</a></td>
+            <td><a href='/lab/extract/{{data.obs_extract.id}}/'>{{data.obs_extract.extract_id}}</a></td>
+            <td>{{data.obs_extract.fraction}}</td>
+            <td>{{data.obs_extract.weight}}</td>
+            <td>{{data.obs_extract.rep}}</td>
+            <td>{{data.obs_extract.grind_method}}</td>
+            <td>{{data.obs_extract.solvent}}</td>
+            <td>{{data.obs_extract.comments}}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <br/>
+      <form action='/lab/download/extract/'>
+        <input class="btn btn-primary" type="submit" name="submit" value="Download Data"/>
+      </form>
+    </div><br/><br/>
+  </div>
+
+
+{% endblock %}

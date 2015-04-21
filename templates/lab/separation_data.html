@@ -1,0 +1,57 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Separation Data{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Separation Data</h1>
+</div>
+  <br />
+  <div class="container-fluid">
+
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <h2>Separation Data</h2><br/>
+        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+          <tr>
+            <th>Sample ID</th>
+            <th>Type</th>
+            <th>Apparatus</th>
+            <th>SG</th>
+            <th>Light Weight (g)</th>
+            <th>Med Weight (g)</th>
+            <th>Heavy Weight (g)</th>
+            <th>Light %</th>
+            <th>Med %</th>
+            <th>Heavy %</th>
+            <th>Factor</th>
+            <th>Comments</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for data in separation_data %}
+          <tr>
+            <td><a href='/lab/sample/{{data.obs_sample_id}}/'>{{data.obs_sample.sample_id}}</a></td>
+            <td>{{data.separation_type}}</td>
+            <td>{{data.apparatus}}</td>
+            <td>{{data.sg}}</td>
+            <td>{{data.light_weight}}</td>
+            <td>{{data.intermediate_weight}}</td>
+            <td>{{data.heavy_weight}}</td>
+            <td>{{data.light_percent}}</td>
+            <td>{{data.intermediate_percent}}</td>
+            <td>{{data.heavy_percent}}</td>
+            <td>{{data.operating_factor}}</td>
+            <td>{{data.comments}}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <br/>
+      <form action='/lab/download/separation/'>
+        <input class="btn btn-primary" type="submit" name="submit" value="Download Data"/>
+      </form>
+    </div><br/><br/>
+  </div>
+
+
+{% endblock %}
