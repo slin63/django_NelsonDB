@@ -513,6 +513,26 @@ def select_pedigree(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_inventory.html', context_dict, context)
 
+def sort_seed_set(set_type):
+	packet_data = []
+	if set_type == '282':
+		seed_data = Stock.objects.filter(pedigree__in=['811','3316','3811','4226','4722','A188','A214N','A239','A4415','A554','A556','A6','A619','A632','A634','A635','A641','A654','A659','A661','A679','A680','A682','AB28A','B10','B103','B104','B105','B109','B115','B14A','B164','B2','B37','B46','B52','B57','B64','B68','B73','B73HTRHM','B75','B76','B77','B79','B84','B96','B97','C103','C123','C49A','CH70130','CH9','CI1872','CI21E','CI28A','CI31A','CI3A','CI44','CI64','CI66','CI7','CI90C','CI91B','CM105','CM174','CM37','CM7','CML10','CML103','CML108','CML11','CML14','CML154Q','CML157Q','CML158Q','CML16','CML218','CML220','CML228','CML238','CML247','CML254','CML258','CML261','CML264','CML277','CML281','CML287','CML311','CML314','CML321','CML322','CML323','CML328','CML329','CML331','CML332','CML333','CML341','CML367','CML38','CML40','CML45','CML48','CML5','CML52','CML56','CML61','CML69','CML9','CML91','CML92','CMV3','CO106','CO109','CO125','CO255','D940Y','DE1','DE2','DE3','DE811','E2558W','EP1','F2','F2834T','F44','F6','F7','FR1064','GA209','GE440','GT112','H100','H105W','H49','H84','H91','H95','H99','HI27','HP301','HY','I137TN','I205','I29','IA2132','IA5125B','IDS28','IDS69','IDS91','IL101T','IL14H','IL677A','K148','K4','K55','K64','KI11','KI14','KI2007','KI2021','KI21','KI3','KI43','KI44','KUI2007','KY21','KY226','KY228','L317','L578','M14','M162W','M37W','MO16W','MO17','MO18W','MO1W','MO24W','MO44','MO45','MO46','MO47','MOG','MP313E','MP339','MP717','MS1334','MS153','MS71','MT42','N192','N28HT','N6','N7A','NC222','NC230','NC232','NC236','NC238','NC250','NC250A','NC258','NC260','NC262','NC264','NC268','NC290A','NC292','NC294','NC296','NC296A','NC298','NC300','NC302','NC304','NC306','NC308','NC310','NC312','NC314','NC316','NC318','NC320','NC322','NC324','NC326','NC328','NC33','NC330','NC332','NC334','NC336','NC338','NC340','NC342','NC344','NC346','NC348','NC350','NC352','NC354','NC356','NC358','NC360','NC362','NC364','NC366','NC368','NC370','NC372','ND246','OH40B','OH43','OH43E','OH603','OH7B','OS420','P39','PA762','PA875','PA880','PA91','R109B','R168','R177','R229','R4','SA24','SC213R','SC357','SC55','SD40','SD44','SG1533','SG18','T232','T234','T8','TX303','TX601','TZI10','TZI11','TZI16','TZI18','TZI25','TZI8','TZI9','U267Y','VA102','VA14','VA17','VA22','VA26','VA35','VA59','VA85','VA99','VAW6','W117HT','W153R','W182B','W22','W401','W64A','WF9','YU796NS'])
+	for seed in seed_data:
+		seed_packets = StockPacket.objects.filter(stock_id=seed.id)
+		packet_data = list(chain(seed_packets, packet_data))
+	return packet_data
+
+@login_required
+def seed_set_download(request, set_type):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="seed_inventory_282.csv"'
+	packet_data = sort_seed_set(set_type)
+	writer = csv.writer(response)
+	writer.writerow(['Seed ID', 'Seed Name', 'Pedigree', 'Cross Type', 'Stock Status', 'Stock Date', 'Inoculated', 'Stock Comments', 'Weight(g)', 'Num Seeds', 'Packet Comments', 'Location Name', 'Building Name', 'Room', 'Shelf', 'Column', 'BoxName', 'Location Comments'])
+	for row in packet_data:
+		writer.writerow([row.stock.seed_id, row.stock.seed_name, row.stock.pedigree, row.stock.cross_type, row.stock.stock_status, row.stock.stock_date, row.stock.inoculated, row.stock.comments, row.weight, row.num_seeds, row.comments, row.location.location_name, row.location.building_name, row.location.room, row.location.shelf, row.location.column, row.location.box_name, row.location.comments])
+	return response
+
 def select_taxonomy(request):
 	context = RequestContext(request)
 	context_dict = {}

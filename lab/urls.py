@@ -31,6 +31,7 @@ urlpatterns = patterns('',
     url(r'^seed_inventory/show_all_taxonomy/$', views.show_all_seedinv_taxonomy, name='show_all_seedinv_taxonomy'),
     url(r'^seed_inventory/show_all_pedigree/$', views.show_all_seedinv_pedigree, name='show_all_seedinv_pedigree'),
     url(r'^seed_inventory/seed_id_search/$', views.seed_id_search, name='seed_id_search'),
+    url(r'^seed_inventory/set/(?P<set_type>\w+)/$', views.seed_set_download, name='seed_set_download'),
     url(r'^seed_inventory/checkbox_clear/(?P<clear_selected>\w+)/$', views.checkbox_seed_inventory_clear, name='checkbox_seed_inventory_clear'),
 
     url(r'^isolate_inventory/$', views.isolate_inventory, name='isolate_inventory'),
