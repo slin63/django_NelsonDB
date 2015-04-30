@@ -66,11 +66,19 @@
     <input class="btn btn-primary" type="submit" name="submit" value="Export Data"/>
   </form>
 
-  <br/>
   <h3>Query 07:</h3>
+  <h5>Display seed inventory for a subset of the 282 association panel.</h5>
+
+  <form id="query_7_form" method="post" action="/lab/seed_inventory/set/282_jenny_subset/">
+    {% csrf_token %}
+    <input class="btn btn-primary" type="submit" name="submit" value="Export Data"/>
+  </form>
+
+  <br/>
+  <h3>Query 08:</h3>
   <h5>Automatically writes a completed thesis.</h5>
 
-  <form id="query_7_form" >
+  <form id="query_8_form" >
     {% csrf_token %}
     <input class="btn btn-primary" type="submit" name="submit" value="Write Thesis"/>
   </form>
