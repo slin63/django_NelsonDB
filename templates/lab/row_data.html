@@ -49,6 +49,7 @@
             <th>Row Name</th>
             <th>Field</th>
             <th>Source Stock</th>
+            <th>Pedigree</th>
             <th>Range</th>
             <th>Plot</th>
             <th>Block</th>
@@ -67,6 +68,7 @@
             <td>{{data.obs_row.row_name}}</td>
             <td><a href='/lab/field/{{data.field.id}}/'>{{data.field.field_name}}</a></td>
             <td><a href='/lab/stock/{{data.stock.id}}/'>{{data.stock.seed_id}}</a></td>
+            <td>{{data.stock.pedigree}}</td>
             <td>{{data.obs_row.range_num}}</td>
             <td>{{data.obs_row.plot}}</td>
             <td>{{data.obs_row.block}}</td>

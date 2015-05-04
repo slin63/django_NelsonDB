@@ -1,0 +1,47 @@
+
+{% extends 'lab/base.html' %}
+{% block title %}Legacy Experiments{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+<h1>Legacy Experiments</h1>
+</div>
+
+<div class="container-fluid">
+  <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Planting Date</th>
+        <th>Tissue Collection</th>
+        <th>Inoculations</th>
+        <th>Inoculation Date 1</th>
+        <th>Inoculation Date 2</th>
+        <th>Inoculation Date 3</th>
+        <th>Pathogen</th>
+        <th>Harvest Date</th>
+        <th>Description</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for exp in legacy_experiment %}
+      <tr>
+        <td><a href="/lab/experiment/{{ exp.name }}/">{{ exp.name }}</a></td>
+        <td>{{ exp.location }}</td>
+        <td>{{ exp.planting_date}}</td>
+        <td>{{ exp.tissue_collection}}</td>
+        <td>{{ exp.inoculations}}</td>
+        <td>{{ exp.inoculation_date1}}</td>
+        <td>{{ exp.inoculation_date2}}</td>
+        <td>{{ exp.inoculation_date3}}</td>
+        <td>{{ exp.pathogen_isolate}}</td>
+        <td>{{ exp.harvest_date}}</td>
+        <td>{{ exp.description}}</td>
+        <td>{{ exp.notes}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

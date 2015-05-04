@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, Collecting, Field, Locality, Location
-from legacy.models import Legacy_Seed, Legacy_Row, Legacy_Experiment, Legacy_Seed_Inventory, Legacy_People
+from legacy.models import Legacy_Seed, Legacy_Row, Legacy_Experiment, Legacy_Seed_Inventory, Legacy_People, Legacy_Genotype, Legacy_Markers, Legacy_Tissue
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -25,6 +25,55 @@ def get_experiment_list(max_results=0, starts_with=''):
   for exp in exp_list:
     exp.url = encode_url(exp.name)
   return exp_list
+
+def legacy_experiment(request):
+    context = RequestContext(request)
+    context_dict = {}
+    legacy_experiment = Legacy_Experiment.objects.all()[:2000]
+    context_dict['legacy_experiment'] = legacy_experiment
+    context_dict['logged_in_user'] = request.user.username
+    return render_to_response('legacy/legacy_experiment.html', context_dict, context)
+
+def legacy_markers(request):
+    context = RequestContext(request)
+    context_dict = {}
+    legacy_markers = Legacy_Markers.objects.all()[:2000]
+    context_dict['legacy_markers'] = legacy_markers
+    context_dict['logged_in_user'] = request.user.username
+    return render_to_response('legacy/legacy_markers.html', context_dict, context)
+
+def legacy_seed(request):
+    context = RequestContext(request)
+    context_dict = {}
+    legacy_seed = Legacy_Seed.objects.all()[:2000]
+    context_dict['legacy_seed'] = legacy_seed
+    context_dict['logged_in_user'] = request.user.username
+    return render_to_response('legacy/legacy_seed.html', context_dict, context)
+
+def legacy_row(request):
+    context = RequestContext(request)
+    context_dict = {}
+    legacy_row = Legacy_Row.objects.all()[:2000]
+    context_dict['legacy_row'] = legacy_row
+    context_dict['logged_in_user'] = request.user.username
+    return render_to_response('legacy/legacy_row_data.html', context_dict, context)
+
+def legacy_genotype(request):
+    context = RequestContext(request)
+    context_dict = {}
+    legacy_genotype = Legacy_Genotype.objects.all()[:2000]
+    context_dict['legacy_genotype'] = legacy_genotype
+    context_dict['logged_in_user'] = request.user.username
+    return render_to_response('legacy/legacy_genotype.html', context_dict, context)
+
+def legacy_tissue(request):
+    context = RequestContext(request)
+    context_dict = {}
+    legacy_tissue = Legacy_Tissue.objects.all()[:2000]
+    context_dict['legacy_tissue'] = legacy_tissue
+    context_dict['logged_in_user'] = request.user.username
+    return render_to_response('legacy/legacy_tissue.html', context_dict, context)
+
 """
 These functions were for single selection. They are obsolete now because of the checkbox functions, found below.
 

@@ -1,0 +1,57 @@
+
+{% extends 'lab/base.html' %}
+{% block title %}Legacy Row{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+<h1>Legacy Row</h1>
+</div>
+
+<div class="container-fluid">
+  <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th>Row ID</th>
+        <th>Row Name</th>
+        <th>Experiment</th>
+        <th>Pedigree</th>
+        <th>Line Num</th>
+        <th>Seed ID</th>
+        <th>Seed Name</th>
+        <th>Range</th>
+        <th>Plot</th>
+        <th>Block</th>
+        <th>Rep</th>
+        <th>Kernel Num</th>
+        <th>Pop</th>
+        <th>Delay</th>
+        <th>Purpose</th>
+        <th>Notes</th>
+        <th>Person</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in legacy_row %}
+      <tr>
+        <td>{{ row.row_id }}</td>
+        <td>{{ row.row_name }}</td>
+        <td><a href="/lab/experiment/{{ row.experiment_id }}/">{{ row.experiment_id }}</a></td>
+        <td>{{ row.pedigree }}</td>
+        <td>{{ row.line_num }}</td>
+        <td>{{ row.source_seed_id }}</td>
+        <td>{{ row.source_seed_name }}</td>
+        <td>{{ row.range_num }}</td>
+        <td>{{ row.plot }}</td>
+        <td>{{ row.block }}</td>
+        <td>{{ row.rep_num }}</td>
+        <td>{{ row.kernel_num }}</td>
+        <td>{{ row.pop }}</td>
+        <td>{{ row.delay }}</td>
+        <td>{{ row.purpose }}</td>
+        <td>{{ row.notes }}</td>
+        <td>{{ row.row_person }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

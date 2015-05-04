@@ -1,0 +1,99 @@
+
+{% extends 'lab/base.html' %}
+{% block title %}Legacy Markers{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+<h1>Legacy Markers</h1>
+</div>
+
+<div class="container-fluid">
+  <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th>Marker ID</th>
+        <th>Locus Name</th>
+        <th>Chromosome</th>
+        <th>Maize Bin</th>
+        <th>Map Physical v1</th>
+        <th>Map Physical v2</th>
+        <th>Map Physical v3</th>
+        <th>BAC</th>
+        <th>NAM Marker</th>
+        <th>Map IBM2n CM</th>
+        <th>Poly Type</th>
+        <th>SNP Type</th>
+        <th>Sequence F1</th>
+        <th>Sequence F2</th>
+        <th>Sequence R1</th>
+        <th>Sequence R2</th>
+        <th>Primer Name F1</th>
+        <th>Primer Name F2</th>
+        <th>Primer Name R1</th>
+        <th>Primer Name R2</th>
+        <th>Primer Tail</th>
+        <th>Size Range</th>
+        <th>Tm Min</th>
+        <th>Tm Max</th>
+        <th>Chemestry</th>
+        <th>Person</th>
+        <th>Order Date</th>
+        <th>Consense Seq</th>
+        <th>Notes</th>
+        <th>Reference B73</th>
+        <th>Reference Mo17</th>
+        <th>Reference CML52</th>
+        <th>Reference DK888</th>
+        <th>Reference S11</th>
+        <th>Reference XL380</th>
+        <th>Reference Tx303</th>
+        <th>Maize GDB</th>
+        <th>Maize Seq</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for marker in legacy_markers %}
+      <tr>
+        <td>{{ marker.marker_id }}</td>
+        <td>{{ marker.locus_name }}</td>
+        <td>{{ marker.chromosome }}</td>
+        <td>{{ marker.maize_bin }}</td>
+        <td>{{ marker.map_physical_refgen_v1 }}</td>
+        <td>{{ marker.map_physical_refgen_v2 }}</td>
+        <td>{{ marker.map_physical_refgen_v3 }}</td>
+        <td>{{ marker.bac }}</td>
+        <td>{{ marker.nam_marker }}</td>
+        <td>{{ marker.map_IBM2n_cM }}</td>
+        <td>{{ marker.polymorphism_type }}</td>
+        <td>{{ marker.snp_type }}</td>
+        <td>{{ marker.sequence_f1 }}</td>
+        <td>{{ marker.sequence_f2 }}</td>
+        <td>{{ marker.sequence_r1 }}</td>
+        <td>{{ marker.sequence_r2 }}</td>
+        <td>{{ marker.primer_name_f1 }}</td>
+        <td>{{ marker.primer_name_f2 }}</td>
+        <td>{{ marker.primer_name_r1 }}</td>
+        <td>{{ marker.primer_name_r2 }}</td>
+        <td>{{ marker.primer_tail }}</td>
+        <td>{{ marker.size_range }}</td>
+        <td>{{ marker.Tm_min }}</td>
+        <td>{{ marker.Tm_max }}</td>
+        <td>{{ marker.chemestry }}</td>
+        <td>{{ marker.primer_person }}</td>
+        <td>{{ marker.order_date }}</td>
+        <td>{{ marker.consense_sequence }}</td>
+        <td>{{ marker.notes }}</td>
+        <td>{{ marker.reference_B73 }}</td>
+        <td>{{ marker.reference_Mo17 }}</td>
+        <td>{{ marker.reference_CML52 }}</td>
+        <td>{{ marker.reference_DK888 }}</td>
+        <td>{{ marker.reference_S11 }}</td>
+        <td>{{ marker.reference_XL380 }}</td>
+        <td>{{ marker.reference_Tx303 }}</td>
+        <td>{{ marker.MaizeGDBLink }}</td>
+        <td>{{ marker.MaizeSeqLink }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
