@@ -26,6 +26,7 @@ def get_experiment_list(max_results=0, starts_with=''):
     exp.url = encode_url(exp.name)
   return exp_list
 
+@login_required
 def legacy_experiment(request):
     context = RequestContext(request)
     context_dict = {}
@@ -34,6 +35,7 @@ def legacy_experiment(request):
     context_dict['logged_in_user'] = request.user.username
     return render_to_response('legacy/legacy_experiment.html', context_dict, context)
 
+@login_required
 def legacy_markers(request):
     context = RequestContext(request)
     context_dict = {}
@@ -42,6 +44,7 @@ def legacy_markers(request):
     context_dict['logged_in_user'] = request.user.username
     return render_to_response('legacy/legacy_markers.html', context_dict, context)
 
+@login_required
 def legacy_seed(request):
     context = RequestContext(request)
     context_dict = {}
@@ -50,6 +53,7 @@ def legacy_seed(request):
     context_dict['logged_in_user'] = request.user.username
     return render_to_response('legacy/legacy_seed.html', context_dict, context)
 
+@login_required
 def legacy_row(request):
     context = RequestContext(request)
     context_dict = {}
@@ -58,6 +62,7 @@ def legacy_row(request):
     context_dict['logged_in_user'] = request.user.username
     return render_to_response('legacy/legacy_row_data.html', context_dict, context)
 
+@login_required
 def legacy_genotype(request):
     context = RequestContext(request)
     context_dict = {}
@@ -66,6 +71,7 @@ def legacy_genotype(request):
     context_dict['logged_in_user'] = request.user.username
     return render_to_response('legacy/legacy_genotype.html', context_dict, context)
 
+@login_required
 def legacy_tissue(request):
     context = RequestContext(request)
     context_dict = {}
