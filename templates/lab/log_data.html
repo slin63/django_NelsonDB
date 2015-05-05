@@ -1,15 +1,27 @@
 {% extends "lab/base.html" %}
 
-{% block title %}Log Data{% endblock %}
+{% block title %}Load Data{% endblock %}
 
 {% block body_block %}
 {% load staticfiles %}
 
 <div class="hero-unit">
-  <h1>Log Data</h1>
+  <h1>Load Data</h1>
 </div>
 <div class="container-fluid">
   <div class="container-fluid">
+    <div class="row">
+      <h3>Template Packages</h3>
+      <hr>
+      <h5><a href='/lab/download/template/mycotoxin_maize_separation/'>Record Mycotoxin Data For Maize Samples</a></h5>
+      <h5><a href='/lab/download/template/mycotoxin_seed_separation/'>Record Mycotoxin Data For Inventoried Seed</a></h5>
+      <hr>
+    </div><br/>
+
+    <div class="row">
+      <h3>Individual Templates</h3>
+      <hr>
+    </div>
     <div class="row">
       <div class="span6">
         <div class="container-fluid">
