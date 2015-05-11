@@ -30,18 +30,18 @@
       <tbody>
       {% for i in isolate_data %}
       <tr>
-        <td><a href='/lab/isolate/{{i.id}}/'>{{ i.isolate_id }}</a></td>
-        <td>{{ i.isolate_name }}</td>
-        <td>{{ i.plant_organ }}</td>
-        <td>{{ i.comments }}</td>
-        <td>{{ i.passport.taxonomy.genus }}</td>
-        <td>{{ i.passport.taxonomy.species }}</td>
-        <td>{{ i.passport.taxonomy.alias }}</td>
-        <td>{{ i.passport.taxonomy.race }}</td>
-        <td>{{ i.passport.taxonomy.subtaxa }}</td>
-        <td>{{ i.disease_info }}</td>
-        <td><a href='/lab/location/{{i.location.id}}/'>{{ i.location.location_name }}</a></td>
-        <td>{{ i.location.box_name }}</td>
+        <td><a href='/lab/isolate/{{i.isolate_id}}/'>{{ i.isolate.isolate_id }}</a></td>
+        <td>{{ i.isolate.isolate_name }}</td>
+        <td>{{ i.isolate.plant_organ }}</td>
+        <td>{{ i.isolate.comments }}</td>
+        <td>{{ i.isolate.passport.taxonomy.genus }}</td>
+        <td>{{ i.isolate.passport.taxonomy.species }}</td>
+        <td>{{ i.isolate.passport.taxonomy.alias }}</td>
+        <td>{{ i.isolate.passport.taxonomy.race }}</td>
+        <td>{{ i.isolate.passport.taxonomy.subtaxa }}</td>
+        <td>{{ i.isolate.disease_info }}</td>
+        <td><a href='/lab/location/{{i.isolateid}}/'>{{ i.isolate.location.location_name }}</a></td>
+        <td>{{ i.isolate.location.box_name }}</td>
       </tr>
       {% endfor %}
       </tbody>

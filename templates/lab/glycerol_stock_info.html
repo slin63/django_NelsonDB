@@ -1,47 +1,43 @@
 {% extends 'lab/base.html' %}
-{% block title %}Extract Info{% endblock %}
+{% block title %}Glycerol Stock Info{% endblock %}
 {% block body_block %}
 
-{% if extract_info %}
+{% if glycerol_stock_info %}
   <div class="hero-unit">
-    <h1>Extract Info: <a href='/lab/extract/{{extract_info.id}}/'>{{extract_info.extract_id}}</a></h1>
+    <h1>Glycerol Stock Info: <a href='/lab/glycerol_stock/{{glycerol_stock_info.id}}/'>{{glycerol_stock_info.glycerol_stock_id}}</a></h1>
   </div>
 
-  <h2>Extract</h2>
-  <table id="extract_info" class="table table-striped table-bordered" cellspacing="0" width="100%">
+  <h2>Glycerol Stock</h2>
+  <table id="single_glycerol_stock_info" class="table table-striped table-bordered" cellspacing="0" width="100%">
     <thead>
       <tr>
-        <th>Extract ID</th>
-        <th>Fraction</th>
-        <th>Weight</th>
-        <th>Rep</th>
-        <th>Grind Method</th>
-        <th>Solvent</th>
+        <th>Glycerol Stock ID</th>
+        <th>Date</th>
+        <th>Extract Color</th>
+        <th>Organism</th>
         <th>Comments</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><a href='/lab/extract/{{extract_info.id}}/'>{{ extract_info.extract_id }}</a></td>
-        <td>{{ extract_info.fraction }}</td>
-        <td>{{ extract_info.weight }}</td>
-        <td>{{ extract_info.rep }}</td>
-        <td>{{ extract_info.grind_method }}</td>
-        <td>{{ extract_info.solvent }}</td>
-        <td>{{ extract_info.comments }}</td>
+        <td><a href='/lab/glycerol_stock/{{glycerol_stock_info.id}}/'>{{ glycerol_stock_info.glycerol_stock_id }}</a></td>
+        <td>{{ glycerol_stock_info.stock_date }}</td>
+        <td>{{ glycerol_stock_info.extract_color }}</td>
+        <td>{{ glycerol_stock_info.organism }}</td>
+        <td>{{ glycerol_stock_info.comments }}</td>
       </tr>
     </tbody>
   </table>
 
   {% for t in obs_tracker %}
-    {% if t.obs_entity_type == 'extract' %}
+    {% if t.obs_entity_type == 'glycerol_stock' %}
       {% include 'lab/tracker_info_table.html' with obs_tracker=obs_tracker %}
     {% endif %}
   {% endfor %}
   <br/>
 
   {% if obs_tracker %}
-  <h2>Extract Used For</h2>
+  <h2>Glycerol Stock Used For</h2>
   <table class="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
     <thead>
       <tr>
@@ -68,9 +64,9 @@
 
 {% else %}
   <div class="hero-unit">
-    <h1>Extract Info: <a href='/lab/'>Not Found!</a></h1>
+    <h1>Glycerol Stock Info: <a href='/lab/'>Not Found!</a></h1>
   </div>
-  <h2>No Extract Info Found!</h2>
+  <h2>No Glycerol Stock Info Found!</h2>
 {% endif %}
 
 {% endblock %}

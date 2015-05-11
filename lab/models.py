@@ -121,7 +121,7 @@ class ObsRow(models.Model):
   kernel_num = models.CharField(max_length=200, blank=True)
   planting_date = models.CharField(max_length=200, blank=True)
   harvest_date = models.CharField(max_length=200, blank=True)
-  comments = models.CharField(max_length=1000, blank=True)
+  comments = models.CharField(max_length=3000, blank=True)
 
   def __unicode__(self):
     return self.row_id
@@ -129,7 +129,7 @@ class ObsRow(models.Model):
 class ObsPlant(models.Model):
   plant_id = models.CharField(max_length=200, unique=True)
   plant_num = models.CharField(max_length=200, blank=True)
-  comments = models.CharField(max_length=1000, blank=True)
+  comments = models.CharField(max_length=3000, blank=True)
 
   def __unicode__(self):
     return self.plant_id
@@ -140,7 +140,7 @@ class ObsSample(models.Model):
 	weight = models.CharField(max_length=200, blank=True)
 	kernel_num = models.CharField(max_length=200, blank=True)
 	photo = models.CharField(max_length=200, blank=True)
-	comments = models.CharField(max_length=1000, blank=True)
+	comments = models.CharField(max_length=3000, blank=True)
 
 	def __unicode__(self):
 		return self.sample_id
@@ -168,7 +168,7 @@ class ObsExtract(models.Model):
 	rep = models.CharField(max_length=200, blank=True)
 	grind_method = models.CharField(max_length=200, blank=True)
 	solvent = models.CharField(max_length=200, blank=True)
-	comments = models.CharField(max_length=1000, blank=True)
+	comments = models.CharField(max_length=3000, blank=True)
 
 	def __unicode__(self):
 		return self.extract_id
@@ -177,7 +177,7 @@ class ObsEnv(models.Model):
 	environment_id = models.CharField(max_length=200, unique=True)
 	longitude = models.CharField(max_length=200, blank=True)
 	latitude = models.CharField(max_length=200, blank=True)
-	comments = models.CharField(max_length=1000, blank=True)
+	comments = models.CharField(max_length=3000, blank=True)
 
 	def __unicode__(self):
 		return self.environment_id
@@ -188,7 +188,7 @@ class ObsDNA(models.Model):
 	date = models.CharField(max_length=200, blank=True)
 	tube_id = models.CharField(max_length=200, blank=True)
 	tube_type = models.CharField(max_length=200, blank=True)
-	comments = models.CharField(max_length=1000, blank=True)
+	comments = models.CharField(max_length=3000, blank=True)
 
 	def __unicode__(self):
 		return self.dna_id
@@ -198,7 +198,7 @@ class ObsTissue(models.Model):
 	tissue_type = models.CharField(max_length=200, blank=True)
 	tissue_name = models.CharField(max_length=200, blank=True)
 	date_ground = models.CharField(max_length=200, blank=True)
-	comments = models.CharField(max_length=1000, blank=True)
+	comments = models.CharField(max_length=3000, blank=True)
 
 	def __unicode__(self):
 		return self.tissue_id
@@ -211,7 +211,7 @@ class ObsPlate(models.Model):
 	rep = models.CharField(max_length=200, blank=True)
 	plate_type = models.CharField(max_length=200, blank=True)
 	plate_status = models.CharField(max_length=200, blank=True)
-	comments = models.CharField(max_length=1000, blank=True)
+	comments = models.CharField(max_length=3000, blank=True)
 
 	def __unicode__(self):
 		return self.plate_id
@@ -221,7 +221,7 @@ class ObsWell(models.Model):
 	well = models.CharField(max_length=200, blank=True)
 	well_inventory = models.CharField(max_length=200, blank=True)
 	tube_label = models.CharField(max_length=200, blank=True)
-	comments = models.CharField(max_length=1000, blank=True)
+	comments = models.CharField(max_length=3000, blank=True)
 
 	def __unicode__(self):
 		return self.well_id
@@ -234,7 +234,9 @@ class ObsCulture(models.Model):
 	plating_cycle = models.CharField(max_length=200, blank=True)
 	dilution = models.CharField(max_length=200, blank=True)
 	image_filename = models.CharField(max_length=200, blank=True)
-	comments = models.CharField(max_length=1000, blank=True)
+	comments = models.CharField(max_length=3000, blank=True)
+	num_colonies = models.CharField(max_length=200, blank=True)
+	num_microbes = models.CharField(max_length=200, blank=True)
 
 	def __unicode__(self):
 		return self.culture_id
@@ -242,7 +244,7 @@ class ObsCulture(models.Model):
 class ObsMicrobe(models.Model):
 	microbe_id = models.CharField(max_length=200, unique=True)
 	microbe_type = models.CharField(max_length=200, blank=True)
-	comments = models.CharField(max_length=1000, blank=True)
+	comments = models.CharField(max_length=3000, blank=True)
 
 	def __unicode__(self):
 		return self.microbe_id
@@ -303,6 +305,16 @@ class MaizeSample(models.Model):
 
   def __unicode__(self):
       return self.maize_id
+
+class GlycerolStock(models.Model):
+  glycerol_stock_id = models.CharField(max_length=200, unique=True)
+  stock_date = models.CharField(max_length=200, blank=True)
+  extract_color = models.CharField(max_length=200, blank=True)
+  organism = models.CharField(max_length=200, blank=True)
+  comments = models.CharField(max_length=1000, blank=True)
+
+  def __unicode__(self):
+      return self.glycerol_stock_id
 
 class DiseaseInfo(models.Model):
   common_name = models.CharField(max_length=200, unique=True)
@@ -365,6 +377,7 @@ class ObsTracker(models.Model):
 	isolate = models.ForeignKey(Isolate, default='1')
 	stock = models.ForeignKey(Stock, default='1')
 	maize_sample = models.ForeignKey(MaizeSample, default='1')
+	glycerol_stock = models.ForeignKey(GlycerolStock, default='1')
 	obs_culture = models.ForeignKey(ObsCulture, default='1')
 	obs_dna = models.ForeignKey(ObsDNA, default='1')
 	obs_microbe = models.ForeignKey(ObsMicrobe, default='1')

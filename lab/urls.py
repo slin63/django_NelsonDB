@@ -22,6 +22,8 @@ urlpatterns = patterns('',
     url(r'^experiment/(?P<experiment_name_url>\w+)/$', views.experiment, name='experiment'),
     url(r'^profile/(?P<profile_name>\w+)/$', views.profile, name ='profile'),
 
+    url(r'^glycerol_stock/$', views.glycerol_stock_inventory, name='glycerol_stock_inventory'),
+
     url(r'^seed_inventory/$', views.seed_inventory, name='seed_inventory'),
     url(r'^seed_inventory/select_pedigree/$', views.select_pedigree, name='select_pedigree'),
     url(r'^seed_inventory/select_taxonomy/$', views.select_taxonomy, name='select_taxonomy'),
@@ -45,10 +47,8 @@ urlpatterns = patterns('',
     url(r'^isolate_inventory/select_isolates/$', views.select_isolates, name='select_isolates'),
 
     url(r'^data/maize/(?P<keyword>\w+)/$', views.maize_data_keyword_browse, name='maize_data_keyword_browse'),
-    url(r'^data/sample/(?P<keyword>\w+)/$', views.sample_data_keyword_browse, name='sample_data_keyword_browse'),
+
     url(r'^data/separation/(?P<keyword>\w+)/$', views.separation_data_keyword_browse, name='separation_data_keyword_browse'),
-    url(r'^data/extract/(?P<keyword>\w+)/$', views.extract_data_keyword_browse, name='extract_data_keyword_browse'),
-    url(r'^data/measurement/(?P<keyword>\w+)/$', views.measurement_data_keyword_browse, name='measurement_data_keyword_browse'),
 
     url(r'^data/medium/$', views.browse_medium_data, name='browse_medium_data'),
     url(r'^data/measurement_parameter/$', views.browse_parameter_data, name='browse_parameter_data'),
@@ -71,6 +71,7 @@ urlpatterns = patterns('',
     url(r'^data/measurement/checkbox_clear/$', views.checkbox_measurement_data_clear, name='checkbox_measurement_data_clear'),
     url(r'^data/measurement/show_all_experiment/$', views.show_all_measurement_experiment, name='show_all_measurement_experiment'),
     url(r'^data/measurement/(?P<experiment_name>\w+)/$', views.measurement_data_from_experiment, name='measurement_data_from_experiment'),
+    url(r'^data/measurement/(?P<keyword>\w+)/$', views.measurement_data_keyword_browse, name='measurement_data_keyword_browse'),
 
     url(r'^data/genotype/$', views.genotype_data_browse, name='genotype_data_browse'),
 
@@ -119,6 +120,9 @@ urlpatterns = patterns('',
     url(r'^data/isolates/(?P<experiment_name>\w+)/$', views.isolate_data_from_experiment, name='isolate_data_from_experiment'),
 
     url(r'^data/samples/$', views.samples_data_browse, name='samples_data_browse'),
+    url(r'^data/sample/(?P<keyword>\w+)/$', views.sample_data_keyword_browse, name='sample_data_keyword_browse'),
+
+    url(r'^data/extract/(?P<keyword>\w+)/$', views.extract_data_keyword_browse, name='extract_data_keyword_browse'),
 
     url(r'^data/row/$', views.row_data_browse, name='row_data_browse'),
     url(r'^data/row/suggest_row_experiment/$', views.suggest_row_experiment, name='suggest_row_experiment'),
@@ -146,6 +150,8 @@ urlpatterns = patterns('',
     url(r'^maize/(?P<maize_id>\d+)/$', views.single_maize_info, name='single_maize_info'),
     url(r'^sample/(?P<obs_sample_id>\d+)/$', views.single_sample_info, name='single_sample_info'),
     url(r'^extract/(?P<obs_extract_id>\d+)/$', views.single_extract_info, name='single_extract_info'),
+    url(r'^isolate/(?P<isolate_table_id>\d+)/$', views.single_isolate_info, name='single_isolate_info'),
+    url(r'^glycerol_stock/(?P<glycerol_stock_table_id>\d+)/$', views.single_glycerol_stock_info, name='single_glycerol_stock_info'),
 
     url(r'^new_experiment/$', views.new_experiment, name='new_experiment'),
     url(r'^new_treatment/$', views.new_treatment, name='new_treatment'),

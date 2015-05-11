@@ -3,7 +3,7 @@ import csv
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation
+from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, GlycerolStock
 from genetics.models import GWASExperimentSet
 from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm
 from django.contrib.auth import authenticate, login, logout
@@ -311,7 +311,7 @@ def experiment(request, experiment_name_url):
 				treatment_data = None
 			context_dict['treatment_data'] = treatment_data
 
-			obs_type_list = ['stock', 'isolate', 'row', 'plant', 'sample', 'environment', 'dna', 'tissue', 'plate', 'well', 'microbe', 'culture']
+			obs_type_list = ['stock', 'isolate', 'glycerol_stock', 'maize', 'row', 'plant', 'sample', 'environment', 'dna', 'tissue', 'plate', 'well', 'microbe', 'culture', 'extract']
 			for obs_type in obs_type_list:
 				obs_data = "%s_data" % (obs_type)
 				try:
@@ -667,6 +667,15 @@ def passport(request, passport_id):
 	context_dict['collecting_source'] = collecting_source
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/passport.html', context_dict, context)
+
+@login_required
+def glycerol_stock_inventory(request):
+	context = RequestContext(request)
+	context_dict = {}
+	glycerol_stocks = ObsTracker.objects.filter(obs_entity_type='glycerol_stock')
+	context_dict['glycerol_stocks'] = glycerol_stocks
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/glycerol_stock_inventory.html', context_dict, context)
 
 @login_required
 def isolate_inventory(request):
@@ -2140,6 +2149,16 @@ def make_obs_tracker_info(tracker):
 			obs_tracker_id_info = [tracker.isolate.isolate_id, obs_entity_type, tracker.isolate_id]
 		except Isolate.DoesNotExist:
 			obs_tracker_id_info = ['No Isolate', obs_entity_type, 1]
+	elif obs_entity_type == 'glycerol_stock':
+		try:
+			obs_tracker_id_info = [tracker.glycerol_stock.glycerol_stock_id, obs_entity_type, tracker.glycerol_stock_id]
+		except GlycerolStock.DoesNotExist:
+			obs_tracker_id_info = ['No Glycerol Stock', obs_entity_type, 1]
+	elif obs_entity_type == 'maize':
+		try:
+			obs_tracker_id_info = [tracker.maize_sample.maize_sample_id, obs_entity_type, tracker.maize_sample_id]
+		except MaizeSample.DoesNotExist:
+			obs_tracker_id_info = ['No Maize Sample', obs_entity_type, 1]
 	elif obs_entity_type == 'row':
 		try:
 			obs_tracker_id_info = [tracker.obs_row.row_id, obs_entity_type, tracker.obs_row_id]
@@ -2252,6 +2271,36 @@ def single_row_info(request, obs_row_id):
 	context_dict['obs_tracker'] = obs_tracker
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/row_info.html', context_dict, context)
+
+@login_required
+def single_isolate_info(request, isolate_table_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		isolate_info = Isolate.objects.get(id=isolate_table_id)
+	except Isolate.DoesNotExist:
+		isolate_info = None
+	if isolate_info is not None:
+		obs_tracker = get_obs_tracker('isolate_id', isolate_table_id)
+	context_dict['isolate_info'] = isolate_info
+	context_dict['obs_tracker'] = obs_tracker
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/isolate_info.html', context_dict, context)
+
+@login_required
+def single_glycerol_stock_info(request, glycerol_stock_table_id):
+	context = RequestContext(request)
+	context_dict = {}
+	try:
+		glycerol_stock_info = GlycerolStock.objects.get(id=glycerol_stock_table_id)
+	except GlycerolStock.DoesNotExist:
+		glycerol_stock_info = None
+	if glycerol_stock_info is not None:
+		obs_tracker = get_obs_tracker('glycerol_stock_id', glycerol_stock_table_id)
+	context_dict['glycerol_stock_info'] = glycerol_stock_info
+	context_dict['obs_tracker'] = obs_tracker
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/glycerol_stock_info.html', context_dict, context)
 
 @login_required
 def single_plant_info(request, obs_plant_id):

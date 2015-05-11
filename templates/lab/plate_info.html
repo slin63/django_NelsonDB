@@ -35,6 +35,13 @@
     </tbody>
   </table>
 
+  {% for t in obs_tracker %}
+    {% if t.obs_entity_type == 'plate' %}
+      {% include 'lab/tracker_info_table.html' with obs_tracker=obs_tracker %}
+    {% endif %}
+  {% endfor %}
+  <br/>
+
   {% if obs_tracker %}
   <h2>Plate Used For</h2>
   <table class="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
