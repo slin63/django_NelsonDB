@@ -29,7 +29,7 @@
         <td>{{ culture_info.plating_cycle }}</td>
         <td>{{ culture_info.dilution }}</td>
         <td>{{ culture_info.image_filename }}</td>
-        <td>{{ culture_info.medium }}</td>
+        <td><a href='/lab/medium/{{culture_info.medium_id}}/'>{{ culture_info.medium.media_name }}</a></td>
         <td>{{ culture_info.comments }}</td>
       </tr>
     </tbody>
