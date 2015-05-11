@@ -7,39 +7,44 @@
 </div>
   <br />
   <div class="container-fluid">
-    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-      <div class="row-fluid">
-        <div class="span3">
-          <ul class="nav nav-list">
-            <li class="nav-header">Select Experiments</li>
-            <form>
-              <label></label>
-              <li><input  class="search-query" type="text" name="measurement_experimentsuggestion" id="measurement_experimentsuggestion" placeholder="Type Experiment (e.g. 08PN)"/></li>
-            </form>
-          </ul>
+    {% if experiment_search %}
+      <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+        <div class="row-fluid">
+          <div class="span3">
+            <ul class="nav nav-list">
+              <li class="nav-header">Select Experiments</li>
+              <form>
+                <label></label>
+                <li><input  class="search-query" type="text" name="measurement_experimentsuggestion" id="measurement_experimentsuggestion" placeholder="Type Experiment (e.g. 08PN)"/></li>
+              </form>
+            </ul>
+          </div>
+          <div class="span3 offset1">
+            <button class="btn btn-info" id="show_all_measurement_experiment" name="show_all_measurement_experiment" type="submit">Show All Experiments</button>
+          </div>
+          {% if checkbox_measurement_experiment %}
+          <div class="span2 offset3">
+            <button class="btn btn-warning" id="clear_measurement_experiment" name="clear_measurement_experiment" type="submit">Clear Experiments</button>
+          </div>
+          {% endif %}
         </div>
-        <div class="span3 offset1">
-          <button class="btn btn-info" id="show_all_measurement_experiment" name="show_all_measurement_experiment" type="submit">Show All Experiments</button>
+        <div id="measurement_experiment">
+          {% include 'lab/measurement_experiment_list.html' with measurement_experiment_list=measurement_experiment_list %}
         </div>
         {% if checkbox_measurement_experiment %}
-        <div class="span2 offset3">
-          <button class="btn btn-warning" id="clear_measurement_experiment" name="clear_measurement_experiment" type="submit">Clear Experiments</button>
-        </div>
+          <hr>
+          <h5>Selected Experiments</h5>
+          {% for exp in checkbox_measurement_experiment %}
+            <li>{{ exp.name }}</li>
+          {% endfor %}
         {% endif %}
-      </div>
-      <div id="measurement_experiment">
-        {% include 'lab/measurement_experiment_list.html' with measurement_experiment_list=measurement_experiment_list %}
-      </div>
-      {% if checkbox_measurement_experiment %}
-        <hr>
-        <h5>Selected Experiments</h5>
-        {% for exp in checkbox_measurement_experiment %}
-          <li>{{ exp.name }}</li>
-        {% endfor %}
-      {% endif %}
-    </div><br/>
+      </div><br/>
 
-    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+
+    {% endif %}
+
+    {% if measurement_data %}
       <h2>Measurement Data</h2><br/>
       <form id="select_stocks_form" method="post" action="/lab/download/measurements/">
         {% csrf_token %}
@@ -78,6 +83,7 @@
         <br/>
         <input class="btn btn-primary" type="submit" name="submit" value="Export Data"/>
       </form>
+      {% endif %}
     </div><br/><br/>
   </div>
 
