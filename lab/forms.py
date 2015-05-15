@@ -64,14 +64,14 @@ class NewExperimentForm(forms.Form):
 	name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Experiment Name'}), help_text="Assign an experiment name (e.g. 15XY):", required=True)
 	start_date = forms.DateField(widget=forms.DateInput(attrs={'placeholder':'Start Date'}), help_text="Give a start date:", required=True)
 	purpose = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Purpose'}), help_text="Description of purpose:", required=True)
-	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments', 'rows': '5', 'cols': '20'}), help_text="Any additional comments:")
+	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments', 'rows': '5', 'cols': '20'}), help_text="Any additional comments:", required=False)
 
 class NewTreatmentForm(forms.Form):
 	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", help_text="Select the experiment:", required=True)
 	treatment_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Treatment ID'}), help_text="Assign a unique ID for this treatment:", required=True)
 	treatment_type = forms.CharField(widget=forms.DateInput(attrs={'placeholder':'Treatment Type'}), help_text="What kind of treatment (e.g. inoculation, fertilizer):", required=True)
 	date = forms.DateField(widget=forms.DateInput(attrs={'placeholder':'Treatment Date'}), help_text="On what date was treatment (01-30-2015):", required=True)
-	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments', 'rows': '5', 'cols': '20'}), help_text="Any additional comments:")
+	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments', 'rows': '5', 'cols': '20'}), help_text="Any additional comments:" , required=False)
 
 class NewFieldForm(forms.Form):
 	locality = forms.ModelChoiceField(queryset=Locality.objects.all(), empty_label="--- Locality ---", help_text="Select the correct locality:", required=True)
