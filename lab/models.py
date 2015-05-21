@@ -137,7 +137,10 @@ class ObsPlant(models.Model):
 class ObsSample(models.Model):
 	sample_id = models.CharField(max_length=200, unique=True)
 	sample_type = models.CharField(max_length=200, blank=True)
+	sample_name = models.CharField(max_length=200, blank=True)
 	weight = models.CharField(max_length=200, blank=True)
+	volume = models.CharField(max_length=200, blank=True)
+	density = models.CharField(max_length=200, blank=True)
 	kernel_num = models.CharField(max_length=200, blank=True)
 	photo = models.CharField(max_length=200, blank=True)
 	comments = models.CharField(max_length=3000, blank=True)
