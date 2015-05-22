@@ -7,6 +7,14 @@
     <h1>Stock Info: <a href='/lab/stock/{{stock_info.id}}/'>{{stock_info.seed_id}}</a></h1>
   </div>
 
+  <hr>
+  <a href='/lab/seed_inventory/update/{{stock_info.id}}/'><input class="btn btn-info" type="submit" name="submit" value="Update Seed Information"/></a>
+  {% if stock_packets %}
+  <a href='/lab/seed_inventory/packet_update/{{stock_info.id}}/'><input class="btn btn-info" type="submit" name="submit" value="Update Seed Packets"/></a>
+  {% endif %}
+  <a href='/lab/log_data/seed_packet/'><input class="btn btn-warning" type="submit" name="submit" value="Add New Seed Packets"/></a>
+  <hr>
+
   <h2>Seed Stock</h2>
   <table id="single_stock_info" class="table table-striped table-bordered" cellspacing="0" width="100%">
     <thead>
@@ -38,7 +46,6 @@
       {% include 'lab/tracker_info_table.html' with obs_tracker=obs_tracker %}
     {% endif %}
   {% endfor %}
-  <br/>
 
   {% if stock_info.passport.taxonomy.population != 'No Taxonomy' and stock_info.passport.taxonomy.population != '' %}
   <h2>Taxonomy</h2>
@@ -201,6 +208,7 @@
   <br/>
   <hr>
   <h2>No Stock Info Found!</h2>
+  <a href='/lab/log_data/stock/'><input class="btn btn-warning" type="submit" name="submit" value="Add New Seed Information"/></a>
   <hr>
 {% endif %}
 

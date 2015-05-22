@@ -8,13 +8,20 @@
 
   <div class="container-fluid">
 
-    <br/>
+    {% if failed %}
+    <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Nothing was saved! Fix Errors in data.<br/>&nbsp;</h4>
+    {% endif %}
+    {% if saved %}
+    <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Data was saved!<br/>&nbsp;</h4>
+    {% endif %}
+
     <form class="form-signin" id="log_data_online" method="post" action="/lab/log_data/{{data_type}}/">
       {% csrf_token %}
       <table id="log_data_online_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
           <tr>
             {% if data_type == 'seed_inventory' %}
+              <th>Experiment</th>
               <th>Seed ID</th>
               <th>Seed Name</th>
               <th>Cross Type</th>
@@ -26,9 +33,6 @@
               <th>Genus</th>
               <th>Species</th>
               <th>Population</th>
-              <th>Collection Field</th>
-              <th>Collection Row</th>
-              <th>Collection Plant</th>
               <th>Collected By</th>
               <th>Collection Date</th>
               <th>Collection Method</th>
@@ -41,7 +45,7 @@
               <th>Source Comments</th>
             {% elif data_type == 'seed_packet' %}
               <th>Seed ID</th>
-              <th>Weight</th>
+              <th>Weight (g)</th>
               <th>Num Seeds</th>
               <th>Packet Comments</th>
               <th>Locality</th>

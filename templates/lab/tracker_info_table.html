@@ -1,79 +1,79 @@
       <table id="isolate_tracker_info" class="table table-striped table-bordered" cellspacing="0" widtd="100%">
         <thead>
           <tr>
-            {% if t.experiment_id != 1 %}
+            {% if t.experiment_id != 1 and t.experiment_id != 'NULL' and t.experiment_id != None %}
               <td colspan="1"><b>Experiment</b></td>
             {% endif %}
-            {% if t.field_id != 1 %}
+            {% if t.field_id != 1 and t.field_id != 'NULL' and t.field_id != None %}
               <td colspan="1"><b>Field</b></td>
             {% endif %}
-            {% if t.glycerol_stock_id != 1 and t.glycerol_stock.glycerol_stock_id != '' %}
+            {% if t.glycerol_stock_id != 1 and t.glycerol_stock.glycerol_stock_id != '' and t.glycerol_stock_id != 'NULL' and t.glycerol_stock_id != None %}
               <td colspan="5"><b>Glycerol Stock</b></td>
             {% endif %}
-            {% if t.location_id != 1 %}
+            {% if t.location_id != 1 and t.location_id != 'NULL' and t.location_id != None %}
               <td colspan="1"><b>Location</b></td>
             {% endif %}
-            {% if t.maize_sample_id != 1 and t.maize_sample.maize_sample_id != '' %}
+            {% if t.maize_sample_id != 1 and t.maize_sample.maize_sample_id != '' and t.maize_sample_id != 'NULL' and t.maize_sample_id != None %}
               <td colspan="8"><b>Maize Sample</b></td>
             {% endif %}
-            {% if t.obs_culture_id != 1 %}
+            {% if t.obs_culture_id != 1 and t.obs_culture_id != 'NULL' and t.obs_culture_id != None %}
               <td colspan="10"><b>Culture</b></td>
             {% endif %}
-            {% if t.obs_dna_id != 1 %}
+            {% if t.obs_dna_id != 1 and t.obs_dna_id != 'NULL' and t.obs_dna_id != None %}
               <td colspan="5"><b>DNA</b></td>
             {% endif %}
-            {% if t.obs_env_id != 1 %}
+            {% if t.obs_env_id != 1 and t.obs_env_id != 'NULL' and t.obs_env_id != None %}
               <td colspan="4"><b>Env</b></td>
             {% endif %}
-            {% if t.obs_extract_id != 1 and t.obs_extract.extract_id != '' %}
+            {% if t.obs_extract_id != 1 and t.obs_extract.extract_id != '' and t.obs_extract_id != 'NULL' and t.obs_extract_id != None %}
               <td colspan="5"><b>Extract</b></td>
             {% endif %}
-            {% if t.obs_microbe_id != 1 %}
+            {% if t.obs_microbe_id != 1 and t.obs_microbe_id != 'NULL' and t.obs_microbe_id != None %}
               <td colspan="3"><b>Microbe</b></td>
             {% endif %}
-            {% if t.obs_plant_id != 1 %}
+            {% if t.obs_plant_id != 1 and t.obs_plant_id != 'NULL' and t.obs_plant_id != None %}
               <td colspan="3"><b>Plant</b></td>
             {% endif %}
-            {% if t.obs_plate_id != 1 %}
+            {% if t.obs_plate_id != 1 and t.obs_plate_id != 'NULL' and t.obs_plate_id != None %}
               <td colspan="8"><b>Plate</b></td>
             {% endif %}
-            {% if t.obs_row_id != 1 %}
+            {% if t.obs_row_id != 1 and t.obs_row_id != 'NULL' and t.obs_row_id != None %}
               <td colspan="10"><b>Row</b></td>
             {% endif %}
-            {% if t.obs_sample_id != 1 %}
+            {% if t.obs_sample_id != 1 and t.obs_sample_id != 'NULL' and t.obs_sample_id != None %}
               <td colspan="6"><b>Sample</b></td>
             {% endif %}
-            {% if t.obs_tissue_id != 1 %}
+            {% if t.obs_tissue_id != 1 and t.obs_tissue_id != 'NULL' and t.obs_tissue_id != None %}
               <td colspan="5"><b>Tissue</b></td>
             {% endif %}
-            {% if t.obs_well_id != 1 %}
+            {% if t.obs_well_id != 1 and t.obs_well_id != 'NULL' and t.obs_well_id != None %}
               <td colspan="5"><b>Well</b></td>
             {% endif %}
-            {% if t.stock_id != 1 %}
+            {% if t.stock_id != 1 and t.stock_id != 'NULL' and t.stock_id != None %}
               <td colspan="8"><b>Seed Stock</b></td>
             {% endif %}
-            {% if t.user_id != 1 %}
+            {% if t.user_id != 1 and t.user_id != 'NULL' and t.user_id != None %}
               <td colspan="1"><b>User</b></td>
             {% endif %}
           </tr>
           <tr>
-            {% if t.experiment_id != 1 %}
+            {% if t.experiment_id != 1 and t.experiment_id != 'NULL' and t.experiment_id != None %}
               <td>Name</td>
             {% endif %}
-            {% if t.field_id != 1 %}
+            {% if t.field_id != 1 and t.field_id != 'NULL' and t.field_id != None %}
               <td>Field</td>
             {% endif %}
-            {% if t.glycerol_stock_id != 1 and t.glycerol_stock.glycerol_stock_id != '' %}
+            {% if t.glycerol_stock_id != 1 and t.glycerol_stock.glycerol_stock_id != '' and t.glycerol_stock_id != 'NULL' and t.glycerol_stock_id != None %}
               <td>Glycerol Stock ID</td>
               <td>Date</td>
               <td>Color</td>
               <td>Organism</td>
               <td>Comments</td>
             {% endif %}
-            {% if t.location_id != 1 %}
+            {% if t.location_id != 1 and t.location_id != 'NULL' and t.location_id != None %}
               <td>Location</td>
             {% endif %}
-            {% if t.maize_sample_id != 1 and t.maize_sample.maize_sample_id != '' %}
+            {% if t.maize_sample_id != 1 and t.maize_sample.maize_sample_id != '' and t.maize_sample_id != 'NULL' and t.maize_sample_id != None %}
               <td>Maize Sample ID</td>
               <td>Locality</td>
               <td>Type of Source</td>
@@ -83,7 +83,7 @@
               <td>Photo</td>
               <td>Comments</td>
             {% endif %}
-            {% if t.obs_culture_id != 1 %}
+            {% if t.obs_culture_id != 1 and t.obs_culture_id != 'NULL' and t.obs_culture_id != None %}
               <td>Culture ID</td>
               <td>Media ID</td>
               <td>Culture Name</td>
@@ -95,37 +95,37 @@
               <td>Num Microbes</td>
               <td>Comments</td>
             {% endif %}
-            {% if t.obs_dna_id != 1 %}
+            {% if t.obs_dna_id != 1 and t.obs_dna_id != 'NULL' and t.obs_dna_id != None %}
               <td>DNA ID</td>
               <td>Date</td>
               <td>Tube ID</td>
               <td>Tube Type</td>
               <td>Comments</td>
             {% endif %}
-            {% if t.obs_env_id != 1 %}
+            {% if t.obs_env_id != 1 and t.obs_env_id != 'NULL' and t.obs_env_id != None %}
               <td>Env ID</td>
               <td>Longitude</td>
               <td>Latitude</td>
               <td>Comments</td>
             {% endif %}
-            {% if t.obs_extract_id != 1 and t.obs_extract.extract_id != '' %}
+            {% if t.obs_extract_id != 1 and t.obs_extract.extract_id != '' and t.obs_extract_id != 'NULL' and t.obs_extract_id != None %}
               <td>Extract ID</td>
               <td>Weight</td>
               <td>Rep</td>
               <td>Solvent</td>
               <td>Comments</td>
             {% endif %}
-            {% if t.obs_microbe_id != 1 %}
+            {% if t.obs_microbe_id != 1 and t.obs_microbe_id != 'NULL' and t.obs_microbe_id != None %}
               <td>Microbe ID</td>
               <td>Type</td>
               <td>Comments</td>
             {% endif %}
-            {% if t.obs_plant_id != 1 %}
+            {% if t.obs_plant_id != 1 and t.obs_plant_id != 'NULL' and t.obs_plant_id != None %}
               <td>Plant ID</td>
               <td>Plant Num</td>
               <td>Plant Comments</td>
             {% endif %}
-            {% if t.obs_plate_id != 1 %}
+            {% if t.obs_plate_id != 1 and t.obs_plate_id != 'NULL' and t.obs_plate_id != None %}
               <td>Plate ID</td>
               <td>Plate Name</td>
               <td>Date</td>
@@ -135,7 +135,7 @@
               <td>Status</td>
               <td>Comments</td>
             {% endif %}
-            {% if t.obs_row_id != 1 %}
+            {% if t.obs_row_id != 1 and t.obs_row_id != 'NULL' and t.obs_row_id != None %}
               <td>Row ID</td>
               <td>Row Name</td>
               <td>Range</td>
@@ -147,7 +147,7 @@
               <td>Harvest Date</td>
               <td>Comments</td>
             {% endif %}
-            {% if t.obs_sample_id != 1 %}
+            {% if t.obs_sample_id != 1 and t.obs_sample_id != 'NULL' and t.obs_sample_id != None %}
               <td>Sample ID</td>
               <td>Type</td>
               <td>Weight</td>
@@ -155,21 +155,21 @@
               <td>Photo</td>
               <td>Comments</td>
             {% endif %}
-            {% if t.obs_tissue_id != 1 %}
+            {% if t.obs_tissue_id != 1 and t.obs_tissue_id != 'NULL' and t.obs_tissue_id != None %}
               <td>Tissue ID</td>
               <td>Type</td>
               <td>Tissue Name</td>
               <td>Date</td>
               <td>Comments</td>
             {% endif %}
-            {% if t.obs_well_id != 1 %}
+            {% if t.obs_well_id != 1 and t.obs_well_id != 'NULL' and t.obs_well_id != None %}
               <td>Well ID</td>
               <td>Well</td>
               <td>Inventory</td>
               <td>Label</td>
               <td>Comments</td>
             {% endif %}
-            {% if t.stock_id != 1 %}
+            {% if t.stock_id != 1 and t.stock_id != 'NULL' and t.stock_id != None %}
               <td>Seed ID</td>
               <td>Seed Name</td>
               <td>Cross Type</td>
@@ -179,30 +179,30 @@
               <td>Inoculated</td>
               <td>Comments</td>
             {% endif %}
-            {% if t.user_id != 1 %}
+            {% if t.user_id != 1 and t.user_id != 'NULL' and t.user_id != None %}
               <td>Username</td>
             {% endif %}
           </tr>
         </thead>
         <tbody>
           <tr>
-            {% if t.experiment_id != 1 %}
+            {% if t.experiment_id != 1 and t.experiment_id != 'NULL' and t.experiment_id != None %}
             <td><a href='/lab/experiment/{{t.experiment.name}}/'>{{t.experiment.name}}</a></td>
             {% endif %}
-            {% if t.field_id != 1 %}
+            {% if t.field_id != 1 and t.field_id != 'NULL' and t.field_id != None %}
             <td><a href='/lab/field/{{t.field_id}}/'>{{t.field.field_name}}</a></td>
             {% endif %}
-            {% if t.glycerol_stock_id != 1 and t.glycerol_stock.glycerol_stock_id != '' %}
+            {% if t.glycerol_stock_id != 1 and t.glycerol_stock.glycerol_stock_id != '' and t.glycerol_stock_id != 'NULL' and t.glycerol_stock_id != None %}
             <td><a href='/lab/glycerol_stock/{{t.glycerol_stock_id}}/'>{{t.glycerol_stock.glycerol_stock_id}}</td>
             <td>{{t.glycerol_stock.stock_date}}</td>
             <td>{{t.glycerol_stock.extract_color}}</td>
             <td>{{t.glycerol_stock.organism}}</td>
             <td>{{t.glycerol_stock.comments}}</td>
             {% endif %}
-            {% if t.location_id != 1 %}
+            {% if t.location_id != 1 and t.location_id != 'NULL' and t.location_id != None %}
             <td><a href='/lab/location/{{t.location_id}}/'>{{t.location.location_name}}</a></td>
             {% endif %}
-            {% if t.maize_sample_id != 1 and t.maize_sample.maize_sample_id != '' %}
+            {% if t.maize_sample_id != 1 and t.maize_sample.maize_sample_id != '' and t.maize_sample_id != 'NULL' and t.maize_sample_id != None %}
             <td><a href='/lab/maize/{{t.maize_sample_id}}/'>{{t.maize_sample.maize_sample_id}}</a></td>
             <td><a href='/lab/locality/{{t.maize_sample.locality_id}}/'>{{t.maize_sample.locality}}</a></td>
             <td>{{t.maize_sample.type_of_source}}</td>
@@ -212,7 +212,7 @@
             <td>{{t.maize_sample.photo}}</td>
             <td>{{t.maize_sample.comments}}</td>
             {% endif %}
-            {% if t.obs_culture_id != 1 %}
+            {% if t.obs_culture_id != 1 and t.obs_culture_id != 'NULL' and t.obs_culture_id != None %}
             <td><a href='/lab/culture/{{t.obs_culture_id}}/'>{{t.obs_culture.culture_id}}</a></td>
             <td><a href='/lab/medium/{{t.obs_culture.medium_id}}/'>{{t.obs_culture.medium.media_name}}</a></td>
             <td>{{t.obs_culture.culture_name}}</td>
@@ -224,37 +224,37 @@
             <td>{{t.obs_culture.num_microbes}}</td>
             <td>{{t.obs_culture.comments}}</td>
             {% endif %}
-            {% if t.obs_dna_id != 1 %}
+            {% if t.obs_dna_id != 1 and t.obs_dna_id != 'NULL' and t.obs_dna_id != None %}
             <td><a href='/lab/dna/{{t.obs_dna_id}}/'>{{t.obs_dna.dna_id}}</a></td>
             <td>{{t.obs_dna.date}}</td>
             <td>{{t.obs_dna.tube_id}}</td>
             <td>{{t.obs_dna.tube_type}}</td>
             <td>{{t.obs_dna.comments}}</td>
             {% endif %}
-            {% if t.obs_env_id != 1 %}
+            {% if t.obs_env_id != 1 and t.obs_env_id != 'NULL' and t.obs_env_id != None %}
             <td><a href='/lab/env/{{t.obs_env_id}}/'>{{t.obs_env.env_id}}</a></td>
             <td>{{t.obs_env.longitude}}</td>
             <td>{{t.obs_env.latitude}}</td>
             <td>{{t.obs_env.comments}}</td>
             {% endif %}
-            {% if t.obs_extract_id != 1 and t.obs_extract.extract_id != '' %}
+            {% if t.obs_extract_id != 1 and t.obs_extract.extract_id != '' and t.obs_extract_id != 'NULL' and t.obs_extract_id != None %}
             <td><a href='/lab/extract/{{t.obs_extract_id}}/'>{{t.obs_extract.extract_id}}</a></td>
             <td>{{t.obs_extract.weight}}</td>
             <td>{{t.obs_extract.rep}}</td>
             <td>{{t.obs_extract.solvent}}</td>
             <td>{{t.obs_extract.comments}}</td>
             {% endif %}
-            {% if t.obs_microbe_id != 1 %}
+            {% if t.obs_microbe_id != 1 and t.obs_microbe_id != 'NULL' and t.obs_microbe_id != None %}
             <td><a href='/lab/microbe/{{t.obs_microbe_id}}/'>{{t.obs_microbe.microbe_id}}</a></td>
             <td>{{t.obs_microbe.microbe_type}}</td>
             <td>{{t.obs_microbe.comments}}</td>
             {% endif %}
-            {% if t.obs_plant_id != 1 %}
+            {% if t.obs_plant_id != 1 and t.obs_plant_id != 'NULL' and t.obs_plant_id != None %}
             <td><a href='/lab/plant/{{t.obs_plant_id}}/'>{{t.obs_plant.plant_id}}</a></td>
             <td>{{t.obs_plant.plant_num}}</td>
             <td>{{t.obs_plant.comments}}</td>
             {% endif %}
-            {% if t.obs_plate_id != 1 %}
+            {% if t.obs_plate_id != 1 and t.obs_plate_id != 'NULL' and t.obs_plate_id != None %}
             <td><a href='/lab/plate/{{t.obs_plate_id}}/'>{{t.obs_plate.plate_id}}</a></td>
             <td>{{t.obs_plate.plate_name}}</td>
             <td>{{t.obs_plate.date}}</td>
@@ -264,7 +264,7 @@
             <td>{{t.obs_plate.plate_status}}</td>
             <td>{{t.obs_plate.comments}}</td>
             {% endif %}
-            {% if t.obs_row_id != 1 %}
+            {% if t.obs_row_id != 1 and t.obs_row_id != 'NULL' and t.obs_row_id != None %}
             <td><a href='/lab/row/{{t.obs_row_id}}/'>{{t.obs_row.row_id}}</a></td>
             <td>{{t.obs_row.row_name}}</td>
             <td>{{t.obs_row.range}}</td>
@@ -276,7 +276,7 @@
             <td>{{t.obs_row.harvest_date}}</td>
             <td>{{t.obs_row.comments}}</td>
             {% endif %}
-            {% if t.obs_sample_id != 1 %}
+            {% if t.obs_sample_id != 1 and t.obs_sample_id != 'NULL' and t.obs_sample_id != None %}
             <td><a href='/lab/sample/{{t.obs_sample_id}}/'>{{t.obs_sample.sample_id}}</a></td>
             <td>{{t.obs_sample.sample_type}}</td>
             <td>{{t.obs_sample.weight}}</td>
@@ -284,21 +284,21 @@
             <td>{{t.obs_sample.photo}}</td>
             <td>{{t.obs_sample.comments}}</td>
             {% endif %}
-            {% if t.obs_tissue_id != 1 %}
+            {% if t.obs_tissue_id != 1 and t.obs_tissue_id != 'NULL' and t.obs_tissue_id != None %}
             <td><a href='/lab/tissue/{{t.obs_tissue_id}}/'>{{t.obs_tissue.tissue_id}}</a></td>
             <td>{{t.obs_tissue.tissue_type}}</td>
             <td>{{t.obs_tissue.tissue_name}}</td>
             <td>{{t.obs_tissue.date_ground}}</td>
             <td>{{t.obs_tissue.comments}}</td>
             {% endif %}
-            {% if t.obs_well_id != 1 %}
+            {% if t.obs_well_id != 1 and t.obs_well_id != 'NULL' and t.obs_well_id != None %}
             <td><a href='/lab/well/{{t.obs_well_id}}/'>{{t.obs_well.well_id}}</a></td>
             <td>{{t.obs_well.well}}</td>
             <td>{{t.obs_well.well_inventory}}</td>
             <td>{{t.obs_well.tube_label}}</td>
             <td>{{t.obs_well.comments}}</td>
             {% endif %}
-            {% if t.stock_id != 1 %}
+            {% if t.stock_id != 1 and t.stock_id != 'NULL' and t.stock_id != None %}
             <td><a href='/lab/stock/{{t.stock_id}}/'>{{t.stock.seed_id}}</a></td>
             <td>{{t.stock.seed_name}}</td>
             <td>{{t.stock.cross_type}}</td>
@@ -308,7 +308,7 @@
             <td>{{t.stock.inoculated}}</td>
             <td>{{t.stock.comments}}</td>
             {% endif %}
-            {% if t.user_id != 1 %}
+            {% if t.user_id != 1 and t.user_id != 'NULL' and t.user_id != None %}
             <td><a href='/lab/profile/{{t.user.username}}/'>{{t.user.username}}</a></td>
             {% endif %}
         </tbody>
