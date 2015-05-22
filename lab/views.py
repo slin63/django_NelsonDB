@@ -578,7 +578,7 @@ def update_seed_info(request, stock_id):
 					stock.save()
 					context_dict['updated'] = True
 				except Exception:
-					context_dict['updated'] = False
+					context_dict['failed'] = True
 		else:
 			print(obs_tracker_stock_form.errors)
 	else:
