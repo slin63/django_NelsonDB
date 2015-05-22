@@ -544,8 +544,10 @@ def update_seed_info(request, stock_id):
 	if request.method == 'POST':
 		obs_tracker_stock_form = LogSeedDataOnlineForm(data=request.POST)
 		if obs_tracker_stock_form.is_valid():
+			print("Here1")
 			with transaction.atomic():
 				try:
+					print("Here2")
 					obs_tracker = ObsTracker.objects.get(obs_entity_type='stock', stock_id=stock_id)
 					obs_tracker.experiment = obs_tracker_stock_form.cleaned_data['experiment']
 					obs_tracker.glycerol_stock_id = None
