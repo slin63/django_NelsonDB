@@ -13,6 +13,7 @@
     {% endif %}
     {% if saved %}
     <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Data was saved!<br/>&nbsp;</h4>
+    {{failed_error}}
     {% endif %}
 
     {% if data_type == 'seed_packet' %}
