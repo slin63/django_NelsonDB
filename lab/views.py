@@ -2590,7 +2590,7 @@ def log_data_online(request, data_type):
 							except Exception as e:
 								failed = True
 								context_dict['failed'] = failed
-								context_dict['failed_error'] = e.message
+								context_dict['failed_error'] = ("error %s %s" % (e.message, type(e)))
 					except KeyError:
 						pass
 				if failed is None:
