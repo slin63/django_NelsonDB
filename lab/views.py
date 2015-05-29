@@ -544,15 +544,10 @@ def update_seed_info(request, stock_id):
 	if request.method == 'POST':
 		obs_tracker_stock_form = LogSeedDataOnlineForm(data=request.POST)
 		if obs_tracker_stock_form.is_valid():
-			print("Here1")
 			with transaction.atomic():
 				try:
-					print("Here2")
 					obs_tracker = ObsTracker.objects.get(obs_entity_type='stock', stock_id=stock_id)
 					obs_tracker.experiment = obs_tracker_stock_form.cleaned_data['experiment']
-					obs_tracker.glycerol_stock_id = 561
-					obs_tracker.maize_sample_id = 1
-					obs_tracker.obs_extract_id = 1
 					obs_tracker.save()
 
 					stock = Stock.objects.get(id=stock_id)
@@ -2586,7 +2581,7 @@ def log_data_online(request, data_type):
 								new_collecting = Collecting.objects.get_or_create(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments)
 								new_passport = Passport.objects.get_or_create(collecting=Collecting.objects.get(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments))
 								new_stock = Stock.objects.get_or_create(passport=Passport.objects.get(collecting=Collecting.objects.get(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments)
-								new_obs_tracker = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=Stock.objects.get(passport=Passport.objects.get(collecting=Collecting.objects.get(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments), experiment=experiment, user=user)
+								new_obs_tracker = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=Stock.objects.get(passport=Passport.objects.get(collecting=Collecting.objects.get(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 							except Exception as e:
 								failed = True
 								context_dict['failed'] = failed
