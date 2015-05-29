@@ -7,7 +7,7 @@
             {% if t.field_id != 1 and t.field_id != 'NULL' and t.field_id != None %}
               <td colspan="1"><b>Field</b></td>
             {% endif %}
-            {% if t.glycerol_stock_id != 561 and t.glycerol_stock.glycerol_stock_id != '' and t.glycerol_stock_id != 'NULL' and t.glycerol_stock_id != None %}
+            {% if t.glycerol_stock_id != 1 and t.glycerol_stock_id != 561 and t.glycerol_stock.glycerol_stock_id != '' and t.glycerol_stock_id != 'NULL' and t.glycerol_stock_id != None %}
               <td colspan="5"><b>Glycerol Stock</b></td>
             {% endif %}
             {% if t.location_id != 1 and t.location_id != 'NULL' and t.location_id != None %}
@@ -63,7 +63,7 @@
             {% if t.field_id != 1 and t.field_id != 'NULL' and t.field_id != None %}
               <td>Field</td>
             {% endif %}
-            {% if t.glycerol_stock_id != 561 and t.glycerol_stock.glycerol_stock_id != '' and t.glycerol_stock_id != 'NULL' and t.glycerol_stock_id != None %}
+            {% if t.glycerol_stock_id != 1 and t.glycerol_stock_id != 561 and t.glycerol_stock.glycerol_stock_id != '' and t.glycerol_stock_id != 'NULL' and t.glycerol_stock_id != None %}
               <td>Glycerol Stock ID</td>
               <td>Date</td>
               <td>Color</td>
@@ -192,7 +192,7 @@
             {% if t.field_id != 1 and t.field_id != 'NULL' and t.field_id != None %}
             <td><a href='/lab/field/{{t.field_id}}/'>{{t.field.field_name}}</a></td>
             {% endif %}
-            {% if t.glycerol_stock_id != 561 and t.glycerol_stock.glycerol_stock_id != '' and t.glycerol_stock_id != 'NULL' and t.glycerol_stock_id != None %}
+            {% if t.glycerol_stock_id != 1 and t.glycerol_stock_id != 561 and t.glycerol_stock.glycerol_stock_id != '' and t.glycerol_stock_id != 'NULL' and t.glycerol_stock_id != None %}
             <td><a href='/lab/glycerol_stock/{{t.glycerol_stock_id}}/'>{{t.glycerol_stock.glycerol_stock_id}}</td>
             <td>{{t.glycerol_stock.stock_date}}</td>
             <td>{{t.glycerol_stock.extract_color}}</td>
