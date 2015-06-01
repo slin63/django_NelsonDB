@@ -548,6 +548,9 @@ def update_seed_info(request, stock_id):
 				try:
 					obs_tracker = ObsTracker.objects.get(obs_entity_type='stock', stock_id=stock_id)
 					obs_tracker.experiment = obs_tracker_stock_form.cleaned_data['experiment']
+					obs_tracker.glycerol_stock_id = 1
+					obs_tracker.maize_sample_id = 1
+					obs_tracker.obs_extract_id = 1
 					obs_tracker.save()
 
 					stock = Stock.objects.get(id=stock_id)
