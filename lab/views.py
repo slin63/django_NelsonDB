@@ -559,19 +559,10 @@ def update_seed_info(request, stock_id):
 					stock.stock_date = obs_tracker_stock_form.cleaned_data['stock__stock_date']
 					stock.inoculated = obs_tracker_stock_form.cleaned_data['stock__inoculated']
 					stock.comments = obs_tracker_stock_form.cleaned_data['stock__comments']
-					stock.passport.collecting.collection_date = obs_tracker_stock_form.cleaned_data['stock__passport__collecting__collection_date']
-					stock.passport.collecting.collection_method = obs_tracker_stock_form.cleaned_data['stock__passport__collecting__collection_method']
-					stock.passport.collecting.comments = obs_tracker_stock_form.cleaned_data['stock__passport__collecting__comments']
-					stock.passport.collecting.user = obs_tracker_stock_form.cleaned_data['stock__passport__collecting__user']
-					stock.passport.people.first_name = obs_tracker_stock_form.cleaned_data['stock__passport__people__first_name']
-					stock.passport.people.last_name = obs_tracker_stock_form.cleaned_data['stock__passport__people__last_name']
-					stock.passport.people.organization = obs_tracker_stock_form.cleaned_data['stock__passport__people__organization']
-					stock.passport.people.phone = obs_tracker_stock_form.cleaned_data['stock__passport__people__phone']
-					stock.passport.people.email = obs_tracker_stock_form.cleaned_data['stock__passport__people__email']
-					stock.passport.people.comments = obs_tracker_stock_form.cleaned_data['stock__passport__people__comments']
-					stock.passport.taxonomy.genus = obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__genus']
-					stock.passport.taxonomy.species = obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__species']
-					stock.passport.taxonomy.population = obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__population']
+					stock.passport.collecting, created = Collecting.objects.get_or_create(collection_date=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__collection_date'], collection_method=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__collection_method'], comments=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__comments'], user=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__user'])
+					stock.passport.people, created = People.objects.get_or_create(first_name=obs_tracker_stock_form.cleaned_data['stock__passport__people__first_name'], last_name=obs_tracker_stock_form.cleaned_data['stock__passport__people__last_name'], organization=obs_tracker_stock_form.cleaned_data['stock__passport__people__organization'], phone=obs_tracker_stock_form.cleaned_data['stock__passport__people__phone'], email=obs_tracker_stock_form.cleaned_data['stock__passport__people__email'], comments=obs_tracker_stock_form.cleaned_data['stock__passport__people__comments'])
+					stock.passport.taxonomy, created = Taxonomy.objects.get_or_create(genus=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__genus'], species=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__species'], population=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__population'], common_name='Maize', alias='', race='', subtaxa='')
+					stock.passport, created = Passport.objects.get_or_create(collecting=stock.passport.collecting, people=stock.passport.people, taxonomy=stock.passport.taxonomy)
 					stock.save()
 					context_dict['updated'] = True
 				except Exception:
