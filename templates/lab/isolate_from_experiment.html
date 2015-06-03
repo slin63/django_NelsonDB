@@ -40,7 +40,7 @@
         <td>{{ i.isolate.passport.taxonomy.race }}</td>
         <td>{{ i.isolate.passport.taxonomy.subtaxa }}</td>
         <td>{{ i.isolate.disease_info }}</td>
-        <td><a href='/lab/location/{{i.isolateid}}/'>{{ i.isolate.location.location_name }}</a></td>
+        <td><a href='/lab/location/{{i.location_id}}/'>{{ i.isolate.location.location_name }}</a></td>
         <td>{{ i.isolate.location.box_name }}</td>
       </tr>
       {% endfor %}
