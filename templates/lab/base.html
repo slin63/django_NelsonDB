@@ -28,6 +28,7 @@
 
 				   <div class="nav-collapse collapse">
 					   <ul class="nav pull-right">
+
 						   {% if logged_in_user %}
 							<li class="navbar-text">Welcome {{logged_in_user}}!</li>
 							<li><a href="/lab/logout/">Logout</a></li>
@@ -53,6 +54,16 @@
 			<div class="row-fluid">
 				<div class="span2">
 					<div class="well sidebar-nav">
+						<ul class="nav nav-list">
+							<li class="nav-header">Search</li>
+							<form>
+								<label></label>
+								<li><input  class="input-medium search-query" type="text" name="sidebarsearch" id="sidebarsearch" placeholder="Type Anything"/></li>
+							</form>
+							<div id="sidebar_search_results">
+								{% include 'lab/sidebar_search_results_list.html' with results_list=results_list %}
+							</div>
+						</ul>
 							<ul class="nav nav-list">
 								<li class="nav-header"><h4>About</h4></li>
 								<li class="nav-list"><a href='/lab/about/help/'>Help</a></li>

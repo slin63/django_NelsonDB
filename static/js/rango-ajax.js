@@ -482,6 +482,19 @@ $('#seedidsearch').keyup(function(){
 	});
 });
 
+$('#sidebarsearch').keyup(function(){
+	var query;
+	query = $(this).val();
+	$.get('/lab/sidebar_search/', {suggestion: query}, function(data){
+		$('#sidebar_search_results').html(data);
+		$('#sidebar_search_results_table').dataTable({
+			"searching": false,
+			"scrollY": "200px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
 
 var frm = $('#query_builder_options_form');
 frm.submit(function () {

@@ -129,7 +129,7 @@ class LogSeedDataOnlineForm(forms.Form):
 	stock__passport__taxonomy__genus = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Genus'}), help_text="Genus", required=False)
 	stock__passport__taxonomy__species = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Species'}), help_text="Species", required=False)
 	stock__passport__taxonomy__population = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Population'}), help_text="Population", required=False)
-	stock__passport__collecting__user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Collected By ---", help_text="Collector", required=True)
+	stock__passport__collecting__user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Collected By ---", initial=User.objects.get(username='unknown_person'), help_text="Collector", required=True)
 	stock__passport__collecting__collection_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Collection Date'}), help_text="Date Collected", required=False)
 	stock__passport__collecting__collection_method = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Collection Method'}), help_text="Collection Method", required=False)
 	stock__passport__collecting__comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Collection Comments'}), help_text="Collection Comments", required=False)

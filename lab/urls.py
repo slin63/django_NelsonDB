@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     url(r'^edit_profile/$', views.edit_profile, name ='edit_profile'),
 	url(r'^goto/$', views.track_url, name='track_url'),
     url(r'^site_map/$', views.site_map, name='site_map'),
+    url(r'^sidebar_search/$', views.sidebar_search, name='sidebar_search'),
 
     url(r'^experiment/(?P<experiment_name_url>\w+)/$', views.experiment, name='experiment'),
     url(r'^profile/(?P<profile_name>\w+)/$', views.profile, name ='profile'),
