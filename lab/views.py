@@ -2875,19 +2875,19 @@ def sidebar_search(request):
 		starts_with = request.POST['suggestion']
 	if starts_with:
 		try:
-			experiment_results = Experiment.objects.filter(name__contains=starts_with)[:10]
+			experiment_results = Experiment.objects.filter(name__contains=starts_with).exclude(name='No Experiment')[:10]
 		except Experiment.DoesNotExist:
 			experiment_results = None
 		for result in experiment_results:
 			result.url = "/lab/experiment/%s/" % (result.name)
 		try:
-			row_results = ObsRow.objects.filter(row_id__contains=starts_with)[:10]
+			row_results = ObsRow.objects.filter(row_id__contains=starts_with).exclude(name='No Row')[:10]
 		except ObsRow.DoesNotExist:
 			row_results = None
 		for result in row_results:
 			result.url = "/lab/row/%d/" % (result.id)
 		try:
-			isolate_results = Isolate.objects.filter(isolate_id__contains=starts_with)[:10]
+			isolate_results = Isolate.objects.filter(isolate_id__contains=starts_with).exclude(name='No Isolate')[:10]
 		except Isolate.DoesNotExist:
 			isolate_results = None
 		for result in isolate_results:
@@ -2899,73 +2899,73 @@ def sidebar_search(request):
 		for result in glycerol_results:
 			result.url = "/lab/glycerol_stock/%d/" % (result.id)
 		try:
-			plant_results = ObsPlant.objects.filter(plant_id__contains=starts_with)[:10]
+			plant_results = ObsPlant.objects.filter(plant_id__contains=starts_with).exclude(name='No Plant')[:10]
 		except ObsPlant.DoesNotExist:
 			plant_results = None
 		for result in plant_results:
 			result.url = "/lab/plant/%d/" % (result.id)
 		try:
-			plate_results = ObsPlate.objects.filter(plate_id__contains=starts_with)[:10]
+			plate_results = ObsPlate.objects.filter(plate_id__contains=starts_with).exclude(name='No Plate')[:10]
 		except ObsPlate.DoesNotExist:
 			plate_results = None
 		for result in plate_results:
 			result.url = "/lab/plate/%d/" % (result.id)
 		try:
-			culture_results = ObsCulture.objects.filter(culture_id__contains=starts_with)[:10]
+			culture_results = ObsCulture.objects.filter(culture_id__contains=starts_with).exclude(name='No Culture')[:10]
 		except ObsCulture.DoesNotExist:
 			culture_results = None
 		for result in culture_results:
 			result.url = "/lab/culture/%d/" % (result.id)
 		try:
-			microbe_results = ObsMicrobe.objects.filter(microbe_id__contains=starts_with)[:10]
+			microbe_results = ObsMicrobe.objects.filter(microbe_id__contains=starts_with).exclude(name='No Microbe')[:10]
 		except ObsMicrobe.DoesNotExist:
 			microbe_results = None
 		for result in microbe_results:
 			result.url = "/lab/microbe/%d/" % (result.id)
 		try:
-			extract_results = ObsExtract.objects.filter(extract_id__contains=starts_with)[:10]
+			extract_results = ObsExtract.objects.filter(extract_id__contains=starts_with).exclude(name='No Extract')[:10]
 		except ObsExtract.DoesNotExist:
 			extract_results = None
 		for result in extract_results:
 			result.url = "/lab/extract/%d/" % (result.id)
 		try:
-			dna_results = ObsDNA.objects.filter(dna_id__contains=starts_with)[:10]
+			dna_results = ObsDNA.objects.filter(dna_id__contains=starts_with).exclude(name='No DNA')[:10]
 		except ObsDNA.DoesNotExist:
 			dna_results = None
 		for result in dna_results:
 			result.url = "/lab/dna/%d/" % (result.id)
 		try:
-			sample_results = ObsSample.objects.filter(sample_id__contains=starts_with)[:10]
+			sample_results = ObsSample.objects.filter(sample_id__contains=starts_with).exclude(name='No Sample')[:10]
 		except ObsSample.DoesNotExist:
 			sample_results = None
 		for result in sample_results:
 			result.url = "/lab/sample/%d/" % (result.id)
 		try:
-			tissue_results = ObsTissue.objects.filter(tissue_id__contains=starts_with)[:10]
+			tissue_results = ObsTissue.objects.filter(tissue_id__contains=starts_with).exclude(name='No Tissue')[:10]
 		except ObsTissue.DoesNotExist:
 			tissue_results = None
 		for result in tissue_results:
 			result.url = "/lab/tissue/%d/" % (result.id)
 		try:
-			env_results = ObsEnv.objects.filter(environment_id__contains=starts_with)[:10]
+			env_results = ObsEnv.objects.filter(environment_id__contains=starts_with).exclude(name='No Environment')[:10]
 		except ObsEnv.DoesNotExist:
 			env_results = None
 		for result in env_results:
 			result.url = "/lab/env/%d/" % (result.id)
 		try:
-			well_results = ObsWell.objects.filter(well_id__contains=starts_with)[:10]
+			well_results = ObsWell.objects.filter(well_id__contains=starts_with).exclude(name='No Well')[:10]
 		except ObsWell.DoesNotExist:
 			well_results = None
 		for result in well_results:
 			result.url = "/lab/well/%d/" % (result.id)
 		try:
-			maize_results = MaizeSample.objects.filter(maize_id__contains=starts_with)[:10]
+			maize_results = MaizeSample.objects.filter(maize_id__contains=starts_with).exclude(name='No Maize ID')[:10]
 		except MaizeSample.DoesNotExist:
 			maize_results = None
 		for result in maize_results:
 			result.url = "/lab/maize/%d/" % (result.id)
 		try:
-			field_results = Field.objects.filter(field_name__contains=starts_with)[:10]
+			field_results = Field.objects.filter(field_name__contains=starts_with).exclude(name='No Field')[:10]
 		except Field.DoesNotExist:
 			field_results = None
 		for result in field_results:
@@ -2989,7 +2989,7 @@ def sidebar_search(request):
 		for result in people_results:
 			result.url = "/lab/people/%d/" % (result.id)
 		try:
-			stock_results = Stock.objects.filter(seed_id__contains=starts_with)[:10]
+			stock_results = Stock.objects.filter(seed_id__contains=starts_with).exclude(name='No Stock')[:10]
 		except Stock.DoesNotExist:
 			stock_results = None
 		for result in stock_results:
