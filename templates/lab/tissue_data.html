@@ -60,7 +60,7 @@
           {% for data in tissue_data %}
           <tr>
             <td><a href='/lab/experiment/{{data.experiment.name}}/'>{{data.experiment.name}}</a></td>
-            <td><a href='/lab/row/{{data.obs_tissue.tissue_id}}/'>{{data.obs_tissue.tissue_id}}</a></td>
+            <td><a href='/lab/tissue/{{data.obs_tissue_id}}/'>{{data.obs_tissue.tissue_id}}</a></td>
             <td>{{data.obs_tissue.tissue_type}}</td>
             <td>{{data.obs_tissue.tissue_name}}</td>
             <td>{{data.obs_tissue.date_ground}}</td>
