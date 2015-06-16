@@ -24,7 +24,7 @@
     {% for isolate in selected_isolates %}
     <tr>
       <td><input type="checkbox" name="checkbox_isolates" value="{{ isolate.id }}"></td>
-      <td>{{ isolate.isolate_id }}</td>
+      <td><a href='/lab/isolate/{{isolate.id}}/'>{{ isolate.isolate_id }}</a></td>
       <td>{{ isolate.isolate_name }}</td>
       <td><a href='/lab/disease_info/{{isolate.disease_info.id}}/'>{{ isolate.disease_info.common_name }}</a></td>
       <td>{{ isolate.plant_organ }}</td>
