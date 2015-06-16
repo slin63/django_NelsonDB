@@ -21,7 +21,7 @@ class UserProfileForm(forms.ModelForm):
 	job_title = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Job Title'}), help_text="(Optional) Type your job title:", required=False)
 	notes = forms.CharField(widget=forms.Textarea(attrs={'placeholder':'Notes','rows': '5', 'cols': '20'}), help_text="(Optional) Add any notes about yourself:", required=False)
 	website = forms.URLField(widget=forms.TextInput(attrs={'placeholder':'Website'}), help_text="(Optional) Your website: ", required=False)
-	picture = forms.ImageField(widget=forms.ClearableFileInput(), help_text="(Optional) Select a profile image:", default='profile_images/underwater.jpg', required=False)
+	picture = forms.ImageField(widget=forms.ClearableFileInput(), help_text="(Optional) Select a profile image:", initial='profile_images/underwater.jpg', required=False)
 
 	class Meta:
 		model = UserProfile
