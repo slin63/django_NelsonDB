@@ -2570,6 +2570,7 @@ def log_data_online(request, data_type):
 								new_stock = Stock.objects.get_or_create(passport=Passport.objects.get(collecting=Collecting.objects.get(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments)
 								new_obs_tracker = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=Stock.objects.get(passport=Passport.objects.get(collecting=Collecting.objects.get(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 							except Exception as e:
+								print("Error: %s %s" % (e.message, e.args))
 								failed = True
 								context_dict['failed'] = failed
 								context_dict['failed_error'] = ("error %s %s" % (e.message, type(e)))
@@ -2612,7 +2613,7 @@ def log_data_online(request, data_type):
 								new_stock_packet = StockPacket.objects.get_or_create(stock=Stock.objects.get(seed_id=seed_id), location=Location.objects.get(locality=locality, building_name=building_name, location_name=location_name, room=room, shelf=shelf, column=column, box_name=box_name, comments=location_comments), weight=weight, num_seeds=num_seeds, comments=packet_comments)
 
 							except Exception as e:
-								print("Error: %s %s" % (e.message, type(e)))
+								print("Error: %s %s" % (e.message, e.args))
 								failed = True
 								context_dict['failed'] = failed
 					except KeyError:
