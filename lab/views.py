@@ -599,19 +599,10 @@ def update_seed_packet_info(request, stock_id):
 							update_packet.weight = form.cleaned_data['weight']
 							update_packet.num_seeds = form.cleaned_data['num_seeds']
 							update_packet.comments = form.cleaned_data['comments']
-
-							#update_packet.location, created = Location.objects.get_or_create(building_name=form.cleaned_data['location__building_name'], location_name=form.cleaned_data['location__location_name'], room=form.cleaned_data['location__room'], shelf=form.cleaned_data['location__shelf'], column=form.cleaned_data['location__column'], box_name=form.cleaned_data['location__box_name'], comments=form.cleaned_data['location__comments'])
-
-							update_packet.location.building_name = form.cleaned_data['location__building_name']
-							update_packet.location.location_name = form.cleaned_data['location__location_name']
-							update_packet.location.room = form.cleaned_data['location__room']
-							update_packet.location.shelf = form.cleaned_data['location__shelf']
-							update_packet.location.column = form.cleaned_data['location__column']
-							update_packet.location.box_name = form.cleaned_data['location__box_name']
-							update_packet.location.comments = form.cleaned_data['location__comments']
+							update_packet.location, created = Location.objects.get_or_create(locality=form.cleaned_data['location__locality'], building_name=form.cleaned_data['location__building_name'], location_name=form.cleaned_data['location__location_name'], room=form.cleaned_data['location__room'], shelf=form.cleaned_data['location__shelf'], column=form.cleaned_data['location__column'], box_name=form.cleaned_data['location__box_name'], comments=form.cleaned_data['location__comments'])
 							update_packet.save()
 						except Exception as e:
-							print("Error: %s" % (e.message))
+							print("Error: %s %s" % (e.message, e.args))
 							failed = True
 						step = step + 1
 			if failed is not None:
