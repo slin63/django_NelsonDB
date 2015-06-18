@@ -366,6 +366,7 @@ class UploadQueue(models.Model):
 	upload_type = models.CharField(max_length=200, blank=True)
 	date = models.DateField(auto_now_add=True)
 	completed = models.BooleanField(default=False)
+	verified = models.BooleanField(default=False)
 	comments = models.CharField(max_length=1000, blank=True)
 
 	def __unicode__(self):
