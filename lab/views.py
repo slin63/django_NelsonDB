@@ -1,5 +1,6 @@
 
 import csv
+import loader_scripts
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
@@ -20,6 +21,7 @@ from django import template
 from django.template.defaulttags import register
 from operator import itemgetter
 from django.db import transaction
+from django.core.files import File
 
 """Used to handle data from URL, to ensure blank spaces don't mess things up"""
 def encode_url(str):
@@ -3280,3 +3282,64 @@ def measurement_data_keyword_browse(request, keyword):
 	context_dict['measurement_data'] = measurement_data
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/measurement_data.html', context_dict, context)
+
+@login_required
+def upload_online(request, template_type):
+	context = RequestContext(request)
+	context_dict = {}
+	if request.method == 'POST':
+		sent = True
+		upload_form = UploadQueueForm(request.POST, request.FILES)
+		if upload_form.is_valid():
+			new_upload_exp = upload_form.cleaned_data['experiment']
+			new_upload_user = upload_form.cleaned_data['user']
+			new_upload_filename = upload_form.cleaned_data['file_name']
+			new_upload_comments = upload_form.cleaned_data['comments']
+			new_upload_verified = upload_form.cleaned_data['verified']
+			new_upload, created = UploadQueue.objects.get_or_create(experiment=new_upload_exp, user=new_upload_user, file_name=new_upload_filename, upload_type=template_type)
+			new_upload.comments = new_upload_comments
+			new_upload.verified = new_upload_verified
+			new_upload.save()
+			upload_added = True
+
+			if template_type == 'seed_stock':
+				results_dict = loader_scripts.seed_stock_loader_prep(request.FILES['file_name'], new_upload_user)
+			else:
+				results_dict = None
+			if results_dict is not None:
+				if new_upload_verified == False:
+					upload_complete = False
+
+					if template_type == 'seed_stock':
+						output = loader_scripts.seed_stock_loader_prep_output(results_dict, new_upload_exp, template_type)
+						return output
+
+				elif new_upload_verified == True:
+					uploaded = loader_scripts.seed_stock_loader(results_dict)
+
+					if uploaded == True:
+						new_upload.completed = True
+						new_upload.save()
+						upload_complete = True
+					else:
+						upload_complete = False
+				else:
+					upload_complete = False
+			else:
+				upload_complete = False
+		else:
+			print(upload_form.errors)
+			upload_added = False
+			upload_complete = False
+	else:
+		sent = False
+		upload_form = UploadQueueForm()
+		upload_added = False
+		upload_complete = None
+	context_dict['upload_form'] = upload_form
+	context_dict['upload_added'] = upload_added
+	context_dict['upload_complete'] = upload_complete
+	context_dict['sent'] = sent
+	context_dict['template_type'] = template_type
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/upload_online.html', context_dict, context)

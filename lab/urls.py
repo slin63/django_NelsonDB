@@ -185,6 +185,8 @@ urlpatterns = patterns('',
     url(r'^download/data/culture/$', views.download_culture_data, name='download_culture_data'),
     url(r'^download/measurements/$', views.download_measurement_data, name='download_measurement_data'),
 
+    url(r'^upload_online/(?P<template_type>\w+)/', views.upload_online, name='upload_online'),
+
     url(r'^query/options/$', views.query_builder_options, name='query_builder_options'),
     url(r'^query/fields/$', views.query_builder_fields, name='query_builder_fields'),
     url(r'^query/$', views.query_builder, name='query_builder'),
