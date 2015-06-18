@@ -3296,10 +3296,6 @@ def upload_online(request, template_type):
 			new_upload_filename = upload_form.cleaned_data['file_name']
 			new_upload_comments = upload_form.cleaned_data['comments']
 			new_upload_verified = upload_form.cleaned_data['verified']
-			new_upload, created = UploadQueue.objects.get_or_create(experiment=new_upload_exp, user=new_upload_user, file_name=new_upload_filename, upload_type=template_type)
-			new_upload.comments = new_upload_comments
-			new_upload.verified = new_upload_verified
-			new_upload.save()
 			upload_added = True
 
 			if template_type == 'seed_stock':
@@ -3315,12 +3311,17 @@ def upload_online(request, template_type):
 						return output
 
 				elif new_upload_verified == True:
-					uploaded = loader_scripts.seed_stock_loader(results_dict)
-
-					if uploaded == True:
-						new_upload.completed = True
-						new_upload.save()
-						upload_complete = True
+					if template_type == 'seed_stock':
+						uploaded = loader_scripts.seed_stock_loader(results_dict)
+						if uploaded == True:
+							new_upload, created = UploadQueue.objects.get_or_create(experiment=new_upload_exp, user=new_upload_user, file_name=new_upload_filename, upload_type=template_type)
+							new_upload.comments = new_upload_comments
+							new_upload.verified = new_upload_verified
+							new_upload.completed = True
+							new_upload.save()
+							upload_complete = True
+						else:
+							upload_complete = False
 					else:
 						upload_complete = False
 				else:
