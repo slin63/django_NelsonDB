@@ -1,0 +1,26 @@
+NelsonLab Environment Data Template Help,,,
+"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,
+,,,
+Template Name: environment_data_v0.1,,,
+Authored 03/04/2015,,,
+,,,
+,,,
+DataBase Header Dictionary,,,
+,,,
+Field + Locality,For if seed collected from fields. Can be left blank if not applicable.,,
+Template Header,Database Table,Database Field,Definition
+Field Name,lab_field,field_name,The field's unique name. MUST BE UNIQUE
+Field Num,lab_field,field_num,The field's number.
+Field Comments,lab_field,comments,Any additional comments about the field.
+City,lab_locality,city,The locality's city name.
+State,lab_locality,state,The locality's state.
+Country,lab_locality,country,The locality's country.
+Zipcode,lab_locality,zipcode,The locality's zipcode.
+,,,
+Environment,,,
+Template Header,Database Table,Database Field,Definition
+Field Name,lab_ObsEnv,field_id = Field(field_name).id,The unique field name of the environemnt.
+Environment ID,lab_ObsEnv,environment_id,"A unique ID for the sample. Formats may vary, but this needs to be unique. MUST BE UNIQUE"
+Longitude,lab_ObsEnv,longitude,"The type of sample. Example: Seed Kernels, Single Kernels, DNA "
+Latitude,lab_ObsEnv,latitude,"The number of seed kernels in the sample. If not applicable, leave blank."
+Environment Comments,lab_ObsEnv,comments,"The weight of the sample. If not applicable, leave blank."

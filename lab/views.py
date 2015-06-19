@@ -6,7 +6,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, GlycerolStock
 from genetics.models import GWASExperimentSet
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm
+from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -1140,11 +1140,11 @@ def log_data_select_obs(request):
 
 @login_required
 def serve_data_template_file(request, filename):
-	path = '%s/%s.xlsx' % (settings.MEDIA_ROOT,filename)
+	path = '%s/%s.csv' % (settings.MEDIA_ROOT,filename)
 	with open(path, "rb") as excel:
 		data = excel.read()
 		response = HttpResponse(data,content_type='application/vnd.ms-excel')
-		response['Content-Disposition'] = 'attachment; filename=%s.xlsx' % (filename)
+		response['Content-Disposition'] = 'attachment; filename=%s.csv' % (filename)
 		return response
 
 @login_required
@@ -2527,14 +2527,14 @@ def single_dna_info(request, obs_dna_id):
 def log_data_online(request, data_type):
 	context = RequestContext(request)
 	context_dict = {}
-
+	failed = False
 	if data_type == 'seed_inventory':
 		data_type_title = 'Load Seed Info'
 		LogDataOnlineFormSet = formset_factory(LogSeedDataOnlineForm, extra=10)
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
 			if log_data_online_form_set.is_valid():
-				failed = None
+				sent = True
 				for form in log_data_online_form_set:
 					try:
 						form.cleaned_data['stock__seed_id']
@@ -2574,15 +2574,13 @@ def log_data_online(request, data_type):
 							except Exception as e:
 								print("Error: %s %s" % (e.message, e.args))
 								failed = True
-								context_dict['failed'] = failed
-								context_dict['failed_error'] = ("error %s %s" % (e.message, type(e)))
 					except KeyError:
 						pass
-				if failed is None:
-					context_dict['saved'] = True
 			else:
+				sent = False
 				print(log_data_online_form_set.errors)
 		else:
+			sent = False
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	if data_type == 'seed_packet':
@@ -2591,7 +2589,7 @@ def log_data_online(request, data_type):
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
 			if log_data_online_form_set.is_valid():
-				failed = None
+				sent = True
 				for form in log_data_online_form_set:
 					try:
 						form.cleaned_data['stock__seed_id']
@@ -2617,14 +2615,216 @@ def log_data_online(request, data_type):
 							except Exception as e:
 								print("Error: %s %s" % (e.message, e.args))
 								failed = True
-								context_dict['failed'] = failed
 					except KeyError:
 						pass
-				if failed is None:
-					context_dict['saved'] = True
 			else:
+				sent = False
 				print(log_data_online_form_set.errors)
 		else:
+			sent = False
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'field':
+		data_type_title = 'Add Field Info'
+		LogDataOnlineFormSet = formset_factory(NewFieldForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				sent = True
+				for form in log_data_online_form_set:
+					try:
+						locality = form.cleaned_data['locality']
+						field_name = form.cleaned_data['field_name']
+						field_num = form.cleaned_data['field_num']
+						comments = form.cleaned_data['comments']
+
+						try:
+							new_field = Field.objects.get_or_create(locality=locality, field_name=field_name, field_num=field_num, comments=comments)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
+					except KeyError:
+						pass
+			else:
+				sent = False
+				print(log_data_online_form_set.errors)
+		else:
+			sent = False
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'locality':
+		data_type_title = 'Add Locality Info'
+		LogDataOnlineFormSet = formset_factory(NewLocalityForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				sent = True
+				for form in log_data_online_form_set:
+					try:
+						city = form.cleaned_data['city']
+						state = form.cleaned_data['state']
+						country = form.cleaned_data['country']
+						zipcode = form.cleaned_data['zipcode']
+
+						try:
+							new_locality, created = Locality.objects.get_or_create(city=city, state=state, country=country, zipcode=zipcode)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
+					except KeyError:
+						pass
+			else:
+				sent = False
+				print(log_data_online_form_set.errors)
+		else:
+			sent = False
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'parameter':
+		data_type_title = 'Add Measurement Parameter Info'
+		LogDataOnlineFormSet = formset_factory(NewMeasurementParameterForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				sent = True
+				for form in log_data_online_form_set:
+					try:
+						parameter = form.cleaned_data['parameter']
+						parameter_type = form.cleaned_data['parameter_type']
+						protocol = form.cleaned_data['protocol']
+						trait_id_buckler = form.cleaned_data['trait_id_buckler']
+						unit_of_measure = form.cleaned_data['unit_of_measure']
+
+						try:
+							new_parameter = MeasurementParameter.objects.get_or_create(parameter=parameter, parameter_type=parameter_type, protocol=protocol, trait_id_buckler=trait_id_buckler, unit_of_measure=unit_of_measure)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
+					except KeyError:
+						pass
+			else:
+				sent = False
+				print(log_data_online_form_set.errors)
+		else:
+			sent = False
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'location':
+		data_type_title = 'Add Location Info'
+		LogDataOnlineFormSet = formset_factory(NewLocationForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				sent = True
+				for form in log_data_online_form_set:
+					try:
+						locality = form.cleaned_data['locality']
+						building_name = form.cleaned_data['building_name']
+						location_name = form.cleaned_data['location_name']
+						room = form.cleaned_data['room']
+						shelf = form.cleaned_data['shelf']
+						column = form.cleaned_data['column']
+						box_name = form.cleaned_data['box_name']
+						comments = form.cleaned_data['comments']
+
+						try:
+							new_location = Location.objects.get_or_create(locality=locality, building_name=building_name, location_name=location_name, room=room, shelf=shelf, column=column, box_name=box_name, comments=comments)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
+					except KeyError:
+						pass
+			else:
+				sent = False
+				print(log_data_online_form_set.errors)
+		else:
+			sent = False
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'disease':
+		data_type_title = 'Add Disease Info'
+		LogDataOnlineFormSet = formset_factory(NewDiseaseInfoForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				sent = True
+				for form in log_data_online_form_set:
+					try:
+						common_name = form.cleaned_data['common_name']
+						abbrev = form.cleaned_data['abbrev']
+						comments = form.cleaned_data['comments']
+
+						try:
+							new_disease = DiseaseInfo.objects.get_or_create(common_name=common_name, abbrev=abbrev, comments=comments)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
+					except KeyError:
+						pass
+			else:
+				sent = False
+				print(log_data_online_form_set.errors)
+		else:
+			sent = False
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'medium':
+		data_type_title = 'Add Medium Info'
+		LogDataOnlineFormSet = formset_factory(NewMediumForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				sent = True
+				for form in log_data_online_form_set:
+					try:
+						citation = form.cleaned_data['citation']
+						media_name = form.cleaned_data['media_name']
+						media_type = form.cleaned_data['media_type']
+						media_description = form.cleaned_data['media_description']
+						media_preparation = form.cleaned_data['media_preparation']
+						comments = form.cleaned_data['comments']
+
+						try:
+							new_medium = Medium.objects.get_or_create(citation=citation, media_name=media_name, media_type=media_type, media_description=media_description, media_preparation=media_preparation, comments=comments)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
+					except KeyError:
+						pass
+			else:
+				sent = False
+				print(log_data_online_form_set.errors)
+		else:
+			sent = False
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'citation':
+		data_type_title = 'Add Citation Info'
+		LogDataOnlineFormSet = formset_factory(NewCitationForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				sent = True
+				for form in log_data_online_form_set:
+					try:
+						citation_type = form.cleaned_data['citation']
+						title = form.cleaned_data['media_name']
+						url = form.cleaned_data['media_type']
+						pubmed_id = form.cleaned_data['media_description']
+						comments = form.cleaned_data['comments']
+
+						try:
+							new_citation = Citation.objects.get_or_create(citation_type=citation_type, title=title, url=url, pubmed_id=pubmed_id, comments=comments)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
+					except KeyError:
+						pass
+			else:
+				sent = False
+				print(log_data_online_form_set.errors)
+		else:
+			sent = False
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	if data_type == 'plant':
@@ -2633,6 +2833,7 @@ def log_data_online(request, data_type):
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
 			if log_data_online_form_set.is_valid():
+				sent = True
 				for form in log_data_online_form_set:
 					try:
 						experiment = form.cleaned_data['experiment']
@@ -2648,8 +2849,10 @@ def log_data_online(request, data_type):
 					except KeyError:
 						pass
 			else:
+				sent = False
 				print(log_data_online_form_set.errors)
 		else:
+			sent = False
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	if data_type == 'row':
@@ -2658,6 +2861,7 @@ def log_data_online(request, data_type):
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
 			if log_data_online_form_set.is_valid():
+				sent = True
 				for form in log_data_online_form_set:
 					try:
 						experiment = form.cleaned_data['experiment']
@@ -2680,8 +2884,10 @@ def log_data_online(request, data_type):
 					except KeyError:
 						pass
 			else:
+				sent = False
 				print(log_data_online_form_set.errors)
 		else:
+			sent = False
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	if data_type == 'environment':
@@ -2690,6 +2896,7 @@ def log_data_online(request, data_type):
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
 			if log_data_online_form_set.is_valid():
+				sent = True
 				for form in log_data_online_form_set:
 					try:
 						experiment = form.cleaned_data['experiment']
@@ -2705,8 +2912,10 @@ def log_data_online(request, data_type):
 					except KeyError:
 						pass
 			else:
+				sent = False
 				print(log_data_online_form_set.errors)
 		else:
+			sent = False
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	if data_type == 'samples':
@@ -2715,6 +2924,7 @@ def log_data_online(request, data_type):
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
 			if log_data_online_form_set.is_valid():
+				sent = True
 				for form in log_data_online_form_set:
 					try:
 						experiment = form.cleaned_data['experiment']
@@ -2734,8 +2944,10 @@ def log_data_online(request, data_type):
 					except KeyError:
 						pass
 			else:
+				sent = False
 				print(log_data_online_form_set.errors)
 		else:
+			sent = False
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	if data_type == 'measurement':
@@ -2744,6 +2956,7 @@ def log_data_online(request, data_type):
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
 			if log_data_online_form_set.is_valid():
+				sent = True
 				for form in log_data_online_form_set:
 					try:
 						row_id = form.cleaned_data['row_id']
@@ -2772,12 +2985,16 @@ def log_data_online(request, data_type):
 					except KeyError:
 						pass
 			else:
+				sent = False
 				print(log_data_online_form_set.errors)
 		else:
+			sent = False
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	context_dict['log_data_online_form_set'] = log_data_online_form_set
 	context_dict['data_type'] = data_type
+	context_dict['failed'] = failed
+	context_dict['sent'] = sent
 	context_dict['data_type_title'] = data_type_title
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/log_data_online.html', context_dict, context)

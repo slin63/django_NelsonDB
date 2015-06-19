@@ -132,6 +132,48 @@
               <th>Time</th>
               <th>Value</th>
               <th>Comments</th>
+            {% elif data_type == 'citation' %}
+              <th>Citation Type</th>
+              <th>Title</th>
+              <th>URL</th>
+              <th>Pubmed ID</th>
+              <th>Comments</th>
+            {% elif data_type == 'field' %}
+              <th>Locality</th>
+              <th>Field Name</th>
+              <th>Field Num</th>
+              <th>Comments</th>
+            {% elif data_type == 'locality' %}
+              <th>City</th>
+              <th>State</th>
+              <th>Country</th>
+              <th>Zipcode</th>
+            {% elif data_type == 'location' %}
+              <th>Locality</th>
+              <th>Building Name</th>
+              <th>Location Name</th>
+              <th>Room</th>
+              <th>Shelf</th>
+              <th>Column</th>
+              <th>Box Name</th>
+              <th>Comments</th>
+            {% elif data_type == 'parameter' %}
+              <th>Parameter</th>
+              <th>Parameter Type</th>
+              <th>Protocol</th>
+              <th>Buckler Trait ID</th>
+              <th>Unit of Measure</th>
+            {% elif data_type == 'medium' %}
+              <th>Citation</th>
+              <th>Media Name</th>
+              <th>Media Type</th>
+              <th>Description</th>
+              <th>Preparation</th>
+              <th>Comments</th>
+            {% elif data_type == 'disease' %}
+              <th>Common Name</th>
+              <th>Abbreviation</th>
+              <th>Comments</th>
             {% endif %}
           </tr>
         </thead>
@@ -149,6 +191,14 @@
       <br/>
       <input class="btn btn-primary" type="submit" name="submit" value="Submit Data"/>
     </form>
+
+    {% if sent %}
+    {% if failed %}
+    <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Data Was Not Saved to the Database!<br/>&nbsp;</h4>
+    {% else %}
+    <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Data Was Saved to the Database!<br/>&nbsp;</h4>
+    {% endif %}
+    {% endif %}
 
   </div>
 {% endblock %}

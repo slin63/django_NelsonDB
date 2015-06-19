@@ -1,6 +1,6 @@
 from django import forms
 
-from lab.models import UserProfile, Experiment, Field, ObsRow, ObsPlant, Locality, Stock, ObsRow, ObsPlant, ObsSample, ObsEnv, MeasurementParameter
+from lab.models import UserProfile, Experiment, Field, ObsRow, ObsPlant, Locality, Stock, ObsRow, ObsPlant, ObsSample, ObsEnv, MeasurementParameter, Citation
 from django.contrib.auth.models import User
 from django.core.validators import EmailValidator
 
@@ -76,8 +76,8 @@ class NewTreatmentForm(forms.Form):
 class NewFieldForm(forms.Form):
 	locality = forms.ModelChoiceField(queryset=Locality.objects.all(), empty_label="--- Locality ---", help_text="Select the correct locality:", required=True)
 	field_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Field Name'}), help_text="Give a field name:", required=True)
-	field_num = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Field Num'}), help_text="What is the field number:", required=True)
-	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), help_text="Any additional comments:", required=True)
+	field_num = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Field Num'}), help_text="What is the field number:", required=False)
+	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), help_text="Any additional comments:", required=False)
 
 class NewLocalityForm(forms.Form):
 	city = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'City'}), help_text="Type a city name:", required=True)
@@ -88,33 +88,48 @@ class NewLocalityForm(forms.Form):
 class NewMeasurementParameterForm(forms.Form):
 	parameter = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Parameter'}), help_text="Type a new parameter:", required=True)
 	parameter_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Parameter Type'}), help_text="What type of parameter is this:", required=True)
-	protocol = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Protocol'}), help_text="Give a description of the protocol:", required=True)
-	trait_id_buckler = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Buckler Trait ID'}), help_text="Give Buckler trait ID if exists:", required=True)
-	unit_of_measure = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Unit of Measure'}), help_text="What is the unit of measure:", required=True)
+	protocol = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Protocol'}), help_text="Give a description of the protocol:", required=False)
+	trait_id_buckler = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Buckler Trait ID'}), help_text="Give Buckler trait ID if exists:", required=False)
+	unit_of_measure = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Unit of Measure'}), help_text="What is the unit of measure:", required=False)
 
 class NewLocationForm(forms.Form):
 	locality = forms.ModelChoiceField(queryset=Locality.objects.all(), empty_label="--- Locality ---", help_text="Select the correct locality:", required=True)
 	building_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Building Name'}), help_text="Type the building name:", required=True)
 	location_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Location Name'}), help_text="Type the location name:", required=True)
-	room = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Room'}), help_text="Type the room name or number:", required=True)
-	shelf = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Shelf'}), help_text="Give the shelf name or number:", required=True)
-	column = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Column'}), help_text="Give the column name or number:", required=True)
-	box_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Box Name'}), help_text="Give the box name:", required=True)
-	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), help_text="Any additional comments:", required=True)
+	room = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Room'}), help_text="Type the room name or number:", required=False)
+	shelf = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Shelf'}), help_text="Give the shelf name or number:", required=False)
+	column = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Column'}), help_text="Give the column name or number:", required=False)
+	box_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Box Name'}), help_text="Give the box name:", required=False)
+	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), help_text="Any additional comments:", required=False)
 
 class NewDiseaseInfoForm(forms.Form):
 	common_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Common Name'}), help_text="Type the disease common name:", required=True)
-	abbrev = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Abbreviation'}), help_text="Type the abbreviation:", required=True)
-	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), help_text="Any additional comments:", required=True)
+	abbrev = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Abbreviation'}), help_text="Type the abbreviation:", required=False)
+	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), help_text="Any additional comments:", required=False)
+
+class NewCitationForm(forms.Form):
+	citation_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Citation Type'}), help_text="Type the disease common name:", required=True)
+	title = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Title'}), help_text="Type the citation:", required=False)
+	url = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'URL'}), help_text="A URL linking to the article:", required=False)
+	pubmed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Pubmed ID'}), help_text="The Pubmed ID:", required=False)
+	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), help_text="Any additional comments:", required=False)
+
+class NewMediumForm(forms.Form):
+	citation = forms.ModelChoiceField(queryset=Citation.objects.all(), empty_label="--- Citation ---", help_text="Select the relevant citation:", required=True)
+	media_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Media Name'}), help_text="A unique name for the media:", required=True)
+	media_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Media Type'}), help_text="The type of media:", required=False)
+	media_description = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Description'}), help_text="A brief description of the media and its uses:", required=False)
+	media_preparation = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Preparation'}), help_text="How the media is prepared:", required=False)
+	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), help_text="Any additional comments:", required=False)
 
 class NewTaxonomyForm(forms.Form):
-	genus = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Genus'}), help_text="Type the genus:", required=True)
-	species = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Species'}), help_text="Type the species:", required=True)
-	population = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Population'}), help_text="Type the population:", required=True)
-	common_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Common Name Type'}), help_text="This is currently either 'Maize' or 'Isolate':", required=True)
-	alias = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Alias'}), help_text="Type the alias (historically for isolates):", required=True)
-	race = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Race'}), help_text="Type the race (historically for isolates):", required=True)
-	subtaxa = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Sub-taxa'}), help_text="Type the sub-taxa (historically for isolates):", required=True)
+	genus = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Genus'}), help_text="Type the genus:", required=False)
+	species = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Species'}), help_text="Type the species:", required=False)
+	population = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Population'}), help_text="Type the population:", required=False)
+	common_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Common Name Type'}), help_text="This is currently either 'Maize' or 'Isolate':", required=False)
+	alias = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Alias'}), help_text="Type the alias (historically for isolates):", required=False)
+	race = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Race'}), help_text="Type the race (historically for isolates):", required=False)
+	subtaxa = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Sub-taxa'}), help_text="Type the sub-taxa (historically for isolates):", required=False)
 
 class LogSeedDataOnlineForm(forms.Form):
 	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", help_text="Experiment", required=True)

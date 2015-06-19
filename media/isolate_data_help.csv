@@ -1,0 +1,64 @@
+NelsonLab Isolate Invetory Template Help,,,
+"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,
+,,,
+Template Name: isolate_inventory_v0.1,,,
+Authored 02/25/2015,,,
+,,,
+,,,
+DataBase Header Dictionary,,,
+,,,
+Field + Locality,For if isolates collected from fields. Can be left blank if not applicable.,,
+Template Header,Database Table,Database Field,Definition
+Field Name,lab_field,field_name,The field's unique name. MUST BE UNIQUE
+Field Num,lab_field,field_num,The field's number.
+Field Comments,lab_field,comments,Any additional comments about the field.
+City,lab_locality,city,The locality's city name.
+State,lab_locality,state,The locality's state.
+Country,lab_locality,country,The locality's country.
+Zipcode,lab_locality,zipcode,The locality's zipcode.
+,,,
+,,,
+Isolates,For inventory of individual isolates. ,,
+Template Header,Database Table,Database Field,Definition
+Isolate ID,lab_isolate,isolate_id,A unique ID in the format Af0001i. This is the ID that is printed on the isolate tubes. MUST BE UNIQUE
+Isolate Name,lab_isolate,isolate_name,A human readable name for the isolate.
+Plant Organ,lab_isolate,plant_organ,"The plant organ that the isolate came from, if relevant."
+Isolate Comments,lab_isolate,comments,Any additional comments about the isolates.
+,,,
+Genus,lab_taxonomy,genus,The genus of the isolate.
+Species,lab_taxonomy,species,The species of the isolate.
+Population,lab_taxonomy,population,A more general classification of the isolate's genotype.
+Alias,lab_taxonomy,alias,The isolate's alias.
+Race,lab_taxonomy,race,The isolate's race classification.
+Subtaxa,lab_taxonomy,subtaxa,The isolate's subtaxa classification.
+,,,
+Row ID,lab_obstracker,obs_row_id = ObsRow(row_id).id,The Row ID from which the isolate was collected. Example 08PN0023. Leave blank if isolate not collected from a row.
+Field Name,lab_obstracker,field_id = Field(field_name).id,The Field Name from which the isolate was collected. Example Aurora NY. Leave blank if not relevant. 
+Plant ID,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,The Plant ID from which the isolate was collected. Example 08PN0023_001. Leave blank if isolate not collected from a plant.
+Tissue ID,lab_obstracker,obs_tissue_id = ObsTissue(tissue_id).id,The Tissue ID from which the isolate was collected. Leave blank if isolate not collected from a tissue.
+Microbe ID,lab_obstracker,obs_microbe_id = ObsMicrobe(microbe_id).id,The Microbe ID from which the isolate was collected. Leave blank if not applicable.
+Well ID,lab_obstracker,obs_well_id = ObsWell(well_id).id,The Well ID from which the isolate was collected. Leave blank if not applicable.
+Plate ID,lab_obstracker,obs_plate_id = ObsPlate(plate_id).id,The Plate ID from which the isolate was collected. Leave blank if not applicable.
+DNA ID,lab_obstracker,obs_dna_id = ObsDNA(dna_id).id,The DNA ID from which the isolate was collected. Leave blank if not applicable.
+Sample ID,lab_obstracker,obs_sample_id = ObsSample(sample_id).id,The Sample ID from which the isolate was collected. Leave blank if not applicable.
+Culture ID,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,The Culture ID from which the isolate was collected. Leave blank if not applicable.
+,,,
+Username,lab_collecting,user_id = User(username).id,The username of the person which collected the isolate. Example: firstname_lastname. Leave blank if isolate not collected.
+Collection Date,lab_collecting,collection_date,The date when the isolate was collected. Format 2015-01-30. Leave blank if isolate not collected
+Method,lab_collecting,collection_method,The method which isolate was collected by. Example: Manual field harvest. Leave blank if isolate not collected
+Collection Comments,lab_collecting,comments,Any additional comments about the collection. Leave blank if isolate not collected.
+,,,
+Organization,lab_people,organization,The organization from which isolate was provided by. Leave blank if isolate not sourced from somewhere.
+First Name,lab_people,first_name,The first name of the person who provided the isolate. Leave blank if isolate not sourced from somewhere.
+Last Name,lab_people,last_name,The last name of the person who provided the isolate. Leave blank if isolate not sourced from somewhere.
+Phone,lab_people,phone,The phone of the person who provided the isolate. Leave blank if isolate not sourced from somewhere.
+Email,lab_people,email,The email of the person who provided the isolate. Leave blank if isolate not sourced from somewhere.
+Source Comments,lab_people,comments,Any additional comments about the isolate provider. Leave blank if isolate not sourced from somewhere.
+,,,
+Location Name,lab_location,location_name,A unique location name. Example: Plant Science 303G. MUST BE UNIQUE
+Building Name,lab_location,building_name,"The exact building name. Example: Plant Science, Weil Hall, or Emerson Hall"
+Room,lab_location,room,The exact room number. Example: 303
+Shelf,lab_location,shelf,"The shelf on which the isolate is located. Example: 1, 2, 3"
+Column,lab_location,column,"The column in which the isolate is located. Example: A, B, C"
+Box Name,lab_location,box_name,The exact box name in which the isolate is located. Example: 08PN_box01
+Location Comments,lab_location,comments,Any additional comments about the location. 

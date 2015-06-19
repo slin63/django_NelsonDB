@@ -27,316 +27,675 @@
     </div><br/>
 
     <div class="row">
-      <h3>Individual Templates</h3>
+      <h3>Individual Data Types</h3>
       <hr>
     </div>
+
     <div class="row">
-      <div class="span6">
-        <div class="container-fluid">
-          <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-            <div class="span7">
-              <h3>Add Seed Info</h3>
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span4">
+            <div class="container-fluid">
+              <h3>Add Seed Data</h3>
+              <img src='{% static '/media/site_images/corn_seed.jpg' %}' />
               <h5><a href='/lab/log_data/seed_inventory'>Use Online Interface</a></h5>
-              <!--
-              <h5><a href='/lab/download/template/seed_inventory'>Download Template</a></h5>
-              <h5><a href='/lab/'>Upload Template</a></h5>
-              -->
-              <h5><a href='/lab/download/template/seed_inventory/'>Download Template</a></h5>
-              <h5><a href='/lab/upload/seed/'>Upload To Queue</a></h5>
+              <h5><a href='/lab/download/template/seed_stock/'>Download Template</a></h5>
+              <h5><a href='/lab/download/template/seed_stock_help/'>Download Template Help</a></h5>
+              <!--<h5><a href='/lab/upload/seed/'>Upload To Queue</a></h5>-->
               <h5><a href='/lab/upload_online/seed_stock/'>Upload Online</a></h5>
             </div>
-            <div class="span5">
-              <img src='{% static '/media/site_images/corn_seed.jpg' %}' />
-            </div>
           </div>
-        </div>
-      </div>
-      <div class="span6">
-        <div class="container-fluid">
-          <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-            <div class="span7">
-              <h3>Inventory Seed Packets</h3>
-              <h5><a href='/lab/log_data/seed_packet'>Use Online Interface</a></h5>
-              <!--
-              <h5><a href='/lab/download/template/seed_packet'>Download Template</a></h5>
-              <h5><a href='/lab/'>Upload Template</a></h5>
-              -->
-              <h5><a href='/lab/download/template/seed_packet/'>Download Template</a></h5>
-              <h5><a href='/lab/upload/seed_packet/'>Upload To Queue</a></h5>
-            </div>
-            <div class="span5">
-              <img src='{% static '/media/site_images/seed_packet.jpg' %}' />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div><br/>
-    <div class="row">
-      <div class="span6">
-        <div class="container-fluid">
-          <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-            <div class="span7">
-              <h3>Inventory Isolates</h3>
-              <!--
-              <h5><a href='/lab/log_data/plant'>Use Online Interface</a></h5>
-              <h5><a href='/lab/download/template/plant_data'>Download Template</a></h5>
-              <h5><a href='/lab/'>Upload Template</a></h5>
-              -->
-              <h5><a href='/lab/download/template/isolate_data/'>Download Template</a></h5>
-              <h5><a href='/lab/upload/isolate_data/'>Upload To Queue</a></h5>
-            </div>
-            <div class="span5">
-              <img src='{% static '/media/site_images/isolate.jpg' %}' />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="span6">
-        <div class="container-fluid">
-          <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-            <div class="span7">
-              <h3>Add Row Info</h3>
-              <!--
-              <h5><a href='/lab/log_data/row'>Use Online Interface</a></h5>
-              <h5><a href='/lab/download/template/row_data'>Download Template</a></h5>
-              <h5><a href='/lab/'>Upload Template</a></h5>
-              -->
-              <h5><a href='/lab/download/template/row_data/'>Download Template</a></h5>
-              <h5><a href='/lab/upload/row_data/'>Upload To Queue</a></h5>
-            </div>
-            <div class="span5">
-              <img src='{% static '/media/site_images/maize_row.jpg' %}' />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div><br/>
-    <div class="row">
-      <div class="span6">
-        <div class="container-fluid">
-          <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-            <div class="span7">
-              <h3>Add Environment Info</h3>
-              <!--
-              <h5><a href='/lab/log_data/environment'>Use Online Interface</a></h5>
-              <h5><a href='/lab/download/template/environment_data'>Download Template</a></h5>
-              <h5><a href='/lab/'>Upload Template</a></h5>
-              -->
-              <h5><a href='/lab/download/template/environment_data/'>Download Template</a></h5>
-              <h5><a href='/lab/upload/environment_data/'>Upload To Queue</a></h5>
-            </div>
-            <div class="span5">
-              <img src='{% static '/media/site_images/environmental.jpg' %}' />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="span6">
-        <div class="container-fluid">
-          <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-            <div class="span7">
-              <h3>Add Samples Info</h3>
-              <!--
-              <h5><a href='/lab/log_data/samples'>Use Online Interface</a></h5>
-              <h5><a href='/lab/download/template/samples_data'>Download Template</a></h5>
-              <h5><a href='/lab/'>Upload Template</a></h5>
-              -->
-              <h5><a href='/lab/download/template/samples_data/'>Download Template</a></h5>
-              <h5><a href='/lab/upload/samples_data/'>Upload To Queue</a></h5>
-            </div>
-            <div class="span5">
-              <img src='{% static '/media/site_images/sample.jpg' %}' />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div><br/>
-    <div class="row">
-      <div class="span6">
-        <div class="container-fluid">
-          <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-            <div class="span7">
-              <h3>Add Culture Info</h3>
-                <!--
-                  <h5><a href='/lab/log_data/environment'>Use Online Interface</a></h5>
-                  <h5><a href='/lab/download/template/environment_data'>Download Template</a></h5>
-                  <h5><a href='/lab/'>Upload Template</a></h5>
-                -->
-                <h5><a href='/lab/download/template/culture_data/'>Download Template</a></h5>
-                <h5><a href='/lab/upload/culture_data/'>Upload To Queue</a></h5>
+          <div class="span8">
+            <h4>Dependencies</h4>
+            <hr>
+            <div class="row">
+              <div class="span3">
+                <img src='{% static '/media/site_images/locality.png' %}' />
               </div>
-              <div class="span5">
+              <div class="span3">
+                <img src='{% static '/media/site_images/field.jpg' %}' />
+              </div>
+              <div class="span3">
+                <img src='{% static '/media/site_images/maize_row.jpg' %}' />
+              </div>
+              <div class="span3">
+                <img src='{% static '/media/site_images/corn_plant.jpg' %}' />
+              </div>
+            </div>
+            <div class="row">
+              <div class="span3">
+                <h5><a href='/lab/log_data/locality/'>Add Locality</a></h5>
+              </div>
+              <div class="span3">
+                <h5><a href='/lab/log_data/field/'>Add Field</a></h5>
+              </div>
+              <div class="span3">
+                <h5><a href='/lab/log_data/row/'>Add Row Data</a></h5>
+              </div>
+              <div class="span3">
+                <h5><a href='/lab/log_data/plant/'>Add Plant Data</a></h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+
+    <div class="row">
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span4">
+            <div class="container-fluid">
+              <h3>Inventory Seed Packets</h3>
+              <img src='{% static '/media/site_images/seed_packet.jpg' %}' />
+              <h5><a href='/lab/log_data/seed_packet/'>Use Online Interface</a></h5>
+              <h5><a href='/lab/download/template/seed_packet/'>Download Template</a></h5>
+              <h5><a href='/lab/download/template/seed_packet_help/'>Download Template Help</a></h5>
+              <h5><a href='/lab/upload/seed_packet/'>Upload To Queue</a></h5>
+              <!--<h5><a href='/lab/upload_online/seed_packet/'>Upload Online</a></h5>-->
+            </div>
+          </div>
+          <div class="span8">
+            <h4>Dependencies</h4>
+            <hr>
+            <div class="row">
+              <div class="span4">
+                <img src='{% static '/media/site_images/locality.png' %}' />
+              </div>
+              <div class="span4">
+                <img src='{% static '/media/site_images/storage.jpg' %}' />
+              </div>
+              <div class="span4">
+                <img src='{% static '/media/site_images/corn_seed.jpg' %}' />
+              </div>
+            </div>
+            <div class="row">
+              <div class="span4">
+                <h5><a href='/lab/log_data/locality/'>Add Locality</a></h5>
+              </div>
+              <div class="span4">
+                <h5><a href='/lab/log_data/location/'>Add Location Data</a></h5>
+              </div>
+              <div class="span4">
+                <h5><a href='/lab/log_data/seed_inventory/'>Add Seed Data</a></h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+
+    <div class="row">
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span4">
+            <div class="container-fluid">
+              <h3>Add Row Data</h3>
+              <img src='{% static '/media/site_images/maize_row.jpg' %}' />
+              <h5><a href='/lab/log_data/row/'>Use Online Interface</a></h5>
+              <h5><a href='/lab/download/template/row_data/'>Download Template</a></h5>
+              <h5><a href='/lab/download/template/row_data_help/'>Download Template Help</a></h5>
+              <h5><a href='/lab/upload/row_data/'>Upload To Queue</a></h5>
+              <!--<h5><a href='/lab/upload_online/row_data/'>Upload Online</a></h5>-->
+            </div>
+          </div>
+          <div class="span8">
+            <h4>Dependencies</h4>
+            <hr>
+            <div class="row">
+              <div class="span4">
+                <img src='{% static '/media/site_images/locality.png' %}' />
+              </div>
+              <div class="span4">
+                <img src='{% static '/media/site_images/field.jpg' %}' />
+              </div>
+              <div class="span4">
+                <img src='{% static '/media/site_images/corn_seed.jpg' %}' />
+              </div>
+            </div>
+            <div class="row">
+              <div class="span4">
+                <h5><a href='/lab/log_data/locality/'>Add Locality</a></h5>
+              </div>
+              <div class="span4">
+                <h5><a href='/lab/log_data/field/'>Add Field</a></h5>
+              </div>
+              <div class="span4">
+                <h5><a href='/lab/log_data/seed_inventory/'>Add Seed Data</a></h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+
+    <div class="row">
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span4">
+            <div class="container-fluid">
+              <h3>Add Plant Data</h3>
+                <img src='{% static '/media/site_images/corn_plant.jpg' %}' />
+                <h5><a href='/lab/log_data/plant/'>Use Online Interface</a></h5>
+                <h5><a href='/lab/download/template/plant_data/'>Download Template</a></h5>
+                <h5><a href='/lab/download/template/plant_data_help/'>Download Template Help</a></h5>
+                <h5><a href='/lab/upload/plant_data/'>Upload To Queue</a></h5>
+                <!--<h5><a href='/lab/upload_online/plant_data/'>Upload Online</a></h5>-->
+            </div>
+          </div>
+          <div class="span8">
+            <h4>Dependencies</h4>
+            <hr>
+            <div class="row">
+              <div class="span6">
+                <img src='{% static '/media/site_images/maize_row.jpg' %}' />
+              </div>
+              <div class="span6">
+                <img src='{% static '/media/site_images/corn_seed.jpg' %}' />
+              </div>
+            </div>
+            <div class="row">
+              <div class="span6">
+                <h5><a href='/lab/log_data/row/'>Add Row Data</a></h5>
+              </div>
+              <div class="span6">
+                <h5><a href='/lab/log_data/seed_inventory/'>Add Seed Data</a></h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+
+    <div class="row">
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span4">
+            <div class="container-fluid">
+              <h3>Add Tissue Data</h3>
+              <img src='{% static '/media/site_images/tissues.jpg' %}' />
+              <h5><a href='/lab/log_data/tissue/'>Use Online Interface</a></h5>
+              <h5><a href='/lab/download/template/tissue_data/'>Download Template</a></h5>
+              <h5><a href='/lab/download/template/tissue_data_help/'>Download Template Help</a></h5>
+              <h5><a href='/lab/upload/tissue_data/'>Upload To Queue</a></h5>
+              <!--<h5><a href='/lab/upload_online/tissue_data/'>Upload Online</a></h5>-->
+            </div>
+          </div>
+          <div class="span8">
+            <h4>Dependencies</h4>
+            <hr>
+            <div class="row">
+              <div class="span4">
+                <img src='{% static '/media/site_images/corn_plant.jpg' %}' />
+              </div>
+              <div class="span4">
+                <img src='{% static '/media/site_images/maize_row.jpg' %}' />
+              </div>
+              <div class="span4">
+                <img src='{% static '/media/site_images/corn_seed.jpg' %}' />
+              </div>
+            </div>
+            <div class="row">
+              <div class="span4">
+                <h5><a href='/lab/log_data/plant/'>Add Plant Data</a></h5>
+              </div>
+              <div class="span4">
+                <h5><a href='/lab/log_data/row/'>Add Row Data</a></h5>
+              </div>
+              <div class="span4">
+                <h5><a href='/lab/log_data/seed_inventory/'>Add Seed Data</a></h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+
+    <div class="row">
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span4">
+            <div class="container-fluid">
+              <h3>Add Culture Data</h3>
+              <img src='{% static '/media/site_images/culture.jpg' %}' />
+              <h5><a href='/lab/log_data/culture/'>Use Online Interface</a></h5>
+              <h5><a href='/lab/download/template/culture_data/'>Download Template</a></h5>
+              <h5><a href='/lab/download/template/culture_data_help/'>Download Template Help</a></h5>
+              <h5><a href='/lab/upload/culture_data/'>Upload To Queue</a></h5>
+              <!--<h5><a href='/lab/upload_online/culture_data/'>Upload Online</a></h5>-->
+            </div>
+          </div>
+          <div class="span8">
+            <h4>Dependencies</h4>
+            <hr>
+            <div class="row">
+              <div class="span2">
+                <img src='{% static '/media/site_images/tissues.jpg' %}' />
+              </div>
+              <div class="span2">
+                <img src='{% static '/media/site_images/corn_plant.jpg' %}' />
+              </div>
+              <div class="span2">
+                <img src='{% static '/media/site_images/maize_row.jpg' %}' />
+              </div>
+              <div class="span2">
+                <img src='{% static '/media/site_images/corn_seed.jpg' %}' />
+              </div>
+              <div class="span2">
+                <img src='{% static '/media/site_images/medium.jpg' %}' />
+              </div>
+              <div class="span2">
+                <img src='{% static '/media/site_images/citation.jpg' %}' />
+              </div>
+            </div>
+            <div class="row">
+              <div class="span2">
+                <h5><a href='/lab/log_data/tissue/'>Add Tissue Data</a></h5>
+              </div>
+              <div class="span2">
+                <h5><a href='/lab/log_data/plant/'>Add Plant Data</a></h5>
+              </div>
+              <div class="span2">
+                <h5><a href='/lab/log_data/row/'>Add Row Data</a></h5>
+              </div>
+              <div class="span2">
+                <h5><a href='/lab/log_data/seed_inventory/'>Add Seed Data</a></h5>
+              </div>
+              <div class="span2">
+                <h5><a href='/lab/log_data/medium/'>Add Medium Data</a></h5>
+              </div>
+              <div class="span2">
+                <h5><a href='/lab/log_data/citation/'>Add Citation Data</a></h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+
+    <div class="row">
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span4">
+            <div class="container-fluid">
+              <h3>Add Microbe Data</h3>
+              <img src='{% static '/media/site_images/microbe.jpg' %}' />
+              <h5><a href='/lab/log_data/microbe/'>Use Online Interface</a></h5>
+              <h5><a href='/lab/download/template/microbe_data/'>Download Template</a></h5>
+              <h5><a href='/lab/download/template/microbe_data_help/'>Download Template Help</a></h5>
+              <h5><a href='/lab/upload/microbe_data/'>Upload To Queue</a></h5>
+              <!--<h5><a href='/lab/upload_online/microbe_data/'>Upload Online</a></h5>-->
+            </div>
+          </div>
+          <div class="span8">
+            <h4>Dependencies</h4>
+            <hr>
+            <div class="row">
+              <div class="span4">
                 <img src='{% static '/media/site_images/culture.jpg' %}' />
               </div>
+              <div class="span4">
+                <img src='{% static '/media/site_images/tissues.jpg' %}' />
+              </div>
+              <div class="span4">
+                <img src='{% static '/media/site_images/corn_seed.jpg' %}' />
+              </div>
             </div>
-          </div>
-        </div>
-        <div class="span6">
-          <div class="container-fluid">
-            <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-              <div class="span7">
-                <h3>Add Tissue Info</h3>
-                <!--
-                <h5><a href='/lab/log_data/samples'>Use Online Interface</a></h5>
-                <h5><a href='/lab/download/template/samples_data'>Download Template</a></h5>
-                <h5><a href='/lab/'>Upload Template</a></h5>
-              -->
-              <h5><a href='/lab/download/template/tissue_data/'>Download Template</a></h5>
-              <h5><a href='/lab/upload/tissue_data/'>Upload To Queue</a></h5>
-            </div>
-            <div class="span5">
-              <img src='{% static '/media/site_images/tissues.jpg' %}' />
+            <div class="row">
+              <div class="span4">
+                <h5><a href='/lab/log_data/culture/'>Add Culture Data</a></h5>
+              </div>
+              <div class="span4">
+                <h5><a href='/lab/log_data/tissue/'>Add Tissue Data</a></h5>
+              </div>
+              <div class="span4">
+                <h5><a href='/lab/log_data/seed_inventory/'>Add Seed Data</a></h5>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div><br/>
+
     <div class="row">
-      <div class="span6">
-        <div class="container-fluid">
-          <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-            <div class="span7">
-              <h3>Add Plate Info</h3>
-                  <!--
-                  <h5><a href='/lab/log_data/environment'>Use Online Interface</a></h5>
-                  <h5><a href='/lab/download/template/environment_data'>Download Template</a></h5>
-                  <h5><a href='/lab/'>Upload Template</a></h5>
-                -->
-                <h5><a href='/lab/download/template/plate_data/'>Download Template</a></h5>
-                <h5><a href='/lab/upload/plate_data/'>Upload To Queue</a></h5>
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span4">
+            <div class="container-fluid">
+              <h3>Add DNA Data</h3>
+              <img src='{% static '/media/site_images/dna.jpg' %}' />
+              <h5><a href='/lab/log_data/dna/'>Use Online Interface</a></h5>
+              <h5><a href='/lab/download/template/dna_data/'>Download Template</a></h5>
+              <h5><a href='/lab/download/template/dna_data_help/'>Download Template Help</a></h5>
+              <h5><a href='/lab/upload/dna_data/'>Upload To Queue</a></h5>
+              <!--<h5><a href='/lab/upload_online/dna_data/'>Upload Online</a></h5>-->
+            </div>
+          </div>
+          <div class="span8">
+            <h4>Dependencies</h4>
+            <hr>
+            <div class="row">
+              <div class="span2">
+                <img src='{% static '/media/site_images/microbe.jpg' %}' />
               </div>
-              <div class="span5">
+              <div class="span2">
+                <img src='{% static '/media/site_images/culture.jpg' %}' />
+              </div>
+              <div class="span2">
+                <img src='{% static '/media/site_images/tissues.jpg' %}' />
+              </div>
+              <div class="span2">
+                <img src='{% static '/media/site_images/corn_plant.jpg' %}' />
+              </div>
+              <div class="span2">
+                <img src='{% static '/media/site_images/maize_row.jpg' %}' />
+              </div>
+              <div class="span2">
+                <img src='{% static '/media/site_images/corn_seed.jpg' %}' />
+              </div>
+            </div>
+            <div class="row">
+              <div class="span2">
+                <h5><a href='/lab/log_data/microbe/'>Add Microbe Data</a></h5>
+              </div>
+              <div class="span2">
+                <h5><a href='/lab/log_data/culture/'>Add Culture Data</a></h5>
+              </div>
+              <div class="span2">
+                <h5><a href='/lab/log_data/tissue/'>Add Tissue Data</a></h5>
+              </div>
+              <div class="span2">
+                <h5><a href='/lab/log_data/plant/'>Add Plant Data</a></h5>
+              </div>
+              <div class="span2">
+                <h5><a href='/lab/log_data/row/'>Add Row Data</a></h5>
+              </div>
+              <div class="span2">
+                <h5><a href='/lab/log_data/seed_inventory/'>Add Seed Data</a></h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+
+    <div class="row">
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span4">
+            <div class="container-fluid">
+              <h3>Add Plate Data</h3>
+              <img src='{% static '/media/site_images/plate.jpg' %}' />
+              <h5><a href='/lab/log_data/plate/'>Use Online Interface</a></h5>
+              <h5><a href='/lab/download/template/plate_data/'>Download Template</a></h5>
+              <h5><a href='/lab/download/template/plate_data_help/'>Download Template Help</a></h5>
+              <h5><a href='/lab/upload/plate_data/'>Upload To Queue</a></h5>
+              <!--<h5><a href='/lab/upload_online/plate_data/'>Upload Online</a></h5>-->
+            </div>
+          </div>
+          <div class="span8">
+            <h4>Dependencies</h4>
+            <hr>
+            <div class="row">
+              <div class="span12">
+                <img src='{% static '/media/site_images/storage.jpg' %}' />
+              </div>
+            </div>
+            <div class="row">
+              <div class="span3">
+                <h5><a href='/lab/log_data/location/'>Add Location Data</a></h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+
+    <div class="row">
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span4">
+            <div class="container-fluid">
+              <h3>Add Well Data</h3>
+              <img src='{% static '/media/site_images/wells.jpg' %}' />
+              <h5><a href='/lab/log_data/well/'>Use Online Interface</a></h5>
+              <h5><a href='/lab/download/template/wells_data/'>Download Template</a></h5>
+              <h5><a href='/lab/download/template/wells_data_help/'>Download Template Help</a></h5>
+              <h5><a href='/lab/upload/well_data/'>Upload To Queue</a></h5>
+              <!--<h5><a href='/lab/upload_online/well_data/'>Upload Online</a></h5>-->
+            </div>
+          </div>
+          <div class="span8">
+            <h4>Dependencies</h4>
+            <hr>
+            <div class="row">
+              <div class="span3">
+                <img src='{% static '/media/site_images/dna.jpg' %}' />
+              </div>
+              <div class="span3">
+                <img src='{% static '/media/site_images/culture.jpg' %}' />
+              </div>
+              <div class="span3">
+                <img src='{% static '/media/site_images/tissues.jpg' %}' />
+              </div>
+              <div class="span3">
                 <img src='{% static '/media/site_images/plate.jpg' %}' />
               </div>
             </div>
-          </div>
-        </div>
-        <div class="span6">
-          <div class="container-fluid">
-            <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-              <div class="span7">
-                <h3>Add Wells Info</h3>
-                <!--
-                <h5><a href='/lab/log_data/samples'>Use Online Interface</a></h5>
-                <h5><a href='/lab/download/template/samples_data'>Download Template</a></h5>
-                <h5><a href='/lab/'>Upload Template</a></h5>
-              -->
-              <h5><a href='/lab/download/template/wells_data/'>Download Template</a></h5>
-              <h5><a href='/lab/upload/well_data/'>Upload To Queue</a></h5>
-            </div>
-            <div class="span5">
-              <img src='{% static '/media/site_images/wells.jpg' %}' />
+            <div class="row">
+              <div class="span3">
+                <h5><a href='/lab/log_data/dna/'>Add DNA Data</a></h5>
+              </div>
+              <div class="span3">
+                <h5><a href='/lab/log_data/culture/'>Add Culture Data</a></h5>
+              </div>
+              <div class="span3">
+                <h5><a href='/lab/log_data/tissue/'>Add Tissue Data</a></h5>
+              </div>
+              <div class="span3">
+                <h5><a href='/lab/log_data/plate/'>Add Plate Data</a></h5>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div><br/>
+
     <div class="row">
-      <div class="span6">
-        <div class="container-fluid">
-          <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-            <div class="span7">
-              <h3>Add DNA Isolate Info</h3>
-                  <!--
-                  <h5><a href='/lab/log_data/environment'>Use Online Interface</a></h5>
-                  <h5><a href='/lab/download/template/environment_data'>Download Template</a></h5>
-                  <h5><a href='/lab/'>Upload Template</a></h5>
-                -->
-                <h5><a href='/lab/download/template/dna_data/'>Download Template</a></h5>
-                <h5><a href='/lab/upload/dna_isolate_data/'>Upload To Queue</a></h5>
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span4">
+            <div class="container-fluid">
+              <h3>Add Environment Data</h3>
+              <img src='{% static '/media/site_images/environmental.jpg' %}' />
+              <h5><a href='/lab/log_data/environment/'>Use Online Interface</a></h5>
+              <h5><a href='/lab/download/template/env_data/'>Download Template</a></h5>
+              <h5><a href='/lab/download/template/env_data_help/'>Download Template Help</a></h5>
+              <h5><a href='/lab/upload/env_data/'>Upload To Queue</a></h5>
+              <!--<h5><a href='/lab/upload_online/env_data/'>Upload Online</a></h5>-->
+            </div>
+          </div>
+          <div class="span8">
+            <h4>Dependencies</h4>
+            <hr>
+            <div class="row">
+              <div class="span6">
+                <img src='{% static '/media/site_images/locality.png' %}' />
               </div>
-              <div class="span5">
+              <div class="span6">
+                <img src='{% static '/media/site_images/field.jpg' %}' />
+              </div>
+            </div>
+            <div class="row">
+              <div class="span6">
+                <h5><a href='/lab/log_data/locality/'>Add Locality</a></h5>
+              </div>
+              <div class="span6">
+                <h5><a href='/lab/log_data/field/'>Add Field</a></h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+
+    <div class="row">
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span4">
+            <div class="container-fluid">
+              <h3>Inventory Isolates</h3>
+              <img src='{% static '/media/site_images/isolate.jpg' %}' />
+              <h5><a href='/lab/log_data/isolate/'>Use Online Interface</a></h5>
+              <h5><a href='/lab/download/template/isolate_data/'>Download Template</a></h5>
+              <h5><a href='/lab/download/template/isolate_data_help/'>Download Template Help</a></h5>
+              <h5><a href='/lab/upload/isolate_data/'>Upload To Queue</a></h5>
+              <!--<h5><a href='/lab/upload_online/isolate_data/'>Upload Online</a></h5>-->
+            </div>
+          </div>
+          <div class="span8">
+            <h4>Dependencies</h4>
+            <hr>
+            <div class="row">
+              <div class="span2">
+                <img src='{% static '/media/site_images/locality.png' %}' />
+              </div>
+              <div class="span2">
+                <img src='{% static '/media/site_images/storage.jpg' %}' />
+              </div>
+              <div class="span2">
                 <img src='{% static '/media/site_images/dna.jpg' %}' />
               </div>
+              <div class="span2">
+                <img src='{% static '/media/site_images/culture.jpg' %}' />
+              </div>
+              <div class="span2">
+                <img src='{% static '/media/site_images/wells.jpg' %}' />
+              </div>
+              <div class="span2">
+                <img src='{% static '/media/site_images/disease.png' %}' />
+              </div>
             </div>
-          </div>
-        </div>
-        <div class="span6">
-          <div class="container-fluid">
-            <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-              <div class="span7">
-                <h3>Add Microbe Info</h3>
-                <!--
-                <h5><a href='/lab/log_data/samples'>Use Online Interface</a></h5>
-                <h5><a href='/lab/download/template/samples_data'>Download Template</a></h5>
-                <h5><a href='/lab/'>Upload Template</a></h5>
-              -->
-              <h5><a href='/lab/download/template/microbe_data/'>Download Template</a></h5>
-              <h5><a href='/lab/upload/microbe_data/'>Upload To Queue</a></h5>
-            </div>
-            <div class="span5">
-              <img src='{% static '/media/site_images/microbe.jpg' %}' />
+            <div class="row">
+              <div class="span2">
+                <h5><a href='/lab/log_data/locality/'>Add Locality</a></h5>
+              </div>
+              <div class="span2">
+                <h5><a href='/lab/log_data/location/'>Add Location</a></h5>
+              </div>
+              <div class="span2">
+                <h5><a href='/lab/log_data/field/'>Add DNA</a></h5>
+              </div>
+              <div class="span2">
+                <h5><a href='/lab/log_data/culture/'>Add Culture</a></h5>
+              </div>
+              <div class="span2">
+                <h5><a href='/lab/log_data/wells/'>Add Well</a></h5>
+              </div>
+              <div class="span2">
+                <h5><a href='/lab/log_data/disease/'>Add Disease</a></h5>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div><br/>
-    <div class="row">
-      <div class="span6">
-        <div class="container-fluid">
-          <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-            <div class="span7">
-              <h3>Add Measurement Data</h3>
-              <!--
-              <h5><a href='/lab/log_data/measurement'>Use Online Interface</a></h5>
-              <h5><a href='/lab/download/template/measurement_data'>Download Template</a></h5>
-              <h5><a href='/lab/'>Upload Template</a></h5>
-              -->
-              <h5><a href='/lab/download/template/measurement_data/'>Download Template</a></h5>
-              <h5><a href='/lab/upload/measurement_data/'>Upload To Queue</a></h5>
-            </div>
-            <div class="span5">
-              <img src='{% static '/media/site_images/measurements.jpg' %}' />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="span6">
-        <div class="container-fluid">
-          <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-            <div class="span7">
-              <h3>Add Plant Info</h3>
-              <!--
-              <h5><a href='/lab/log_data/plant'>Use Online Interface</a></h5>
-              <h5><a href='/lab/download/template/plant_data'>Download Template</a></h5>
-              <h5><a href='/lab/'>Upload Template</a></h5>
-            -->
-              <h5><a href='/lab/download/template/plant_data/'>Download Template</a></h5>
-              <h5><a href='/lab/upload/plant_data/'>Upload To Queue</a></h5>
-            </div>
-            <div class="span5">
-              <img src='{% static '/media/site_images/corn_plant.jpg' %}' />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div><br/>
-    <div class="row">
-      <div class="span6">
-        <div class="container-fluid">
-          <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-            <div class="span7">
-              <h3>Add Genotype Results Data</h3>
-              <!--
-              <h5><a href='/lab/log_data/measurement'>Use Online Interface</a></h5>
-              <h5><a href='/lab/download/template/measurement_data'>Download Template</a></h5>
-              <h5><a href='/lab/'>Upload Template</a></h5>
-            -->
-                <h5><a href='/lab/download/template/genotype_results_data/'>Download Template</a></h5>
-                <h5><a href='/lab/upload/genotype_results_data/'>Upload To Queue</a></h5>
-              </div>
-              <div class="span5">
-                <img src='{% static '/media/site_images/geno_results.jpg' %}' />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="span6">
-          <div class="container-fluid">
 
+    <div class="row">
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span4">
+            <div class="container-fluid">
+              <h3>Add Samples Data</h3>
+              <img src='{% static '/media/site_images/sample.jpg' %}' />
+              <h5><a href='/lab/log_data/sample/'>Use Online Interface</a></h5>
+              <h5><a href='/lab/download/template/samples_data/'>Download Template</a></h5>
+              <h5><a href='/lab/download/template/samples_data_help/'>Download Template Help</a></h5>
+              <h5><a href='/lab/upload/samples_data/'>Upload To Queue</a></h5>
+              <!--<h5><a href='/lab/upload_online/samples_data/'>Upload Online</a></h5>-->
+            </div>
+          </div>
+          <div class="span8">
+            <h4>Dependencies</h4>
+            <hr>
+            <div class="row">
+              <div class="span12">
+                <img src='{% static '/media/site_images/corn_seed.jpg' %}' />
+              </div>
+            </div>
+            <div class="row">
+              <div class="span12">
+                <h5><a href='/lab/log_data/seed_inventory/'>Add Seed Data</a></h5>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div><br/>
+
+    <div class="row">
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span4">
+            <div class="container-fluid">
+              <h3>Add Measurement Data</h3>
+              <img src='{% static '/media/site_images/measurements.jpg' %}' />
+              <h5><a href='/lab/log_data/measurement/'>Use Online Interface</a></h5>
+              <h5><a href='/lab/download/template/measurement_data/'>Download Template</a></h5>
+              <h5><a href='/lab/download/template/measurement_data_help/'>Download Template Help</a></h5>
+              <h5><a href='/lab/upload/measurement_data/'>Upload To Queue</a></h5>
+              <!--<h5><a href='/lab/upload_online/measurement_data/'>Upload Online</a></h5>-->
+            </div>
+          </div>
+          <div class="span8">
+            <h4>Dependencies</h4>
+            <hr>
+            <div class="row">
+              <div class="span12">
+                <img src='{% static '/media/site_images/parameter.png' %}' />
+              </div>
+            </div>
+            <div class="row">
+              <div class="span12">
+                <h5><a href='/lab/log_data/parameter/'>Add Measurement Parameter</a></h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+
+    <div class="row">
+      <div class="container-fluid">
+        <div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+          <div class="span4">
+            <div class="container-fluid">
+              <h3>Add Genotypic Data</h3>
+              <img src='{% static '/media/site_images/geno_results.jpg' %}' />
+              <h5><a href='/lab/log_data/genotype_results_data/'>Use Online Interface</a></h5>
+              <h5><a href='/lab/download/template/genotype_results_data/'>Download Template</a></h5>
+              <h5><a href='/lab/upload/genotype_results_data/'>Upload To Queue</a></h5>
+              <h5><a href='/lab/upload_online/genotype_results_data/'>Upload Online</a></h5>
+            </div>
+          </div>
+          <div class="span8">
+            <h4>Dependencies</h4>
+            <hr>
+            <div class="row">
+              <div class="span12">
+                <img src='{% static '/media/site_images/parameter.png' %}' />
+              </div>
+            </div>
+            <div class="row">
+              <div class="span12">
+                <h5><a href='/lab/log_data/parameter/'>Add Measurement Parameter</a></h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br/>
+
   </div>
 
 </div>
