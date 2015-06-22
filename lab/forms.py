@@ -144,6 +144,9 @@ class LogSeedDataOnlineForm(forms.Form):
 	stock__passport__taxonomy__genus = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Genus'}), help_text="Genus", required=False)
 	stock__passport__taxonomy__species = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Species'}), help_text="Species", required=False)
 	stock__passport__taxonomy__population = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Population'}), help_text="Population", required=False)
+	obs_row__row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Row ID'}), help_text="Row ID", required=False)
+	obs_plant__plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Plant ID'}), help_text="Plant ID", required=False)
+	field = forms.ModelChoiceField(queryset=Field.objects.all(), empty_label="--- Field Source ---", initial=Field.objects.get(field_name='No Field'), help_text="Field Source", required=True)
 	stock__passport__collecting__user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Collected By ---", initial=User.objects.get(username='unknown_person'), help_text="Collector", required=True)
 	stock__passport__collecting__collection_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Collection Date'}), help_text="Date Collected", required=False)
 	stock__passport__collecting__collection_method = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Collection Method'}), help_text="Collection Method", required=False)
@@ -188,7 +191,7 @@ class LogPlantsOnlineForm(forms.Form):
 	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", required=True)
 	plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Plant ID'}), required=True)
 	plant_num = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Plant Num'}), required=True)
-	seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Seed ID'}), required=False)
+	seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Seed ID'}), required=True)
 	row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Row ID'}), required=False)
 	plant_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), required=False)
 

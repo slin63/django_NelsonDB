@@ -348,6 +348,16 @@ def obs_tracker_extract_id_mirror():
             obs_tracker_extract_id_table[row.extract_id] = (ot[row.id][0], ot[row.id][1], ot[row.id][2], ot[row.id][3], ot[row.id][4], ot[row.id][5], ot[row.id][6], ot[row.id][7], ot[row.id][8], ot[row.id][9], ot[row.id][10], ot[row.id][11], ot[row.id][12], ot[row.id][13], ot[row.id][14], ot[row.id][15], ot[row.id][16], ot[row.id][17], ot[row.id][18], ot[row.id][19], ot[row.id][20])
     return obs_tracker_extract_id_table
 
+def plant_id_mirror():
+    plant_id_table = OrderedDict({})
+    #--- Key = (row_id)
+    #--- Value = (obs_plant_id, plant_id, plant_num, comments)
+
+    obs_plant_file = ObsPlant.objects.all()
+    for row in obs_plant_file:
+        plant_id_table[row.plant_id] = (row.id, row.plant_id, row.plant_num, row.comments)
+    return plant_id_table
+
 def row_id_mirror():
     row_id_table = OrderedDict({})
     #--- Key = (row_id)
@@ -355,10 +365,7 @@ def row_id_mirror():
 
     obs_row_file = ObsRow.objects.all()
     for row in obs_row_file:
-        row_id = row.row_id
-        row_id.rstrip('\r')
-        row_id.rstrip('\n')
-        row_id_table[row_id] = (row.id, row.row_id, row.row_name, row.range_num, row.plot, row.block, row.rep, row.kernel_num, row.planting_date, row.harvest_date, row.comments)
+        row_id_table[row.row_id] = (row.id, row.row_id, row.row_name, row.range_num, row.plot, row.block, row.rep, row.kernel_num, row.planting_date, row.harvest_date, row.comments)
     return row_id_table
 
 def row_id_seed_id_mirror():

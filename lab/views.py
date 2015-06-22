@@ -548,12 +548,14 @@ def update_seed_info(request, stock_id):
 		if obs_tracker_stock_form.is_valid():
 			with transaction.atomic():
 				try:
-					#obs_tracker = ObsTracker.objects.get(obs_entity_type='stock', stock_id=stock_id)
-					#obs_tracker.experiment = obs_tracker_stock_form.cleaned_data['experiment']
-					#obs_tracker.glycerol_stock_id = 1
-					#obs_tracker.maize_sample_id = 1
-					#obs_tracker.obs_extract_id = 1
-					#obs_tracker.save()
+					obs_tracker = ObsTracker.objects.get(obs_entity_type='stock', stock_id=stock_id, experiment=obs_tracker_stock_form.cleaned_data['experiment'])
+					obs_tracker.glycerol_stock_id = 1
+					obs_tracker.maize_sample_id = 1
+					obs_tracker.obs_extract_id = 1
+					obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_stock_form.cleaned_data['obs_row__row_id'])
+					obs_tracker.obs_plant = ObsPlant.objects.get(plant_id=obs_tracker_stock_form.cleaned_data['obs_plant__plant_id'])
+					obs_tracker.field = obs_tracker_stock_form.cleaned_data['field']
+					obs_tracker.save()
 
 					stock = Stock.objects.get(id=stock_id)
 					stock.seed_id = obs_tracker_stock_form.cleaned_data['stock__seed_id']
@@ -575,7 +577,7 @@ def update_seed_info(request, stock_id):
 		else:
 			print(obs_tracker_stock_form.errors)
 	else:
-		stock_data = ObsTracker.objects.filter(obs_entity_type='stock', stock_id=stock_id).values('experiment', 'stock__seed_id', 'stock__seed_name', 'stock__cross_type', 'stock__pedigree', 'stock__stock_status', 'stock__stock_date', 'stock__inoculated', 'stock__comments', 'stock__passport__collecting__user', 'stock__passport__collecting__collection_date', 'stock__passport__collecting__collection_method', 'stock__passport__collecting__comments', 'stock__passport__people__first_name', 'stock__passport__people__last_name', 'stock__passport__people__organization', 'stock__passport__people__phone', 'stock__passport__people__email', 'stock__passport__people__comments', 'stock__passport__taxonomy__genus', 'stock__passport__taxonomy__species', 'stock__passport__taxonomy__population')
+		stock_data = ObsTracker.objects.filter(obs_entity_type='stock', stock_id=stock_id).values('experiment', 'stock__seed_id', 'stock__seed_name', 'stock__cross_type', 'stock__pedigree', 'stock__stock_status', 'stock__stock_date', 'stock__inoculated', 'stock__comments', 'stock__passport__collecting__user', 'stock__passport__collecting__collection_date', 'stock__passport__collecting__collection_method', 'stock__passport__collecting__comments', 'stock__passport__people__first_name', 'stock__passport__people__last_name', 'stock__passport__people__organization', 'stock__passport__people__phone', 'stock__passport__people__email', 'stock__passport__people__comments', 'stock__passport__taxonomy__genus', 'stock__passport__taxonomy__species', 'stock__passport__taxonomy__population', 'obs_row__row_id', 'obs_plant__plant_id', 'field')
 		obs_tracker_stock_form = LogSeedDataOnlineForm(initial=stock_data[0])
 	context_dict['stock_id'] = stock_id
 	context_dict['obs_tracker_stock_form'] = obs_tracker_stock_form
@@ -2843,9 +2845,26 @@ def log_data_online(request, data_type):
 						row_id = form.cleaned_data['row_id']
 						plant_comments = form.cleaned_data['plant_comments']
 
-						new_obs_selector = ObsSelector.objects.create(experiment=experiment)
-						new_plant = ObsPlant.objects.get_or_create(obs_selector=ObsSelector.objects.order_by('-pk')[0], obs_row=ObsRow.objects.get(row_id=row_id), plant_id=plant_id, plant_num=plant_num, comments=plant_comments)
-
+						if row_id != '':
+							try:
+								obs_tracker = ObsTracker.objects.get(obs_entity_type='row', obs_row=ObsRow.objects.get(row_id=row_id))
+								field_id = obs_tracker.field_id
+								obs_row_id = obs_tracker.obs_row_id
+							except Exception as e:
+								obs_tracker = None
+								field_id = 1
+								obs_row_id = 1
+								print("Error: %s %s" % (e.message, e.args))
+								failed = True
+						else:
+							field_id = 1
+							obs_row_id = 1
+						try:
+							new_obsplant = ObsPlant.objects.get_or_create(plant_id=plant_id, plant_num=plant_num, comments=plant_comments)
+							new_obs_tracker = ObsTracker.objects.get_or_create(obs_entity_type='plant', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=field_id, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=obs_row_id, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
 					except KeyError:
 						pass
 			else:
@@ -2877,10 +2896,14 @@ def log_data_online(request, data_type):
 						planting_date = form.cleaned_data['planting_date']
 						harvest_date = form.cleaned_data['harvest_date']
 						row_comments = form.cleaned_data['row_comments']
+						user = request.user
 
-						new_obs_selector = ObsSelector.objects.create(experiment=experiment)
-						new_row = ObsRow.objects.get_or_create(obs_selector=ObsSelector.objects.order_by('-pk')[0], field=field, stock=Stock.objects.get(seed_id=seed_id), row_id=row_id, row_name=row_name, range_num=range_num, plot=plot, block=block, rep=rep, kernel_num=kernel_num, planting_date=planting_date, harvest_date=harvest_date, comments=row_comments)
-
+						try:
+							new_obsrow = ObsRow.objects.get_or_create(row_id=row_id, row_name=row_name, range_num=range_num, plot=plot, block=block, rep=rep, kernel_num=kernel_num, planting_date=planting_date, harvest_date=harvest_date, comments=row_comments)
+							new_obs_tracker = ObsTracker.objects.get_or_create(obs_entity_type='row', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
 					except KeyError:
 						pass
 			else:
@@ -3517,6 +3540,10 @@ def upload_online(request, template_type):
 
 			if template_type == 'seed_stock':
 				results_dict = loader_scripts.seed_stock_loader_prep(request.FILES['file_name'], new_upload_user)
+			elif template_type == 'seed_packet':
+				results_dict = loader_scripts.seed_packet_loader_prep(request.FILES['file_name'], new_upload_user)
+			elif template_type == 'row_data':
+				results_dict = loader_scripts.row_loader_prep(request.FILES['file_name'], new_upload_user)
 			else:
 				results_dict = None
 			if results_dict is not None:
@@ -3525,20 +3552,31 @@ def upload_online(request, template_type):
 
 					if template_type == 'seed_stock':
 						output = loader_scripts.seed_stock_loader_prep_output(results_dict, new_upload_exp, template_type)
-						return output
+					elif template_type == 'seed_packet':
+						output = loader_scripts.seed_packet_loader_prep_output(results_dict, new_upload_exp, template_type)
+					elif template_type == 'row_data':
+						output = loader_scripts.row_loader_prep_output(results_dict, new_upload_exp, template_type)
+					else:
+						output = None
+					return output
 
 				elif new_upload_verified == True:
 					if template_type == 'seed_stock':
 						uploaded = loader_scripts.seed_stock_loader(results_dict)
-						if uploaded == True:
-							new_upload, created = UploadQueue.objects.get_or_create(experiment=new_upload_exp, user=new_upload_user, file_name=new_upload_filename, upload_type=template_type)
-							new_upload.comments = new_upload_comments
-							new_upload.verified = new_upload_verified
-							new_upload.completed = True
-							new_upload.save()
-							upload_complete = True
-						else:
-							upload_complete = False
+					if template_type == 'seed_packet':
+						uploaded = loader_scripts.seed_packet_loader(results_dict)
+					if template_type == 'row_data':
+						uploaded = loader_scripts.row_loader(results_dict)
+					else:
+						uploaded = False
+
+					if uploaded == True:
+						new_upload, created = UploadQueue.objects.get_or_create(experiment=new_upload_exp, user=new_upload_user, file_name=new_upload_filename, upload_type=template_type)
+						new_upload.comments = new_upload_comments
+						new_upload.verified = new_upload_verified
+						new_upload.completed = True
+						new_upload.save()
+						upload_complete = True
 					else:
 						upload_complete = False
 				else:
