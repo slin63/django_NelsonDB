@@ -346,52 +346,48 @@ def seed_stock_loader_prep_output(results_dict, new_upload_exp, template_type):
 
 @transaction.atomic
 def seed_stock_loader(results_dict):
-    try:
-        for key in results_dict['collecting_new'].iterkeys():
-            try:
-                new_stock = Collecting.objects.create(id=key[0], user_id=key[1], collection_date=key[2], collection_method=key[3], comments=key[4])
-            except Exception as e:
-                print("Collecting Error: %s %s" % (e.message, e.args))
-                return False
-        for key in results_dict['people_new'].iterkeys():
-            try:
-                new_stock = People.objects.create(id=key[0], first_name=key[1], last_name=key[2], organization=key[3], phone=key[4], email=key[5], comments=key[6])
-            except Exception as e:
-                print("People Error: %s %s" % (e.message, e.args))
-                return False
-        for key in results_dict['taxonomy_new'].iterkeys():
-            try:
-                new_stock = Taxonomy.objects.create(id=key[0], genus=key[1], species=key[2], population=key[3], common_name=key[4], alias=key[5], race=key[6], subtaxa=key[7])
-            except Exception as e:
-                print("Taxonomy Error: %s %s" % (e.message, e.args))
-                return False
-        for key in results_dict['passport_new'].iterkeys():
-            try:
-                new_stock = Passport.objects.create(id=key[0], collecting_id=key[1], people_id=key[2], taxonomy_id=key[3])
-            except Exception as e:
-                print("Passport Error: %s %s" % (e.message, e.args))
-                return False
-        for key in results_dict['stock_new'].iterkeys():
-            try:
-                new_stock = Stock.objects.create(id=key[0], passport_id=key[1], seed_id=key[2], seed_name=key[3], cross_type=key[4], pedigree=key[5], stock_status=key[6], stock_date=key[7], inoculated=key[8], comments=key[9])
-            except Exception as e:
-                print("Stock Error: %s %s" % (e.message, e.args))
-                return False
-        for key in results_dict['obs_tracker_new'].iterkeys():
-            try:
-                new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
-            except Exception as e:
-                print("ObsTracker Error: %s %s" % (e.message, e.args))
-                return False
-        for key in results_dict['obs_tracker_source_new'].iterkeys():
-            try:
-                new_stock = ObsTrackerSource.objects.create(id=key[0], source_obs_id=key[1], target_obs_id=key[2])
-            except Exception as e:
-                print("ObsTrackerSource Error: %s %s" % (e.message, e.args))
-                return False
-    except Exception as e:
-        print("Error: %s %s" % (e.message, e.args))
-        return False
+    for key in results_dict['collecting_new'].iterkeys():
+        try:
+            new_stock = Collecting.objects.create(id=key[0], user_id=key[1], collection_date=key[2], collection_method=key[3], comments=key[4])
+        except Exception as e:
+            print("Collecting Error: %s %s" % (e.message, e.args))
+            return False
+    for key in results_dict['people_new'].iterkeys():
+        try:
+            new_stock = People.objects.create(id=key[0], first_name=key[1], last_name=key[2], organization=key[3], phone=key[4], email=key[5], comments=key[6])
+        except Exception as e:
+            print("People Error: %s %s" % (e.message, e.args))
+            return False
+    for key in results_dict['taxonomy_new'].iterkeys():
+        try:
+            new_stock = Taxonomy.objects.create(id=key[0], genus=key[1], species=key[2], population=key[3], common_name=key[4], alias=key[5], race=key[6], subtaxa=key[7])
+        except Exception as e:
+            print("Taxonomy Error: %s %s" % (e.message, e.args))
+            return False
+    for key in results_dict['passport_new'].iterkeys():
+        try:
+            new_stock = Passport.objects.create(id=key[0], collecting_id=key[1], people_id=key[2], taxonomy_id=key[3])
+        except Exception as e:
+            print("Passport Error: %s %s" % (e.message, e.args))
+            return False
+    for key in results_dict['stock_new'].iterkeys():
+        try:
+            new_stock = Stock.objects.create(id=key[0], passport_id=key[1], seed_id=key[2], seed_name=key[3], cross_type=key[4], pedigree=key[5], stock_status=key[6], stock_date=key[7], inoculated=key[8], comments=key[9])
+        except Exception as e:
+            print("Stock Error: %s %s" % (e.message, e.args))
+            return False
+    for key in results_dict['obs_tracker_new'].iterkeys():
+        try:
+            new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+        except Exception as e:
+            print("ObsTracker Error: %s %s" % (e.message, e.args))
+            return False
+    for key in results_dict['obs_tracker_source_new'].iterkeys():
+        try:
+            new_stock = ObsTrackerSource.objects.create(id=key[0], source_obs_id=key[1], target_obs_id=key[2])
+        except Exception as e:
+            print("ObsTrackerSource Error: %s %s" % (e.message, e.args))
+            return False
     return True
 
 def seed_packet_loader_prep(upload_file, user):
@@ -552,28 +548,24 @@ def seed_packet_loader_prep_output(results_dict, new_upload_exp, template_type):
 
 @transaction.atomic
 def seed_packet_loader(results_dict):
-    try:
-        for key in results_dict['locality_new'].iterkeys():
-            try:
-                new_locality = Locality.objects.create(id=key[0], city=key[1], state=key[2], country=key[3], zipcode=key[4])
-            except Exception as e:
-                print("Locality Error: %s %s" % (e.message, e.args))
-                return False
-        for key in results_dict['location_new'].iterkeys():
-            try:
-                new_location = Location.objects.create(id=key[0], locality_id=key[1], location_name=key[2], building_name=key[3], room=key[4], shelf=key[5], column=key[6], box_name=key[7], comments=key[8])
-            except Exception as e:
-                print("Location Error: %s %s" % (e.message, e.args))
-                return False
-        for key in results_dict['stock_packet_new'].iterkeys():
-            try:
-                new_stock_packet = StockPacket.objects.create(id=key[0], stock_id=key[1], location_id=key[2], weight=key[3], num_seeds=key[4], comments=key[5])
-            except Exception as e:
-                print("StockPacket Error: %s %s" % (e.message, e.args))
-                return False
-    except Exception as e:
-        print("Error: %s %s" % (e.message, e.args))
-        return False
+    for key in results_dict['locality_new'].iterkeys():
+        try:
+            new_locality = Locality.objects.create(id=key[0], city=key[1], state=key[2], country=key[3], zipcode=key[4])
+        except Exception as e:
+            print("Locality Error: %s %s" % (e.message, e.args))
+            return False
+    for key in results_dict['location_new'].iterkeys():
+        try:
+            new_location = Location.objects.create(id=key[0], locality_id=key[1], location_name=key[2], building_name=key[3], room=key[4], shelf=key[5], column=key[6], box_name=key[7], comments=key[8])
+        except Exception as e:
+            print("Location Error: %s %s" % (e.message, e.args))
+            return False
+    for key in results_dict['stock_packet_new'].iterkeys():
+        try:
+            new_stock_packet = StockPacket.objects.create(id=key[0], stock_id=key[1], location_id=key[2], weight=key[3], num_seeds=key[4], comments=key[5])
+        except Exception as e:
+            print("StockPacket Error: %s %s" % (e.message, e.args))
+            return False
     return True
 
 def row_loader_prep(upload_file, user):
@@ -734,20 +726,16 @@ def row_loader_prep_output(results_dict, new_upload_exp, template_type):
 
 @transaction.atomic
 def row_loader(results_dict):
-    try:
-        for key in results_dict['obs_row_new'].iterkeys():
-            try:
-                new_obsrow = ObsRow.objects.create(id=key[0], row_id=key[1], row_name=key[2], range_num=key[3], plot=key[4], block=key[5], rep=key[6], kernel_num=key[7], planting_date=key[8], harvest_date=key[9], comments=key[10])
-            except Exception as e:
-                print("ObsRow Error: %s %s" % (e.message, e.args))
-                return False
-        for key in results_dict['obs_tracker_new'].iterkeys():
-            try:
-                new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
-            except Exception as e:
-                print("ObsTracker Error: %s %s" % (e.message, e.args))
-                return False
-    except Exception as e:
-        print("Error: %s %s" % (e.message, e.args))
-        return False
+    for key in results_dict['obs_row_new'].iterkeys():
+        try:
+            new_obsrow = ObsRow.objects.create(id=key[0], row_id=key[1], row_name=key[2], range_num=key[3], plot=key[4], block=key[5], rep=key[6], kernel_num=key[7], planting_date=key[8], harvest_date=key[9], comments=key[10])
+        except Exception as e:
+            print("ObsRow Error: %s %s" % (e.message, e.args))
+            return False
+    for key in results_dict['obs_tracker_new'].iterkeys():
+        try:
+            new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+        except Exception as e:
+            print("ObsTracker Error: %s %s" % (e.message, e.args))
+            return False
     return True
