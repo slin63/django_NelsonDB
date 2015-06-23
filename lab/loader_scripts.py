@@ -98,9 +98,9 @@ def seed_stock_loader_prep(upload_file, user):
         if row_id != '':
             row_id_fix = row_id + '\r'
             if row_id in row_id_table:
-                obs_row_id = row_id_table[row_id]
+                obs_row_id = row_id_table[row_id][0]
             elif row_id_fix in row_id_table:
-                obs_row_id = row_id_table[row_id_fix]
+                obs_row_id = row_id_table[row_id_fix][0]
             else:
                 row_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, genus, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
                 error_count = error_count + 1
@@ -111,9 +111,9 @@ def seed_stock_loader_prep(upload_file, user):
         if plant_id != '':
             plant_id_fix = plant_id + '\r'
             if plant_id in plant_id_table:
-                obs_plant_id = plant_id_table[plant_id]
+                obs_plant_id = plant_id_table[plant_id][0]
             elif plant_id_fix in plant_id_table:
-                obs_plant_id = plant_id_table[plant_id_fix]
+                obs_plant_id = plant_id_table[plant_id_fix][0]
             else:
                 plant_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, genus, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
                 error_count = error_count + 1
@@ -201,7 +201,7 @@ def seed_stock_loader_prep(upload_file, user):
             temp_stock_id = 1
             error_count = error_count + 1
 
-        if experiment_used == 1:
+        if experiment_used == '1':
             obs_tracker_stock_hash_fix = 'stock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_row_id) + str(1) + str(1) + str(1) + str(temp_stock_id) + str(user_hash_table[user.username]) + '\r'
             obs_tracker_stock_hash = 'stock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_row_id) + str(1) + str(1) + str(1) + str(temp_stock_id) + str(user_hash_table[user.username])
             if obs_tracker_stock_hash not in obs_tracker_hash_table and obs_tracker_stock_hash_fix not in obs_tracker_hash_table:
@@ -211,7 +211,7 @@ def seed_stock_loader_prep(upload_file, user):
             else:
                 obs_tracker_hash_exists[('stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
 
-        if experiment_collected == 1:
+        if experiment_collected == '1':
             obs_tracker_stock_hash_fix = 'stock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_row_id) + str(1) + str(1) + str(1) + str(temp_stock_id) + str(user_hash_table[user.username]) + '\r'
             obs_tracker_stock_hash = 'stock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_row_id) + str(1) + str(1) + str(1) + str(temp_stock_id) + str(user_hash_table[user.username])
             if obs_tracker_stock_hash not in obs_tracker_hash_table and obs_tracker_stock_hash_fix not in obs_tracker_hash_table:
