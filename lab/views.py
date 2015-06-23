@@ -6,7 +6,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, GlycerolStock
 from genetics.models import GWASExperimentSet
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm
+from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -544,7 +544,7 @@ def update_seed_info(request, stock_id):
 	context = RequestContext(request)
 	context_dict = {}
 	if request.method == 'POST':
-		obs_tracker_stock_form = LogSeedDataOnlineForm(data=request.POST)
+		obs_tracker_stock_form = UpdateSeedDataOnlineForm(data=request.POST)
 		if obs_tracker_stock_form.is_valid():
 			with transaction.atomic():
 				try:
@@ -578,7 +578,7 @@ def update_seed_info(request, stock_id):
 			print(obs_tracker_stock_form.errors)
 	else:
 		stock_data = ObsTracker.objects.filter(obs_entity_type='stock', stock_id=stock_id).values('experiment', 'stock__seed_id', 'stock__seed_name', 'stock__cross_type', 'stock__pedigree', 'stock__stock_status', 'stock__stock_date', 'stock__inoculated', 'stock__comments', 'stock__passport__collecting__user', 'stock__passport__collecting__collection_date', 'stock__passport__collecting__collection_method', 'stock__passport__collecting__comments', 'stock__passport__people__first_name', 'stock__passport__people__last_name', 'stock__passport__people__organization', 'stock__passport__people__phone', 'stock__passport__people__email', 'stock__passport__people__comments', 'stock__passport__taxonomy__genus', 'stock__passport__taxonomy__species', 'stock__passport__taxonomy__population', 'obs_row__row_id', 'obs_plant__plant_id', 'field')
-		obs_tracker_stock_form = LogSeedDataOnlineForm(initial=stock_data[0])
+		obs_tracker_stock_form = UpdateSeedDataOnlineForm(initial=stock_data[0])
 	context_dict['stock_id'] = stock_id
 	context_dict['obs_tracker_stock_form'] = obs_tracker_stock_form
 	context_dict['logged_in_user'] = request.user.username
@@ -2543,6 +2543,8 @@ def log_data_online(request, data_type):
 
 						with transaction.atomic():
 							try:
+								experiment_used = form.cleaned_data['experiment_used']
+								experiment_collected = form.cleaned_data['experiment_collected']
 								experiment = form.cleaned_data['experiment']
 								user = request.user
 								seed_id = form.cleaned_data['stock__seed_id']
@@ -2556,6 +2558,9 @@ def log_data_online(request, data_type):
 								genus = form.cleaned_data['stock__passport__taxonomy__genus']
 								species = form.cleaned_data['stock__passport__taxonomy__species']
 								population = form.cleaned_data['stock__passport__taxonomy__population']
+								row_id = form.cleaned_data['obs_row__row_id']
+								plant_id = form.cleaned_data['obs_plant__plant_id']
+								field = form.cleaned_data['field']
 								collection_user = form.cleaned_data['stock__passport__collecting__user']
 								collection_date = form.cleaned_data['stock__passport__collecting__collection_date']
 								collection_method = form.cleaned_data['stock__passport__collecting__collection_method']
@@ -2572,7 +2577,21 @@ def log_data_online(request, data_type):
 								new_collecting = Collecting.objects.get_or_create(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments)
 								new_passport = Passport.objects.get_or_create(collecting=Collecting.objects.get(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments))
 								new_stock = Stock.objects.get_or_create(passport=Passport.objects.get(collecting=Collecting.objects.get(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments)
-								new_obs_tracker = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=Stock.objects.get(passport=Passport.objects.get(collecting=Collecting.objects.get(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+
+								if row_id != '':
+									obs_row = ObsRow.objects.get(row_id=row_id)
+								else:
+									obs_row = ObsRow.objects.get(id=1)
+								if plant_id != '':
+									obs_plant = ObsPlant.objects.get(plant_id=plant_id)
+								else:
+									obs_plant = ObsPlant.objects.get(id=1)
+								if experiment_used == True:
+									new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=Stock.objects.get(passport=Passport.objects.get(collecting=Collecting.objects.get(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments), experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=obs_plant, obs_plate_id=1, obs_row=obs_row, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+								if experiment_collected == True:
+									new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=Stock.objects.get(passport=Passport.objects.get(collecting=Collecting.objects.get(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments), experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=obs_plant, obs_plate_id=1, obs_row=obs_row, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+									new_obs_tracker_exp, created = ObsTracker.objects.get_or_create(obs_entity_type='experiment', stock_id=1, experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+									new_obs_tracker_source, created = ObsTrackerSource.objects.get_or_create(source_obs=new_obs_tracker_exp, target_obs=new_obs_tracker)
 							except Exception as e:
 								print("Error: %s %s" % (e.message, e.args))
 								failed = True
@@ -3231,7 +3250,7 @@ def sidebar_search(request):
 		for result in stock_results:
 			result.url = "/lab/stock/%d/" % (result.id)
 
-		results_list = list(chain(experiment_results, user_results, stock_results, row_results, isolate_results, glycerol_results, plant_results, plate_results, culture_results, microbe_results, extract_results, dna_results, sample_results, tissue_results, env_results, well_results, maize_results, field_results, locality_results, people_results))[:10]
+		results_list = list(chain(experiment_results, user_results, row_results, stock_results, isolate_results, glycerol_results, plant_results, plate_results, culture_results, microbe_results, extract_results, dna_results, sample_results, tissue_results, env_results, well_results, maize_results, field_results, locality_results, people_results))[:10]
 
 	else:
 		results_list = None

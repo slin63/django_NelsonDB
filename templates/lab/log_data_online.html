@@ -16,6 +16,14 @@
     <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Data was saved!<br/>&nbsp;</h4>
     {% endif %}
 
+    {% if sent %}
+    {% if failed %}
+    <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Data Was Not Saved to the Database!<br/>&nbsp;</h4>
+    {% else %}
+    <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Data Was Saved to the Database!<br/>&nbsp;</h4>
+    {% endif %}
+    {% endif %}
+
     {% if data_type == 'seed_packet' %}
       <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
         <div class="row-fluid">
@@ -48,6 +56,8 @@
         <thead>
           <tr>
             {% if data_type == 'seed_inventory' %}
+              <th>Used</th>
+              <th>Collected</th>
               <th>Experiment</th>
               <th>Seed ID</th>
               <th>Seed Name</th>
@@ -60,6 +70,9 @@
               <th>Genus</th>
               <th>Species</th>
               <th>Population</th>
+              <th>Source Row ID</th>
+              <th>Source Plant ID</th>
+              <th>Source Field</th>
               <th>Collected By</th>
               <th>Collection Date</th>
               <th>Collection Method</th>
@@ -123,10 +136,7 @@
               <th>Kernel Num</th>
               <th>Comments</th>
             {% elif data_type == 'measurement' %}
-              <th>Row ID</th>
-              <th>Plant ID</th>
-              <th>Sample ID</th>
-              <th>Environment ID</th>
+              <th>Observation ID</th>
               <th>Parameter</th>
               <th>Username</th>
               <th>Time</th>
@@ -191,14 +201,6 @@
       <br/>
       <input class="btn btn-primary" type="submit" name="submit" value="Submit Data"/>
     </form>
-
-    {% if sent %}
-    {% if failed %}
-    <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Data Was Not Saved to the Database!<br/>&nbsp;</h4>
-    {% else %}
-    <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Data Was Saved to the Database!<br/>&nbsp;</h4>
-    {% endif %}
-    {% endif %}
 
   </div>
 {% endblock %}

@@ -9,7 +9,7 @@ sys.path.append('C:/Users/Nicolas/Documents/GitHub/django_NelsonDB')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
 import django
 django.setup()
-from lab.models import User, Experiment, Locality, MaizeSample, ObsTracker, ObsTrackerSource, ObsSample, Separation, ObsExtract, MeasurementParameter, Measurement, Medium, Citation, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsMicrobe, ObsCulture, ObsDNA, ObsExtract, ObsPlate, ObsWell, ObsTissue, Stock, Location, Locality, Field, Collecting, Isolate, Passport, People, Taxonomy, DiseaseInfo, GlycerolStock, StockPacket
+from lab.models import User, Experiment, Locality, MaizeSample, ObsTracker, ObsTrackerSource, ObsSample, Separation, ObsExtract, MeasurementParameter, Measurement, Medium, Citation, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsMicrobe, ObsCulture, ObsDNA, ObsExtract, ObsPlate, ObsWell, ObsTissue, Stock, Location, Locality, Field, Collecting, Isolate, Passport, People, Taxonomy, DiseaseInfo, GlycerolStock, StockPacket, ObsTrackerSource
 
 def user_id_mirror():
     user_id = User.objects.latest('id').id + 1
@@ -898,11 +898,24 @@ def stockpacket_hash_mirror():
     packet_file = StockPacket.objects.all()
     for row in packet_file:
         packet_hash = str(row.stock_id) + str(row.location_id) + row.weight + row.num_seeds+ row.comments
-        packet_hash.rstrip('\r')
-        packet_hash.rstrip('\n')
         stockpacket_hash_table[packet_hash] = row.id
     return stockpacket_hash_table
 
 def stockpacket_id_mirror():
     stockpacket_id = StockPacket.objects.latest('id').id + 1
     return stockpacket_id
+
+def obs_tracker_source_hash_mirror():
+    obs_tracker_source_hash_table = OrderedDict({})
+    #--- Key = (source_obs_id, target_obs_id)
+    #--- Value = (obs_tracker_id)
+
+    packet_file = ObsTrackerSource.objects.all()
+    for row in packet_file:
+        source_hash = str(row.stock_id) + str(row.location_id) + row.weight + row.num_seeds+ row.comments
+        obs_tracker_source_hash_table[source_hash] = row.id
+    return obs_tracker_source_hash_table
+
+def obs_tracker_source_id_mirror():
+    obs_tracker_source_id = ObsTrackerSource.objects.latest('id').id + 1
+    return obs_tracker_source_id

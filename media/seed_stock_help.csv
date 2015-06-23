@@ -8,9 +8,11 @@ DataBase Header Dictionary,,,
 ,,,
 Seed Stocks,For recording seed information.,,
 Template Header,Database Table,Database Field,Definition
+Used,,,"If the seed was used in this experiment, as in planted or ground up, place 1 in this fied. Leave blank otherwise."
+Collected,,,"If the seed was collected in this experiment, as in harvested, place 1 in this field. Leave blank otherwise."
+Experiment Name,lab_obstracker,experiment_id = Experiment(name).id,The experiment's name to which this seed is being used for OR collected from. The upload method is different for if seed is being used or collected. Leave blank if not applicable.
 Seed ID,lab_stock,seed_id,A unique ID in the format 08PN0023_001x. This is the ID that is printed on seed packets. MUST BE UNIQUE
 Seed Name,lab_stock,seed_name,A more human readable name for the seed.
-Experiment Name,lab_obstracker,experiment_id = Experiment(name).id,The experiment's name to which this seed is being used for. Leave blank if not applicable.
 Cross Type,lab_stock,cross_type,"Options: sib, self, cross"
 Pedigree,lab_stock,pedigree,"The genotype of the seed. Examples: B73, Mo17, CML52xCML322"
 Stock Status,lab_stock,stock_status,An indicator if the seed is available and whether it has been inventoried.
