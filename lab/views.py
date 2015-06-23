@@ -3582,21 +3582,20 @@ def upload_online(request, template_type):
 				elif new_upload_verified == True:
 					if template_type == 'seed_stock':
 						uploaded = loader_scripts.seed_stock_loader(results_dict)
-					if template_type == 'seed_packet':
+					elif template_type == 'seed_packet':
 						uploaded = loader_scripts.seed_packet_loader(results_dict)
-					if template_type == 'row_data':
+					elif template_type == 'row_data':
 						uploaded = loader_scripts.row_loader(results_dict)
 					else:
 						uploaded = False
 
 					if uploaded == True:
-						upload_complete = True
 						new_upload, created = UploadQueue.objects.get_or_create(experiment=new_upload_exp, user=new_upload_user, file_name=new_upload_filename, upload_type=template_type)
 						new_upload.comments = new_upload_comments
 						new_upload.verified = new_upload_verified
 						new_upload.completed = True
 						new_upload.save()
-
+						upload_complete = True
 					else:
 						upload_complete = False
 				else:
