@@ -897,7 +897,7 @@ def stockpacket_hash_mirror():
 
     packet_file = StockPacket.objects.all()
     for row in packet_file:
-        packet_hash = str(row.stock_id) + str(row.location_id) + row.weight + row.num_seeds+ row.comments
+        packet_hash = str(row.stock_id) + str(row.location_id) + row.weight + row.num_seeds + row.comments
         stockpacket_hash_table[packet_hash] = row.id
     return stockpacket_hash_table
 
@@ -910,9 +910,9 @@ def obs_tracker_source_hash_mirror():
     #--- Key = (source_obs_id, target_obs_id)
     #--- Value = (obs_tracker_id)
 
-    packet_file = ObsTrackerSource.objects.all()
-    for row in packet_file:
-        source_hash = str(row.stock_id) + str(row.location_id) + row.weight + row.num_seeds+ row.comments
+    source_file = ObsTrackerSource.objects.all()
+    for row in source_file:
+        source_hash = str(row.source_obs_id) + str(row.target_obs_id)
         obs_tracker_source_hash_table[source_hash] = row.id
     return obs_tracker_source_hash_table
 
