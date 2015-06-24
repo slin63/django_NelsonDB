@@ -2848,7 +2848,7 @@ def log_data_online(request, data_type):
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	if data_type == 'plant':
-		data_type_title = 'Log Plant Info'
+		data_type_title = 'Load Plant Info'
 		LogDataOnlineFormSet = formset_factory(LogPlantsOnlineForm, extra=10)
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
@@ -2893,7 +2893,7 @@ def log_data_online(request, data_type):
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	if data_type == 'row':
-		data_type_title = 'Log Row Info'
+		data_type_title = 'Load Row Info'
 		LogDataOnlineFormSet = formset_factory(LogRowsOnlineForm, extra=10)
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
@@ -2932,7 +2932,7 @@ def log_data_online(request, data_type):
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	if data_type == 'environment':
-		data_type_title = 'Log Environment Info'
+		data_type_title = 'Load Environment Info'
 		LogDataOnlineFormSet = formset_factory(LogEnvironmentsOnlineForm, extra=10)
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
@@ -2964,7 +2964,7 @@ def log_data_online(request, data_type):
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	if data_type == 'sample':
-		data_type_title = 'Log Samples Info'
+		data_type_title = 'Load Samples Info'
 		LogDataOnlineFormSet = formset_factory(LogSamplesOnlineForm, extra=10)
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
@@ -3003,7 +3003,7 @@ def log_data_online(request, data_type):
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	if data_type == 'measurement':
-		data_type_title = 'Log Measurements'
+		data_type_title = 'Load Measurements'
 		LogDataOnlineFormSet = formset_factory(LogMeasurementsOnlineForm, extra=10)
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
