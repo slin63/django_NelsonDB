@@ -6,78 +6,84 @@
   <h1>Isolate Inventory</h1>
 </div>
 
-<hr>
-<h2>Filters</h2>
-  <div class="container-fluid">
-    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-      <div class="row-fluid">
-        <div class="span3">
-          <ul class="nav nav-list">
-            <li class="nav-header">Select Disease</li>
-            <form>
-            <label></label>
-            <li><input  class="search-query" type="text" name="isolate_diseasesuggestion" id="isolate_diseasesuggestion" placeholder="Type Name (e.g. Ear Rot)"/></li>
-            </form>
-          </ul>
-        </div>
-        <div class="span3 offset1">
-          <button class="btn btn-info" id="show_all_isolate_disease" name="show_all_isolate_disease" type="submit">Show All Diseases</button>
-        </div>
-        {% if checkbox_isolate_disease %}
-        <div class="span2 offset3">
-          <form id="clear_isolate_disease" method="post" action="/lab/isolate_inventory/checkbox_clear/checkbox_isolate_disease/">
-            {% csrf_token %}
-            <button class="btn btn-warning" type="submit">Clear Diseases</button>
+
+<div class="container-fluid">
+
+  <hr>
+  <a href='/lab/log_data/isolate/'><input class="btn btn-warning" type="submit" name="submit" value="Add New Isolate Information"/></a>
+  <hr>
+
+  <h2>Filters</h2>
+
+  <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+    <div class="row-fluid">
+      <div class="span3">
+        <ul class="nav nav-list">
+          <li class="nav-header">Select Disease</li>
+          <form>
+          <label></label>
+          <li><input  class="search-query" type="text" name="isolate_diseasesuggestion" id="isolate_diseasesuggestion" placeholder="Type Name (e.g. Ear Rot)"/></li>
           </form>
-        </div>
-        {% endif %}
+        </ul>
       </div>
-      <div id="isolate_disease">
-        {% include 'lab/isolate_disease_list.html' with isolate_disease_list=isolate_disease_list %}
+      <div class="span3 offset1">
+        <button class="btn btn-info" id="show_all_isolate_disease" name="show_all_isolate_disease" type="submit">Show All Diseases</button>
       </div>
       {% if checkbox_isolate_disease %}
-        <hr>
-        <h5>Selected Diseases</h5>
-        {% for disease in checkbox_isolate_disease %}
-          <li>{{ disease.common_name }}</li>
-        {% endfor %}
-      {% endif %}
-    </div><br/>
-    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-      <div class="row-fluid">
-        <div class="span3">
-          <ul class="nav nav-list">
-            <li class="nav-header">Select Taxonomy</li>
-            <form>
-            <label></label>
-            <li><input  class="search-query" type="text" name="isolate_taxonomysuggestion" id="isolate_taxonomysuggestion" placeholder="Type Genus (e.g. Aspergillus Flavus)" /></li>
-            </form>
-          </ul>
-        </div>
-        <div class="span3 offset1">
-          <button class="btn btn-info" id="show_all_isolate_taxonomy" name="show_all_isolate_taxonomy" type="submit">Show All Taxonomies</button>
-        </div>
-        {% if checkbox_isolate_taxonomy %}
-        <div class="span2 offset3">
-          <form id="clear_isolate_taxonomy" method="post" action="/lab/isolate_inventory/checkbox_clear/checkbox_isolate_taxonomy/">
-            {% csrf_token %}
-            <button class="btn btn-warning" type="submit">Clear Taxonomies</button>
-          </form>
-        </div>
-        {% endif %}
+      <div class="span2 offset3">
+        <form id="clear_isolate_disease" method="post" action="/lab/isolate_inventory/checkbox_clear/checkbox_isolate_disease/">
+          {% csrf_token %}
+          <button class="btn btn-warning" type="submit">Clear Diseases</button>
+        </form>
       </div>
-      <div id="isolate_taxonomies">
-        {% include 'lab/isolate_taxonomy_list.html' with isolate_taxonomy_list=isolate_taxonomy_list %}
-      </div>
-      {% if checkbox_isolate_taxonomy %}
-        <hr>
-        <h5>Selected Genus</h5>
-        {% for genus in checkbox_isolate_taxonomy %}
-          <li>{{ genus.genus }}</li>
-        {% endfor %}
       {% endif %}
     </div>
+    <div id="isolate_disease">
+      {% include 'lab/isolate_disease_list.html' with isolate_disease_list=isolate_disease_list %}
+    </div>
+    {% if checkbox_isolate_disease %}
+      <hr>
+      <h5>Selected Diseases</h5>
+      {% for disease in checkbox_isolate_disease %}
+        <li>{{ disease.common_name }}</li>
+      {% endfor %}
+    {% endif %}
+  </div><br/>
+  <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+    <div class="row-fluid">
+      <div class="span3">
+        <ul class="nav nav-list">
+          <li class="nav-header">Select Taxonomy</li>
+          <form>
+          <label></label>
+          <li><input  class="search-query" type="text" name="isolate_taxonomysuggestion" id="isolate_taxonomysuggestion" placeholder="Type Genus (e.g. Aspergillus Flavus)" /></li>
+          </form>
+        </ul>
+      </div>
+      <div class="span3 offset1">
+        <button class="btn btn-info" id="show_all_isolate_taxonomy" name="show_all_isolate_taxonomy" type="submit">Show All Taxonomies</button>
+      </div>
+      {% if checkbox_isolate_taxonomy %}
+      <div class="span2 offset3">
+        <form id="clear_isolate_taxonomy" method="post" action="/lab/isolate_inventory/checkbox_clear/checkbox_isolate_taxonomy/">
+          {% csrf_token %}
+          <button class="btn btn-warning" type="submit">Clear Taxonomies</button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
+    <div id="isolate_taxonomies">
+      {% include 'lab/isolate_taxonomy_list.html' with isolate_taxonomy_list=isolate_taxonomy_list %}
+    </div>
+    {% if checkbox_isolate_taxonomy %}
+      <hr>
+      <h5>Selected Genus</h5>
+      {% for genus in checkbox_isolate_taxonomy %}
+        <li>{{ genus.genus }}</li>
+      {% endfor %}
+    {% endif %}
   </div>
+</div>
 
 {% include 'lab/isolate_table.html' %}
 {% endblock %}

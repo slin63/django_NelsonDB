@@ -1,6 +1,6 @@
 from django import forms
 
-from lab.models import UserProfile, Experiment, Field, ObsRow, ObsPlant, Locality, Stock, ObsRow, ObsPlant, ObsSample, ObsEnv, MeasurementParameter, Citation
+from lab.models import UserProfile, Experiment, Field, ObsRow, ObsPlant, Locality, Stock, ObsRow, ObsPlant, ObsSample, ObsEnv, MeasurementParameter, Citation, Medium, Location, DiseaseInfo
 from django.contrib.auth.models import User
 from django.core.validators import EmailValidator
 
@@ -246,6 +246,114 @@ class LogEnvironmentsOnlineForm(forms.Form):
 	longitude = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Longitude'}), required=False)
 	latitude = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Latitude'}), required=False)
 	environment_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), required=False)
+
+class LogTissuesOnlineForm(forms.Form):
+	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", required=True)
+	tissue_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Tissue ID'}), required=True)
+	row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Row ID'}), required=False)
+	seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Seed ID'}), required=False)
+	plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Plant ID'}), required=False)
+	culture_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Culture ID'}), required=False)
+	tissue_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Tissue Name'}), required=False)
+	tissue_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Tissue Type'}), required=False)
+	date_ground = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Date Ground'}), required=False)
+	tissue_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), required=False)
+
+class LogCulturesOnlineForm(forms.Form):
+	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", required=True)
+	culture_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Culture ID'}), required=True)
+	medium = forms.ModelChoiceField(queryset=Medium.objects.all(), empty_label="--- Medium ---", required=True)
+	row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Row ID'}), required=False)
+	seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Seed ID'}), required=False)
+	plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Plant ID'}), required=False)
+	tissue_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Tissue ID'}), required=False)
+	microbe_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Microbe ID'}), required=False)
+	culture_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Culture Name'}), required=False)
+	microbe_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Microbe Type'}), required=False)
+	plating_cycle = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Plating Cycle'}), required=False)
+	dilution = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Dilution'}), required=False)
+	num_colonies = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Num Colonies'}), required=False)
+	num_microbes = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Num Microbes'}), required=False)
+	image = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Image'}), required=False)
+	culture_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), required=False)
+
+class LogMicrobesOnlineForm(forms.Form):
+	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", required=True)
+	microbe_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Microbe ID'}), required=True)
+	row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Row ID'}), required=False)
+	seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Seed ID'}), required=False)
+	plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Plant ID'}), required=False)
+	tissue_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Tissue ID'}), required=False)
+	culture_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Culture ID'}), required=False)
+	microbe_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Microbe Type'}), required=False)
+	microbe_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), required=False)
+
+class LogDNAOnlineForm(forms.Form):
+	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", required=True)
+	dna_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'DNA ID'}), required=True)
+	microbe_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Microbe ID'}), required=False)
+	row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Row ID'}), required=False)
+	seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Seed ID'}), required=False)
+	plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Plant ID'}), required=False)
+	tissue_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Tissue ID'}), required=False)
+	culture_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Culture ID'}), required=False)
+	plate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Plate ID'}), required=False)
+	well_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Well ID'}), required=False)
+	extraction = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Extraction'}), required=False)
+	date = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Date'}), required=False)
+	tube_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Tube ID'}), required=False)
+	tube_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Tube Type'}), required=False)
+	dna_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), required=False)
+
+class LogWellOnlineForm(forms.Form):
+	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", required=True)
+	well_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Well ID'}), required=True)
+	microbe_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Microbe ID'}), required=False)
+	row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Row ID'}), required=False)
+	seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Seed ID'}), required=False)
+	plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Plant ID'}), required=False)
+	tissue_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Tissue ID'}), required=False)
+	culture_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Culture ID'}), required=False)
+	plate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Plate ID'}), required=False)
+	well = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Well'}), required=False)
+	inventory = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Inventory'}), required=False)
+	tube_label = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Tube Label'}), required=False)
+	well_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), required=False)
+
+class LogPlatesOnlineForm(forms.Form):
+	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", required=True)
+	plate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Plate ID'}), required=True)
+	location_id = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Location Name ---", required=True)
+	plate_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Plate Name'}), required=False)
+	date = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Date'}), required=False)
+	contents = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Contents'}), required=False)
+	rep = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Rep'}), required=False)
+	plate_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Plate Type'}), required=False)
+	plate_status = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Plate Status'}), required=False)
+	plate_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), required=False)
+
+class LogIsolatesOnlineForm(forms.Form):
+	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", required=True)
+	isolate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Isolate ID'}), required=True)
+	location_id = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Location Name ---", required=True)
+	dna_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source DNA ID'}), required=False)
+	microbe_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Microbe ID'}), required=False)
+	row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Row ID'}), required=False)
+	seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Seed ID'}), required=False)
+	plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Plant ID'}), required=False)
+	tissue_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Tissue ID'}), required=False)
+	culture_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Culture ID'}), required=False)
+	plate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Plate ID'}), required=False)
+	well_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Well ID'}), required=False)
+	isolate_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Isolate Name'}), required=False)
+	disease = forms.ModelChoiceField(queryset=DiseaseInfo.objects.all(), empty_label="--- Disease ---", required=True)
+	plant_organ = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Plant Organ'}), required=False)
+	tube_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Tube Type'}), required=False)
+	genus = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Genus'}), required=False)
+	alias = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Alias'}), required=False)
+	race = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Race'}), required=False)
+	subtaxa = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Subtaxa'}), required=False)
+	isolate_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), required=False)
 
 class LogMeasurementsOnlineForm(forms.Form):
 	observation_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Observation ID'}), required=True)

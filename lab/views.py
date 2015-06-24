@@ -6,7 +6,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, GlycerolStock
 from genetics.models import GWASExperimentSet
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm
+from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolatesOnlineForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -2987,9 +2987,376 @@ def log_data_online(request, data_type):
 						sample_comments = form.cleaned_data['sample_comments']
 						user = request.user
 
+						if source_row_id == '':
+							source_row_id = 'No Row'
+						if source_plant_id == '':
+							source_plant_id = 'No Plant'
+						if source_seed_id == '':
+							source_seed_id = 'No Seed'
+
 						try:
 							new_obssample, created = ObsSample.objects.get_or_create(sample_id=sample_id, sample_type=sample_type, sample_name=sample_name, weight=weight, volume=volume, density=density, kernel_num=kernel_num, photo=photo, comments=sample_comments)
 							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='sample', stock=Stock.objects.get(seed_id=source_seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=ObsPlant.objects.get(plant_id=source_plant_id), obs_plate_id=1, obs_row=ObsRow.objects.get(row_id=source_row_id), obs_sample=new_obssample, obs_tissue_id=1, obs_well_id=1)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
+					except KeyError:
+						pass
+			else:
+				sent = False
+				print(log_data_online_form_set.errors)
+		else:
+			sent = False
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'tissue':
+		data_type_title = 'Load Tissue Info'
+		LogDataOnlineFormSet = formset_factory(LogTissuesOnlineForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				sent = True
+				for form in log_data_online_form_set:
+					try:
+						experiment = form.cleaned_data['experiment']
+						tissue_id = form.cleaned_data['tissue_id']
+						row_id = form.cleaned_data['row_id']
+						seed_id = form.cleaned_data['seed_id']
+						plant_id = form.cleaned_data['plant_id']
+						culture_id = form.cleaned_data['culture_id']
+						tissue_name = form.cleaned_data['tissue_name']
+						tissue_type = form.cleaned_data['tissue_type']
+						date_ground = form.cleaned_data['date_ground']
+						tissue_comments = form.cleaned_data['tissue_comments']
+						user = request.user
+
+						if row_id == '':
+							row_id = 'No Row'
+						if plant_id == '':
+							plant_id = 'No Plant'
+						if seed_id == '':
+							seed_id = 'No Seed'
+						if culture_id == '':
+							culture_id = 'No Culture'
+
+						try:
+							new_obstissue, created = ObsTissue.objects.get_or_create(tissue_id=tissue_id, tissue_name=tissue_name, tissue_type=tissue_type, date_ground=date_ground, comments=tissue_comments)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='tissue', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_row=ObsRow.objects.get(row_id=row_id), obs_sample=new_obssample, obs_tissue=new_obstissue, obs_well_id=1)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
+					except KeyError:
+						pass
+			else:
+				sent = False
+				print(log_data_online_form_set.errors)
+		else:
+			sent = False
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'culture':
+		data_type_title = 'Load Tissue Info'
+		LogDataOnlineFormSet = formset_factory(LogCulturesOnlineForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				sent = True
+				for form in log_data_online_form_set:
+					try:
+						experiment = form.cleaned_data['experiment']
+						culture_id = form.cleaned_data['culture_id']
+						medium = form.cleaned_data['medium']
+						row_id = form.cleaned_data['row_id']
+						plant_id = form.cleaned_data['plant_id']
+						seed_id = form.cleaned_data['seed_id']
+						tissue_id = form.cleaned_data['tissue_id']
+						microbe_id = form.cleaned_data['microbe_id']
+						culture_name = form.cleaned_data['culture_name']
+						microbe_type = form.cleaned_data['microbe_type']
+						plating_cycle = form.cleaned_data['plating_cycle']
+						dilution = form.cleaned_data['dilution']
+						num_colonies = form.cleaned_data['num_colonies']
+						num_microbes = form.cleaned_data['num_microbes']
+						image = form.cleaned_data['image']
+						culture_comments = form.cleaned_data['culture_comments']
+						user = request.user
+
+						if row_id == '':
+							row_id = 'No Row'
+						if plant_id == '':
+							plant_id = 'No Plant'
+						if seed_id == '':
+							seed_id = 'No Seed'
+						if tissue_id == '':
+							tissue_id = 'No Tissue'
+						if microbe_id == '':
+							microbe_id = 'No Microbe'
+
+						try:
+							new_obsculture, created = ObsCulture.objects.get_or_create(medium=medium, culture_id=culture_id, culture_name=culture_name, microbe_type=microbe_type, plating_cycle=plating_cycle, dilution=dilution, image_filename=image, num_colonies=num_colonies, num_microbes=num_microbes, comments=tissue_comments)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='culture', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture=new_obsculture, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_row=ObsRow.objects.get(row_id=row_id), obs_sample=new_obssample, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well_id=1)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
+					except KeyError:
+						pass
+			else:
+				sent = False
+				print(log_data_online_form_set.errors)
+		else:
+			sent = False
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'microbe':
+		data_type_title = 'Load Microbe Info'
+		LogDataOnlineFormSet = formset_factory(LogMicrobesOnlineForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				sent = True
+				for form in log_data_online_form_set:
+					try:
+						experiment = form.cleaned_data['experiment']
+						microbe_id = form.cleaned_data['microbe_id']
+						row_id = form.cleaned_data['row_id']
+						plant_id = form.cleaned_data['plant_id']
+						seed_id = form.cleaned_data['seed_id']
+						tissue_id = form.cleaned_data['tissue_id']
+						culture_id = form.cleaned_data['culture_id']
+						microbe_type = form.cleaned_data['microbe_type']
+						microbe_comments = form.cleaned_data['microbe_comments']
+						user = request.user
+
+						if row_id == '':
+							row_id = 'No Row'
+						if plant_id == '':
+							plant_id = 'No Plant'
+						if seed_id == '':
+							seed_id = 'No Seed'
+						if tissue_id == '':
+							tissue_id = 'No Tissue'
+						if culture_id == '':
+							culture_id = 'No Culture'
+
+						try:
+							new_obsmicrobe, created = ObsMicrobe.objects.get_or_create(microbe_id=microbe_id, microbe_type=microbe_type, comments=microbe_comments)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='microbe', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe=new_obsmicrobe, obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_row=ObsRow.objects.get(row_id=row_id), obs_sample=new_obssample, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well_id=1)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
+					except KeyError:
+						pass
+			else:
+				sent = False
+				print(log_data_online_form_set.errors)
+		else:
+			sent = False
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'dna':
+		data_type_title = 'Load DNA Info'
+		LogDataOnlineFormSet = formset_factory(LogDNAOnlineForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				sent = True
+				for form in log_data_online_form_set:
+					try:
+						experiment = form.cleaned_data['experiment']
+						dna_id = form.cleaned_data['dna_id']
+						microbe_id = form.cleaned_data['microbe_id']
+						row_id = form.cleaned_data['row_id']
+						plant_id = form.cleaned_data['plant_id']
+						seed_id = form.cleaned_data['seed_id']
+						tissue_id = form.cleaned_data['tissue_id']
+						culture_id = form.cleaned_data['culture_id']
+						plate_id = form.cleaned_data['plate_id']
+						well_id = form.cleaned_data['well_id']
+						extraction = form.cleaned_data['extraction']
+						date = form.cleaned_data['date']
+						tube_id = form.cleaned_data['tube_id']
+						tube_type = form.cleaned_data['tube_type']
+						dna_comments = form.cleaned_data['dna_comments']
+						user = request.user
+
+						if row_id == '':
+							row_id = 'No Row'
+						if plant_id == '':
+							plant_id = 'No Plant'
+						if seed_id == '':
+							seed_id = 'No Seed'
+						if tissue_id == '':
+							tissue_id = 'No Tissue'
+						if culture_id == '':
+							culture_id = 'No Culture'
+						if microbe_id == '':
+							microbe_id = 'No Microbe'
+						if plate_id == '':
+							plate_id = 'No Plate'
+						if well_id == '':
+							well_id = 'No Well'
+
+						try:
+							new_obsdna, created = ObsDNA.objects.get_or_create(dna_id=dna_id, extraction_method=extraction, date=date, tube_id=tube_id, tube_type=tube_type, comments=dna_comments)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='dna', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=new_obsdna, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample=new_obssample, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
+					except KeyError:
+						pass
+			else:
+				sent = False
+				print(log_data_online_form_set.errors)
+		else:
+			sent = False
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'plate':
+		data_type_title = 'Load Plate Info'
+		LogDataOnlineFormSet = formset_factory(LogPlatesOnlineForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				sent = True
+				for form in log_data_online_form_set:
+					try:
+						experiment = form.cleaned_data['experiment']
+						plate_id = form.cleaned_data['plate_id']
+						location = form.cleaned_data['location']
+						plate_name = form.cleaned_data['plate_name']
+						date = form.cleaned_data['date']
+						contents = form.cleaned_data['contents']
+						rep = form.cleaned_data['rep']
+						plate_type = form.cleaned_data['plate_type']
+						plate_status = form.cleaned_data['plate_status']
+						plate_comments = form.cleaned_data['plate_comments']
+						user = request.user
+
+						try:
+							new_obsplate, created = ObsPlate.objects.get_or_create(plate_id=plate_id, plate_name=plate_name, date=date, contents=contents, rep=rep, plate_type=plate_type, plate_status=plate_status, comments=plate_comments)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='plate', stock_id=1, experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate=new_obsplate, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
+					except KeyError:
+						pass
+			else:
+				sent = False
+				print(log_data_online_form_set.errors)
+		else:
+			sent = False
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'well':
+		data_type_title = 'Load Well Info'
+		LogDataOnlineFormSet = formset_factory(LogWellOnlineForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				sent = True
+				for form in log_data_online_form_set:
+					try:
+						experiment = form.cleaned_data['experiment']
+						well_id = form.cleaned_data['well_id']
+						microbe_id = form.cleaned_data['microbe_id']
+						row_id = form.cleaned_data['row_id']
+						plant_id = form.cleaned_data['plant_id']
+						seed_id = form.cleaned_data['seed_id']
+						tissue_id = form.cleaned_data['tissue_id']
+						culture_id = form.cleaned_data['culture_id']
+						plate_id = form.cleaned_data['plate_id']
+						well = form.cleaned_data['well']
+						inventory = form.cleaned_data['extraction']
+						tube_label = form.cleaned_data['date']
+						well_comments = form.cleaned_data['dna_comments']
+						user = request.user
+
+						if row_id == '':
+							row_id = 'No Row'
+						if plant_id == '':
+							plant_id = 'No Plant'
+						if seed_id == '':
+							seed_id = 'No Seed'
+						if tissue_id == '':
+							tissue_id = 'No Tissue'
+						if culture_id == '':
+							culture_id = 'No Culture'
+						if microbe_id == '':
+							microbe_id = 'No Microbe'
+						if plate_id == '':
+							plate_id = 'No Plate'
+
+						try:
+							new_obswell, created = ObsWell.objects.get_or_create(well_id=well_id, well=well, date=date, well_inventory=inventory, tube_label=tube_label, comments=well_comments)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='well', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=new_obsdna, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=new_obswell)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
+					except KeyError:
+						pass
+			else:
+				sent = False
+				print(log_data_online_form_set.errors)
+		else:
+			sent = False
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'isolate':
+		data_type_title = 'Load Isolate Info'
+		LogDataOnlineFormSet = formset_factory(LogIsolatesOnlineForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				sent = True
+				for form in log_data_online_form_set:
+					try:
+						experiment = form.cleaned_data['experiment']
+						isolate_id = form.cleaned_data['isolate_id']
+						location = form.cleaned_data['location']
+						dna_id = form.cleaned_data['dna_id']
+						microbe_id = form.cleaned_data['microbe_id']
+						row_id = form.cleaned_data['row_id']
+						plant_id = form.cleaned_data['plant_id']
+						seed_id = form.cleaned_data['seed_id']
+						tissue_id = form.cleaned_data['tissue_id']
+						culture_id = form.cleaned_data['culture_id']
+						plate_id = form.cleaned_data['plate_id']
+						well_id = form.cleaned_data['well_id']
+						isolate_name = form.cleaned_data['isolate_name']
+						disease = form.cleaned_data['disease']
+						plant_organ = form.cleaned_data['plant_organ']
+						tube_type = form.cleaned_data['tube_type']
+						genus = form.cleaned_data['genus']
+						alias = form.cleaned_data['alias']
+						race = form.cleaned_data['race']
+						subtaxa = form.cleaned_data['subtaxa']
+						isolate_comments = form.cleaned_data['isolate_comments']
+						user = request.user
+
+						if row_id == '':
+							row_id = 'No Row'
+						if dna_id == '':
+							dna_id = 'No DNA'
+						if plant_id == '':
+							plant_id = 'No Plant'
+						if seed_id == '':
+							seed_id = 'No Seed'
+						if tissue_id == '':
+							tissue_id = 'No Tissue'
+						if culture_id == '':
+							culture_id = 'No Culture'
+						if microbe_id == '':
+							microbe_id = 'No Microbe'
+						if plate_id == '':
+							plate_id = 'No Plate'
+						if well_id == '':
+							well_id = 'No Well'
+
+						try:
+							new_taxonomy, created = Taxonomy.objects.get_or_create(genus=genus, common_name='Isolate', alias=alias, race=race, subtaxa=subtaxa)
+							new_passport, created = Passport.objects.get_or_create(taxonomy=new_taxonomy, people_id=1, collecting_id=1)
+							new_isolate, created = Isolate.objects.get_or_create(passport=new_passport, location=location, disease_info=disease, isolate_id=isolate_id, isolate_name=isolate_name, plant_organ=plant_organ, comments=isolate_comments)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='isolate', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate=new_isolate, location=location, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=ObsDNA.objects.get(dna_id=dna_id), obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
