@@ -767,14 +767,15 @@ def plant_loader_prep(upload_file, user):
     obs_plant_id = loader_db_mirror.obs_plant_id_mirror()
     row_id_table = loader_db_mirror.row_id_mirror()
     seed_id_table = loader_db_mirror.seed_id_mirror()
+    plant_id_table = loader_db_mirror.plant_id_mirror()
     obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
     obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
     experiment_name_table = loader_db_mirror.experiment_name_mirror()
 
     error_count = 0
-    source_seed_id_error = OrderedDict({})
-    field_name_error = OrderedDict({})
-    row_hash_exists = OrderedDict({})
+    seed_id_error = OrderedDict({})
+    row_id_error = OrderedDict({})
+    plant_hash_exists = OrderedDict({})
     obs_tracker_hash_exists = OrderedDict({})
 
     plant_file = csv.DictReader(upload_file)
@@ -788,7 +789,7 @@ def plant_loader_prep(upload_file, user):
         user = request.user
 
         if seed_id != '':
-            seed_id_fix = source_seed_id + '\r'
+            seed_id_fix = seed_id + '\r'
             if seed_id in seed_id_table:
                 stock_id = seed_id_table[seed_id][0]
             elif seed_id_fix in seed_id_table:
