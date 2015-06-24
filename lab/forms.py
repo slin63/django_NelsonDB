@@ -206,7 +206,7 @@ class LogRowsOnlineForm(forms.Form):
 	row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Row ID'}), required=True)
 	row_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Row Name'}), required=True)
 	seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Seed ID'}), required=True)
-	field = forms.ModelChoiceField(queryset=Field.objects.all(), empty_label="--- Field Name ---", required=True)
+	field = forms.ModelChoiceField(queryset=Field.objects.all(), initial=Field.objects.get(id=1), empty_label="--- Field Name ---", required=True)
 	range_num = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Range'}), required=False)
 	plot = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Plot'}), required=False)
 	block = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Block'}), required=False)
@@ -239,7 +239,7 @@ class LogSamplesOnlineForm(forms.Form):
 class LogEnvironmentsOnlineForm(forms.Form):
 	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", required=True)
 	environment_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Environment ID'}), required=True)
-	field = forms.ModelChoiceField(queryset=Field.objects.all(), empty_label="--- Field Name ---", required=True)
+	field = forms.ModelChoiceField(queryset=Field.objects.all(), initial=Field.objects.get(id=1), empty_label="--- Field Name ---", required=True)
 	longitude = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Longitude'}), required=False)
 	latitude = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Latitude'}), required=False)
 	environment_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), required=False)

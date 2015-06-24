@@ -2947,10 +2947,14 @@ def log_data_online(request, data_type):
 						longitude = form.cleaned_data['longitude']
 						latitude = form.cleaned_data['latitude']
 						environment_comments = form.cleaned_data['environment_comments']
+						user = request.user
 
-						new_obs_selector = ObsSelector.objects.create(experiment=experiment)
-						new_environment = ObsEnv.objects.get_or_create(obs_selector=ObsSelector.objects.order_by('-pk')[0], field=field, environment_id=environment_id, longitude=longitude, latitude=latitude, comments=environment_comments)
-
+						try:
+							new_obsenv = ObsEnv.objects.get_or_create(environment_id=environment_id, longitude=longitude, latitude=latitude, comments=environment_comments)
+							new_obs_tracker = ObsTracker.objects.get_or_create(obs_entity_type='environment', stock_id=1, experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
 					except KeyError:
 						pass
 			else:
