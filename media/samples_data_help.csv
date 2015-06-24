@@ -4,24 +4,20 @@ NelsonLab Samples Data Template Help,,,
 Template Name: sample_data_v0.1,,,
 Authored 03/04/2015,,,
 ,,,
-,,,
 DataBase Header Dictionary,,,
 ,,,
 Template Header,Database Table,Database Field,Definition
+Experiment Name,lab_obstracker,ObsTracker(experiment).id,The experiment name to which this sample is a part of.
 Sample ID,lab_obssample,sample_id,"A unique ID for the sample. Formats may vary, but this needs to be unique. MUST BE UNIQUE"
 Sample Type,lab_obssample,sample_type,"The type of sample. Example: Seed Kernels, Single Kernels, DNA "
+Sample Name,lab_obssample,sample_name,A human readable name or ID for the sample.
+Weight,lab_obssample,weight,"The weight of the sample in g. If not applicable, leave blank."
+Volume,lab_obssample,volume,"The volume of the sample in mL. If not applicable, leave blank."
+Density,lab_obssample,density,The density of the sample in g/mL. Leave blank if not applicable.
 Kernel Number,lab_obssample,kernel_num,"The number of seed kernels in the sample. If not applicable, leave blank."
-Weight,lab_obssample,weight,"The weight of the sample. If not applicable, leave blank."
+Photo,lab_obssample,photo,The image filename of the sample. Leave blank if not applicable.
 Sample Comments,lab_obssample,comments,Any additional comments about the sample.
 ,,,
 Source Seed ID,lab_obstracker,stock_id = Stock(seed_id).id,"If the sample was selected using seed, provide the Seed ID here. If not applicable, leave blank."
-Source Isolate ID,lab_obstracker,isolate_id = Isolate(isolate_id).id,"If the sample was selected using an isolate, provide te isolate ID here. If not applicable leave blank."
 Source Row ID,lab_obstracker,obs_row_id = ObsRow(row_id).id,"If the sample was selected from a row, provide the Row ID here. If not applicable, leave blank."
 Source Plant ID,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,"If the sample was selected from a plant, provide the Plant ID here. If not applicable, leave blank."
-Source Well ID,lab_obstracker,obs_well_id = ObsWellr(well_id).id,"If the sample was selected from a specific well, provide the Well ID here. If not applicable, leave blank."
-Source Microbe ID,lab_obstracker,obs_microbe_id = ObsMicrobe(microbe_id).id,"If the sample was selected from a microbe, provide the Microbe ID here. If not applicable, leave blank."
-Source Culture ID,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,"If the sample was selected from a separate culture, provide the Culture ID here. If not applicable, leave blank."
-Source Tissue ID,lab_obstracker,obs_tissue_id = ObsTissue(tissue_id).id,"If the sample was selected from a tissue, provide the Tissue ID here. If not applicable, leave blank."
-Source Sample ID,lab_obstracker,obs_sample_id = ObsSample(sample_id).id,"If the sample was selected from a specific sample, provide Sample ID here. If not applicable, leave blank."
-Source Plate ID,lab_obstracker,obs-plate_id = ObsPlate(plate_id).id,"If the sample was selected from a specific plate, provide the Plate ID here. If not applicable leave blank."
-Source DNA iD,lab_obstracker,obs_dna_id = ObsDNA(dna_id).id,"If the sample was selected from specific DNA, provide the DNA ID here. If not applicable, leave blank. "

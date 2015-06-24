@@ -17,15 +17,12 @@ def user_id_mirror():
 
 def user_hash_mirror():
     user_hash_table = OrderedDict({})
-    #--- Key = (hash(username))
+    #--- Key = (username)
     #--- Value = (user_id)
 
     user_file = User.objects.all()
     for row in user_file:
-        username = row.username
-        username.rstrip('\r')
-        username.rstrip('\n')
-        user_hash_table[username] = row.id
+        user_hash_table[row.username] = row.id
     return user_hash_table
 
 def experiment_id_mirror():
@@ -499,10 +496,7 @@ def measurement_parameter_name_mirror():
 
     measurement_param_file = MeasurementParameter.objects.all()
     for row in measurement_param_file:
-        parameter = row.parameter
-        parameter.rstrip('\r')
-        parameter.rstrip('\n')
-        measurement_param_name_table[parameter] = (row.id, row.parameter, row.parameter_type, row.unit_of_measure, row.protocol, row.trait_id_buckler)
+        measurement_param_name_table[row.parameter] = (row.id, row.parameter, row.parameter_type, row.unit_of_measure, row.protocol, row.trait_id_buckler)
     return measurement_param_name_table
 
 def measurement_id_mirror():

@@ -1,1 +1,1 @@
-Row ID,Plant ID,Environment ID,Sample ID,Microbe ID,Well ID,Plate ID,DNA ID,Tissue ID,Extract ID,Culture ID,Parameter,Username,DateTime,Value,Measurement Comments
+Observation ID,Parameter,Username,DateTime,Value,Measurement Comments

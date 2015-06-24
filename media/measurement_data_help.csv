@@ -4,22 +4,11 @@ NelsonLab Measurement Data Template Help,,,
 Template Name: measurement_data_v0.1,,,
 Authored 02/25/2015,,,
 ,,,
-,,,
 DataBase Header Dictionary,,,
 ,,,
 Measurements,For recording a measurement.,,
 Template Header,Database Table,Database Field,Definition
-Row ID,lab_measurement,obs_tracker_id = ObsRow(row_id).id,The row ID of the row being measured. The Row ID is a unique ID in the format 08PN0023. Leave blank if not applicable.
-Plant ID,lab_measurement,obs_tracker_id = ObsPlant(plant_id).id,The plant ID of the plant being measured. The Plant ID is a unique ID in the format 08PN0023_001. Leave blank if not applicable.
-Enviroment ID,lab_measurement,obs_tracker_id = ObsEnv(environment_id).id,The environment ID of the environment being measured. The Env ID is a unique ID. Leave blank if not applicable. 
-Sample ID,lab_measurement,obs_tracker_id = ObsSample(sample_id).id,The sample ID of the sample being measured. The Sample ID is a unique ID. Leave blank if not applicable.
-Microbe ID,lab_measurement,obs_tracker_id = ObsMicrobe(microbe_id).id,The microbe ID of the microbe being measured. The Microbe ID is a unique ID. Leave blank if not applicable.
-Well ID,lab_measurement,obs_tracker_id = ObsWell(well_id).id,The well ID of the well being measured. The Well ID is a unique ID. Leave blank if not applicable.
-Plate ID,lab_measurement,obs_tracker_id = ObsPlate(plate_id).id,The plate ID of the plate being measured. The Plate ID is a unique ID. Leave blank if not applicable.
-DNA ID,lab_measurement,obs_tracker_id = ObsDNA(dna_id).id,The DNA ID of the dna being measured. The DNA ID is a unique ID. Leave blank if not applicable.
-Tissue ID,lab_measurement,obs_tracker_id = ObsTissue(tissue_id).id,The tissue ID of the tissue being measured. The Tissue ID is a unique ID. Leave blank if not applicable.
-Extract ID,lab_measurement,obs_tracker_id = ObsExtract(extract_id).id,The extract ID of the extract being measured. The Extract ID is a unique ID. Leave blank if not applicable. 
-Culture ID,lab_measurement,obs_tracker_id = ObsCulture(culture_id).id,The culture ID of the culture being measured. The Culture ID is a unique ID. Leave blank if not applicable.
+Observation ID,lab_measurement,obs_tracker_id = ObsTracker(observation_id).id,"The observation ID being measured, whther it is a row ID, plant ID, sample ID, tissue ID, plate ID, culture ID, well ID, DNA ID, microbe ID, extract ID, env ID"
 Paramter,lab_measurement,measurement_parameter_id = MeasurementParameter(parameter).id,The parameter being measured. The measurement paraemter is unique.
 Username,lab_measurement,user_id = User(username).id,The username of the user taking the measurement. Example: firstname_lastname
 DateTime,lab_measurement,time_of_measurement,The datetime when the measuremnt was taken. Format: 2015-01-30 14:50

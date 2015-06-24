@@ -702,7 +702,7 @@ def row_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Row Table'])
-    writer.writerow(['row_id', 'row_name', 'range_num', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date', 'comments'])
+    writer.writerow(['obs_row_id', 'row_id', 'row_name', 'range_num', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date', 'comments'])
     for key in results_dict['obs_row_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -746,6 +746,158 @@ def row_loader(results_dict):
                 new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
+                return False
+    except Exception as e:
+        print("Error: %s %s" % (e.message, e.args))
+        return False
+    return True
+
+def measurement_loader_prep(upload_file, user):
+    start = time.clock()
+
+    #-- These are the tables that will hold the curated data that is then written to csv files --
+    measurement_new = OrderedDict({})
+    #--- Key = (measurement_id, obs_tracker_id, measurement_parameter_id, user_id, time_of_measurement, value, comments)
+    #--- Value = (measurement_id)
+
+    measurement_hash_table = loader_db_mirror.measurement_hash_mirror()
+    measurement_id = loader_db_mirror.measurement_id_mirror()
+    obs_tracker_row_id_table = loader_db_mirror.obs_tracker_row_id_mirror()
+    obs_tracker_plant_id_table = loader_db_mirror.obs_tracker_plant_id_mirror()
+    obs_tracker_env_id_table = loader_db_mirror.obs_tracker_env_id_mirror()
+    obs_tracker_sample_id_table = loader_db_mirror.obs_tracker_sample_id_mirror()
+    obs_tracker_microbe_id_table = loader_db_mirror.obs_tracker_microbe_id_mirror()
+    obs_tracker_well_id_table = loader_db_mirror.obs_tracker_well_id_mirror()
+    obs_tracker_plate_id_table = loader_db_mirror.obs_tracker_plate_id_mirror()
+    obs_tracker_dna_id_table = loader_db_mirror.obs_tracker_dna_id_mirror()
+    obs_tracker_tissue_id_table = loader_db_mirror.obs_tracker_tissue_id_mirror()
+    obs_tracker_extract_id_table = loader_db_mirror.obs_tracker_extract_id_mirror()
+    obs_tracker_culture_id_table = loader_db_mirror.obs_tracker_culture_id_mirror()
+    user_hash_table = loader_db_mirror.user_hash_mirror()
+    measurement_param_name_table = loader_db_mirror.measurement_parameter_name_mirror()
+
+    error_count = 0
+    obs_id_error = OrderedDict({})
+    username_error = OrderedDict({})
+    parameter_error = OrderedDict({})
+    measurement_hash_exists = OrderedDict({})
+
+    measurement_file = csv.DictReader(upload_file)
+    for row in measurement_file:
+        obs_id = row["Observation ID"]
+        parameter = row["Parameter"]
+        username = row["Username"]
+        time_of_measurement = row["DateTime"]
+        value = row["Value"]
+        comments = row["Measurement Comments"]
+
+        if obs_id in obs_tracker_row_id_table:
+            obs_tracker_id = obs_tracker_row_id_table[obs_id][0]
+        elif obs_id in obs_tracker_plant_id_table:
+            obs_tracker_id = obs_tracker_plant_id_table[obs_id][0]
+        elif obs_id in obs_tracker_env_id_table:
+            obs_tracker_id = obs_tracker_env_id_table[obs_id][0]
+        elif obs_id in obs_tracker_sample_id_table:
+            obs_tracker_id = obs_tracker_sample_id_table[obs_id][0]
+        elif obs_id in obs_tracker_microbe_id_table:
+            obs_tracker_id = obs_tracker_microbe_id_table[obs_id][0]
+        elif obs_id in obs_tracker_well_id_table:
+            obs_tracker_id = obs_tracker_well_id_table[obs_id][0]
+        elif obs_id in obs_tracker_plate_id_table:
+            obs_tracker_id = obs_tracker_plate_id_table[obs_id][0]
+        elif obs_id in obs_tracker_dna_id_table:
+            obs_tracker_id = obs_tracker_dna_id_table[obs_id][0]
+        elif obs_id in obs_tracker_tissue_id_table:
+            obs_tracker_id = obs_tracker_tissue_id_table[obs_id][0]
+        elif obs_id in obs_tracker_extract_id_table:
+            obs_tracker_id = obs_tracker_extract_id_table[obs_id][0]
+        elif obs_id in obs_tracker_culture_id_table:
+            obs_tracker_id = obs_tracker_culture_id_table[obs_id][0]
+        else:
+            obs_tracker_id = 1
+            obs_id_error[(obs_id, parameter, username, time_of_measurement, value, comments)] = obs_id
+            error_count = error_count + 1
+
+        if username in user_hash_table:
+            user_id = user_hash_table[username]
+        else:
+            user_id = user_hash_table['unknown_person']
+            username_error[(obs_id, parameter, username, time_of_measurement, value, comments)] = obs_id
+            error_count = error_count + 1
+
+        if parameter in measurement_param_name_table:
+            parameter_id = measurement_param_name_table[parameter][0]
+        else:
+            parameter_id = 1
+            parameter_error[(obs_id, parameter, username, time_of_measurement, value, comments)] = obs_id
+            error_count = error_count + 1
+
+        measurement_hash_fix = str(obs_tracker_id) + str(parameter_id) + str(user_id) + time_of_measurement + value + comments + '\r'
+        measurement_hash = str(obs_tracker_id) + str(parameter_id) + str(user_id) + time_of_measurement + value + comments
+        if measurement_hash not in measurement_hash_table and measurement_hash_fix not in measurement_hash_table:
+            measurement_hash_table[measurement_hash] = measurement_id
+            measurement_new[(measurement_id, obs_tracker_id, parameter_id, user_id, time_of_measurement, value, comments)] = measurement_id
+            measurement_id = measurement_id + 1
+        else:
+            measurement_hash_exists[(measurement_id, obs_tracker_id, parameter_id, user_id, time_of_measurement, value, comments)] = measurement_id
+
+    end = time.clock()
+    stats = {}
+    stats[("Time: %s" % (end-start), "Errors: %s" % (error_count))] = error_count
+
+    results_dict = {}
+    results_dict['measurement_new'] = measurement_new
+    results_dict['obs_id_error'] = obs_id_error
+    results_dict['username_error'] = username_error
+    results_dict['parameter_error'] = parameter_error
+    results_dict['measurement_hash_exists'] = measurement_hash_exists
+    results_dict['stats'] = stats
+    return results_dict
+
+def measurement_loader_prep_output(results_dict, new_upload_exp, template_type):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="%s_%s_prep.csv"' % (new_upload_exp, template_type)
+    writer = csv.writer(response)
+    writer.writerow(['Stats'])
+    writer.writerow([''])
+    for key in results_dict['stats'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['New Measurement Table'])
+    writer.writerow(['measurement_id', 'obs_tracker_id', 'measurement_parameter_id', 'user_id', 'time_of_measurement', 'value', 'comments'])
+    for key in results_dict['measurement_new'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['---------------------------------------------------------------------------------------------------'])
+    writer.writerow([''])
+    writer.writerow(['Observation ID Errors'])
+    writer.writerow(['observation_id', 'parameter', 'username', 'time_of_measurement', 'value', 'comments'])
+    for key in results_dict['obs_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Username Errors'])
+    writer.writerow(['observation_id', 'parameter', 'username', 'time_of_measurement', 'value', 'comments'])
+    for key in results_dict['username_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Parameter Errors'])
+    writer.writerow(['observation_id', 'parameter', 'username', 'time_of_measurement', 'value', 'comments'])
+    for key in results_dict['parameter_error'].iterkeys():
+        writer.writerow([key])
+    writer.writerow([''])
+    writer.writerow(['Measurement Entry Already Exists'])
+    for key in results_dict['measurement_hash_exists'].iterkeys():
+        writer.writerow(key)
+    return response
+
+@transaction.atomic
+def measurement_loader(results_dict):
+    try:
+        for key in results_dict['measurement_new'].iterkeys():
+            try:
+                new_measurement = Measurement.objects.create(id=key[0], obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6])
+            except Exception as e:
+                print("Measurement Error: %s %s" % (e.message, e.args))
                 return False
     except Exception as e:
         print("Error: %s %s" % (e.message, e.args))

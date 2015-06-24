@@ -2572,11 +2572,11 @@ def log_data_online(request, data_type):
 								source_email = form.cleaned_data['stock__passport__people__email']
 								source_comments = form.cleaned_data['stock__passport__people__comments']
 
-								new_taxonomy = Taxonomy.objects.get_or_create(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL')
-								new_people = People.objects.get_or_create(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)
-								new_collecting = Collecting.objects.get_or_create(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments)
-								new_passport = Passport.objects.get_or_create(collecting=Collecting.objects.get(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments))
-								new_stock = Stock.objects.get_or_create(passport=Passport.objects.get(collecting=Collecting.objects.get(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments)
+								new_taxonomy, created = Taxonomy.objects.get_or_create(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL')
+								new_people, created = People.objects.get_or_create(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)
+								new_collecting, created = Collecting.objects.get_or_create(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments)
+								new_passport, created = Passport.objects.get_or_create(collecting=new_collecting, taxonomy=new_taxonomy, people=new_people)
+								new_stock, created = Stock.objects.get_or_create(passport=new_passport, seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments)
 
 								if row_id != '':
 									obs_row = ObsRow.objects.get(row_id=row_id)
@@ -2587,9 +2587,9 @@ def log_data_online(request, data_type):
 								else:
 									obs_plant = ObsPlant.objects.get(id=1)
 								if experiment_used == True:
-									new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=Stock.objects.get(passport=Passport.objects.get(collecting=Collecting.objects.get(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments), experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=obs_plant, obs_plate_id=1, obs_row=obs_row, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+									new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=new_stock, experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=obs_plant, obs_plate_id=1, obs_row=obs_row, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 								if experiment_collected == True:
-									new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=Stock.objects.get(passport=Passport.objects.get(collecting=Collecting.objects.get(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments), taxonomy=Taxonomy.objects.get(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL'), people=People.objects.get(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)), seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments), experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=obs_plant, obs_plate_id=1, obs_row=obs_row, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+									new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=new_stock, experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=obs_plant, obs_plate_id=1, obs_row=obs_row, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 									new_obs_tracker_exp, created = ObsTracker.objects.get_or_create(obs_entity_type='experiment', stock_id=1, experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 									new_obs_tracker_source, created = ObsTrackerSource.objects.get_or_create(source_obs=new_obs_tracker_exp, target_obs=new_obs_tracker)
 							except Exception as e:
@@ -2630,9 +2630,8 @@ def log_data_online(request, data_type):
 								box_name = form.cleaned_data['location__box_name']
 								location_comments = form.cleaned_data['location__comments']
 
-								new_location = Location.objects.get_or_create(locality=locality, building_name=building_name, location_name=location_name, room=room, shelf=shelf, column=column, box_name=box_name, comments=location_comments)
-								new_stock_packet = StockPacket.objects.get_or_create(stock=Stock.objects.get(seed_id=seed_id), location=Location.objects.get(locality=locality, building_name=building_name, location_name=location_name, room=room, shelf=shelf, column=column, box_name=box_name, comments=location_comments), weight=weight, num_seeds=num_seeds, comments=packet_comments)
-
+								new_location, created = Location.objects.get_or_create(locality=locality, building_name=building_name, location_name=location_name, room=room, shelf=shelf, column=column, box_name=box_name, comments=location_comments)
+								new_stock_packet = StockPacket.objects.get_or_create(stock=Stock.objects.get(seed_id=seed_id), location=new_location, weight=weight, num_seeds=num_seeds, comments=packet_comments)
 							except Exception as e:
 								print("Error: %s %s" % (e.message, e.args))
 								failed = True
@@ -2879,8 +2878,8 @@ def log_data_online(request, data_type):
 							field_id = 1
 							obs_row_id = 1
 						try:
-							new_obsplant = ObsPlant.objects.get_or_create(plant_id=plant_id, plant_num=plant_num, comments=plant_comments)
-							new_obs_tracker = ObsTracker.objects.get_or_create(obs_entity_type='plant', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=field_id, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=obs_row_id, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+							new_obsplant, created = ObsPlant.objects.get_or_create(plant_id=plant_id, plant_num=plant_num, comments=plant_comments)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='plant', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=field_id, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=new_obsplant, obs_plate_id=1, obs_row_id=obs_row_id, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
@@ -2918,8 +2917,8 @@ def log_data_online(request, data_type):
 						user = request.user
 
 						try:
-							new_obsrow = ObsRow.objects.get_or_create(row_id=row_id, row_name=row_name, range_num=range_num, plot=plot, block=block, rep=rep, kernel_num=kernel_num, planting_date=planting_date, harvest_date=harvest_date, comments=row_comments)
-							new_obs_tracker = ObsTracker.objects.get_or_create(obs_entity_type='row', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+							new_obsrow, created = ObsRow.objects.get_or_create(row_id=row_id, row_name=row_name, range_num=range_num, plot=plot, block=block, rep=rep, kernel_num=kernel_num, planting_date=planting_date, harvest_date=harvest_date, comments=row_comments)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='row', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row=new_obsrow, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
@@ -2950,8 +2949,8 @@ def log_data_online(request, data_type):
 						user = request.user
 
 						try:
-							new_obsenv = ObsEnv.objects.get_or_create(environment_id=environment_id, longitude=longitude, latitude=latitude, comments=environment_comments)
-							new_obs_tracker = ObsTracker.objects.get_or_create(obs_entity_type='environment', stock_id=1, experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+							new_obsenv, created = ObsEnv.objects.get_or_create(environment_id=environment_id, longitude=longitude, latitude=latitude, comments=environment_comments)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='environment', stock_id=1, experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env=new_obsenv, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
@@ -2964,7 +2963,7 @@ def log_data_online(request, data_type):
 			sent = False
 			log_data_online_form_set = LogDataOnlineFormSet
 
-	if data_type == 'samples':
+	if data_type == 'sample':
 		data_type_title = 'Log Samples Info'
 		LogDataOnlineFormSet = formset_factory(LogSamplesOnlineForm, extra=10)
 		if request.method == 'POST':
@@ -2976,17 +2975,24 @@ def log_data_online(request, data_type):
 						experiment = form.cleaned_data['experiment']
 						sample_id = form.cleaned_data['sample_id']
 						sample_type = form.cleaned_data['sample_type']
+						sample_name = form.cleaned_data['sample_name']
 						source_seed_id = form.cleaned_data['source_seed_id']
 						source_row_id = form.cleaned_data['source_row_id']
 						source_plant_id = form.cleaned_data['source_plant_id']
-						source_sample_id = form.cleaned_data['source_sample_id']
 						weight = form.cleaned_data['weight']
+						volume = form.cleaned_data['volume']
+						density = form.cleaned_data['density']
 						kernel_num = form.cleaned_data['kernel_num']
+						photo = form.cleaned_data['photo']
 						sample_comments = form.cleaned_data['sample_comments']
+						user = request.user
 
-						new_obs_selector = ObsSelector.objects.create(experiment=experiment)
-						new_sample = ObsSample.objects.get_or_create(obs_selector=ObsSelector.objects.order_by('-pk')[0], obs_plant=ObsPlant.objects.get(plant_id=source_plant_id), obs_row=ObsRow.objects.get(row_id=source_row_id), stock=Stock.objects.get(seed_id=source_seed_id), source_sample=ObsSample.objects.get(sample_id=source_sample_id), sample_id=sample_id, sample_type=sample_type, weight=weight, kernel_num=kernel_num, comments=sample_comments)
-
+						try:
+							new_obssample, created = ObsSample.objects.get_or_create(sample_id=sample_id, sample_type=sample_type, sample_name=sample_name, weight=weight, volume=volume, density=density, kernel_num=kernel_num, photo=photo, comments=sample_comments)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='sample', stock=Stock.objects.get(seed_id=source_seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=ObsPlant.objects.get(plant_id=source_plant_id), obs_plate_id=1, obs_row=ObsRow.objects.get(row_id=source_row_id), obs_sample=new_obssample, obs_tissue_id=1, obs_well_id=1)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
 					except KeyError:
 						pass
 			else:
@@ -3005,29 +3011,87 @@ def log_data_online(request, data_type):
 				sent = True
 				for form in log_data_online_form_set:
 					try:
-						row_id = form.cleaned_data['row_id']
-						plant_id = form.cleaned_data['plant_id']
-						sample_id = form.cleaned_data['sample_id']
-						environment_id = form.cleaned_data['environment_id']
+						observation_id = form.cleaned_data['observation_id']
 						measurement_parameter = form.cleaned_data['measurement_parameter']
 						user = form.cleaned_data['user']
 						time_of_measurement = form.cleaned_data['time_of_measurement']
 						value = form.cleaned_data['value']
 						measurement_comments = form.cleaned_data['measurement_comments']
+						try:
+							obs_unit = ObsRow.objects.get(row_id=observation_id)
+							obs_tracker = ObsTracker.objects.get(obs_entity_type='row', obs_row=obs_unit)
+							obs_tracker_found = True
+						except (ObsRow.DoesNotExist, ObsTracker.DoesNotExist):
+							pass
+						try:
+							obs_unit = ObsPlant.objects.get(plant_id=observation_id)
+							obs_tracker = ObsTracker.objects.get(obs_entity_type='plant', obs_plant=obs_unit)
+							obs_tracker_found = True
+						except (ObsPlant.DoesNotExist, ObsTracker.DoesNotExist):
+							pass
+						try:
+							obs_unit = ObsSample.objects.get(sample_id=observation_id)
+							obs_tracker = ObsTracker.objects.get(obs_entity_type='sample', obs_sample=obs_unit)
+							obs_tracker_found = True
+						except (ObsSample.DoesNotExist, ObsTracker.DoesNotExist):
+							pass
+						try:
+							obs_unit = ObsCulture.objects.get(culture_id=observation_id)
+							obs_tracker = ObsTracker.objects.get(obs_entity_type='culture', obs_culture=obs_unit)
+							obs_tracker_found = True
+						except (ObsCulture.DoesNotExist, ObsTracker.DoesNotExist):
+							pass
+						try:
+							obs_unit = ObsDNA.objects.get(dna_id=observation_id)
+							obs_tracker = ObsTracker.objects.get(obs_entity_type='dna', obs_dna=obs_unit)
+							obs_tracker_found = True
+						except (ObsDNA.DoesNotExist, ObsTracker.DoesNotExist):
+							pass
+						try:
+							obs_unit = ObsEnv.objects.get(environment_id=observation_id)
+							obs_tracker = ObsTracker.objects.get(obs_entity_type='environment', obs_env=obs_unit)
+							obs_tracker_found = True
+						except (ObsEnv.DoesNotExist, ObsTracker.DoesNotExist):
+							pass
+						try:
+							obs_unit = ObsExtract.objects.get(extract_id=observation_id)
+							obs_tracker = ObsTracker.objects.get(obs_entity_type='extract', obs_extract=obs_unit)
+							obs_tracker_found = True
+						except (ObsExtract.DoesNotExist, ObsTracker.DoesNotExist):
+							pass
+						try:
+							obs_unit = ObsMicrobe.objects.get(microbe_id=observation_id)
+							obs_tracker = ObsTracker.objects.get(obs_entity_type='microbe', obs_microbe=obs_unit)
+							obs_tracker_found = True
+						except (ObsMicrobe.DoesNotExist, ObsTracker.DoesNotExist):
+							pass
+						try:
+							obs_unit = ObsPlate.objects.get(plate_id=observation_id)
+							obs_tracker = ObsTracker.objects.get(obs_entity_type='plate', obs_plate=obs_unit)
+							obs_tracker_found = True
+						except (ObsPlate.DoesNotExist, ObsTracker.DoesNotExist):
+							pass
+						try:
+							obs_unit = ObsTissue.objects.get(tissue_id=observation_id)
+							obs_tracker = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue=obs_unit)
+							obs_tracker_found = True
+						except (ObsTissue.DoesNotExist, ObsTracker.DoesNotExist):
+							pass
+						try:
+							obs_unit = ObsWell.objects.get(well_id=observation_id)
+							obs_tracker = ObsTracker.objects.get(obs_entity_type='well', obs_well=obs_unit)
+							obs_tracker_found = True
+						except (ObsWell.DoesNotExist, ObsTracker.DoesNotExist):
+							pass
 
-						if row_id != '':
-							obs_row = ObsRow.objects.get(row_id=row_id)
-							new_measurement = Measurement.objects.get_or_create(obs_selector_id=obs_row.obs_selector_id, measurement_parameter=measurement_parameter, user=user, time_of_measurement=time_of_measurement, value=value, comments=measurement_comments)
-						elif plant_id != '':
-							obs_plant = ObsPlant.objects.get(plant_id=plant_id)
-							new_measurement = Measurement.objects.get_or_create(obs_selector_id=obs_plant.obs_selector_id, measurement_parameter=measurement_parameter, user=user, time_of_measurement=time_of_measurement, value=value, comments=measurement_comments)
-						elif sample_id != '':
-							obs_sample = ObsPlant.objects.get(sample_id=sample_id)
-							new_measurement = Measurement.objects.get_or_create(obs_selector_id=obs_sample.obs_selector_id, measurement_parameter=measurement_parameter, user=user, time_of_measurement=time_of_measurement, value=value, comments=measurement_comments)
-						elif environment_id != '':
-							obs_env = ObsPlant.objects.get(environment_id=environment_id)
-							new_measurement = Measurement.objects.get_or_create(obs_selector_id=obs_env.obs_selector_id, measurement_parameter=measurement_parameter, user=user, time_of_measurement=time_of_measurement, value=value, comments=measurement_comments)
-
+						if obs_tracker_found == True:
+							try:
+								new_measurement, created = Measurement.objects.get_or_create(obs_tracker=obs_tracker, measurement_parameter=measurement_parameter, user=user, time_of_measurement=time_of_measurement, value=value, comments=measurement_comments)
+							except Exception as e:
+								print("Error: %s %s" % (e.message, e.args))
+								failed = True
+						else:
+							failed = True
 					except KeyError:
 						pass
 			else:
@@ -3567,6 +3631,8 @@ def upload_online(request, template_type):
 				results_dict = loader_scripts.seed_packet_loader_prep(request.FILES['file_name'], new_upload_user)
 			elif template_type == 'row_data':
 				results_dict = loader_scripts.row_loader_prep(request.FILES['file_name'], new_upload_user)
+			elif template_type == 'measurement_data':
+				results_dict = loader_scripts.measurement_loader_prep(request.FILES['file_name'], new_upload_user)
 			else:
 				results_dict = None
 			if results_dict is not None:
@@ -3579,6 +3645,8 @@ def upload_online(request, template_type):
 						output = loader_scripts.seed_packet_loader_prep_output(results_dict, new_upload_exp, template_type)
 					elif template_type == 'row_data':
 						output = loader_scripts.row_loader_prep_output(results_dict, new_upload_exp, template_type)
+					elif template_type == 'measurement_data':
+						output = loader_scripts.measurement_loader_prep_output(results_dict, new_upload_exp, template_type)
 					else:
 						output = None
 					return output
@@ -3590,6 +3658,8 @@ def upload_online(request, template_type):
 						uploaded = loader_scripts.seed_packet_loader(results_dict)
 					elif template_type == 'row_data':
 						uploaded = loader_scripts.row_loader(results_dict)
+					elif template_type == 'measurement_data':
+						uploaded = loader_scripts.measurement_loader(results_dict)
 					else:
 						uploaded = False
 

@@ -228,12 +228,15 @@ class LogSamplesOnlineForm(forms.Form):
 	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", required=True)
 	sample_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Sample ID'}), required=True)
 	sample_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Sample Type'}), required=True)
+	sample_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Sample Name'}), required=False)
 	source_seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Seed ID'}), required=False)
 	source_row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Row ID'}), required=False)
 	source_plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Plant ID'}), required=False)
-	source_sample_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Sample ID'}), required=False)
 	weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Weight'}), required=False)
-	kernel_num = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Kernel Num'}), required=False)
+	volume = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Volume'}), required=False)
+	density = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Density'}), required=False)
+	kernel_num = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Num Kernels'}), required=False)
+	photo = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Photo'}), required=False)
 	sample_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), required=False)
 
 class LogEnvironmentsOnlineForm(forms.Form):

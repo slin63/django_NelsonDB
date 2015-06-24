@@ -19,6 +19,7 @@ Zipcode,lab_locality,zipcode,The locality's zipcode.
 ,,,
 Environment,,,
 Template Header,Database Table,Database Field,Definition
+Experiment Name,lab_ObsTracker(experiment).id,experiment,The experiment to which this environment is a part of.
 Field Name,lab_ObsEnv,field_id = Field(field_name).id,The unique field name of the environemnt.
 Environment ID,lab_ObsEnv,environment_id,"A unique ID for the sample. Formats may vary, but this needs to be unique. MUST BE UNIQUE"
 Longitude,lab_ObsEnv,longitude,"The type of sample. Example: Seed Kernels, Single Kernels, DNA "
