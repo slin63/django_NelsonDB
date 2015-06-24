@@ -4000,6 +4000,8 @@ def upload_online(request, template_type):
 				results_dict = loader_scripts.row_loader_prep(request.FILES['file_name'], new_upload_user)
 			elif template_type == 'measurement_data':
 				results_dict = loader_scripts.measurement_loader_prep(request.FILES['file_name'], new_upload_user)
+			elif template_type == 'plant_data':
+				results_dict = loader_scripts.plant_loader_prep(request.FILES['file_name'], new_upload_user)
 			else:
 				results_dict = None
 			if results_dict is not None:
@@ -4014,6 +4016,8 @@ def upload_online(request, template_type):
 						output = loader_scripts.row_loader_prep_output(results_dict, new_upload_exp, template_type)
 					elif template_type == 'measurement_data':
 						output = loader_scripts.measurement_loader_prep_output(results_dict, new_upload_exp, template_type)
+					elif template_type == 'plant_data':
+						output = loader_scripts.plant_loader_prep_output(results_dict, new_upload_exp, template_type)
 					else:
 						output = None
 					return output
@@ -4027,6 +4031,8 @@ def upload_online(request, template_type):
 						uploaded = loader_scripts.row_loader(results_dict)
 					elif template_type == 'measurement_data':
 						uploaded = loader_scripts.measurement_loader(results_dict)
+					elif template_type == 'plant_data':
+						uploaded = loader_scripts.plant_loader(results_dict)
 					else:
 						uploaded = False
 

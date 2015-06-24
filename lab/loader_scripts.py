@@ -658,9 +658,9 @@ def row_loader_prep(upload_file, user):
             row_hash_exists[(row_id, row_name, row_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)] = obs_row_id
 
         if row_id in row_id_table:
-            temp_obsrow_id = row_id[row_id][0]
+            temp_obsrow_id = row_id_table[row_id][0]
         elif row_id + '\r' in row_id_table:
-            temp_obsrow_id = row_id[row_id + '\r'][0]
+            temp_obsrow_id = row_id_table[row_id + '\r'][0]
         elif row_hash in obs_row_hash_table:
             temp_obsrow_id = obs_row_hash_table[row_hash]
         elif row_hash_fix in obs_row_hash_table:
@@ -740,6 +740,175 @@ def row_loader(results_dict):
                 new_obsrow = ObsRow.objects.create(id=key[0], row_id=key[1], row_name=key[2], range_num=key[3], plot=key[4], block=key[5], rep=key[6], kernel_num=key[7], planting_date=key[8], harvest_date=key[9], comments=key[10])
             except Exception as e:
                 print("ObsRow Error: %s %s" % (e.message, e.args))
+                return False
+        for key in results_dict['obs_tracker_new'].iterkeys():
+            try:
+                new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+            except Exception as e:
+                print("ObsTracker Error: %s %s" % (e.message, e.args))
+                return False
+    except Exception as e:
+        print("Error: %s %s" % (e.message, e.args))
+        return False
+    return True
+
+def plant_loader_prep(upload_file, user):
+    start = time.clock()
+
+    obs_plant_new = OrderedDict({})
+    #--- Key = (obs_plant_id, plant_id, plant_num, comments)
+    #--- Value = (obs_row_id)
+    obs_tracker_new = OrderedDict({})
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, glycerol_stock_id, isolate_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id)
+
+    user_hash_table = loader_db_mirror.user_hash_mirror()
+    obs_plant_hash_table = loader_db_mirror.obs_plant_hash_mirror()
+    obs_plant_id = loader_db_mirror.obs_plant_id_mirror()
+    row_id_table = loader_db_mirror.row_id_mirror()
+    seed_id_table = loader_db_mirror.seed_id_mirror()
+    obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
+    obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
+    experiment_name_table = loader_db_mirror.experiment_name_mirror()
+
+    error_count = 0
+    source_seed_id_error = OrderedDict({})
+    field_name_error = OrderedDict({})
+    row_hash_exists = OrderedDict({})
+    obs_tracker_hash_exists = OrderedDict({})
+
+    plant_file = csv.DictReader(upload_file)
+    for row in plant_file:
+        plant_id = row["Plant ID"]
+        experiment_name = row["Experiment Name"]
+        row_id = row["Row ID"]
+        seed_id = row["Seed ID"]
+        plant_num = row["Plant Number"]
+        comments = row["Plant Comments"]
+        user = request.user
+
+        if seed_id != '':
+            seed_id_fix = source_seed_id + '\r'
+            if seed_id in seed_id_table:
+                stock_id = seed_id_table[seed_id][0]
+            elif seed_id_fix in seed_id_table:
+                stock_id = seed_id_table[seed_id_fix][0]
+            else:
+                seed_id_error[(plant_id, experiment_name, row_id, seed_id, plant_num, comments)] = error_count
+                error_count = error_count + 1
+                stock_id = 1
+        else:
+            stock_id = 1
+
+        if row_id != '':
+            row_id_fix = row_id + '\r'
+            if row_id in row_id_table:
+                obs_row_id = row_id_table[row_id][0]
+            elif row_id_fix in row_id_table:
+                obs_row_id = row_id_table[row_id_fix][0]
+            else:
+                row_id_error[(plant_id, experiment_name, row_id, seed_id, plant_num, comments)] = error_count
+                error_count = error_count + 1
+                obs_row_id = 1
+        else:
+            obs_row_id = 1
+
+        plant_hash = plant_id + plant_num + comments
+        plant_hash_fix = plant_id + plant_num + comments + '\r'
+        if plant_id not in plant_id_table and plant_id + '\r' not in plant_id_table:
+            if plant_hash not in obs_plant_hash_table and plant_hash_fix not in obs_plant_hash_table:
+                obs_row_hash_table[plant_hash] = obs_plant_id
+                obs_plant_new[(obs_plant_id, plant_id, plant_num, comments)] = obs_plant_id
+                plant_id_table[plant_id] = (obs_plant_id, plant_id, plant_num, comments)
+                obs_plant_id = obs_plant_id + 1
+            else:
+                plant_hash_exists[(plant_id, plant_num, comments)] = obs_plant_id
+        else:
+            plant_hash_exists[(plant_id, plant_num, comments)] = obs_plant_id
+
+        if plant_id in plant_id_table:
+            temp_obsplant_id = plant_id_table[plant_id][0]
+        elif plant_id + '\r' in plant_id_table:
+            temp_obsplant_id = plant_id_table[plant_id + '\r'][0]
+        elif plant_hash in obs_plant_hash_table:
+            temp_obsplant_id = obs_plant_hash_table[plant_hash]
+        elif plant_hash_fix in obs_plant_hash_table:
+            temp_obsplant_id = obs_plant_hash_table[plant_hash_fix]
+        else:
+            temp_obsplant_id = 1
+            error_count = error_count + 1
+
+        obs_tracker_plant_hash = 'plant' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(temp_obsplant_id) + str(1) + str(obs_row_id) + str(1) + str(1) + str(1) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_plant_hash_fix = 'plant' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(temp_obsplant_id) + str(1) + str(obs_row_id) + str(1) + str(1) + str(1) + str(stock_id) + str(user_hash_table[user.username]) + '\r'
+        if obs_tracker_plant_hash not in obs_tracker_hash_table and obs_tracker_plant_hash_fix not in obs_tracker_hash_table:
+            obs_tracker_hash_table[obs_tracker_plant_hash] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'plant', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, temp_obsplant_id, 1, obs_row_id, 1, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_id = obs_tracker_id + 1
+        else:
+            obs_tracker_hash_exists[('plant', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, temp_obsplant_id, 1, obs_row_id, 1, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+
+    end = time.clock()
+    stats = {}
+    stats[("Time: %s" % (end-start), "Errors: %s" % (error_count))] = error_count
+
+    results_dict = {}
+    results_dict['obs_plant_new'] = obs_plant_new
+    results_dict['obs_tracker_new'] = obs_tracker_new
+    results_dict['seed_id_error'] = seed_id_error
+    results_dict['row_id_error'] = row_id_error
+    results_dict['plant_hash_exists'] = plant_hash_exists
+    results_dict['obs_tracker_hash_exists'] = obs_tracker_hash_exists
+    results_dict['stats'] = stats
+    return results_dict
+
+def plant_loader_prep_output(results_dict, new_upload_exp, template_type):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="%s_%s_prep.csv"' % (new_upload_exp, template_type)
+    writer = csv.writer(response)
+    writer.writerow(['Stats'])
+    writer.writerow([''])
+    for key in results_dict['stats'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['New Plant Table'])
+    writer.writerow(['obs_plant_id', 'plant_id', 'plant_num', 'comments'])
+    for key in results_dict['obs_plant_new'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['New ObsTracker Table'])
+    writer.writerow(['obs_tracker_id', 'obs_entity_type', 'experiment_id', 'field_id', 'glycerol_stock_id', 'isolate_id', 'location_id', 'maize_sample_id', 'obs_culture_id', 'obs_dna_id', 'obs_env_id', 'obs_extract_id', 'obs_microbe_id', 'obs_plant_id', 'obs_plate_id', 'obs_row_id', 'obs_sample_id', 'obs_tissue_id', 'obs_well_id', 'stock_id', 'user_id'])
+    for key in results_dict['obs_tracker_new'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['---------------------------------------------------------------------------------------------------'])
+    writer.writerow([''])
+    writer.writerow(['Seed ID Errors'])
+    writer.writerow(['plant_id', 'experiment_name', 'row_id', 'seed_id', 'plant_num', 'comments'])
+    for key in results_dict['seed_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Row ID Errors'])
+    writer.writerow(['plant_id', 'experiment_name', 'row_id', 'seed_id', 'plant_num', 'comments'])
+    for key in results_dict['row_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Plant Entry Already Exists'])
+    for key in results_dict['plant_hash_exists'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['ObsTracker Entry Already Exists'])
+    for key in results_dict['obs_tracker_hash_exists'].iterkeys():
+        writer.writerow(key)
+    return response
+
+@transaction.atomic
+def plant_loader(results_dict):
+    try:
+        for key in results_dict['obs_plant_new'].iterkeys():
+            try:
+                new_obsrow = ObsPlant.objects.create(id=key[0], plant_id=key[1], plant_num=key[2], comments=key[3])
+            except Exception as e:
+                print("ObsPlant Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:

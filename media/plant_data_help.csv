@@ -8,15 +8,9 @@ Authored 02/25/2015,,,
 DataBase Header Dictionary,,,
 ,,,
 Template Header,Database Table,Database Field,Definition
+Experiment Name,lab_obstracker,ObsTracker(experiment).id,The experiment name to which the plant is a part of.
 Plant ID,lab_obsplant,plant_id,A unique ID for the plant in the format 08PN0023_001. MUST BE UNIQUE
 Row ID,lab_obstracker,obs_row_id = ObsRow(row_id).id,The row ID that the plant was planted in. The Row ID is a unique ID in the format 08PN0023. Leave blank if not applicable.
 Seed ID,lab_obstracker,stock_id = Stock(seed_id).id,The seed ID for the seed that was planted. The Seed ID is a unique ID in the format 08PN0023_001x. This is the ID that is printed on seed packets. Leave blank if not applicable.
 Plant Number,lab_obsplant,plant_num,A number or name given to the plant. Example: 002
 Plant Comments,lab_obsplant,comments,Any additional comments about the plant.
-,,,
-,,,
-,,,
-,,,
-,,,
-,,,
-,,,
