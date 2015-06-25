@@ -757,7 +757,7 @@ def plant_loader_prep(upload_file, user):
 
     obs_plant_new = OrderedDict({})
     #--- Key = (obs_plant_id, plant_id, plant_num, comments)
-    #--- Value = (obs_row_id)
+    #--- Value = (obs_plant_id)
     obs_tracker_new = OrderedDict({})
     #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, glycerol_stock_id, isolate_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
@@ -910,6 +910,221 @@ def plant_loader(results_dict):
                 new_obsrow = ObsPlant.objects.create(id=key[0], plant_id=key[1], plant_num=key[2], comments=key[3])
             except Exception as e:
                 print("ObsPlant Error: %s %s" % (e.message, e.args))
+                return False
+        for key in results_dict['obs_tracker_new'].iterkeys():
+            try:
+                new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+            except Exception as e:
+                print("ObsTracker Error: %s %s" % (e.message, e.args))
+                return False
+    except Exception as e:
+        print("Error: %s %s" % (e.message, e.args))
+        return False
+    return True
+
+def tissue_loader_prep(upload_file, user):
+    start = time.clock()
+
+    obs_tissue_new = OrderedDict({})
+    #--- Key = (obs_tissue_id, tissue_id, tissue_type, tissue_name, date_ground, comments)
+    #--- Value = (obs_tissue_id)
+    obs_tracker_new = OrderedDict({})
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, glycerol_stock_id, isolate_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id)
+
+    user_hash_table = loader_db_mirror.user_hash_mirror()
+    obs_tissue_hash_table = loader_db_mirror.obs_tissue_hash_mirror()
+    obs_tissue_id = loader_db_mirror.obs_tissue_id_mirror()
+    row_id_table = loader_db_mirror.row_id_mirror()
+    seed_id_table = loader_db_mirror.seed_id_mirror()
+    plant_id_table = loader_db_mirror.plant_id_mirror()
+    culture_id_table = loader_db_mirror.culture_id_mirror()
+    obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
+    obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
+    experiment_name_table = loader_db_mirror.experiment_name_mirror()
+
+    error_count = 0
+    seed_id_error = OrderedDict({})
+    row_id_error = OrderedDict({})
+    plant_id_error = OrderedDict({})
+    culture_id_error = OrderedDict({})
+    tissue_hash_exists = OrderedDict({})
+    obs_tracker_hash_exists = OrderedDict({})
+
+    tissue_file = csv.DictReader(upload_file)
+    for row in tissue_file:
+        tissue_id = row["Tissue ID"]
+        experiment_name = row["Experiment Name"]
+        tissue_name = row["Tissue Name"]
+        tissue_type = row["Tissue Type"]
+        date_ground = row["Date Ground"]
+        tissue_comments = row["Tissue Comments"]
+        row_id = row["Source Row ID"]
+        seed_id = row["Source Seed ID"]
+        plant_id = row["Source Plant ID"]
+        culture_id = row["Source Culture ID"]
+        user = request.user
+
+        if seed_id != '':
+            seed_id_fix = seed_id + '\r'
+            if seed_id in seed_id_table:
+                stock_id = seed_id_table[seed_id][0]
+            elif seed_id_fix in seed_id_table:
+                stock_id = seed_id_table[seed_id_fix][0]
+            else:
+                seed_id_error[(tissue_id, experiment_name, tissue_name, tissue_type, date_ground, row_id, seed_id, plant_id, culture_id, tissue_comments)] = error_count
+                error_count = error_count + 1
+                stock_id = 1
+        else:
+            stock_id = 1
+
+        if row_id != '':
+            row_id_fix = row_id + '\r'
+            if row_id in row_id_table:
+                obs_row_id = row_id_table[row_id][0]
+            elif row_id_fix in row_id_table:
+                obs_row_id = row_id_table[row_id_fix][0]
+            else:
+                row_id_error[(tissue_id, experiment_name, tissue_name, tissue_type, date_ground, row_id, seed_id, plant_id, culture_id, tissue_comments)] = error_count
+                error_count = error_count + 1
+                obs_row_id = 1
+        else:
+            obs_row_id = 1
+
+        if plant_id != '':
+            plant_id_fix = plant_id + '\r'
+            if plant_id in plant_id_table:
+                obs_plant_id = plant_id_table[plant_id][0]
+            elif plant_id_fix in plant_id_table:
+                obs_plant_id = plant_id_table[plant_id_fix][0]
+            else:
+                plant_id_error[(tissue_id, experiment_name, tissue_name, tissue_type, date_ground, row_id, seed_id, plant_id, culture_id, tissue_comments)] = error_count
+                error_count = error_count + 1
+                obs_plant_id = 1
+        else:
+            obs_plant_id = 1
+
+        if culture_id != '':
+            culture_id_fix = culture_id + '\r'
+            if culture_id in culture_id_table:
+                obs_culture_id = culture_id_table[culture_id][0]
+            elif culture_id_fix in culture_id_table:
+                obs_culture_id = culture_id_table[culture_id_fix][0]
+            else:
+                culture_id_error[(tissue_id, experiment_name, tissue_name, tissue_type, date_ground, row_id, seed_id, plant_id, culture_id, tissue_comments)] = error_count
+                error_count = error_count + 1
+                obs_culture_id = 1
+        else:
+            obs_culture_id = 1
+
+        tissue_hash = tissue_id + tissue_type + tissue_name + date_ground + tissue_comments
+        tissue_hash_fix = tissue_id + tissue_type + tissue_name + date_ground + tissue_comments + '\r'
+        if tissue_id not in tissue_id_table and tissue_id + '\r' not in tissue_id_table:
+            if tissue_hash not in obs_tissue_hash_table and tissue_hash_fix not in obs_tissue_hash_table:
+                obs_tissue_hash_table[tissue_hash] = obs_tissue_id
+                obs_tissue_new[(obs_tissue_id, tissue_id, tissue_type, tissue_name, date_ground, tissue_comments)] = obs_tissue_id
+                tissue_id_table[tissue_id] = (obs_tissue_id, tissue_id, tissue_type, tissue_name, date_ground, tissue_comments)
+                obs_tissue_id = obs_tissue_id + 1
+            else:
+                tissue_hash_exists[(tissue_id, tissue_type, tissue_name, date_ground, tissue_comments)] = obs_tissue_id
+        else:
+            tissue_hash_exists[(tissue_id, tissue_type, tissue_name, date_ground, tissue_comments)] = obs_tissue_id
+
+        if tissue_id in tissue_id_table:
+            temp_obstissue_id = tissue_id_table[tissue_id][0]
+        elif tissue_id + '\r' in tissue_id_table:
+            temp_obstissue_id = tissue_id_table[tissue_id + '\r'][0]
+        elif tissue_hash in obs_tissue_hash_table:
+            temp_obstissue_id = obs_tissue_hash_table[tissue_hash]
+        elif tissue_hash_fix in obs_tissue_hash_table:
+            temp_obstissue_id = obs_tissue_hash_table[tissue_hash_fix]
+        else:
+            temp_obstissue_id = 1
+            error_count = error_count + 1
+
+        obs_tracker_tissue_hash = 'tissue' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_culture_id) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_row_id) + str(1) + str(temp_obstissue_id) + str(1) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_tissue_hash_fix = 'tissue' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_culture_id) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_row_id) + str(1) + str(temp_obstissue_id) + str(1) + str(stock_id) + str(user_hash_table[user.username]) + '\r'
+        if obs_tracker_tissue_hash not in obs_tracker_hash_table and obs_tracker_tissue_hash_fix not in obs_tracker_hash_table:
+            obs_tracker_hash_table[obs_tracker_tissue_hash] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'tissue', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, temp_obstissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_id = obs_tracker_id + 1
+        else:
+            obs_tracker_hash_exists[('tissue', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, temp_obstissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+
+    end = time.clock()
+    stats = {}
+    stats[("Time: %s" % (end-start), "Errors: %s" % (error_count))] = error_count
+
+    results_dict = {}
+    results_dict['obs_tissue_new'] = obs_tissue_new
+    results_dict['obs_tracker_new'] = obs_tracker_new
+    results_dict['seed_id_error'] = seed_id_error
+    results_dict['row_id_error'] = row_id_error
+    results_dict['plant_id_error'] = plant_id_error
+    results_dict['culture_id_error'] = culture_id_error
+    results_dict['tissue_hash_exists'] = tissue_hash_exists
+    results_dict['obs_tracker_hash_exists'] = obs_tracker_hash_exists
+    results_dict['stats'] = stats
+    return results_dict
+
+def tissue_loader_prep_output(results_dict, new_upload_exp, template_type):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="%s_%s_prep.csv"' % (new_upload_exp, template_type)
+    writer = csv.writer(response)
+    writer.writerow(['Stats'])
+    writer.writerow([''])
+    for key in results_dict['stats'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['New Tissue Table'])
+    writer.writerow(['obs_tissue_id', 'tissue_id', 'tissue_type', 'tissue_name', 'date_ground', 'comments'])
+    for key in results_dict['obs_tissue_new'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['New ObsTracker Table'])
+    writer.writerow(['obs_tracker_id', 'obs_entity_type', 'experiment_id', 'field_id', 'glycerol_stock_id', 'isolate_id', 'location_id', 'maize_sample_id', 'obs_culture_id', 'obs_dna_id', 'obs_env_id', 'obs_extract_id', 'obs_microbe_id', 'obs_plant_id', 'obs_plate_id', 'obs_row_id', 'obs_sample_id', 'obs_tissue_id', 'obs_well_id', 'stock_id', 'user_id'])
+    for key in results_dict['obs_tracker_new'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['---------------------------------------------------------------------------------------------------'])
+    writer.writerow([''])
+    writer.writerow(['Seed ID Errors'])
+    writer.writerow(['tissue_id', 'experiment_name', 'tissue_name', 'tissue_type', 'date_ground', 'row_id', 'seed_id', 'plant_id', 'culture_id', 'tissue_comments'])
+    for key in results_dict['seed_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Row ID Errors'])
+    writer.writerow(['tissue_id', 'experiment_name', 'tissue_name', 'tissue_type', 'date_ground', 'row_id', 'seed_id', 'plant_id', 'culture_id', 'tissue_comments'])
+    for key in results_dict['row_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Plant ID Errors'])
+    writer.writerow(['tissue_id', 'experiment_name', 'tissue_name', 'tissue_type', 'date_ground', 'row_id', 'seed_id', 'plant_id', 'culture_id', 'tissue_comments'])
+    for key in results_dict['plant_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Culture ID Errors'])
+    writer.writerow(['tissue_id', 'experiment_name', 'tissue_name', 'tissue_type', 'date_ground', 'row_id', 'seed_id', 'plant_id', 'culture_id', 'tissue_comments'])
+    for key in results_dict['culture_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Tissue Entry Already Exists'])
+    for key in results_dict['tissue_hash_exists'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['ObsTracker Entry Already Exists'])
+    for key in results_dict['obs_tracker_hash_exists'].iterkeys():
+        writer.writerow(key)
+    return response
+
+@transaction.atomic
+def tissue_loader(results_dict):
+    try:
+        for key in results_dict['obs_tissue_new'].iterkeys():
+            try:
+                new_obstissue = ObsTissue.objects.create(id=key[0], tissue_id=key[1], tissue_type=key[2], tissue_name=key[3], date_ground=key[4], comments=key[5])
+            except Exception as e:
+                print("ObsTissue Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:

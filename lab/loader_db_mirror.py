@@ -355,6 +355,16 @@ def plant_id_mirror():
         plant_id_table[row.plant_id] = (row.id, row.plant_id, row.plant_num, row.comments)
     return plant_id_table
 
+def culture_id_mirror():
+    culture_id_table = OrderedDict({})
+    #--- Key = (culture_id)
+    #--- Value = (obs_culture_id, medium_id, culture_id, culture_name, microbe_type, plating_cycle, dilution, image_filename, comments, num_colonies, num_microbes)
+
+    obs_culture_file = ObsCulture.objects.all()
+    for row in obs_culture_file:
+        culture_id_table[row.culture_id] = (row.id, row.medium_id, row.culture_id, row.culture_name, row.microbe_type, row.plating_cycle, row.dilution, row.image_filename, row.comments, row.num_colonies, row.num_microbes)
+    return culture_id_table
+
 def row_id_mirror():
     row_id_table = OrderedDict({})
     #--- Key = (row_id)
@@ -692,8 +702,6 @@ def obs_tissue_hash_mirror():
     tissue_file = ObsTissue.objects.all()
     for row in tissue_file:
         tissue_hash = row.tissue_id + row.tissue_type + row.tissue_name + row.date_ground + row.comments
-        tissue_hash.rstrip('\r')
-        tissue_hash.rstrip('\n')
         obs_tissue_hash_table[tissue_hash] = row.id
     return obs_tissue_hash_table
 
