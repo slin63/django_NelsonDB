@@ -263,6 +263,7 @@ class LogCulturesOnlineForm(forms.Form):
 	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", required=True)
 	culture_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Culture ID'}), required=True)
 	medium = forms.ModelChoiceField(queryset=Medium.objects.all(), empty_label="--- Medium ---", required=True)
+	location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Location ---", required=True)
 	row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Row ID'}), required=False)
 	seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Seed ID'}), required=False)
 	plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Plant ID'}), required=False)

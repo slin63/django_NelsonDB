@@ -679,14 +679,12 @@ def medium_id_table_mirror():
 
 def obs_culture_hash_mirror():
     obs_culture_hash_table = OrderedDict({})
-    #--- Key = (medium_id + culture_id + culture_name + microbe_type + plating_cycle + dilution + image_filename + comments)
+    #--- Key = (medium_id + culture_id + culture_name + microbe_type + plating_cycle + dilution + image_filename + comments + num_colonies + num_microbes)
     #--- Value = (obs_culture_id)
 
     culture_file = ObsCulture.objects.all()
     for row in culture_file:
-        culture_hash = str(row.medium_id) + row.culture_id + row.culture_name + row.microbe_type + row.plating_cycle + row.dilution + row.image_filename + row.comments
-        culture_hash.rstrip('\r')
-        culture_hash.rstrip('\n')
+        culture_hash = str(row.medium_id) + row.culture_id + row.culture_name + row.microbe_type + row.plating_cycle + row.dilution + row.image_filename + row.comments + row.num_colonies + row.num_microbes
         obs_culture_hash_table[culture_hash] = row.id
     return obs_culture_hash_table
 

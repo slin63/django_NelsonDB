@@ -3055,7 +3055,7 @@ def log_data_online(request, data_type):
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	if data_type == 'culture':
-		data_type_title = 'Load Tissue Info'
+		data_type_title = 'Load Culture Info'
 		LogDataOnlineFormSet = formset_factory(LogCulturesOnlineForm, extra=10)
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
@@ -4004,6 +4004,8 @@ def upload_online(request, template_type):
 				results_dict = loader_scripts.plant_loader_prep(request.FILES['file_name'], new_upload_user)
 			elif template_type == 'tissue_data':
 				results_dict = loader_scripts.tissue_loader_prep(request.FILES['file_name'], new_upload_user)
+			elif template_type == 'culture_data':
+				results_dict = loader_scripts.culture_loader_prep(request.FILES['file_name'], new_upload_user)
 			else:
 				results_dict = None
 			if results_dict is not None:
@@ -4022,6 +4024,8 @@ def upload_online(request, template_type):
 						output = loader_scripts.plant_loader_prep_output(results_dict, new_upload_exp, template_type)
 					elif template_type == 'tissue_data':
 						output = loader_scripts.tissue_loader_prep_output(results_dict, new_upload_exp, template_type)
+					elif template_type == 'culture_data':
+						output = loader_scripts.culture_loader_prep_output(results_dict, new_upload_exp, template_type)
 					else:
 						output = None
 					return output
@@ -4039,6 +4043,8 @@ def upload_online(request, template_type):
 						uploaded = loader_scripts.plant_loader(results_dict)
 					elif template_type == 'tissue_data':
 						uploaded = loader_scripts.tissue_loader(results_dict)
+					elif template_type == 'culture_data':
+						uploaded = loader_scripts.culture_loader(results_dict)
 					else:
 						uploaded = False
 
