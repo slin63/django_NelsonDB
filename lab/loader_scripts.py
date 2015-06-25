@@ -1425,8 +1425,8 @@ def dna_loader_prep(upload_file, user):
     #--- Value = (obs_tracker_id)
 
     user_hash_table = loader_db_mirror.user_hash_mirror()
-    obs_dna_hash_table = loader_db_mirror.obs_culture_hash_mirror()
-    obs_dna_id = loader_db_mirror.obs_culture_id_mirror()
+    obs_dna_hash_table = loader_db_mirror.obs_dna_hash_mirror()
+    obs_dna_id = loader_db_mirror.obs_dna_id_mirror()
     row_id_table = loader_db_mirror.row_id_mirror()
     seed_id_table = loader_db_mirror.seed_id_mirror()
     plant_id_table = loader_db_mirror.plant_id_mirror()
@@ -1730,8 +1730,8 @@ def microbe_loader_prep(upload_file, user):
     #--- Value = (obs_tracker_id)
 
     user_hash_table = loader_db_mirror.user_hash_mirror()
-    obs_microbe_hash_table = loader_db_mirror.obs_culture_hash_mirror()
-    obs_microbe_id = loader_db_mirror.obs_culture_id_mirror()
+    obs_microbe_hash_table = loader_db_mirror.obs_microbe_hash_mirror()
+    obs_microbe_id = loader_db_mirror.obs_microbe_id_mirror()
     row_id_table = loader_db_mirror.row_id_mirror()
     seed_id_table = loader_db_mirror.seed_id_mirror()
     plant_id_table = loader_db_mirror.plant_id_mirror()
@@ -1943,6 +1943,159 @@ def microbe_loader(results_dict):
                 new_obsmicrobe = ObsMicrobe.objects.create(id=key[0], microbe_id=key[1], microbe_type=key[2], comments=key[3])
             except Exception as e:
                 print("ObsMicrobe Error: %s %s" % (e.message, e.args))
+                return False
+        for key in results_dict['obs_tracker_new'].iterkeys():
+            try:
+                new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+            except Exception as e:
+                print("ObsTracker Error: %s %s" % (e.message, e.args))
+                return False
+    except Exception as e:
+        print("Error: %s %s" % (e.message, e.args))
+        return False
+    return True
+
+def plate_loader_prep(upload_file, user):
+    start = time.clock()
+
+    obs_plate_new = OrderedDict({})
+    #--- Key = (obs_plate_id, plate_id, plate_name, date, contents, rep, plate_type, plate_status, comments)
+    #--- Value = (obs_plate_id)
+    obs_tracker_new = OrderedDict({})
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, glycerol_stock_id, isolate_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id)
+
+    user_hash_table = loader_db_mirror.user_hash_mirror()
+    obs_plate_hash_table = loader_db_mirror.obs_plate_hash_mirror()
+    obs_plate_id = loader_db_mirror.obs_plate_id_mirror()
+    plate_id_table = loader_db_mirror.plate_id_mirror()
+    location_name_table = loader_db_mirror.location_name_mirror()
+    obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
+    obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
+    experiment_name_table = loader_db_mirror.experiment_name_mirror()
+
+    error_count = 0
+    location_name_error = OrderedDict({})
+    plate_hash_exists = OrderedDict({})
+    obs_tracker_hash_exists = OrderedDict({})
+
+    plate_file = csv.DictReader(upload_file)
+    for row in plate_file:
+        plate_id = row["Plate ID"]
+        experiment_name = row["Experiment Name"]
+        location_name = row["Location Name"]
+        plate_name = row["Plate Name"]
+        date = row["Date Plated"]
+        contents = row["Plate Contents"]
+        rep = row["Plate Rep"]
+        plate_type = row["Plate Type"]
+        plate_status = row["Plate Status"]
+        plate_comments = row["Plate Comments"]
+        user = request.user
+
+        if location_name != '':
+            location_name_fix = location_name + '\r'
+            if location_name in location_name_table:
+                location_id = location_name_table[location_name][0]
+            elif location_name_fix in location_name_table:
+                location_id = location_name_table[location_name_fix][0]
+            else:
+                location_name_error[(plate_id, experiment_name, location_name, plate_name, date, contents, rep, plate_type, plate_status, plate_comments)] = error_count
+                error_count = error_count + 1
+                location_id = 1
+        else:
+            location_id = 1
+
+        plate_hash = plate_id + plate_name + date + contents + rep + plate_type + plate_status + plate_comments
+        plate_hash_fix = plate_id + plate_name + date + contents + rep + plate_type + plate_status + plate_comments + '\r'
+        if plate_id not in plate_id_table and plate_id + '\r' not in plate_id_table:
+            if plate_hash not in obs_plate_hash_table and plate_hash_fix not in obs_plate_hash_table:
+                obs_plate_hash_table[plate_hash] = obs_plate_id
+                obs_plate_new[(obs_plate_id, plate_id, plate_name, date, contents, rep, plate_type, plate_status, plate_comments)] = obs_plate_id
+                plate_id_table[plate_id] = (obs_plate_id, plate_id, plate_name, date, contents, rep, plate_type, plate_status, plate_comments)
+                obs_plate_id = obs_plate_id + 1
+            else:
+                plate_hash_exists[(plate_id, plate_name, date, contents, rep, plate_type, plate_status, plate_comments)] = obs_plate_id
+        else:
+            plate_hash_exists[(plate_id, plate_name, date, contents, rep, plate_type, plate_status, plate_comments)] = obs_plate_id
+
+        if plate_id in plate_id_table:
+            temp_obsplate_id = plate_id_table[plate_id][0]
+        elif plate_id + '\r' in plate_id_table:
+            temp_obsplate_id = plate_id_table[plate_id + '\r'][0]
+        elif plate_hash in obs_plate_hash_table:
+            temp_obsplate_id = obs_plate_hash_table[plate_hash]
+        elif plate_hash_fix in obs_plate_hash_table:
+            temp_obsplate_id = obs_plate_hash_table[plate_hash_fix]
+        else:
+            temp_obsplate_id = 1
+            error_count = error_count + 1
+
+        obs_tracker_plate_hash = 'plate' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(location_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(temp_obsplate_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(user_hash_table[user.username])
+        obs_tracker_plate_hash_fix = 'plate' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(location_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(temp_obsplate_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(user_hash_table[user.username]) + '\r'
+        if obs_tracker_plate_hash not in obs_tracker_hash_table and obs_tracker_plate_hash_fix not in obs_tracker_hash_table:
+            obs_tracker_hash_table[obs_tracker_plate_hash] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'plate', experiment_name_table[experiment_name][0], 1, 1, 1, location_id, 1, 1, 1, 1, 1, 1, 1, temp_obsplate_id, 1, 1, 1, 1, 1, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_id = obs_tracker_id + 1
+        else:
+            obs_tracker_hash_exists[('plate', experiment_name_table[experiment_name][0], 1, 1, 1, location_id, 1, 1, 1, 1, 1, 1, 1, temp_obsplate_id, 1, 1, 1, 1, 1, user_hash_table[user.username])] = obs_tracker_id
+
+    end = time.clock()
+    stats = {}
+    stats[("Time: %s" % (end-start), "Errors: %s" % (error_count))] = error_count
+
+    results_dict = {}
+    results_dict['obs_plate_new'] = obs_plate_new
+    results_dict['obs_tracker_new'] = obs_tracker_new
+    results_dict['location_name_error'] = location_name_error
+    results_dict['plate_hash_exists'] = plate_hash_exists
+    results_dict['obs_tracker_hash_exists'] = obs_tracker_hash_exists
+    results_dict['stats'] = stats
+    return results_dict
+
+def plate_loader_prep_output(results_dict, new_upload_exp, template_type):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="%s_%s_prep.csv"' % (new_upload_exp, template_type)
+    writer = csv.writer(response)
+    writer.writerow(['Stats'])
+    writer.writerow([''])
+    for key in results_dict['stats'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['New Plate Table'])
+    writer.writerow(['obs_plate_id', 'plate_id', 'plate_name', 'date', 'contents', 'rep', 'plate_type', 'plate_status', 'comments'])
+    for key in results_dict['obs_plate_new'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['New ObsTracker Table'])
+    writer.writerow(['obs_tracker_id', 'obs_entity_type', 'experiment_id', 'field_id', 'glycerol_stock_id', 'isolate_id', 'location_id', 'maize_sample_id', 'obs_culture_id', 'obs_dna_id', 'obs_env_id', 'obs_extract_id', 'obs_microbe_id', 'obs_plant_id', 'obs_plate_id', 'obs_row_id', 'obs_sample_id', 'obs_tissue_id', 'obs_well_id', 'stock_id', 'user_id'])
+    for key in results_dict['obs_tracker_new'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['---------------------------------------------------------------------------------------------------'])
+    writer.writerow([''])
+    writer.writerow(['Location Name Errors'])
+    writer.writerow(['plate_id', 'experiment_name', 'location_name', 'plate_name', 'date', 'contents', 'rep', 'plate_type', 'plate_status', 'plate_comments'])
+    for key in results_dict['location_name_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Plate Entry Already Exists'])
+    for key in results_dict['plate_hash_exists'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['ObsTracker Entry Already Exists'])
+    for key in results_dict['obs_tracker_hash_exists'].iterkeys():
+        writer.writerow(key)
+    return response
+
+@transaction.atomic
+def plate_loader(results_dict):
+    try:
+        for key in results_dict['obs_plate_new'].iterkeys():
+            try:
+                new_obsplate = ObsPlate.objects.create(id=key[0], plate_id=key[1], plate_name=key[2], date=key[3], contents=key[4], rep=key[5], plate_type=key[6], plate_status=key[7], comments=key[8])
+            except Exception as e:
+                print("ObsPlate Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:

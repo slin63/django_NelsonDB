@@ -4,11 +4,12 @@ NelsonLab Plate Data Template Help,,,
 Template Name: plate_data_v0.1,,,
 Authored 03/04/2015,,,
 ,,,
-,,,
 DataBase Header Dictionary,,,
 ,,,
 Template Header,Database Table,Database Field,Definition
+Experiment Name,lab_obstracker,ObsTracker(experiment).id,The experiment name to which this plate is a part of.
 Plate ID,lab_obsplate,plate_id,"A unique ID for the plate. Formats may vary, but this needs to be unique. MUST BE UNIQUE"
+Location Name,lab_obstracker,Obstracker(plate).id,The location name of where the plate is located.
 Plate Name,lab_obsplate,plate_name,A human readable name for the plate.
 Date Plated,lab_obsplate,date_plated,The date when the plate was plated. Format: 2015-01-30
 Plate Contents,lab_obsplate,plate_contents,"The contents of the plate. Example: Tissue, DNA"
@@ -16,15 +17,3 @@ Plate Rep,lab_obsplate,rep,The rep number of the plate.
 Plate Type,lab_obsplate,plate_type,"The type of plate. Example: 96-well, Costar rack"
 Plate Status,lab_obsplate,plate_status,A brief description of whether the plate exists or not. 
 Plate Comments,lab_obsplate,comments,Any additional comments about the plate.
-,,,
-Source Seed ID,lab_obstracker,stock_id = Stock(seed_id).id,"If the plate was made using seed, provide the Seed ID here. If not applicable, leave blank."
-Source Isolate ID,lab_obstracker,isolate_id = Isolate(isolate_id).id,"If the plate was made using an isolate, provide te isolate ID here. If not applicable leave blank."
-Source Row ID,lab_obstracker,obs_row_id = ObsRow(row_id).id,"If the plate was made from a row, provide the Row ID here. If not applicable, leave blank."
-Source Plant ID,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,"If the plate was made from a plant, provide the Plant ID here. If not applicable, leave blank."
-Source Well ID,lab_obstracker,obs_well_id = ObsWellr(well_id).id,"If the plate was made from a specific well, provide the Well ID here. If not applicable, leave blank."
-Source Microbe ID,lab_obstracker,obs_microbe_id = ObsMicrobe(microbe_id).id,"If the plate was made from a microbe, provide the Microbe ID here. If not applicable, leave blank."
-Source Culture ID,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,"If the plate was made from a separate culture, provide the Culture ID here. If not applicable, leave blank."
-Source Tissue ID,lab_obstracker,obs_tissue_id = ObsTissue(tissue_id).id,"If the plate was made from a tissue, provide the Tissue ID here. If not applicable, leave blank."
-Source Sample ID,lab_obstracker,obs_sample_id = ObsSample(sample_id).id,"If the plate was made from a specific sample, provide Sample ID here. If not applicable, leave blank."
-Source Plate ID,lab_obstracker,obs-plate_id = ObsPlate(plate_id).id,"If the plate was made from a specific plate, provide the Plate ID here. If not applicable leave blank."
-Source DNA iD,lab_obstracker,obs_dna_id = ObsDNA(dna_id).id,"If the plate was made from specific DNA, provide the DNA ID here. If not applicable, leave blank. "
