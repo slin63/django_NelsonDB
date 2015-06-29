@@ -344,48 +344,54 @@ def seed_stock_loader_prep_output(results_dict, new_upload_exp, template_type):
 
     return response
 
-@transaction.atomic
 def seed_stock_loader(results_dict):
     try:
         for key in results_dict['collecting_new'].iterkeys():
             try:
-                new_stock = Collecting.objects.create(id=key[0], user_id=key[1], collection_date=key[2], collection_method=key[3], comments=key[4])
+                with transaction.atomic():
+                    new_stock = Collecting.objects.create(id=key[0], user_id=key[1], collection_date=key[2], collection_method=key[3], comments=key[4])
             except Exception as e:
                 print("Collecting Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['people_new'].iterkeys():
             try:
-                new_stock = People.objects.create(id=key[0], first_name=key[1], last_name=key[2], organization=key[3], phone=key[4], email=key[5], comments=key[6])
+                with transaction.atomic():
+                    new_stock = People.objects.create(id=key[0], first_name=key[1], last_name=key[2], organization=key[3], phone=key[4], email=key[5], comments=key[6])
             except Exception as e:
                 print("People Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['taxonomy_new'].iterkeys():
             try:
-                new_stock = Taxonomy.objects.create(id=key[0], genus=key[1], species=key[2], population=key[3], common_name=key[4], alias=key[5], race=key[6], subtaxa=key[7])
+                with transaction.atomic():
+                    new_stock = Taxonomy.objects.create(id=key[0], genus=key[1], species=key[2], population=key[3], common_name=key[4], alias=key[5], race=key[6], subtaxa=key[7])
             except Exception as e:
                 print("Taxonomy Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['passport_new'].iterkeys():
             try:
-                new_stock = Passport.objects.create(id=key[0], collecting_id=key[1], people_id=key[2], taxonomy_id=key[3])
+                with transaction.atomic():
+                    new_stock = Passport.objects.create(id=key[0], collecting_id=key[1], people_id=key[2], taxonomy_id=key[3])
             except Exception as e:
                 print("Passport Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['stock_new'].iterkeys():
             try:
-                new_stock = Stock.objects.create(id=key[0], passport_id=key[1], seed_id=key[2], seed_name=key[3], cross_type=key[4], pedigree=key[5], stock_status=key[6], stock_date=key[7], inoculated=key[8], comments=key[9])
+                with transaction.atomic():
+                    new_stock = Stock.objects.create(id=key[0], passport_id=key[1], seed_id=key[2], seed_name=key[3], cross_type=key[4], pedigree=key[5], stock_status=key[6], stock_date=key[7], inoculated=key[8], comments=key[9])
             except Exception as e:
                 print("Stock Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
-                new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                with transaction.atomic():
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_source_new'].iterkeys():
             try:
-                new_stock = ObsTrackerSource.objects.create(id=key[0], source_obs_id=key[1], target_obs_id=key[2])
+                with transaction.atomic():
+                    new_stock = ObsTrackerSource.objects.create(id=key[0], source_obs_id=key[1], target_obs_id=key[2])
             except Exception as e:
                 print("ObsTrackerSource Error: %s %s" % (e.message, e.args))
                 return False
@@ -550,24 +556,26 @@ def seed_packet_loader_prep_output(results_dict, new_upload_exp, template_type):
 
     return response
 
-@transaction.atomic
 def seed_packet_loader(results_dict):
     try:
         for key in results_dict['locality_new'].iterkeys():
             try:
-                new_locality = Locality.objects.create(id=key[0], city=key[1], state=key[2], country=key[3], zipcode=key[4])
+                with transaction.atomic():
+                    new_locality = Locality.objects.create(id=key[0], city=key[1], state=key[2], country=key[3], zipcode=key[4])
             except Exception as e:
                 print("Locality Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['location_new'].iterkeys():
             try:
-                new_location = Location.objects.create(id=key[0], locality_id=key[1], location_name=key[2], building_name=key[3], room=key[4], shelf=key[5], column=key[6], box_name=key[7], comments=key[8])
+                with transaction.atomic():
+                    new_location = Location.objects.create(id=key[0], locality_id=key[1], location_name=key[2], building_name=key[3], room=key[4], shelf=key[5], column=key[6], box_name=key[7], comments=key[8])
             except Exception as e:
                 print("Location Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['stock_packet_new'].iterkeys():
             try:
-                new_stock_packet = StockPacket.objects.create(id=key[0], stock_id=key[1], location_id=key[2], weight=key[3], num_seeds=key[4], comments=key[5])
+                with transaction.atomic():
+                    new_stock_packet = StockPacket.objects.create(id=key[0], stock_id=key[1], location_id=key[2], weight=key[3], num_seeds=key[4], comments=key[5])
             except Exception as e:
                 print("StockPacket Error: %s %s" % (e.message, e.args))
                 return False
@@ -732,18 +740,19 @@ def row_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     return response
 
-@transaction.atomic
 def row_loader(results_dict):
     try:
         for key in results_dict['obs_row_new'].iterkeys():
             try:
-                new_obsrow = ObsRow.objects.create(id=key[0], row_id=key[1], row_name=key[2], range_num=key[3], plot=key[4], block=key[5], rep=key[6], kernel_num=key[7], planting_date=key[8], harvest_date=key[9], comments=key[10])
+                with transaction.atomic():
+                    new_obsrow = ObsRow.objects.create(id=key[0], row_id=key[1], row_name=key[2], range_num=key[3], plot=key[4], block=key[5], rep=key[6], kernel_num=key[7], planting_date=key[8], harvest_date=key[9], comments=key[10])
             except Exception as e:
                 print("ObsRow Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
-                new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                with transaction.atomic():
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -902,18 +911,19 @@ def plant_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     return response
 
-@transaction.atomic
 def plant_loader(results_dict):
     try:
         for key in results_dict['obs_plant_new'].iterkeys():
             try:
-                new_obsrow = ObsPlant.objects.create(id=key[0], plant_id=key[1], plant_num=key[2], comments=key[3])
+                with transaction.atomic():
+                    new_obsrow = ObsPlant.objects.create(id=key[0], plant_id=key[1], plant_num=key[2], comments=key[3])
             except Exception as e:
                 print("ObsPlant Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
-                new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                with transaction.atomic():
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -1118,18 +1128,19 @@ def tissue_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     return response
 
-@transaction.atomic
 def tissue_loader(results_dict):
     try:
         for key in results_dict['obs_tissue_new'].iterkeys():
             try:
-                new_obstissue = ObsTissue.objects.create(id=key[0], tissue_id=key[1], tissue_type=key[2], tissue_name=key[3], date_ground=key[4], comments=key[5])
+                with transaction.atomic():
+                    new_obstissue = ObsTissue.objects.create(id=key[0], tissue_id=key[1], tissue_type=key[2], tissue_name=key[3], date_ground=key[4], comments=key[5])
             except Exception as e:
                 print("ObsTissue Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
-                new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                with transaction.atomic():
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -1394,18 +1405,19 @@ def culture_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     return response
 
-@transaction.atomic
 def culture_loader(results_dict):
     try:
         for key in results_dict['obs_culture_new'].iterkeys():
             try:
-                new_obsculture = ObsCulture.objects.create(id=key[0], medium_id=key[1], culture_id=key[2], culture_name=key[3], microbe_type=key[4], plating_cycle=key[5], dilution=key[6], image_filename=key[7], comments=key[8], num_colonies=key[9], num_microbes=key[10])
+                with transaction.atomic():
+                    new_obsculture = ObsCulture.objects.create(id=key[0], medium_id=key[1], culture_id=key[2], culture_name=key[3], microbe_type=key[4], plating_cycle=key[5], dilution=key[6], image_filename=key[7], comments=key[8], num_colonies=key[9], num_microbes=key[10])
             except Exception as e:
                 print("ObsCulture Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
-                new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                with transaction.atomic():
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -1699,18 +1711,19 @@ def dna_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     return response
 
-@transaction.atomic
 def dna_loader(results_dict):
     try:
         for key in results_dict['obs_dna_new'].iterkeys():
             try:
-                new_obsdna = ObsDNA.objects.create(id=key[0], dna_id=key[1], extraction_method=key[2], date=key[3], tube_id=key[4], tube_type=key[5], comments=key[6])
+                with transaction.atomic():
+                    new_obsdna = ObsDNA.objects.create(id=key[0], dna_id=key[1], extraction_method=key[2], date=key[3], tube_id=key[4], tube_type=key[5], comments=key[6])
             except Exception as e:
                 print("ObsDNA Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
-                new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                with transaction.atomic():
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -1923,7 +1936,7 @@ def microbe_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow([''])
     writer.writerow(['Culture ID Errors'])
     writer.writerow(['microbe_id', 'experiment_name', 'microbe_type', 'microbe_comments','source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id'])
-    for key in results_dict['microbe_id_error'].iterkeys():
+    for key in results_dict['culture_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Microbe Entry Already Exists'])
@@ -1935,18 +1948,19 @@ def microbe_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     return response
 
-@transaction.atomic
 def microbe_loader(results_dict):
     try:
         for key in results_dict['obs_microbe_new'].iterkeys():
             try:
-                new_obsmicrobe = ObsMicrobe.objects.create(id=key[0], microbe_id=key[1], microbe_type=key[2], comments=key[3])
+                with transaction.atomic():
+                    new_obsmicrobe = ObsMicrobe.objects.create(id=key[0], microbe_id=key[1], microbe_type=key[2], comments=key[3])
             except Exception as e:
                 print("ObsMicrobe Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
-                new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                with transaction.atomic():
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -2088,18 +2102,300 @@ def plate_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     return response
 
-@transaction.atomic
 def plate_loader(results_dict):
     try:
         for key in results_dict['obs_plate_new'].iterkeys():
             try:
-                new_obsplate = ObsPlate.objects.create(id=key[0], plate_id=key[1], plate_name=key[2], date=key[3], contents=key[4], rep=key[5], plate_type=key[6], plate_status=key[7], comments=key[8])
+                with transaction.atomic():
+                    new_obsplate = ObsPlate.objects.create(id=key[0], plate_id=key[1], plate_name=key[2], date=key[3], contents=key[4], rep=key[5], plate_type=key[6], plate_status=key[7], comments=key[8])
             except Exception as e:
                 print("ObsPlate Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
-                new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                with transaction.atomic():
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+            except Exception as e:
+                print("ObsTracker Error: %s %s" % (e.message, e.args))
+                return False
+    except Exception as e:
+        print("Error: %s %s" % (e.message, e.args))
+        return False
+    return True
+
+def well_loader_prep(upload_file, user):
+    start = time.clock()
+
+    obs_well_new = OrderedDict({})
+    #--- Key = (obs_well_id, well_id, well, well_inventory, tube_label, comments)
+    #--- Value = (obs_well_id)
+    obs_tracker_new = OrderedDict({})
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, glycerol_stock_id, isolate_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id)
+
+    user_hash_table = loader_db_mirror.user_hash_mirror()
+    obs_well_hash_table = loader_db_mirror.obs_well_hash_mirror()
+    obs_well_id = loader_db_mirror.obs_well_id_mirror()
+    row_id_table = loader_db_mirror.row_id_mirror()
+    seed_id_table = loader_db_mirror.seed_id_mirror()
+    plant_id_table = loader_db_mirror.plant_id_mirror()
+    tissue_id_table = loader_db_mirror.tissue_id_mirror()
+    microbe_id_table = loader_db_mirror.microbe_id_mirror()
+    culture_id_table = loader_db_mirror.culture_id_mirror()
+    plate_id_table = loader_db_mirror.plate_id_mirror()
+    obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
+    obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
+    experiment_name_table = loader_db_mirror.experiment_name_mirror()
+
+    error_count = 0
+    seed_id_error = OrderedDict({})
+    row_id_error = OrderedDict({})
+    plant_id_error = OrderedDict({})
+    tissue_id_error = OrderedDict({})
+    culture_id_error = OrderedDict({})
+    plate_id_error = OrderedDict({})
+    microbe_hash_exists = OrderedDict({})
+    obs_tracker_hash_exists = OrderedDict({})
+
+    well_file = csv.DictReader(upload_file)
+    for row in well_file:
+        well_id = row["Well ID"]
+        experiment_name = row["Experiment Name"]
+        well = row["Well"]
+        inventory = row["Inventory"]
+        tube_label = row["Tube Label"]
+        well_comments = row["Well Comments"]
+        row_id = row["Source Row ID"]
+        seed_id = row["Source Seed ID"]
+        plant_id = row["Source Plant ID"]
+        tissue_id = row["Source Tissue ID"]
+        culture_id = row["Source Culture ID"]
+        microbe_id = row["Source Microbe ID"]
+        plate_id = row["Source Plate ID"]
+        user = request.user
+
+        if seed_id != '':
+            seed_id_fix = seed_id + '\r'
+            if seed_id in seed_id_table:
+                stock_id = seed_id_table[seed_id][0]
+            elif seed_id_fix in seed_id_table:
+                stock_id = seed_id_table[seed_id_fix][0]
+            else:
+                seed_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, row_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
+                error_count = error_count + 1
+                stock_id = 1
+        else:
+            stock_id = 1
+
+        if row_id != '':
+            row_id_fix = row_id + '\r'
+            if row_id in row_id_table:
+                obs_row_id = row_id_table[row_id][0]
+            elif row_id_fix in row_id_table:
+                obs_row_id = row_id_table[row_id_fix][0]
+            else:
+                row_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, row_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
+                error_count = error_count + 1
+                obs_row_id = 1
+        else:
+            obs_row_id = 1
+
+        if plant_id != '':
+            plant_id_fix = plant_id + '\r'
+            if plant_id in plant_id_table:
+                obs_plant_id = plant_id_table[plant_id][0]
+            elif plant_id_fix in plant_id_table:
+                obs_plant_id = plant_id_table[plant_id_fix][0]
+            else:
+                plant_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, row_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
+                error_count = error_count + 1
+                obs_plant_id = 1
+        else:
+            obs_plant_id = 1
+
+        if tissue_id != '':
+            tissue_id_fix = tissue_id + '\r'
+            if tissue_id in tissue_id_table:
+                obs_tissue_id = tissue_id_table[tissue_id][0]
+            elif tissue_id_fix in tissue_id_table:
+                obs_tissue_id = tissue_id_table[tissue_id_fix][0]
+            else:
+                tissue_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, row_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
+                error_count = error_count + 1
+                obs_tissue_id = 1
+        else:
+            obs_tissue_id = 1
+
+        if culture_id != '':
+            culture_id_fix = culture_id + '\r'
+            if culture_id in culture_id_table:
+                obs_culture_id = culture_id_table[culture_id][0]
+            elif culture_id_fix in culture_id_table:
+                obs_culture_id = culture_id_table[culture_id_fix][0]
+            else:
+                culture_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, row_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
+                error_count = error_count + 1
+                obs_culture_id = 1
+        else:
+            obs_culture_id = 1
+
+        if plate_id != '':
+            plate_id_fix = plate_id + '\r'
+            if plate_id in plate_id_table:
+                obs_plate_id = plate_id_table[plate_id][0]
+            elif plate_id_fix in plate_id_table:
+                obs_plate_id = plate_id_table[plate_id_fix][0]
+            else:
+                plate_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, row_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
+                error_count = error_count + 1
+                obs_plate_id = 1
+        else:
+            obs_plate_id = 1
+
+        if microbe_id != '':
+            microbe_id_fix = microbe_id + '\r'
+            if microbe_id in microbe_id_table:
+                obs_microbe_id = microbe_id_table[microbe_id][0]
+            elif microbe_id_fix in microbe_id_table:
+                obs_microbe_id = microbe_id_table[microbe_id_fix][0]
+            else:
+                microbe_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, row_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
+                error_count = error_count + 1
+                obs_microbe_id = 1
+        else:
+            obs_microbe_id = 1
+
+        well_hash = well_id + well + inventory + tube_label + well_comments
+        well_hash_fix = well_id + well + inventory + tube_label + well_comments + '\r'
+        if well_id not in well_id_table and well_id + '\r' not in well_id_table:
+            if well_hash not in obs_well_hash_table and well_hash_fix not in obs_well_hash_table:
+                obs_well_hash_table[well_hash] = obs_well_id
+                obs_well_new[(obs_well_id, well_id, well, inventory, tube_label, well_comments)] = obs_well_id
+                well_id_table[well_id] = (obs_well_id, well_id, well, inventory, tube_label, well_comments)
+                obs_well_id = obs_well_id + 1
+            else:
+                well_hash_exists[(well_id, well, inventory, tube_label, well_comments)] = obs_well_id
+        else:
+            well_hash_exists[(well_id, well, inventory, tube_label, well_comments)] = obs_well_id
+
+        if well_id in well_id_table:
+            temp_obswell_id = well_id_table[well_id][0]
+        elif well_id + '\r' in well_id_table:
+            temp_obswell_id = well_id_table[well_id + '\r'][0]
+        elif well_hash in obs_well_hash_table:
+            temp_obswell_id = obs_well_hash_table[well_hash]
+        elif well_hash_fix in obs_well_hash_table:
+            temp_obswell_id = obs_well_hash_table[well_hash_fix]
+        else:
+            temp_obswell_id = 1
+            error_count = error_count + 1
+
+        obs_tracker_well_hash = 'well' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_culture_id) + str(1) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_row_id) + str(1) + str(obs_tissue_id) + str(temp_obswell_id) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_well_hash_fix = obs_tracker_well_hash + '\r'
+        if obs_tracker_microbe_hash not in obs_tracker_hash_table and obs_tracker_microbe_hash_fix not in obs_tracker_hash_table:
+            obs_tracker_hash_table[obs_tracker_microbe_hash] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'well', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, temp_obswell_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_id = obs_tracker_id + 1
+        else:
+            obs_tracker_hash_exists[('well', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, temp_obswell_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
+
+    end = time.clock()
+    stats = {}
+    stats[("Time: %s" % (end-start), "Errors: %s" % (error_count))] = error_count
+
+    results_dict = {}
+    results_dict['obs_well_new'] = obs_well_new
+    results_dict['obs_tracker_new'] = obs_tracker_new
+    results_dict['seed_id_error'] = seed_id_error
+    results_dict['row_id_error'] = row_id_error
+    results_dict['plant_id_error'] = plant_id_error
+    results_dict['tissue_id_error'] = tissue_id_error
+    results_dict['culture_id_error'] = culture_id_error
+    results_dict['plate_id_error'] = plate_id_error
+    results_dict['microbe_id_error'] = microbe_id_error
+    results_dict['well_hash_exists'] = well_hash_exists
+    results_dict['obs_tracker_hash_exists'] = obs_tracker_hash_exists
+    results_dict['stats'] = stats
+    return results_dict
+
+def well_loader_prep_output(results_dict, new_upload_exp, template_type):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="%s_%s_prep.csv"' % (new_upload_exp, template_type)
+    writer = csv.writer(response)
+    writer.writerow(['Stats'])
+    writer.writerow([''])
+    for key in results_dict['stats'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['New Well Table'])
+    writer.writerow(['obs_well_id', 'well_id', 'well', 'well_inventory', 'tube_label', 'comments'])
+    for key in results_dict['obs_well_new'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['New ObsTracker Table'])
+    writer.writerow(['obs_tracker_id', 'obs_entity_type', 'experiment_id', 'field_id', 'glycerol_stock_id', 'isolate_id', 'location_id', 'maize_sample_id', 'obs_culture_id', 'obs_dna_id', 'obs_env_id', 'obs_extract_id', 'obs_microbe_id', 'obs_plant_id', 'obs_plate_id', 'obs_row_id', 'obs_sample_id', 'obs_tissue_id', 'obs_well_id', 'stock_id', 'user_id'])
+    for key in results_dict['obs_tracker_new'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['---------------------------------------------------------------------------------------------------'])
+    writer.writerow([''])
+    writer.writerow(['Seed ID Errors'])
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    for key in results_dict['seed_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Row ID Errors'])
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    for key in results_dict['row_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Plant ID Errors'])
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    for key in results_dict['plant_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Tissue ID Errors'])
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    for key in results_dict['tissue_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Culture ID Errors'])
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    for key in results_dict['culture_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Microbe ID Errors'])
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    for key in results_dict['microbe_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Plate ID Errors'])
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    for key in results_dict['plate_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Well Entry Already Exists'])
+    for key in results_dict['well_hash_exists'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['ObsTracker Entry Already Exists'])
+    for key in results_dict['obs_tracker_hash_exists'].iterkeys():
+        writer.writerow(key)
+    return response
+
+def well_loader(results_dict):
+    try:
+        for key in results_dict['obs_well_new'].iterkeys():
+            try:
+                with transaction.atomic():
+                    new_obswell = ObsWell.objects.create(id=key[0], well_id=key[1], well=key[2], well_inventory=key[3], tube_label=key[4], comments=key[5])
+            except Exception as e:
+                print("ObsWell Error: %s %s" % (e.message, e.args))
+                return False
+        for key in results_dict['obs_tracker_new'].iterkeys():
+            try:
+                with transaction.atomic():
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -2246,12 +2542,12 @@ def measurement_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     return response
 
-@transaction.atomic
 def measurement_loader(results_dict):
     try:
         for key in results_dict['measurement_new'].iterkeys():
             try:
-                new_measurement = Measurement.objects.create(id=key[0], obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6])
+                with transaction.atomic():
+                    new_measurement = Measurement.objects.create(id=key[0], obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6])
             except Exception as e:
                 print("Measurement Error: %s %s" % (e.message, e.args))
                 return False
