@@ -1,0 +1,23 @@
+NelsonLab Mycotoxin Template Help,,,
+"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,
+,,,
+Template Name: separation_v0.1,,,
+Authored 05/05/2015,,,
+,,,
+DataBase Header Dictionary,,,
+,,,
+Separation,For recording info about a floatation separation test that was done on a sample.,,
+Template Header,Database Table,Database Field,Definition
+Sample ID,lab_obssample,obs_sample_id = ObsSample(sample_id).id,The Sample ID for the sample that was run through the floatation test. The Sample ID is a unique id.
+Sample Name,lab_obssample,sample_name,The sample name that was defined with the sample ID above. The sample name is a human readable name.
+Separation Type,lab_separation,separation_type,"If the separation was done by density, mass, optical, spectral, chemical, size, or other means."
+Apparatus,lab_separation,apparatus,A name for the aparatus that performed the separation.
+SG,lab_separation,sg,"The specific gravity of the liquid, if a liquid density separation was performed. Leave blank if not applicable."
+Light Weight,lab_separation,light_weight,The weight in grams of the light/top/upper fraction.
+Medium Weight,lab_separation,intermediate_weight,The weight in grams of the medium/middle/intermediate fraction.
+Heavy Weight,lab_separation,heavy_weight,The weight in grams of the heavy/bottom/lower fraction.
+Light Percent,lab_separation,light_percent,The percent of the sample that was in the light/top/upper fraction.
+Medium Percent,lab_separation,intermediate_percent,The percent of the sample that was in the medium/middle/intermediate fraction.
+Heavy Percent,lab_separation,heavy_percent,The percent of the sample that was in the heavy/bottom/lower fraction.
+Operating Factor,lab_separation,operating_factor,"If an operating factor is at play, for example, the power or speed of the motor."
+Comments,lab_separation,comments,Any additional comments about the separation.

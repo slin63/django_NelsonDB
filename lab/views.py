@@ -4021,6 +4021,8 @@ def upload_online(request, template_type):
 				results_dict = loader_scripts.isolate_loader_prep(request.FILES['file_name'], new_upload_user)
 			elif template_type == 'samples_data':
 				results_dict = loader_scripts.samples_loader_prep(request.FILES['file_name'], new_upload_user)
+			elif template_type == 'separation_data':
+				results_dict = loader_scripts.separation_loader_prep(request.FILES['file_name'], new_upload_user)
 			else:
 				results_dict = None
 			if results_dict is not None:
@@ -4055,6 +4057,8 @@ def upload_online(request, template_type):
 						output = loader_scripts.isolate_loader_prep_output(results_dict, new_upload_exp, template_type)
 					elif template_type == 'samples_data':
 						output = loader_scripts.samples_loader_prep_output(results_dict, new_upload_exp, template_type)
+					elif template_type == 'separation_data':
+						output = loader_scripts.separation_loader_prep_output(results_dict, new_upload_exp, template_type)
 					else:
 						output = None
 					return output
@@ -4088,6 +4092,8 @@ def upload_online(request, template_type):
 						uploaded = loader_scripts.isolate_loader(results_dict)
 					elif template_type == 'samples_data':
 						uploaded = loader_scripts.samples_loader(results_dict)
+					elif template_type == 'separation_data':
+						uploaded = loader_scripts.separation_loader(results_dict)
 					else:
 						uploaded = False
 

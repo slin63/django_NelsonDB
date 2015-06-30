@@ -2752,6 +2752,111 @@ def samples_loader(results_dict):
         return False
     return True
 
+def separation_loader_prep(upload_file, user):
+    start = time.clock()
+
+    separation_new = OrderedDict({})
+    #--- Key = (separation_id, obs_sample_id, separation_type, apparatus, sg, light_weight, intermediate_weight, heavy_weight, light_percent, intermediate_percent, heavy_percent, operating_factor, comments)
+    #--- Value = (separation_id)
+
+    user_hash_table = loader_db_mirror.user_hash_mirror()
+    separation_hash_table = loader_db_mirror.separation_hash_mirror()
+    separation_id = loader_db_mirror.separation_id_mirror()
+    sample_id_table = loader_db_mirror.sample_id_mirror()
+
+    error_count = 0
+    sample_id_error = OrderedDict({})
+    separation_hash_exists = OrderedDict({})
+
+    separation_file = csv.DictReader(upload_file)
+    for row in separation_file:
+        sample_id = row["Sample ID"]
+        sample_name = row["Sample Name"]
+        separation_type = row["Separation Type"]
+        apparatus = row["Apparatus"]
+        sg = row["SG"]
+        light_weight = row["Light Weight"]
+        medium_weight = row["Medium Weight"]
+        heavy_weight = row["Heavy Weight"]
+        light_percent = row["Light Percent"]
+        medium_percent = row["Medium Percent"]
+        heavy_percent = row["Heavy Percent"]
+        operating_factor = row["Operating Factor"]
+        comments = row["Separation Comments"]
+
+        if sample_id != '':
+            seed_id_fix = sample_id + '\r'
+            if sample_id in sample_id_table:
+                obs_sample_id = sample_id_table[sample_id][0]
+            elif seed_id_fix in sample_id_table:
+                obs_sample_id = sample_id_table[seed_id_fix][0]
+            else:
+                sample_id_error[(sample_id, sample_name, separation_type, apparatus, sg, light_weight, medium_weight, heavy_weight, light_percent, medium_percent, heavy_percent, operating_factor, comments)] = error_count
+                error_count = error_count + 1
+                obs_sample_id = 1
+        else:
+            obs_sample_id = 1
+
+        separation_hash = str(obs_sample_id) + separation_type + apparatus + sg + light_weight + medium_weight + heavy_weight + light_percent + medium_percent + heavy_percent + operating_factor + comments
+        separation_hash_fix = separation_hash + '\r'
+        if separation_hash not in separation_hash_table and separation_hash_fix not in separation_hash_table:
+            separation_hash_table[separation_hash] = separation_id
+            separation_new[(separation_id, obs_sample_id, separation_type, apparatus, sg, light_weight, medium_weight, heavy_weight, light_percent, medium_percent, heavy_percent, operating_factor, comments)] = separation_id
+            separation_id = separation_id + 1
+        else:
+            separation_hash_exists[(obs_sample_id, separation_type, apparatus, sg, light_weight, medium_weight, heavy_weight, light_percent, medium_percent, heavy_percent, operating_factor, comments)] = obs_sample_id
+
+    end = time.clock()
+    stats = {}
+    stats[("Time: %s" % (end-start), "Errors: %s" % (error_count))] = error_count
+
+    results_dict = {}
+    results_dict['separation_new'] = separation_new
+    results_dict['sample_id_error'] = sample_id_error
+    results_dict['separation_hash_exists'] = separation_hash_exists
+    results_dict['stats'] = stats
+    return results_dict
+
+def separation_loader_prep_output(results_dict, new_upload_exp, template_type):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="%s_%s_prep.csv"' % (new_upload_exp, template_type)
+    writer = csv.writer(response)
+    writer.writerow(['Stats'])
+    writer.writerow([''])
+    for key in results_dict['stats'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['New Separation Table'])
+    writer.writerow(['separation_id', 'obs_sample_id', 'separation_type', 'apparatus', 'sg', 'light_weight', 'medium_weight', 'heavy_weight', 'light_percent', 'medium_percent', 'heavy_percent', 'operating_factor', 'comments'])
+    for key in results_dict['separation_new'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['---------------------------------------------------------------------------------------------------'])
+    writer.writerow([''])
+    writer.writerow(['Sample ID Errors'])
+    writer.writerow(['sample_id', 'sample_name', 'separation_type', 'apparatus', 'sg', 'light_weight', 'medium_weight', 'heavy_weight', 'light_percent', 'medium_percent', 'heavy_percent', 'operating_factor', 'comments'])
+    for key in results_dict['sample_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Separation Entry Already Exists'])
+    for key in results_dict['separation_hash_exists'].iterkeys():
+        writer.writerow(key)
+    return response
+
+def separation_loader(results_dict):
+    try:
+        for key in results_dict['separation_new'].iterkeys():
+            try:
+                with transaction.atomic():
+                    new_separation = Separation.objects.create(id=key[0], obs_sample_id=key[1], separation_type=key[2], apparatus=key[3], SG=key[4], light_weight=key[5], intermediate_weight=key[6], heavy_weight=key[7], light_percent=key[8], intermediate_percent=key[9], heavy_percent=key[10], operating_factor=key[11], comments=key[12])
+            except Exception as e:
+                print("Separation Error: %s %s" % (e.message, e.args))
+                return False
+    except Exception as e:
+        print("Error: %s %s" % (e.message, e.args))
+        return False
+    return True
+
 def isolate_loader_prep(upload_file, user):
     start = time.clock()
 
