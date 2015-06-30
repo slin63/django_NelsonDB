@@ -6,7 +6,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, GlycerolStock
 from genetics.models import GWASExperimentSet
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolatesOnlineForm
+from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolatesOnlineForm, LogSeparationsOnlineForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -3172,6 +3172,7 @@ def log_data_online(request, data_type):
 						culture_id = form.cleaned_data['culture_id']
 						plate_id = form.cleaned_data['plate_id']
 						well_id = form.cleaned_data['well_id']
+						sample_id = form.cleaned_data['sample_id']
 						extraction = form.cleaned_data['extraction']
 						date = form.cleaned_data['date']
 						tube_id = form.cleaned_data['tube_id']
@@ -3195,10 +3196,12 @@ def log_data_online(request, data_type):
 							plate_id = 'No Plate'
 						if well_id == '':
 							well_id = 'No Well'
+						if sample_id == '':
+							sample_id = 'No Sample'
 
 						try:
 							new_obsdna, created = ObsDNA.objects.get_or_create(dna_id=dna_id, extraction_method=extraction, date=date, tube_id=tube_id, tube_type=tube_type, comments=dna_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='dna', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=new_obsdna, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample=new_obssample, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='dna', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=new_obsdna, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample=ObsSample.objects.get(sample_id=sample_id), obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
@@ -3301,6 +3304,43 @@ def log_data_online(request, data_type):
 			sent = False
 			log_data_online_form_set = LogDataOnlineFormSet
 
+	if data_type == 'separation':
+		data_type_title = 'Load Separation Info'
+		LogDataOnlineFormSet = formset_factory(LogSeparationsOnlineForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				sent = True
+				for form in log_data_online_form_set:
+					try:
+						sample_id = form.cleaned_data['sample_id']
+						sample_name = form.cleaned_data['sample_name']
+						separation_type = form.cleaned_data['separation_type']
+						apparatus = form.cleaned_data['apparatus']
+						sg = form.cleaned_data['sg']
+						light_weight = form.cleaned_data['light_weight']
+						medium_weight = form.cleaned_data['medium_weight']
+						heavy_weight = form.cleaned_data['heavy_weight']
+						light_percent = form.cleaned_data['light_percent']
+						medium_percent = form.cleaned_data['medium_percent']
+						heavy_percent = form.cleaned_data['heavy_percent']
+						operating_factor = form.cleaned_data['operating_factor']
+						separation_comments = form.cleaned_data['separation_comments']
+
+						try:
+							new_separation, created = Separation.objects.get_or_create(obs_sample=ObsSample.objects.get(sample_id=sample_id), separation_type=separation_type, apparatus=apparatus, SG=sg, light_weight=light_weight, intermediate_weight=medium_weight, heavy_weight=heavy_weight, light_percent=light_percent, intermediate_percent=medium_percent, heavy_percent=heavy_percent, operating_factor=operating_factor, comments=separation_comments)
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
+					except KeyError:
+						pass
+			else:
+				sent = False
+				print(log_data_online_form_set.errors)
+		else:
+			sent = False
+			log_data_online_form_set = LogDataOnlineFormSet
+
 	if data_type == 'isolate':
 		data_type_title = 'Load Isolate Info'
 		LogDataOnlineFormSet = formset_factory(LogIsolatesOnlineForm, extra=10)
@@ -3313,6 +3353,7 @@ def log_data_online(request, data_type):
 						experiment = form.cleaned_data['experiment']
 						isolate_id = form.cleaned_data['isolate_id']
 						location = form.cleaned_data['location']
+						field = form.cleaned_data['field']
 						dna_id = form.cleaned_data['dna_id']
 						microbe_id = form.cleaned_data['microbe_id']
 						row_id = form.cleaned_data['row_id']
@@ -3356,7 +3397,7 @@ def log_data_online(request, data_type):
 							new_taxonomy, created = Taxonomy.objects.get_or_create(genus=genus, common_name='Isolate', alias=alias, race=race, subtaxa=subtaxa)
 							new_passport, created = Passport.objects.get_or_create(taxonomy=new_taxonomy, people_id=1, collecting_id=1)
 							new_isolate, created = Isolate.objects.get_or_create(passport=new_passport, location=location, disease_info=disease, isolate_id=isolate_id, isolate_name=isolate_name, plant_organ=plant_organ, comments=isolate_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='isolate', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate=new_isolate, location=location, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=ObsDNA.objects.get(dna_id=dna_id), obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='isolate', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate=new_isolate, location=location, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=ObsDNA.objects.get(dna_id=dna_id), obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
@@ -4012,6 +4053,16 @@ def upload_online(request, template_type):
 				results_dict = loader_scripts.dna_loader_prep(request.FILES['file_name'], new_upload_user)
 			elif template_type == 'plate_data':
 				results_dict = loader_scripts.plate_loader_prep(request.FILES['file_name'], new_upload_user)
+			elif template_type == 'well_data':
+				results_dict = loader_scripts.well_loader_prep(request.FILES['file_name'], new_upload_user)
+			elif template_type == 'env_data':
+				results_dict = loader_scripts.env_loader_prep(request.FILES['file_name'], new_upload_user)
+			elif template_type == 'isolate_data':
+				results_dict = loader_scripts.isolate_loader_prep(request.FILES['file_name'], new_upload_user)
+			elif template_type == 'samples_data':
+				results_dict = loader_scripts.samples_loader_prep(request.FILES['file_name'], new_upload_user)
+			elif template_type == 'separation_data':
+				results_dict = loader_scripts.separation_loader_prep(request.FILES['file_name'], new_upload_user)
 			else:
 				results_dict = None
 			if results_dict is not None:
@@ -4038,6 +4089,16 @@ def upload_online(request, template_type):
 						output = loader_scripts.dna_loader_prep_output(results_dict, new_upload_exp, template_type)
 					elif template_type == 'plate_data':
 						output = loader_scripts.plate_loader_prep_output(results_dict, new_upload_exp, template_type)
+					elif template_type == 'well_data':
+						output = loader_scripts.well_loader_prep_output(results_dict, new_upload_exp, template_type)
+					elif template_type == 'env_data':
+						output = loader_scripts.env_loader_prep_output(results_dict, new_upload_exp, template_type)
+					elif template_type == 'isolate_data':
+						output = loader_scripts.isolate_loader_prep_output(results_dict, new_upload_exp, template_type)
+					elif template_type == 'samples_data':
+						output = loader_scripts.samples_loader_prep_output(results_dict, new_upload_exp, template_type)
+					elif template_type == 'separation_data':
+						output = loader_scripts.separation_loader_prep_output(results_dict, new_upload_exp, template_type)
 					else:
 						output = None
 					return output
@@ -4063,6 +4124,16 @@ def upload_online(request, template_type):
 						uploaded = loader_scripts.dna_loader(results_dict)
 					elif template_type == 'plate_data':
 						uploaded = loader_scripts.plate_loader(results_dict)
+					elif template_type == 'well_data':
+						uploaded = loader_scripts.well_loader(results_dict)
+					elif template_type == 'env_data':
+						uploaded = loader_scripts.env_loader(results_dict)
+					elif template_type == 'isolate_data':
+						uploaded = loader_scripts.isolate_loader(results_dict)
+					elif template_type == 'samples_data':
+						uploaded = loader_scripts.samples_loader(results_dict)
+					elif template_type == 'separation_data':
+						uploaded = loader_scripts.separation_loader(results_dict)
 					else:
 						uploaded = False
 
