@@ -2586,8 +2586,8 @@ def samples_loader_prep(upload_file, user):
     #--- Value = (obs_tracker_id)
 
     user_hash_table = loader_db_mirror.user_hash_mirror()
-    obs_sample_hash_table = loader_db_mirror.obs_well_hash_mirror()
-    obs_sample_id = loader_db_mirror.obs_well_id_mirror()
+    obs_sample_hash_table = loader_db_mirror.obs_sample_hash_mirror()
+    obs_sample_id = loader_db_mirror.obs_sample_id_mirror()
     row_id_table = loader_db_mirror.row_id_mirror()
     seed_id_table = loader_db_mirror.seed_id_mirror()
     plant_id_table = loader_db_mirror.plant_id_mirror()
@@ -2761,6 +2761,147 @@ def samples_loader(results_dict):
                     new_obssample = ObsSample.objects.create(id=key[0], sample_id=key[1], sample_type=key[2], sample_name=key[3], weight=key[4], volume=key[5], density=key[6], kernel_num=key[7], photo=key[8], comments=key[9])
             except Exception as e:
                 print("ObsSample Error: %s %s" % (e.message, e.args))
+                return False
+        for key in results_dict['obs_tracker_new'].iterkeys():
+            try:
+                with transaction.atomic():
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+            except Exception as e:
+                print("ObsTracker Error: %s %s" % (e.message, e.args))
+                return False
+    except Exception as e:
+        print("Error: %s %s" % (e.message, e.args))
+        return False
+    return True
+
+def maize_loader_prep(upload_file, user):
+    start = time.clock()
+
+    maize_sample_new = OrderedDict({})
+    #--- Key = (maize_sample_id, maize_id, gps_altitude, county, weight, appearance, photo, gps_accuracy, gps_latitude, gps_longitude, harvest_date, maize_variety, moisture_content, seed_source, source_type, storage_conditions, storage_months, sub_location, village)
+    #--- Value = (maize_sample_id)
+    obs_tracker_new = OrderedDict({})
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, glycerol_stock_id, isolate_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id)
+
+    user_hash_table = loader_db_mirror.user_hash_mirror()
+    maize_sample_hash_table = loader_db_mirror.maize_sample_hash_mirror()
+    maize_sample_id = loader_db_mirror.maize_sample_id_mirror()
+    obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
+    obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
+    experiment_name_table = loader_db_mirror.experiment_name_mirror()
+
+    error_count = 0
+    maize_sample_hash_exists = OrderedDict({})
+    obs_tracker_hash_exists = OrderedDict({})
+
+    maize_sample_file = csv.DictReader(upload_file)
+    for row in maize_sample_file:
+        maize_id = row["Maize ID"]
+        experiment_name = row["Experiment Name"]
+        county = row["County"]
+        sub_location = row["Sub Location"]
+        village = row["Village"]
+        weight = row["Weight"]
+        harvest_date = row["Harvest Date"]
+        storage_months = row["Storage Months"]
+        storage_conditions = row["Storage Conditions"]
+        maize_variety = row["Maize Variety"]
+        seed_source = row["Seed Source"]
+        moisture_content = row["Moisture Content"]
+        source_type = row["Source Type"]
+        appearance = row["Appearance"]
+        gps_latitude = row["GPS Latitude"]
+        gps_longitude = row["GPS Longitude"]
+        gps_altitude = row["GPS Altitude"]
+        gps_accuracy = row["GPS Accuracy"]
+        photo = row["Photo"]
+        user = request.user
+
+        maize_hash = maize_id + gps_altitude + county + weight + appearance + photo + gps_accuracy + gps_latitude + gps_longitude + harvest_date + maize_variety + moisture_content + seed_source + source_type + storage_conditions + storage_months + sub_location + village
+        maize_hash_fix = maize_hash + '\r'
+        if maize_id not in maize_id_table and maize_id + '\r' not in maize_id_table:
+            if maize_hash not in maize_sample_hash_table and maize_hash_fix not in maize_sample_hash_table:
+                maize_sample_hash_table[maize_hash] = maize_sample_id
+                maize_sample_new[(maize_sample_id, maize_id, gps_altitude, county, weight, appearance, photo, gps_accuracy, gps_latitude, gps_longitude, harvest_date, maize_variety, moisture_content, seed_source, source_type, storage_conditions, storage_months, sub_location, village)] = maize_sample_id
+                maize_id_table[maize_id] = (maize_sample_id, maize_id, gps_altitude, county, weight, appearance, photo, gps_accuracy, gps_latitude, gps_longitude, harvest_date, maize_variety, moisture_content, seed_source, source_type, storage_conditions, storage_months, sub_location, village)
+                maize_sample_id = maize_sample_id + 1
+            else:
+                sample_hash_exists[(maize_id, gps_altitude, county, weight, appearance, photo, gps_accuracy, gps_latitude, gps_longitude, harvest_date, maize_variety, moisture_content, seed_source, source_type, storage_conditions, storage_months, sub_location, village)] = maize_sample_id
+        else:
+            sample_hash_exists[(maize_id, gps_altitude, county, weight, appearance, photo, gps_accuracy, gps_latitude, gps_longitude, harvest_date, maize_variety, moisture_content, seed_source, source_type, storage_conditions, storage_months, sub_location, village)] = maize_sample_id
+
+        if maize_id in maize_id_table:
+            temp_maizesample_id = maize_id_table[maize_id][0]
+        elif maize_id + '\r' in maize_id_table:
+            temp_maizesample_id = maize_id_table[maize_id + '\r'][0]
+        elif maize_hash in maize_sample_hash_table:
+            temp_maizesample_id = maize_sample_hash_table[maize_hash]
+        elif maize_hash_fix in maize_sample_hash_table:
+            temp_maizesample_id = maize_sample_hash_table[maize_hash_fix]
+        else:
+            temp_maizesample_id = 1
+            error_count = error_count + 1
+
+        tracker_maize_sample_hash = 'maize' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(temp_maizesample_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(user_hash_table[user.username])
+        tracker_maize_sample_hash_fix = tracker_maize_sample_hash + '\r'
+        if tracker_maize_sample_hash not in obs_tracker_hash_table and tracker_maize_sample_hash_fix not in obs_tracker_hash_table:
+            obs_tracker_hash_table[tracker_maize_sample_hash] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'maize', experiment_name_table[experiment_name][0], 1, 1, 1, 1, temp_maizesample_id, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_id = obs_tracker_id + 1
+        else:
+            obs_tracker_hash_exists[('maize', experiment_name_table[experiment_name][0], 1, 1, 1, 1, temp_maizesample_id, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, user_hash_table[user.username])] = obs_tracker_id
+
+    end = time.clock()
+    stats = {}
+    stats[("Time: %s" % (end-start), "Errors: %s" % (error_count))] = error_count
+
+    results_dict = {}
+    results_dict['maize_sample_new'] = maize_sample_new
+    results_dict['obs_tracker_new'] = obs_tracker_new
+    results_dict['sample_hash_exists'] = sample_hash_exists
+    results_dict['obs_tracker_hash_exists'] = obs_tracker_hash_exists
+    results_dict['stats'] = stats
+    return results_dict
+
+def maize_loader_prep_output(results_dict, new_upload_exp, template_type):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="%s_%s_prep.csv"' % (new_upload_exp, template_type)
+    writer = csv.writer(response)
+    writer.writerow(['Stats'])
+    writer.writerow([''])
+    for key in results_dict['stats'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['New Maize Samples Table'])
+    writer.writerow(['maize_sample_id', 'maize_id', 'gps_altitude', 'county', 'weight', 'appearance', 'photo', 'gps_accuracy', 'gps_latitude', 'gps_longitude', 'harvest_date', 'maize_variety', 'moisture_content', 'seed_source', 'source_type', 'storage_conditions', 'storage_months', 'sub_location', 'village'])
+    for key in results_dict['maize_sample_new'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['New ObsTracker Table'])
+    writer.writerow(['obs_tracker_id', 'obs_entity_type', 'experiment_id', 'field_id', 'glycerol_stock_id', 'isolate_id', 'location_id', 'maize_sample_id', 'obs_culture_id', 'obs_dna_id', 'obs_env_id', 'obs_extract_id', 'obs_microbe_id', 'obs_plant_id', 'obs_plate_id', 'obs_row_id', 'obs_sample_id', 'obs_tissue_id', 'obs_well_id', 'stock_id', 'user_id'])
+    for key in results_dict['obs_tracker_new'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['---------------------------------------------------------------------------------------------------'])
+    writer.writerow([''])
+    writer.writerow(['Maize Sample Entry Already Exists'])
+    for key in results_dict['sample_hash_exists'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['ObsTracker Entry Already Exists'])
+    for key in results_dict['obs_tracker_hash_exists'].iterkeys():
+        writer.writerow(key)
+    return response
+
+def maize_loader(results_dict):
+    try:
+        for key in results_dict['maize_sample_new'].iterkeys():
+            try:
+                with transaction.atomic():
+                    new_maizesample = MaizeSample.objects.create(id=key[0], maize_id=key[1], gps_altitude=key[2], county=key[3], weight=key[4], appearance=key[5], photo=key[6], gps_accuracy=key[7], gps_latitude=key[8], gps_longitude=key[9], harvest_date=key[10], maize_variety=key[11], moisture_content=key[12], seed_source=key[13], source_type=key[14], storage_conditions=key[15], storage_months=key[16], sub_location=key[17], village=key[18])
+            except Exception as e:
+                print("MaizeSample Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
