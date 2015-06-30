@@ -22,4 +22,5 @@ Source Well ID,lab_obstracker,obs_well_id = ObsWellr(well_id).id,"If the sample 
 Source Microbe ID,lab_obstracker,obs_microbe_id = ObsMicrobe(microbe_id).id,"If the sample was selected from a microbe, provide the Microbe ID here. If not applicable, leave blank."
 Source Culture ID,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,"If the sample was selected from a separate culture, provide the Culture ID here. If not applicable, leave blank."
 Source Tissue ID,lab_obstracker,obs_tissue_id = ObsTissue(tissue_id).id,"If the sample was selected from a tissue, provide the Tissue ID here. If not applicable, leave blank."
-Source Plate ID,lab_obstracker,obs-plate_id = ObsPlate(plate_id).id,"If the sample was selected from a specific plate, provide the Plate ID here. If not applicable leave blank."
+Source Plate ID,lab_obstracker,obs_plate_id = ObsPlate(plate_id).id,"If the sample was selected from a specific plate, provide the Plate ID here. If not applicable leave blank."
+Source Sample ID,lab_obstracker,obs_sample_id = ObsSample(samplee_id).id,"If the sample was selected from a specific plate, provide the Plate ID here. If not applicable leave blank."

@@ -300,6 +300,7 @@ class LogDNAOnlineForm(forms.Form):
 	culture_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Culture ID'}), required=False)
 	plate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Plate ID'}), required=False)
 	well_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Well ID'}), required=False)
+	sample_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Sample ID'}), required=False)
 	extraction = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Extraction'}), required=False)
 	date = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Date'}), required=False)
 	tube_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Tube ID'}), required=False)

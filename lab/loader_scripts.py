@@ -1448,6 +1448,7 @@ def dna_loader_prep(upload_file, user):
     well_id_table = loader_db_mirror.well_id_mirror()
     dna_id_table = loader_db_mirror.dna_id_mirror()
     plate_id_table = loader_db_mirror.plate_id_mirror()
+    sample_id_table = loader_db_mirror.sample_id_mirror()
     obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
     obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
     experiment_name_table = loader_db_mirror.experiment_name_mirror()
@@ -1461,6 +1462,7 @@ def dna_loader_prep(upload_file, user):
     culture_id_error = OrderedDict({})
     well_id_error = OrderedDict({})
     plate_id_error = OrderedDict({})
+    sample_id_error = OrderedDict({})
     dna_hash_exists = OrderedDict({})
     obs_tracker_hash_exists = OrderedDict({})
 
@@ -1481,6 +1483,7 @@ def dna_loader_prep(upload_file, user):
         well_id = row["Source Well ID"]
         culture_id = row["Source Culture ID"]
         plate_id = row["Source Plate ID"]
+        sample_id = row["Source Sample ID"]
         user = request.user
 
         if seed_id != '':
@@ -1495,6 +1498,19 @@ def dna_loader_prep(upload_file, user):
                 stock_id = 1
         else:
             stock_id = 1
+
+        if sample_id != '':
+            sample_id_fix = sample_id + '\r'
+            if sample_id in sample_id_table:
+                obs_sample_id = sample_id_table[sample_id][0]
+            elif sample_id_fix in sample_id_table:
+                obs_sample_id = sample_id_table[sample_id_fix][0]
+            else:
+                sample_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, row_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
+                error_count = error_count + 1
+                obs_sample_id = 1
+        else:
+            obs_sample_id = 1
 
         if row_id != '':
             row_id_fix = row_id + '\r'
@@ -1612,14 +1628,14 @@ def dna_loader_prep(upload_file, user):
             temp_obsdna_id = 1
             error_count = error_count + 1
 
-        obs_tracker_dna_hash = 'dna' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_culture_id) + str(temp_obsdna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_row_id) + str(1) + str(obs_tissue_id) + str(1) + str(stock_id) + str(user_hash_table[user.username])
-        obs_tracker_dna_hash_fix = 'dna' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_culture_id) + str(temp_obsdna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_row_id) + str(1) + str(obs_tissue_id) + str(1) + str(stock_id) + str(user_hash_table[user.username]) + '\r'
+        obs_tracker_dna_hash = 'dna' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_culture_id) + str(temp_obsdna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_row_id) + str(obs_sample_id) + str(obs_tissue_id) + str(1) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_dna_hash_fix = obs_tracker_dna_hash + '\r'
         if obs_tracker_dna_hash not in obs_tracker_hash_table and obs_tracker_dna_hash_fix not in obs_tracker_hash_table:
             obs_tracker_hash_table[obs_tracker_dna_hash] = obs_tracker_id
-            obs_tracker_new[(obs_tracker_id, 'dna', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, temp_obsdna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'dna', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, temp_obsdna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
             obs_tracker_id = obs_tracker_id + 1
         else:
-            obs_tracker_hash_exists[('dna', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, temp_obsdna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_hash_exists[('dna', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, temp_obsdna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
     end = time.clock()
     stats = {}
@@ -1636,6 +1652,7 @@ def dna_loader_prep(upload_file, user):
     results_dict['culture_id_error'] = culture_id_error
     results_dict['plate_id_error'] = plate_id_error
     results_dict['well_id_error'] = well_id_error
+    results_dict['sample_id_error'] = sample_id_error
     results_dict['dna_hash_exists'] = dna_hash_exists
     results_dict['obs_tracker_hash_exists'] = obs_tracker_hash_exists
     results_dict['stats'] = stats
@@ -1700,6 +1717,11 @@ def dna_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['Well ID Errors'])
     writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
     for key in results_dict['well_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Sample ID Errors'])
+    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
+    for key in results_dict['sample_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['DNA Entry Already Exists'])
