@@ -481,14 +481,12 @@ def obs_sample_table_mirror():
 
 def obs_sample_hash_mirror():
     obs_sample_hash_table = OrderedDict({})
-    #--- Key = (sample_id + sample_type + weight + kernel_num + photo + comments)
+    #--- Key = (sample_id + sample_type + sample_name + weight + volume + density + kernel_num + photo + comments)
     #--- Value = (obs_sample_id)
 
     obs_sample_file = ObsSample.objects.all()
     for row in obs_sample_file:
-        sample_hash = row.sample_id + row.sample_type + row.weight + row.kernel_num + row.photo + row.comments
-        sample_hash.rstrip('\r')
-        sample_hash.rstrip('\n')
+        sample_hash = row.sample_id + row.sample_type + row.sample_name + row.weight + row.volume + row.density + row.kernel_num + row.photo + row.comments
         obs_sample_hash_table[sample_hash] = row.id
     return obs_sample_hash_table
 
