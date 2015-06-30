@@ -333,6 +333,21 @@ class LogPlatesOnlineForm(forms.Form):
 	plate_status = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Plate Status'}), required=False)
 	plate_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), required=False)
 
+class LogSeparationsOnlineForm(forms.Form):
+	sample_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Sample ID'}), required=True)
+	sample_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Sample Name'}), required=False)
+	separation_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Separation Type'}), required=False)
+	apparatus = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Apparatus'}), required=False)
+	sg = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Specific Gravity'}), required=False)
+	light_weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Light Weight'}), required=False)
+	medium_weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Medium Weight'}), required=False)
+	heavy_weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Heavy Weight'}), required=False)
+	light_percent = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Light Percent'}), required=False)
+	medium_percent = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Medium Percent'}), required=False)
+	heavy_percent = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Heavy Percent'}), required=False)
+	operating_factor = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Operating Factor'}), required=False)
+	separation_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), required=False)
+
 class LogIsolatesOnlineForm(forms.Form):
 	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", required=True)
 	isolate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Isolate ID'}), required=True)
