@@ -297,14 +297,24 @@ class Stock(models.Model):
       return self.seed_id
 
 class MaizeSample(models.Model):
-  locality = models.ForeignKey(Locality)
   maize_id = models.CharField(max_length=200, unique=True)
-  type_of_source = models.CharField(max_length=200, blank=True)
-  sample_source = models.CharField(max_length=200, blank=True)
+  county = models.CharField(max_length=200, blank=True)
+  sub_location = models.CharField(max_length=200, blank=True)
+  village = models.CharField(max_length=200, blank=True)
   weight = models.CharField(max_length=200, blank=True)
-  description = models.CharField(max_length=200, blank=True)
+  harvest_date = models.CharField(max_length=200, blank=True)
+  storage_months = models.CharField(max_length=200, blank=True)
+  storage_conditions = models.CharField(max_length=200, blank=True)
+  maize_variety = models.CharField(max_length=200, blank=True)
+  seed_source = models.CharField(max_length=200, blank=True)
+  moisture_content = models.CharField(max_length=200, blank=True)
+  source_type = models.CharField(max_length=200, blank=True)
+  appearance = models.CharField(max_length=200, blank=True)
+  gps_latitude = models.CharField(max_length=200, blank=True)
+  gps_longitude = models.CharField(max_length=200, blank=True)
+  gps_altitude = models.CharField(max_length=200, blank=True)
+  gps_accuracy = models.CharField(max_length=200, blank=True)
   photo = models.CharField(max_length=200, blank=True)
-  comments = models.CharField(max_length=1000, blank=True)
 
   def __unicode__(self):
       return self.maize_id

@@ -322,6 +322,27 @@ class LogWellOnlineForm(forms.Form):
 	tube_label = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Tube Label'}), required=False)
 	well_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), required=False)
 
+class LogMaizeSurveyOnlineForm(forms.Form):
+	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", required=True)
+	maize_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Maize ID'}), required=True)
+	county = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'County'}), required=False)
+	sub_location = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Sub Location'}), required=False)
+	village = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Village'}), required=False)
+	weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Weight'}), required=False)
+	harvest_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Harvest Date'}), required=False)
+	storage_months = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Storage Months'}), required=False)
+	storage_conditions = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Storage Conditions'}), required=False)
+	maize_variety = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Maize Variety'}), required=False)
+	seed_source = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Seed Source'}), required=False)
+	moisture_content = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Moisture Content'}), required=False)
+	source_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Type'}), required=False)
+	appearance = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Appearance'}), required=False)
+	gps_latitude = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'GPS Latitude'}), required=False)
+	gps_longitude = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'GPS Longitude'}), required=False)
+	gps_altitude = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'GPS Altitude'}), required=False)
+	gps_accuracy = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'GPS Accuracy'}), required=False)
+	photo = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Photo Filename'}), required=False)
+
 class LogPlatesOnlineForm(forms.Form):
 	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", required=True)
 	plate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Plate ID'}), required=True)
