@@ -6,87 +6,85 @@
   <h1>Row Data</h1>
 </div>
   <br />
-  <div class="container-fluid">
-    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-      <div class="row-fluid">
-        <div class="span3">
-          <ul class="nav nav-list">
-            <li class="nav-header">Select Experiments</li>
-            <form>
-              <label></label>
-              <li><input  class="search-query" type="text" name="row_experimentsuggestion" id="row_experimentsuggestion" placeholder="Type Experiment (e.g. 08PN)"/></li>
-            </form>
-          </ul>
-        </div>
-        <div class="span3 offset1">
-          <button class="btn btn-info" id="show_all_row_experiment" name="show_all_row_experiment" type="submit">Show All Experiments</button>
-        </div>
-        {% if checkbox_row_experiment %}
-        <div class="span2 offset3">
-          <button class="btn btn-warning" id="clear_row_experiment" name="clear_row_experiment" type="submit">Clear Experiments</button>
-        </div>
-        {% endif %}
-      </div>
-      <div id="row_experiment">
-        {% include 'lab/row_experiment_list.html' with row_experiment_list=row_experiment_list %}
-      </div>
-      {% if checkbox_row_experiment %}
-        <hr>
-        <h5>Selected Experiments</h5>
-        {% for exp in checkbox_row_experiment %}
-          <li>{{ exp.name }}</li>
-        {% endfor %}
-      {% endif %}
-    </div><br/>
 
-    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-      <h2>Row Data</h2><br/>
-        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
-          <thead>
-          <tr>
-            <th>Exp</th>
-            <th>Row ID</th>
-            <th>Row Name</th>
-            <th>Field</th>
-            <th>Source Stock</th>
-            <th>Pedigree</th>
-            <th>Range</th>
-            <th>Plot</th>
-            <th>Block</th>
-            <th>Rep</th>
-            <th>Kernel Num</th>
-            <th>Planting Date</th>
-            <th>Harvest Date</th>
-            <th>Comments</th>
-          </tr>
-          </thead>
-          <tbody>
-          {% for data in row_data %}
-          <tr>
-            <td><a href='/lab/experiment/{{data.experiment.name}}/'>{{data.experiment.name}}</a></td>
-            <td><a href='/lab/row/{{data.obs_row.id}}/'>{{data.obs_row.row_id}}</a></td>
-            <td>{{data.obs_row.row_name}}</td>
-            <td><a href='/lab/field/{{data.field.id}}/'>{{data.field.field_name}}</a></td>
-            <td><a href='/lab/stock/{{data.stock.id}}/'>{{data.stock.seed_id}}</a></td>
-            <td>{{data.stock.pedigree}}</td>
-            <td>{{data.obs_row.range_num}}</td>
-            <td>{{data.obs_row.plot}}</td>
-            <td>{{data.obs_row.block}}</td>
-            <td>{{data.obs_row.rep}}</td>
-            <td>{{data.obs_row.kernel_num}}</td>
-            <td>{{data.obs_row.planting_date}}</td>
-            <td>{{data.obs_row.harvest_date}}</td>
-            <td>{{data.obs_row.comments}}</td>
-          </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-        <br/>
-      <form action='/lab/download/data/row/'>
-        <input class="btn btn-primary" type="submit" name="submit" value="Download Data"/>
-      </form>
-    </div><br/><br/>
+<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+  <div class="row-fluid">
+    <div class="span3">
+      <ul class="nav nav-list">
+        <li class="nav-header">Select Experiments</li>
+        <form>
+          <label></label>
+          <li><input  class="search-query" type="text" name="row_experimentsuggestion" id="row_experimentsuggestion" placeholder="Type Experiment (e.g. 08PN)"/></li>
+        </form>
+      </ul>
+    </div>
+    <div class="span3 offset1">
+      <button class="btn btn-info" id="show_all_row_experiment" name="show_all_row_experiment" type="submit">Show All Experiments</button>
+    </div>
+    {% if checkbox_row_experiment %}
+    <div class="span2 offset3">
+      <button class="btn btn-warning" id="clear_row_experiment" name="clear_row_experiment" type="submit">Clear Experiments</button>
+    </div>
+    {% endif %}
   </div>
+  <div id="row_experiment">
+    {% include 'lab/row_experiment_list.html' with row_experiment_list=row_experiment_list %}
+  </div>
+  {% if checkbox_row_experiment %}
+    <hr>
+    <h5>Selected Experiments</h5>
+    {% for exp in checkbox_row_experiment %}
+      <li>{{ exp.name }}</li>
+    {% endfor %}
+  {% endif %}
+</div><br/>
 
+<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+  <h2>Row Data</h2><br/>
+    <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <thead>
+      <tr>
+        <th>Exp</th>
+        <th>Row ID</th>
+        <th>Row Name</th>
+        <th>Field</th>
+        <th>Source Stock</th>
+        <th>Pedigree</th>
+        <th>Range</th>
+        <th>Plot</th>
+        <th>Block</th>
+        <th>Rep</th>
+        <th>Kernel Num</th>
+        <th>Planting Date</th>
+        <th>Harvest Date</th>
+        <th>Comments</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for data in row_data %}
+      <tr>
+        <td><a href='/lab/experiment/{{data.experiment.name}}/'>{{data.experiment.name}}</a></td>
+        <td><a href='/lab/row/{{data.obs_row.id}}/'>{{data.obs_row.row_id}}</a></td>
+        <td>{{data.obs_row.row_name}}</td>
+        <td><a href='/lab/field/{{data.field.id}}/'>{{data.field.field_name}}</a></td>
+        <td><a href='/lab/stock/{{data.stock.id}}/'>{{data.stock.seed_id}}</a></td>
+        <td>{{data.stock.pedigree}}</td>
+        <td>{{data.obs_row.range_num}}</td>
+        <td>{{data.obs_row.plot}}</td>
+        <td>{{data.obs_row.block}}</td>
+        <td>{{data.obs_row.rep}}</td>
+        <td>{{data.obs_row.kernel_num}}</td>
+        <td>{{data.obs_row.planting_date}}</td>
+        <td>{{data.obs_row.harvest_date}}</td>
+        <td>{{data.obs_row.comments}}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <br/>
+  <form action='/lab/download/data/row/'>
+    <input class="btn btn-primary" type="submit" name="submit" value="Download Data"/>
+  </form>
+</div><br/><br/>
 
 {% endblock %}

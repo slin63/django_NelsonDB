@@ -1,0 +1,73 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Maize Survey Data{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Maize Survey Data</h1>
+</div>
+  <br />
+  <div class="container-fluid">
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      {% if experiment_name %}
+      <h2>Maize Survey Data from <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h2><br/>
+      <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th>Exp</th>
+            <th>Maize ID</th>
+            <th>County</th>
+            <th>Sub Location</th>
+            <th>Village</th>
+            <th>Weight</th>
+            <th>Harvest Date</th>
+            <th>Storage Months</th>
+            <th>Storage Conditions</th>
+            <th>Maize Variety</th>
+            <th>Seed Source</th>
+            <th>Moisture Content</th>
+            <th>Source Type</th>
+            <th>Appearance</th>
+            <th>GPS Latitude</th>
+            <th>GPS Longitude</th>
+            <th>GPS Altitude</th>
+            <th>GPS Accuracy</th>
+            <th>Photo</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for data in maize_data %}
+          <tr>
+            <td><a href='/lab/experiment/{{data.experiment.name}}/'>{{data.experiment.name}}</a></td>
+            <td><a href='/lab/maize/{{data.maize_sample.id}}/'>{{data.maize_sample.maize_id}}</a></td>
+            <td>{{data.maize_sample.county}}</td>
+            <td>{{data.maize_sample.sub_location}}</td>
+            <td>{{data.maize_sample.village}}</td>
+            <td>{{data.maize_sample.weight}}</td>
+            <td>{{data.maize_sample.harvest_date}}</td>
+            <td>{{data.maize_sample.storage_months}}</td>
+            <td>{{data.maize_sample.storage_conditions}}</td>
+            <td>{{data.maize_sample.maize_variety}}</td>
+            <td>{{data.maize_sample.seed_source}}</td>
+            <td>{{data.maize_sample.moisture_content}}</td>
+            <td>{{data.maize_sample.source_type}}</td>
+            <td>{{data.maize_sample.appearance}}</td>
+            <td>{{data.maize_sample.gps_latitude}}</td>
+            <td>{{data.maize_sample.gps_longitude}}</td>
+            <td>{{data.maize_sample.gps_altitude}}</td>
+            <td>{{data.maize_sample.gps_accuracy}}</td>
+            <td>{{data.maize_sample.photo}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+        <br/>
+      <form action='/lab/download/culture/{{experiment_name}}/'>
+        <input class="btn btn-primary" type="submit" name="submit" value="Download Data"/>
+      </form>
+      {% endif %}
+
+    </div><br/><br/>
+  </div>
+
+
+{% endblock %}

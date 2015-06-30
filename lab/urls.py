@@ -49,8 +49,6 @@ urlpatterns = patterns('',
     url(r'^isolate_inventory/checkbox_clear/(?P<clear_selected>\w+)/$', views.checkbox_isolate_inventory_clear, name='checkbox_isolate_inventory_clear'),
     url(r'^isolate_inventory/select_isolates/$', views.select_isolates, name='select_isolates'),
 
-    url(r'^data/maize/(?P<keyword>\w+)/$', views.maize_data_keyword_browse, name='maize_data_keyword_browse'),
-
     url(r'^data/separation/(?P<keyword>\w+)/$', views.separation_data_keyword_browse, name='separation_data_keyword_browse'),
 
     url(r'^data/medium/$', views.browse_medium_data, name='browse_medium_data'),
@@ -120,6 +118,13 @@ urlpatterns = patterns('',
     url(r'^data/dna/checkbox_clear/$', views.checkbox_dna_data_clear, name='checkbox_dna_data_clear'),
     url(r'^data/dna/(?P<experiment_name>\w+)/$', views.dna_data_from_experiment, name='dna_data_from_experiment'),
 
+    url(r'^data/maize/$', views.maize_data_browse, name='maize_data_browse'),
+    url(r'^data/maize/suggest_maize_experiment/$', views.suggest_maize_experiment, name='suggest_maize_experiment'),
+    url(r'^data/maize/select_maize_experiment/$', views.select_maize_experiment, name='select_maize_experiment'),
+    url(r'^data/maize/show_all_experiment/$', views.show_all_maize_experiment, name='show_all_maize_experiment'),
+    url(r'^data/maize/checkbox_clear/$', views.checkbox_maize_data_clear, name='checkbox_maize_data_clear'),
+    url(r'^data/maize/(?P<experiment_name>\w+)/$', views.maize_data_from_experiment, name='maize_data_from_experiment'),
+
     url(r'^data/isolates/(?P<experiment_name>\w+)/$', views.isolate_data_from_experiment, name='isolate_data_from_experiment'),
 
     url(r'^data/samples/$', views.samples_data_browse, name='samples_data_browse'),
@@ -165,6 +170,7 @@ urlpatterns = patterns('',
     url(r'^upload/(?P<data_type>\w+)/$', views.queue_upload_file, name='queue_upload_file'),
 
     url(r'^download/measurement/(?P<experiment_name>\w+)/', views.download_measurement_experiment, name='download_measurement_experiment'),
+    url(r'^download/maize/(?P<experiment_name>\w+)/', views.download_maize_experiment, name='download_maize_experiment'),
     url(r'^download/row/(?P<experiment_name>\w+)/', views.download_row_experiment, name='download_row_experiment'),
     url(r'^download/plate/(?P<experiment_name>\w+)/', views.download_plate_experiment, name='download_plate_experiment'),
     url(r'^download/culture/(?P<experiment_name>\w+)/', views.download_culture_experiment, name='download_culture_experiment'),
@@ -183,6 +189,7 @@ urlpatterns = patterns('',
     url(r'^download/data/plate/$', views.download_plate_data, name='download_plate_data'),
     url(r'^download/data/well/$', views.download_well_data, name='download_well_data'),
     url(r'^download/data/culture/$', views.download_culture_data, name='download_culture_data'),
+    url(r'^download/data/maize/$', views.download_maize_data, name='download_maize_data'),
     url(r'^download/measurements/$', views.download_measurement_data, name='download_measurement_data'),
 
     url(r'^upload_online/(?P<template_type>\w+)/', views.upload_online, name='upload_online'),

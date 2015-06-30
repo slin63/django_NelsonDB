@@ -314,7 +314,7 @@ def experiment(request, experiment_name_url):
 				treatment_data = None
 			context_dict['treatment_data'] = treatment_data
 
-			obs_type_list = ['stock', 'isolate', 'glycerol_stock', 'maize', 'row', 'plant', 'sample', 'environment', 'dna', 'tissue', 'plate', 'well', 'microbe', 'culture', 'extract']
+			obs_type_list = ['stock', 'isolate', 'glycerol_stock', 'maize', 'row', 'plant', 'sample', 'environment', 'dna', 'tissue', 'plate', 'well', 'microbe', 'culture', 'extract', 'maize']
 			for obs_type in obs_type_list:
 				obs_data = "%s_data" % (obs_type)
 				try:
@@ -415,6 +415,8 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_dna_experiment'] = request.session.get('checkbox_dna_experiment')
 	if request.session.get('checkbox_culture_experiment', None):
 		context_dict['checkbox_culture_experiment'] = request.session.get('checkbox_culture_experiment')
+	if request.session.get('checkbox_maize_experiment', None):
+		context_dict['checkbox_maize_experiment'] = request.session.get('checkbox_maize_experiment')
 	if request.session.get('checkbox_measurement_experiment', None):
 		context_dict['checkbox_measurement_experiment'] = request.session.get('checkbox_measurement_experiment')
 	return context_dict
@@ -1148,6 +1150,119 @@ def serve_data_template_file(request, filename):
 		response = HttpResponse(data,content_type='application/vnd.ms-excel')
 		response['Content-Disposition'] = 'attachment; filename=%s.csv' % (filename)
 		return response
+
+@login_required
+def maize_data_browse(request):
+	context = RequestContext(request)
+	context_dict = {}
+	maize_data = sort_maize_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['maize_data'] = maize_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/maize_data.html', context_dict, context)
+
+def sort_maize_data(request):
+	maize_data = {}
+	if request.session.get('checkbox_maize_experiment_id_list', None):
+		checkbox_maize_experiment_id_list = request.session.get('checkbox_maize_experiment_id_list')
+		for maize_experiment in checkbox_maize_experiment_id_list:
+			rows = ObsTracker.objects.filter(obs_entity_type='maize', experiment__id=maize_experiment)
+			maize_data = list(chain(rows, maize_data))
+	else:
+		maize_data = ObsTracker.objects.filter(obs_entity_type='maize')[:2000]
+	return maize_data
+
+def suggest_maize_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	tissue_experiment_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with = request.GET['suggestion']
+	else:
+		starts_with = request.POST['suggestion']
+	if starts_with:
+		maize_experiment_list = ObsTracker.objects.filter(obs_entity_type='maize', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
+	else:
+		maize_experiment_list = None
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['maize_experiment_list'] = maize_experiment_list
+	return render_to_response('lab/maize_experiment_list.html', context_dict, context)
+
+def select_maize_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	plant_data = []
+	checkbox_maize_experiment_name_list = []
+	checkbox_maize_experiment_list = request.POST.getlist('checkbox_maize_experiment')
+	for experiment_id in checkbox_maize_experiment_list:
+		experiment_name = Experiment.objects.filter(id=experiment_id).values('name')
+		checkbox_maize_experiment_name_list = list(chain(experiment_name, checkbox_maize_experiment_name_list))
+	request.session['checkbox_maize_experiment'] = checkbox_maize_experiment_name_list
+	request.session['checkbox_maize_experiment_id_list'] = checkbox_maize_experiment_list
+	maize_data = sort_maize_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['maize_data'] = maize_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/maize_data.html', context_dict, context)
+
+def checkbox_maize_data_clear(request):
+	context = RequestContext(request)
+	context_dict = {}
+	del request.session['checkbox_maize_experiment']
+	del request.session['checkbox_maize_experiment_id_list']
+	maize_data = sort_maize_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['maize_data'] = maize_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/maize_data.html', context_dict, context)
+
+def show_all_maize_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	maize_experiment_list = ObsTracker.objects.filter(obs_entity_type='maize').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['maize_experiment_list'] = maize_experiment_list
+	return render_to_response('lab/maize_experiment_list.html', context_dict, context)
+
+def find_maize_from_experiment(experiment_name):
+	try:
+		maize_data = ObsTracker.objects.filter(obs_entity_type='maize', experiment__name=experiment_name)
+	except ObsTracker.DoesNotExist:
+		maize_data = None
+	return maize_data
+
+@login_required
+def maize_data_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	maize_data = find_maize_from_experiment(experiment_name)
+	context_dict['maize_data'] = maize_data
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/maize_experiment_data.html', context_dict, context)
+
+@login_required
+def download_maize_experiment(request, experiment_name):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="%s_maize_survey.csv"' % (experiment_name)
+	maize_data = find_maize_from_experiment(experiment_name)
+	writer = csv.writer(response)
+	writer.writerow(['Maize ID', 'County', 'Sub Location', 'Village', 'Weight', 'Harvest Date', 'Storage Months', 'Storage Conditions', 'Maize Variety', 'Seed Source', 'Moisture Content', 'Source Type', 'Appearance', 'GPS Latitude', 'GPS Longitude', 'GPS Altitude', 'GPS Accuracy', 'Photo Filename'])
+	for row in maize_data:
+		writer.writerow([row.maize_sample.maize_id, row.maize_sample.county, row.maize_sample.sub_location, row.maize_sample.village, row.maize_sample.weight, row.maize_sample.harvest_date, row.maize_sample.storage_months, row.maize_sample.storage_conditions, row.maize_sample.maize_variety, row.maize_sample.seed_source, row.maize_sample.moisture_content, row.maize_sample.source_type, row.maize_sample.appearance, row.maize_sample.gps_latitude, row.maize_sample.gps_longitude, row.maize_sample.gps_altitude, row.maize_sample.gps_accuracy, row.maize_sample.photo])
+	return response
+
+@login_required
+def download_maize_data(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="selected_experiment_maize_survey.csv"'
+	maize_data = sort_maize_data(request)
+	writer = csv.writer(response)
+	writer.writerow(['Exp Name', 'Maize ID', 'County', 'Sub Location', 'Village', 'Weight', 'Harvest Date', 'Storage Months', 'Storage Conditions', 'Maize Variety', 'Seed Source', 'Moisture Content', 'Source Type', 'Appearance', 'GPS Latitude', 'GPS Longitude', 'GPS Altitude', 'GPS Accuracy', 'Photo Filename'])
+	for row in maize_data:
+		writer.writerow([row.experiment.name, row.maize_sample.maize_id, row.maize_sample.county, row.maize_sample.sub_location, row.maize_sample.village, row.maize_sample.weight, row.maize_sample.harvest_date, row.maize_sample.storage_months, row.maize_sample.storage_conditions, row.maize_sample.maize_variety, row.maize_sample.seed_source, row.maize_sample.moisture_content, row.maize_sample.source_type, row.maize_sample.appearance, row.maize_sample.gps_latitude, row.maize_sample.gps_longitude, row.maize_sample.gps_altitude, row.maize_sample.gps_accuracy, row.maize_sample.photo])
+	return response
 
 @login_required
 def row_data_browse(request):

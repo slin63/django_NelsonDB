@@ -1,55 +1,101 @@
 {% extends 'lab/base.html' %}
 {% load static %}
-{% block title %}Maize Sample Data{% endblock %}
+{% block title %}Maize Survey Data{% endblock %}
 {% block body_block %}
+
 <div class="hero-unit">
-  <h1>Maize Sample Data</h1>
+  <h1>Maize Survey Data</h1>
 </div>
-  <br />
-  <div class="container-fluid">
+<br />
 
-    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
-      <h2>Maize Sample Data</h2><br/>
-        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
-          <thead>
-          <tr>
-            <th>Exp</th>
-            <th>Maize ID</th>
-            <th>Type of Source</th>
-            <th>Source</th>
-            <th>City</th>
-            <th>State</th>
-            <th>Country</th>
-            <th>Weight (g)</th>
-            <th>Description</th>
-            <th>Photo</th>
-            <th>Comments</th>
-          </tr>
-          </thead>
-          <tbody>
-          {% for data in maize_data %}
-          <tr>
-            <td><a href='/lab/experiment/{{data.experiment.name}}/'>{{data.experiment.name}}</a></td>
-            <td><a href='/lab/maize/{{data.maize_sample.id}}/'>{{data.maize_sample.maize_id}}</a></td>
-            <td>{{data.maize_sample.type_of_source}}</td>
-            <td>{{data.maize_sample.sample_source}}</td>
-            <td>{{data.maize_sample.locality.city}}</td>
-            <td>{{data.maize_sample.locality.state}}</td>
-            <td>{{data.maize_sample.locality.country}}</td>
-            <td>{{data.maize_sample.weight}}</td>
-            <td>{{data.maize_sample.description}}</td>
-            <td>{{data.maize_sample.photo}}</td>
-            <td>{{data.maize_sample.comments}}</td>
-          </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-        <br/>
-      <form action='/lab/download/maize/'>
-        <input class="btn btn-primary" type="submit" name="submit" value="Download Data"/>
-      </form>
-    </div><br/><br/>
+<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+  <div class="row-fluid">
+    <div class="span3">
+      <ul class="nav nav-list">
+        <li class="nav-header">Select Experiments</li>
+        <form>
+          <label></label>
+          <li><input  class="search-query" type="text" name="maize_experimentsuggestion" id="maize_experimentsuggestion" placeholder="Type Experiment (e.g. 08PN)"/></li>
+        </form>
+      </ul>
+    </div>
+    <div class="span3 offset1">
+      <button class="btn btn-info" id="show_all_maize_experiment" name="show_all_maize_experiment" type="submit">Show All Experiments</button>
+    </div>
+    {% if checkbox_maize_experiment %}
+    <div class="span2 offset3">
+      <button class="btn btn-warning" id="clear_maize_experiment" name="clear_maize_experiment" type="submit">Clear Experiments</button>
+    </div>
+    {% endif %}
   </div>
+  <div id="maize_experiment">
+    {% include 'lab/maize_experiment_list.html' with maize_experiment_list=maize_experiment_list %}
+  </div>
+  {% if checkbox_maize_experiment %}
+  <hr>
+  <h5>Selected Experiments</h5>
+  {% for exp in checkbox_maize_experiment %}
+  <li>{{ exp.name }}</li>
+  {% endfor %}
+  {% endif %}
+</div><br/>
 
+<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+  <h2>Maize Survey Data</h2><br/>
+  <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th>Exp</th>
+        <th>Maize ID</th>
+        <th>County</th>
+        <th>Sub Location</th>
+        <th>Village</th>
+        <th>Weight</th>
+        <th>Harvest Date</th>
+        <th>Storage Months</th>
+        <th>Storage Conditions</th>
+        <th>Maize Variety</th>
+        <th>Seed Source</th>
+        <th>Moisture Content</th>
+        <th>Source Type</th>
+        <th>Appearance</th>
+        <th>GPS Latitude</th>
+        <th>GPS Longitude</th>
+        <th>GPS Altitude</th>
+        <th>GPS Accuracy</th>
+        <th>Photo</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for data in maize_data %}
+      <tr>
+        <td><a href='/lab/experiment/{{data.experiment.name}}/'>{{data.experiment.name}}</a></td>
+        <td><a href='/lab/maize/{{data.maize_sample.id}}/'>{{data.maize_sample.maize_id}}</a></td>
+        <td>{{data.maize_sample.county}}</td>
+        <td>{{data.maize_sample.sub_location}}</td>
+        <td>{{data.maize_sample.village}}</td>
+        <td>{{data.maize_sample.weight}}</td>
+        <td>{{data.maize_sample.harvest_date}}</td>
+        <td>{{data.maize_sample.storage_months}}</td>
+        <td>{{data.maize_sample.storage_conditions}}</td>
+        <td>{{data.maize_sample.maize_variety}}</td>
+        <td>{{data.maize_sample.seed_source}}</td>
+        <td>{{data.maize_sample.moisture_content}}</td>
+        <td>{{data.maize_sample.source_type}}</td>
+        <td>{{data.maize_sample.appearance}}</td>
+        <td>{{data.maize_sample.gps_latitude}}</td>
+        <td>{{data.maize_sample.gps_longitude}}</td>
+        <td>{{data.maize_sample.gps_altitude}}</td>
+        <td>{{data.maize_sample.gps_accuracy}}</td>
+        <td>{{data.maize_sample.photo}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <br/>
+  <form action='/lab/download/data/maize/'>
+    <input class="btn btn-primary" type="submit" name="submit" value="Download Data"/>
+  </form>
+</div><br/><br/>
 
 {% endblock %}

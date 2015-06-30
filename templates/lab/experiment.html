@@ -150,16 +150,16 @@
 							<div class="container-fluid">
 								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
-										<h3>Environment Data</h3>
-										{% if environment_data %}
-										<h5><a href='/lab/data/environment/{{experiment.name}}/'>View</a></h5>
-										<h5><a href='/lab/download/data/environment/{{experiment.name}}/'>Download</a></h5>
+										<h3>Maize Survey Data</h3>
+										{% if maize_data %}
+										<h5><a href='/lab/data/maize/{{experiment.name}}/'>View</a></h5>
+										<h5><a href='/lab/download/maize/{{experiment.name}}/'>Download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}
 									</div>
 									<div class="span5">
-										<img src='{% static '/media/site_images/environmental.jpg' %}' />
+										<img src='{% static '/media/site_images/maize_survey.jpg' %}' />
 									</div>
 								</div>
 							</div>
@@ -302,16 +302,16 @@
 							<div class="container-fluid">
 								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
-										<h3>Measurement Data</h3>
-										{% if measurement_data %}
-										<h5><a href='/lab/data/measurement/{{experiment.name}}/'>View</a></h5>
-										<h5><a href='/lab/download/measurement/{{experiment.name}}/'>Download</a></h5>
+										<h3>Environment Data</h3>
+										{% if environment_data %}
+										<h5><a href='/lab/data/environment/{{experiment.name}}/'>View</a></h5>
+										<h5><a href='/lab/download/data/environment/{{experiment.name}}/'>Download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}
 									</div>
 									<div class="span5">
-										<img src='{% static '/media/site_images/measurements.jpg' %}' />
+										<img src='{% static '/media/site_images/environmental.jpg' %}' />
 									</div>
 								</div>
 							</div>
@@ -340,6 +340,24 @@
 							<div class="container-fluid">
 								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
+										<h3>Measurement Data</h3>
+										{% if measurement_data %}
+										<h5><a href='/lab/data/measurement/{{experiment.name}}/'>View</a></h5>
+										<h5><a href='/lab/download/measurement/{{experiment.name}}/'>Download</a></h5>
+										{% else %}
+										<h5>No Data Available</h5>
+										{% endif %}
+									</div>
+									<div class="span5">
+										<img src='{% static '/media/site_images/measurements.jpg' %}' />
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="span6">
+							<div class="container-fluid">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+									<div class="span7">
 										<h3>Genotype Data</h3>
 										{% if genotype_data %}
 										<h5><a href='/lab/data/gwas/{{experiment.name}}/'>View</a></h5>
@@ -352,11 +370,6 @@
 										<img src='{% static '/media/site_images/geno_results.jpg' %}' />
 									</div>
 								</div>
-							</div>
-						</div>
-						<div class="span6">
-							<div class="container-fluid">
-
 							</div>
 						</div>
 					</div><br/>
