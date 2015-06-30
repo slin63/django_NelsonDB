@@ -6,7 +6,7 @@
   <h1>Samples Data</h1>
 </div>
   <br />
-  <div class="container-fluid">
+
     <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
       <div class="row-fluid">
         <div class="span3">
@@ -14,26 +14,26 @@
             <li class="nav-header">Select Experiments</li>
             <form>
               <label></label>
-              <li><input  class="search-query" type="text" name="samples_experimentsuggestion" id="samples_experimentsuggestion" placeholder="Type Experiment (e.g. 08PN)"/></li>
+              <li><input  class="search-query" type="text" name="sample_experimentsuggestion" id="sample_experimentsuggestion" placeholder="Type Experiment (e.g. 08PN)"/></li>
             </form>
           </ul>
         </div>
         <div class="span3 offset1">
-          <button class="btn btn-info" id="show_all_samples_experiment" name="show_all_samples_experiment" type="submit">Show All Experiments</button>
+          <button class="btn btn-info" id="show_all_sample_experiment" name="show_all_sample_experiment" type="submit">Show All Experiments</button>
         </div>
-        {% if checkbox_samples_experiment %}
+        {% if checkbox_sample_experiment %}
         <div class="span2 offset3">
-          <button class="btn btn-warning" id="clear_samples_experiment" name="clear_samples_experiment" type="submit">Clear Experiments</button>
+          <button class="btn btn-warning" id="clear_sample_experiment" name="clear_sample_experiment" type="submit">Clear Experiments</button>
         </div>
         {% endif %}
       </div>
-      <div id="plant_experiment">
-        {% include 'lab/samples_experiment_list.html' with samples_experiment_list=samples_experiment_list %}
+      <div id="sample_experiment">
+        {% include 'lab/sample_experiment_list.html' with sample_experiment_list=sample_experiment_list %}
       </div>
-      {% if checkbox_samples_experiment %}
+      {% if checkbox_sample_experiment %}
         <hr>
         <h5>Selected Experiments</h5>
-        {% for exp in checkbox_samples_experiment %}
+        {% for exp in checkbox_sample_experiment %}
           <li>{{ exp.name }}</li>
         {% endfor %}
       {% endif %}
@@ -47,19 +47,25 @@
             <th>Exp</th>
             <th>Sample ID</th>
             <th>Sample Type</th>
+            <th>Sample Name</th>
             <th>Weight (g)</th>
+            <th>Volume (mL)</th>
+            <th>Density (g/mL)</th>
             <th>Kernel Num</th>
             <th>Photo</th>
             <th>Comments</th>
           </tr>
           </thead>
           <tbody>
-          {% for data in samples_data %}
+          {% for data in sample_data %}
           <tr>
             <td><a href='/lab/experiment/{{data.experiment.name}}/'>{{data.experiment.name}}</a></td>
             <td><a href='/lab/sample/{{data.obs_sample_id}}/'>{{data.obs_sample.sample_id}}</a></td>
             <td>{{data.obs_sample.sample_type}}</td>
+            <td>{{data.obs_sample.sample_name}}</td>
             <td>{{data.obs_sample.weight}}</td>
+            <td>{{data.obs_sample.volume}}</td>
+            <td>{{data.obs_sample.density}}</td>
             <td>{{data.obs_sample.kernel_num}}</td>
             <td>{{data.obs_sample.photo}}</td>
             <td>{{data.obs_sample.comments}}</td>
@@ -72,7 +78,6 @@
           <input class="btn btn-primary" type="submit" name="submit" value="Download Data"/>
         </form>
     </div><br/><br/>
-  </div>
 
 
 {% endblock %}

@@ -171,7 +171,7 @@
 										<h3>Samples Data</h3>
 										{% if sample_data %}
 										<h5><a href='/lab/data/sample/{{experiment.name}}/'>View</a></h5>
-										<h5><a href='/lab/download/data/sample/{{experiment.name}}/'>Download</a></h5>
+										<h5><a href='/lab/download/sample/{{experiment.name}}/'>Download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}
@@ -333,6 +333,29 @@
 									</div>
 								</div>
 							</div>
+						</div>
+					</div><br/>
+					<div class="row">
+						<div class="span6">
+							<div class="container-fluid">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+									<div class="span7">
+										<h3>Separations Data</h3>
+										{% if separation_data %}
+										<h5><a href='/lab/data/separation/{{experiment.name}}/'>View</a></h5>
+										<h5><a href='/lab/download/separation/{{experiment.name}}/'>Download</a></h5>
+										{% else %}
+										<h5>No Data Available</h5>
+										{% endif %}
+									</div>
+									<div class="span5">
+										<img src='{% static '/media/site_images/separation.png' %}' />
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="span6">
+
 						</div>
 					</div><br/>
 					<div class="row">

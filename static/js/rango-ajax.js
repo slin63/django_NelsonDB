@@ -191,6 +191,32 @@ $('#show_all_maize_experiment').click(function(){
 	});
 });
 
+$('#sample_experimentsuggestion').keyup(function(){
+	var query;
+	query = $(this).val();
+	$.get('/lab/data/sample/suggest_sample_experiment/', {suggestion: query}, function(data){
+		$('#sample_experiment').html(data);
+		$('#selected_sample_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
+$('#show_all_sample_experiment').click(function(){
+	$.get('/lab/data/sample/show_all_experiment/', {}, function(data){
+		$('#sample_experiment').html(data);
+		$('#selected_sample_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
 $('#culture_experimentsuggestion').keyup(function(){
 	var query;
 	query = $(this).val();
@@ -397,6 +423,12 @@ $('#clear_dna_experiment').click(function(){
 
 $('#clear_maize_experiment').click(function(){
 	$.get('/lab/data/maize/checkbox_clear/', {}, function(data){
+		$('body').html(data);
+	});
+});
+
+$('#clear_sample_experiment').click(function(){
+	$.get('/lab/data/sample/checkbox_clear/', {}, function(data){
 		$('body').html(data);
 	});
 });

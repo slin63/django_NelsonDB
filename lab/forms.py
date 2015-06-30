@@ -227,7 +227,7 @@ class LogPlantsOnlineForm(forms.Form):
 class LogSamplesOnlineForm(forms.Form):
 	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", required=True)
 	sample_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Sample ID'}), required=True)
-	sample_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Sample Type'}), required=True)
+	sample_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Sample Type'}), required=False)
 	sample_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Sample Name'}), required=False)
 	source_seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Seed ID'}), required=False)
 	source_row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Row ID'}), required=False)

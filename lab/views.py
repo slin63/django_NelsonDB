@@ -338,6 +338,22 @@ def experiment(request, experiment_name_url):
 				stockpackets_collected = None
 			context_dict['stockpackets_collected'] = stockpackets_collected
 
+			if context_dict['sample_data'] is not None:
+				separations = False
+				for sample in context_dict['sample_data']:
+					try:
+						separation = Separation.objects.filter(obs_sample=ObsSample.objects.get(sample_id=sample.obs_sample.sample_id))
+						separations = True
+					except Separation.DoesNotExist:
+						pass
+				if separations == True:
+					separation_data = True
+				else:
+					separation_data = None
+			else:
+				separation_data = None
+			context_dict['separation_data'] = separation_data
+
 			try:
 				measurement_data = Measurement.objects.filter(obs_tracker__experiment__name=experiment_name)
 			except Measurement.DoesNotExist:
@@ -417,6 +433,8 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_culture_experiment'] = request.session.get('checkbox_culture_experiment')
 	if request.session.get('checkbox_maize_experiment', None):
 		context_dict['checkbox_maize_experiment'] = request.session.get('checkbox_maize_experiment')
+	if request.session.get('checkbox_sample_experiment', None):
+		context_dict['checkbox_sample_experiment'] = request.session.get('checkbox_sample_experiment')
 	if request.session.get('checkbox_measurement_experiment', None):
 		context_dict['checkbox_measurement_experiment'] = request.session.get('checkbox_measurement_experiment')
 	return context_dict
@@ -1352,25 +1370,117 @@ def show_all_row_experiment(request):
 	return render_to_response('lab/row_experiment_list.html', context_dict, context)
 
 @login_required
-def samples_data_browse(request):
+def sample_data_browse(request):
 	context = RequestContext(request)
 	context_dict = {}
-	samples_data = sort_samples_data(request)
+	sample_data = sort_sample_data(request)
 	context_dict = checkbox_session_variable_check(request)
-	context_dict['samples_data'] = samples_data
+	context_dict['sample_data'] = sample_data
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/samples_data.html', context_dict, context)
+	return render_to_response('lab/sample_data.html', context_dict, context)
 
-def sort_samples_data(request):
-	samples_data = {}
-	if request.session.get('checkbox_samples_experiment_id_list', None):
-		checkbox_samples_experiment_id_list = request.session.get('checkbox_samples_experiment_id_list')
-		for samples_experiment in checkbox_samples_experiment_id_list:
-			samples = ObsTracker.objects.filter(obs_entity_type='sample', experiment__id=samples_experiment)
-			samples_data = list(chain(samples, samples_data))
+def sort_sample_data(request):
+	sample_data = {}
+	if request.session.get('checkbox_sample_experiment_id_list', None):
+		checkbox_sample_experiment_id_list = request.session.get('checkbox_sample_experiment_id_list')
+		for sample_experiment in checkbox_sample_experiment_id_list:
+			samples = ObsTracker.objects.filter(obs_entity_type='sample', experiment__id=sample_experiment)
+			sample_data = list(chain(samples, sample_data))
 	else:
-		samples_data = ObsTracker.objects.filter(obs_entity_type='sample')[:2000]
-	return samples_data
+		sample_data = ObsTracker.objects.filter(obs_entity_type='sample')[:2000]
+	return sample_data
+
+@login_required
+def download_sample_data(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="selected_experiment_samples.csv"'
+	sample_data = sort_sample_data(request)
+	writer = csv.writer(response)
+	writer.writerow(['Exp ID', 'Sample ID', 'Sample Type', 'Sample Name', 'Source Seed ID', 'Source Row ID', 'Source Plant ID', 'Weight', 'Volume', 'Density', 'Num Kernels', 'Photo', 'Comments'])
+	for row in sample_data:
+		writer.writerow([row.experiment, row.obs_sample.sample_id, row.obs_sample.sample_type, row.obs_sample.sample_name, row.stock.seed_id, row.obs_row.row_id, row.obs_plant.plant_id, row.obs_sample.weight, row.obs_sample.volume, row.obs_sample.density, row.obs_sample.kernel_num, row.obs_sample.photo, row.obs_sample.comments])
+	return response
+
+def suggest_sample_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	sample_experiment_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with = request.GET['suggestion']
+	else:
+		starts_with = request.POST['suggestion']
+	if starts_with:
+		sample_experiment_list = ObsTracker.objects.filter(obs_entity_type='sample', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
+	else:
+		sample_experiment_list = None
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['sample_experiment_list'] = sample_experiment_list
+	return render_to_response('lab/sample_experiment_list.html', context_dict, context)
+
+def select_sample_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	sample_data = []
+	checkbox_sample_experiment_name_list = []
+	checkbox_sample_experiment_list = request.POST.getlist('checkbox_sample_experiment')
+	for experiment_id in checkbox_sample_experiment_list:
+		experiment_name = Experiment.objects.filter(id=experiment_id).values('name')
+		checkbox_sample_experiment_name_list = list(chain(experiment_name, checkbox_sample_experiment_name_list))
+	request.session['checkbox_sample_experiment'] = checkbox_sample_experiment_name_list
+	request.session['checkbox_sample_experiment_id_list'] = checkbox_sample_experiment_list
+	sample_data = sort_sample_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['sample_data'] = sample_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/sample_data.html', context_dict, context)
+
+def checkbox_sample_data_clear(request):
+	context = RequestContext(request)
+	context_dict = {}
+	del request.session['checkbox_sample_experiment']
+	del request.session['checkbox_sample_experiment_id_list']
+	sample_data = sort_sample_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['sample_data'] = sample_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/sample_data.html', context_dict, context)
+
+def show_all_sample_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	sample_experiment_list = ObsTracker.objects.filter(obs_entity_type='sample').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['sample_experiment_list'] = sample_experiment_list
+	return render_to_response('lab/sample_experiment_list.html', context_dict, context)
+
+def find_sample_from_experiment(experiment_name):
+	try:
+		sample_data = ObsTracker.objects.filter(obs_entity_type='sample', experiment__name=experiment_name)
+	except ObsTracker.DoesNotExist:
+		sample_data = None
+	return sample_data
+
+@login_required
+def sample_data_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	sample_data = find_sample_from_experiment(experiment_name)
+	context_dict['sample_data'] = sample_data
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/sample_experiment_data.html', context_dict, context)
+
+@login_required
+def download_sample_experiment(request, experiment_name):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="%s_samples.csv"' % (experiment_name)
+	sample_data = find_sample_from_experiment(experiment_name)
+	writer = csv.writer(response)
+	writer.writerow(['Sample ID', 'Sample Type', 'Sample Name', 'Source Seed ID', 'Source Row ID', 'Source Plant ID', 'Weight', 'Volume', 'Density', 'Num Kernels', 'Photo', 'Comments'])
+	for row in sample_data:
+		writer.writerow([row.obs_sample.sample_id, row.obs_sample.sample_type, row.obs_sample.sample_name, row.stock.seed_id, row.obs_row.row_id, row.obs_plant.plant_id, row.obs_sample.weight, row.obs_sample.volume, row.obs_sample.density, row.obs_sample.kernel_num, row.obs_sample.photo, row.obs_sample.comments])
+	return response
 
 @login_required
 def tissue_data_browse(request):

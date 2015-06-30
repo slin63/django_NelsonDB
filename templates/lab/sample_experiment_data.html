@@ -1,0 +1,53 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Samples Data{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Samples Data</h1>
+</div>
+  <br />
+
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      {% if experiment_name %}
+      <h2>Samples Data from <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h2><br/>
+      <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th>Exp</th>
+            <th>Sample ID</th>
+            <th>Sample Type</th>
+            <th>Sample Name</th>
+            <th>Weight (g)</th>
+            <th>Volume (mL)</th>
+            <th>Density (g/mL)</th>
+            <th>Kernel Num</th>
+            <th>Photo</th>
+            <th>Comments</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for data in sample_data %}
+          <tr>
+            <td><a href='/lab/experiment/{{data.experiment.name}}/'>{{data.experiment.name}}</a></td>
+            <td><a href='/lab/sample/{{data.obs_sample_id}}/'>{{data.obs_sample.sample_id}}</a></td>
+            <td>{{data.obs_sample.sample_type}}</td>
+            <td>{{data.obs_sample.sample_name}}</td>
+            <td>{{data.obs_sample.weight}}</td>
+            <td>{{data.obs_sample.volume}}</td>
+            <td>{{data.obs_sample.density}}</td>
+            <td>{{data.obs_sample.kernel_num}}</td>
+            <td>{{data.obs_sample.photo}}</td>
+            <td>{{data.obs_sample.comments}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+        <br/>
+        <form action='/lab/download/sample/{{experiment_name}}/'>
+          <input type='submit' class="btn btn-primary" name='submit' value='Download Data'/>
+        </form>
+      {% endif %}
+
+    </div><br/><br/>
+
+{% endblock %}

@@ -49,8 +49,6 @@ urlpatterns = patterns('',
     url(r'^isolate_inventory/checkbox_clear/(?P<clear_selected>\w+)/$', views.checkbox_isolate_inventory_clear, name='checkbox_isolate_inventory_clear'),
     url(r'^isolate_inventory/select_isolates/$', views.select_isolates, name='select_isolates'),
 
-    url(r'^data/separation/(?P<keyword>\w+)/$', views.separation_data_keyword_browse, name='separation_data_keyword_browse'),
-
     url(r'^data/medium/$', views.browse_medium_data, name='browse_medium_data'),
     url(r'^data/measurement_parameter/$', views.browse_parameter_data, name='browse_parameter_data'),
     url(r'^data/location/$', views.browse_location_data, name='browse_location_data'),
@@ -72,7 +70,6 @@ urlpatterns = patterns('',
     url(r'^data/measurement/checkbox_clear/$', views.checkbox_measurement_data_clear, name='checkbox_measurement_data_clear'),
     url(r'^data/measurement/show_all_experiment/$', views.show_all_measurement_experiment, name='show_all_measurement_experiment'),
     url(r'^data/measurement/(?P<experiment_name>\w+)/$', views.measurement_data_from_experiment, name='measurement_data_from_experiment'),
-    url(r'^data/measurement/(?P<keyword>\w+)/$', views.measurement_data_keyword_browse, name='measurement_data_keyword_browse'),
 
     url(r'^data/genotype/$', views.genotype_data_browse, name='genotype_data_browse'),
 
@@ -127,10 +124,12 @@ urlpatterns = patterns('',
 
     url(r'^data/isolates/(?P<experiment_name>\w+)/$', views.isolate_data_from_experiment, name='isolate_data_from_experiment'),
 
-    url(r'^data/samples/$', views.samples_data_browse, name='samples_data_browse'),
-    url(r'^data/sample/(?P<keyword>\w+)/$', views.sample_data_keyword_browse, name='sample_data_keyword_browse'),
-
-    url(r'^data/extract/(?P<keyword>\w+)/$', views.extract_data_keyword_browse, name='extract_data_keyword_browse'),
+    url(r'^data/sample/$', views.sample_data_browse, name='sample_data_browse'),
+    url(r'^data/sample/suggest_sample_experiment/$', views.suggest_sample_experiment, name='suggest_sample_experiment'),
+    url(r'^data/sample/select_sample_experiment/$', views.select_sample_experiment, name='select_sample_experiment'),
+    url(r'^data/sample/show_all_experiment/$', views.show_all_sample_experiment, name='show_all_sample_experiment'),
+    url(r'^data/sample/checkbox_clear/$', views.checkbox_sample_data_clear, name='checkbox_sample_data_clear'),
+    url(r'^data/sample/(?P<experiment_name>\w+)/$', views.sample_data_from_experiment, name='sample_data_from_experiment'),
 
     url(r'^data/row/$', views.row_data_browse, name='row_data_browse'),
     url(r'^data/row/suggest_row_experiment/$', views.suggest_row_experiment, name='suggest_row_experiment'),
@@ -172,6 +171,7 @@ urlpatterns = patterns('',
     url(r'^download/measurement/(?P<experiment_name>\w+)/', views.download_measurement_experiment, name='download_measurement_experiment'),
     url(r'^download/maize/(?P<experiment_name>\w+)/', views.download_maize_experiment, name='download_maize_experiment'),
     url(r'^download/row/(?P<experiment_name>\w+)/', views.download_row_experiment, name='download_row_experiment'),
+    url(r'^download/sample/(?P<experiment_name>\w+)/', views.download_sample_experiment, name='download_sample_experiment'),
     url(r'^download/plate/(?P<experiment_name>\w+)/', views.download_plate_experiment, name='download_plate_experiment'),
     url(r'^download/culture/(?P<experiment_name>\w+)/', views.download_culture_experiment, name='download_culture_experiment'),
     url(r'^download/tissue/(?P<experiment_name>\w+)/', views.download_tissue_experiment, name='download_tissue_experiment'),
