@@ -43,7 +43,7 @@
 
     {% if measurement_data %}
       <h2>Measurement Data</h2><br/>
-      <form id="select_stocks_form" method="post" action="/lab/download/measurements/">
+      <form id="select_stocks_form" method="post" action="/lab/download/data/measurements/">
         {% csrf_token %}
         <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>

@@ -327,6 +327,16 @@ def experiment(request, experiment_name_url):
 					stockpackets_used = find_seedpackets_from_obstracker_stock(obs_type_data)
 					context_dict['stockpackets_used'] = stockpackets_used
 
+				if obs_type == 'sample':
+					separations = []
+					for sample in obs_type_data:
+						try:
+							separation = Separation.objects.filter(obs_sample_id=sample.obs_sample_id)
+						except Separation.DoesNotExist:
+							separation = None
+						separations = list(chain(separation, separations))
+					context_dict['separation_data'] = separations
+
 				context_dict[obs_data] = obs_type_data
 
 			collected_stock_data = find_stock_collected_from_experiment(experiment_name)
@@ -337,22 +347,6 @@ def experiment(request, experiment_name_url):
 			else:
 				stockpackets_collected = None
 			context_dict['stockpackets_collected'] = stockpackets_collected
-
-			if context_dict['sample_data'] is not None:
-				separations = False
-				for sample in context_dict['sample_data']:
-					try:
-						separation = Separation.objects.filter(obs_sample=ObsSample.objects.get(sample_id=sample.obs_sample.sample_id))
-						separations = True
-					except Separation.DoesNotExist:
-						pass
-				if separations == True:
-					separation_data = True
-				else:
-					separation_data = None
-			else:
-				separation_data = None
-			context_dict['separation_data'] = separation_data
 
 			try:
 				measurement_data = Measurement.objects.filter(obs_tracker__experiment__name=experiment_name)
@@ -1593,6 +1587,84 @@ def download_tissue_experiment(request, experiment_name):
 	writer.writerow(['Tissue ID', 'Tissue Type', 'Tissue Name', 'Date Ground', 'Comments', 'Row ID', 'Plant ID', 'Plate ID', 'Seed ID'])
 	for row in tissue_data:
 		writer.writerow([row.obs_tissue.tissue_id, row.obs_tissue.tissue_type, row.obs_tissue.tissue_name, row.obs_tissue.date_ground, row.obs_tissue.comments, row.obs_row.row_id, row.obs_plant.plant_id, row.obs_plate.plate_id, row.stock.seed_id])
+	return response
+
+@login_required
+def separation_data_browse(request):
+	context = RequestContext(request)
+	context_dict = {}
+	separation_data = sort_separation_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['separation_data'] = separation_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/separation_data.html', context_dict, context)
+
+def sort_separation_data(request):
+	separation_data = []
+	sample_data = []
+	if request.session.get('checkbox_separation_experiment_id_list', None):
+		checkbox_separation_experiment_id_list = request.session.get('checkbox_separation_experiment_id_list')
+		for separation_experiment in checkbox_separation_experiment_id_list:
+			try:
+				samples = ObsTracker.objects.filter(obs_entity_type='samples', experiment__id=separation_experiment)
+			except ObsTracker.DoesNotExist:
+				samples = None
+			sample_data = list(chain(samples, sample_data))
+		for sample in sample_data:
+			try:
+				separation = Separation.objects.filter(obs_sample_id=sample.obs_sample_id)
+			except Separation.DoesNotExist:
+				separation = None
+			separation_data = list(chain(separation, separation_data))
+	else:
+		separation_data = Separation.objects.all()[:2000]
+	return separation_data
+
+def find_separation_from_experiment(experiment_name):
+	try:
+		sample_data = ObsTracker.objects.filter(obs_entity_type='sample', experiment__name=experiment_name)
+	except ObsTracker.DoesNotExist:
+		sample_data = None
+	if sample_data is not None:
+		separations = []
+		for sample in sample_data:
+			try:
+				separation = Separation.objects.filter(obs_sample_id=sample.obs_sample_id)
+			except Separation.DoesNotExist:
+				separation = None
+			separations = list(chain(separation, separations))
+	return separations
+
+@login_required
+def separation_data_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	separation_data = find_separation_from_experiment(experiment_name)
+	context_dict['separation_data'] = separation_data
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/separation_experiment_data.html', context_dict, context)
+
+@login_required
+def download_separation_experiment(request, experiment_name):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="%s_separations.csv"' % (experiment_name)
+	separation_data = find_separation_from_experiment(experiment_name)
+	writer = csv.writer(response)
+	writer.writerow(['Sample ID', 'Sample Name', 'Separation Type', 'Apparatus', 'SG', 'Light Weight (g)', 'Medium Weight (g)', 'Heavy Weight (g)', 'Light Percent', 'Medium Percent', 'Heavy Percent', 'Operating Factor', 'Comments'])
+	for row in separation_data:
+		writer.writerow([row.obs_sample.sample_id, row.obs_sample.sample_name, row.separation_type, row.apparatus, row.SG, row.light_weight, row.intermediate_weight, row.heavy_weight, row.light_percent, row.intermediate_percent, row.heavy_percent, row.operating_factor, row.comments])
+	return response
+
+@login_required
+def download_separation_data(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="all_separations.csv"'
+	separation_data = sort_separation_data(request)
+	writer = csv.writer(response)
+	writer.writerow(['Sample ID', 'Sample Name', 'Separation Type', 'Apparatus', 'SG', 'Light Weight (g)', 'Medium Weight (g)', 'Heavy Weight (g)', 'Light Percent', 'Medium Percent', 'Heavy Percent', 'Operating Factor', 'Comments'])
+	for row in separation_data:
+		writer.writerow([row.obs_sample.sample_id, row.obs_sample.sample_name, row.separation_type, row.apparatus, row.SG, row.light_weight, row.intermediate_weight, row.heavy_weight, row.light_percent, row.intermediate_percent, row.heavy_percent, row.operating_factor, row.comments])
 	return response
 
 @login_required
@@ -3217,7 +3289,7 @@ def log_data_online(request, data_type):
 						if source_plant_id == '':
 							source_plant_id = 'No Plant'
 						if source_seed_id == '':
-							source_seed_id = 'No Seed'
+							source_seed_id = 'No Stock'
 
 						try:
 							new_obssample, created = ObsSample.objects.get_or_create(sample_id=sample_id, sample_type=sample_type, sample_name=sample_name, weight=weight, volume=volume, density=density, kernel_num=kernel_num, photo=photo, comments=sample_comments)
@@ -3260,7 +3332,7 @@ def log_data_online(request, data_type):
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
-							seed_id = 'No Seed'
+							seed_id = 'No Stock'
 						if culture_id == '':
 							culture_id = 'No Culture'
 
@@ -3311,7 +3383,7 @@ def log_data_online(request, data_type):
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
-							seed_id = 'No Seed'
+							seed_id = 'No Stock'
 						if tissue_id == '':
 							tissue_id = 'No Tissue'
 						if microbe_id == '':
@@ -3357,7 +3429,7 @@ def log_data_online(request, data_type):
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
-							seed_id = 'No Seed'
+							seed_id = 'No Stock'
 						if tissue_id == '':
 							tissue_id = 'No Tissue'
 						if culture_id == '':
@@ -3410,7 +3482,7 @@ def log_data_online(request, data_type):
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
-							seed_id = 'No Seed'
+							seed_id = 'No Stock'
 						if tissue_id == '':
 							tissue_id = 'No Tissue'
 						if culture_id == '':
@@ -3504,7 +3576,7 @@ def log_data_online(request, data_type):
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
-							seed_id = 'No Seed'
+							seed_id = 'No Stock'
 						if tissue_id == '':
 							tissue_id = 'No Tissue'
 						if culture_id == '':
@@ -3651,7 +3723,7 @@ def log_data_online(request, data_type):
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
-							seed_id = 'No Seed'
+							seed_id = 'No Stock'
 						if tissue_id == '':
 							tissue_id = 'No Tissue'
 						if culture_id == '':
