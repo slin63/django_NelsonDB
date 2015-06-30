@@ -3313,6 +3313,7 @@ def log_data_online(request, data_type):
 						experiment = form.cleaned_data['experiment']
 						isolate_id = form.cleaned_data['isolate_id']
 						location = form.cleaned_data['location']
+						field = form.cleaned_data['field']
 						dna_id = form.cleaned_data['dna_id']
 						microbe_id = form.cleaned_data['microbe_id']
 						row_id = form.cleaned_data['row_id']
@@ -3356,7 +3357,7 @@ def log_data_online(request, data_type):
 							new_taxonomy, created = Taxonomy.objects.get_or_create(genus=genus, common_name='Isolate', alias=alias, race=race, subtaxa=subtaxa)
 							new_passport, created = Passport.objects.get_or_create(taxonomy=new_taxonomy, people_id=1, collecting_id=1)
 							new_isolate, created = Isolate.objects.get_or_create(passport=new_passport, location=location, disease_info=disease, isolate_id=isolate_id, isolate_name=isolate_name, plant_organ=plant_organ, comments=isolate_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='isolate', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate=new_isolate, location=location, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=ObsDNA.objects.get(dna_id=dna_id), obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='isolate', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate=new_isolate, location=location, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=ObsDNA.objects.get(dna_id=dna_id), obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
@@ -4016,6 +4017,8 @@ def upload_online(request, template_type):
 				results_dict = loader_scripts.well_loader_prep(request.FILES['file_name'], new_upload_user)
 			elif template_type == 'env_data':
 				results_dict = loader_scripts.env_loader_prep(request.FILES['file_name'], new_upload_user)
+			elif template_type == 'isolate_data':
+				results_dict = loader_scripts.isolate_loader_prep(request.FILES['file_name'], new_upload_user)
 			else:
 				results_dict = None
 			if results_dict is not None:
@@ -4046,6 +4049,8 @@ def upload_online(request, template_type):
 						output = loader_scripts.well_loader_prep_output(results_dict, new_upload_exp, template_type)
 					elif template_type == 'env_data':
 						output = loader_scripts.env_loader_prep_output(results_dict, new_upload_exp, template_type)
+					elif template_type == 'isolate_data':
+						output = loader_scripts.isolate_loader_prep_output(results_dict, new_upload_exp, template_type)
 					else:
 						output = None
 					return output
@@ -4075,6 +4080,8 @@ def upload_online(request, template_type):
 						uploaded = loader_scripts.well_loader(results_dict)
 					elif template_type == 'env_data':
 						uploaded = loader_scripts.env_loader(results_dict)
+					elif template_type == 'isolate_data':
+						uploaded = loader_scripts.isolate_loader(results_dict)
 					else:
 						uploaded = False
 

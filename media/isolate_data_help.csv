@@ -20,6 +20,7 @@ Zipcode,lab_locality,zipcode,The locality's zipcode.
 ,,,
 Isolates,For inventory of individual isolates. ,,
 Template Header,Database Table,Database Field,Definition
+Experiment Name,lab_obstracker,ObsTracker(experiment).id,The experiment name to which this isolate is a part of.
 Isolate ID,lab_isolate,isolate_id,A unique ID in the format Af0001i. This is the ID that is printed on the isolate tubes. MUST BE UNIQUE
 Isolate Name,lab_isolate,isolate_name,A human readable name for the isolate.
 Plant Organ,lab_isolate,plant_organ,"The plant organ that the isolate came from, if relevant."
@@ -31,17 +32,17 @@ Population,lab_taxonomy,population,A more general classification of the isolate'
 Alias,lab_taxonomy,alias,The isolate's alias.
 Race,lab_taxonomy,race,The isolate's race classification.
 Subtaxa,lab_taxonomy,subtaxa,The isolate's subtaxa classification.
-,,,
-Row ID,lab_obstracker,obs_row_id = ObsRow(row_id).id,The Row ID from which the isolate was collected. Example 08PN0023. Leave blank if isolate not collected from a row.
-Field Name,lab_obstracker,field_id = Field(field_name).id,The Field Name from which the isolate was collected. Example Aurora NY. Leave blank if not relevant. 
-Plant ID,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,The Plant ID from which the isolate was collected. Example 08PN0023_001. Leave blank if isolate not collected from a plant.
-Tissue ID,lab_obstracker,obs_tissue_id = ObsTissue(tissue_id).id,The Tissue ID from which the isolate was collected. Leave blank if isolate not collected from a tissue.
-Microbe ID,lab_obstracker,obs_microbe_id = ObsMicrobe(microbe_id).id,The Microbe ID from which the isolate was collected. Leave blank if not applicable.
-Well ID,lab_obstracker,obs_well_id = ObsWell(well_id).id,The Well ID from which the isolate was collected. Leave blank if not applicable.
-Plate ID,lab_obstracker,obs_plate_id = ObsPlate(plate_id).id,The Plate ID from which the isolate was collected. Leave blank if not applicable.
-DNA ID,lab_obstracker,obs_dna_id = ObsDNA(dna_id).id,The DNA ID from which the isolate was collected. Leave blank if not applicable.
-Sample ID,lab_obstracker,obs_sample_id = ObsSample(sample_id).id,The Sample ID from which the isolate was collected. Leave blank if not applicable.
-Culture ID,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,The Culture ID from which the isolate was collected. Leave blank if not applicable.
+Disease Common Name,lab_diseaseinfo,common_name,The common name for the disease this isolate is known to be linked to.
+Source Row ID,lab_obstracker,obs_row_id = ObsRow(row_id).id,The Row ID from which the isolate was collected. Example 08PN0023. Leave blank if isolate not collected from a row.
+Source Field Name,lab_obstracker,field_id = Field(field_name).id,The Field Name from which the isolate was collected. Example Aurora NY. Leave blank if not relevant. 
+Source Plant ID,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,The Plant ID from which the isolate was collected. Example 08PN0023_001. Leave blank if isolate not collected from a plant.
+Source Seed ID,lab_obstracker,stock_id=Stock(seed_id).id,The Seed ID from which the isolate is associated. Leave blank if not applicable.
+Source Tissue ID,lab_obstracker,obs_tissue_id = ObsTissue(tissue_id).id,The Tissue ID from which the isolate was collected. Leave blank if isolate not collected from a tissue.
+Source Microbe ID,lab_obstracker,obs_microbe_id = ObsMicrobe(microbe_id).id,The Microbe ID from which the isolate was collected. Leave blank if not applicable.
+Source Well ID,lab_obstracker,obs_well_id = ObsWell(well_id).id,The Well ID from which the isolate was collected. Leave blank if not applicable.
+Source Plate ID,lab_obstracker,obs_plate_id = ObsPlate(plate_id).id,The Plate ID from which the isolate was collected. Leave blank if not applicable.
+Source DNA ID,lab_obstracker,obs_dna_id = ObsDNA(dna_id).id,The DNA ID from which the isolate was collected. Leave blank if not applicable.
+SourceCulture ID,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,The Culture ID from which the isolate was collected. Leave blank if not applicable.
 ,,,
 Username,lab_collecting,user_id = User(username).id,The username of the person which collected the isolate. Example: firstname_lastname. Leave blank if isolate not collected.
 Collection Date,lab_collecting,collection_date,The date when the isolate was collected. Format 2015-01-30. Leave blank if isolate not collected

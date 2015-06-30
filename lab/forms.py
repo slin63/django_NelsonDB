@@ -336,7 +336,8 @@ class LogPlatesOnlineForm(forms.Form):
 class LogIsolatesOnlineForm(forms.Form):
 	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", required=True)
 	isolate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Isolate ID'}), required=True)
-	location_id = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Location Name ---", required=True)
+	location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Location Name ---", required=True)
+	field = forms.ModelChoiceField(queryset=Field.objects.all(), empty_label="--- Source Field Name ---", required=True)
 	dna_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source DNA ID'}), required=False)
 	microbe_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Microbe ID'}), required=False)
 	row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Row ID'}), required=False)

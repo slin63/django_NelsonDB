@@ -801,8 +801,6 @@ def passport_hash_mirror():
     passport_file = Passport.objects.all()
     for row in passport_file:
         passport_hash = str(row.collecting_id) + str(row.people_id) + str(row.taxonomy_id)
-        passport_hash.rstrip('\r')
-        passport_hash.rstrip('\n')
         passport_hash_table[passport_hash] = row.id
     return passport_hash_table
 
@@ -867,8 +865,6 @@ def obs_row_hash_mirror():
     row_file = ObsRow.objects.all()
     for row in row_file:
         obs_row_hash = row.row_id + row.row_name + row.range_num + row.plot + row.block + row.rep + row.kernel_num + row.planting_date + row.harvest_date + row.comments
-        obs_row_hash.rstrip('\r')
-        obs_row_hash.rstrip('\n')
         obs_row_hash_table[obs_row_hash] = row.id
     return obs_row_hash_table
 
@@ -884,8 +880,6 @@ def people_hash_mirror():
     people_file = People.objects.all()
     for row in people_file:
         people_hash = row.first_name + row.last_name + row.organization + row.phone + row.email + row.comments
-        people_hash.rstrip('\r')
-        people_hash.rstrip('\n')
         people_hash_table[people_hash] = row.id
     return people_hash_table
 
@@ -901,8 +895,6 @@ def taxonomy_hash_mirror():
     taxonomy_file = Taxonomy.objects.all()
     for row in taxonomy_file:
         taxonomy_hash = row.genus + row.species + row.population + row.common_name + row.alias + row.race + row.subtaxa
-        taxonomy_hash.rstrip('\r')
-        taxonomy_hash.rstrip('\n')
         taxonomy_hash_table[taxonomy_hash] = row.id
     return taxonomy_hash_table
 
