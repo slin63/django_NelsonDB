@@ -6,7 +6,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, GlycerolStock
 from genetics.models import GWASExperimentSet
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolatesOnlineForm, LogSeparationsOnlineForm, LogMaizeSurveyOnlineForm
+from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolatesOnlineForm, LogSeparationsOnlineForm, LogMaizeSurveyOnlineForm, LogGlycerolStocksOnlineForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -686,6 +686,53 @@ def update_isolate_info(request, isolate_id):
 	context_dict['obs_tracker_isolate_form'] = obs_tracker_isolate_form
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/isolate_info_update.html', context_dict, context)
+
+@login_required
+def update_glycerol_stock_info(request, glycerol_stock_id):
+	context = RequestContext(request)
+	context_dict = {}
+	if request.method == 'POST':
+		obs_tracker_glycerol_stock_form = LogGlycerolStocksOnlineForm(data=request.POST)
+		if obs_tracker_glycerol_stock_form.is_valid():
+			with transaction.atomic():
+				try:
+					obs_tracker = ObsTracker.objects.get(obs_entity_type='glycerol_stock', glycerol_stock_id=glycerol_stock_id, experiment=obs_tracker_glycerol_stock_form.cleaned_data['experiment'])
+					obs_tracker.maize_sample_id = 1
+					obs_tracker.obs_extract_id = 1
+					obs_tracker.location = obs_tracker_glycerol_stock_form.cleaned_data['location']
+					obs_tracker.field = obs_tracker_glycerol_stock_form.cleaned_data['field']
+					obs_tracker.obs_dna = ObsDNA.objects.get(dna_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_dna__dna_id'])
+					obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_microbe__microbe_id'])
+					obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_row__row_id'])
+					obs_tracker.stock = Stock.objects.get(seed_id=obs_tracker_glycerol_stock_form.cleaned_data['stock__seed_id'])
+					obs_tracker.obs_plant = ObsPlant.objects.get(plant_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_plant__plant_id'])
+					obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_tissue__tissue_id'])
+					obs_tracker.obs_culture = ObsCulture.objects.get(culture_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_culture__culture_id'])
+					obs_tracker.obs_plate = ObsPlate.objects.get(plate_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_plate__plate_id'])
+					obs_tracker.obs_well = ObsWell.objects.get(well_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_well__well_id'])
+					obs_tracker.obs_sample = ObsSample.objects.get(sample_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_sample__sample_id'])
+					obs_tracker.isolate = Isolate.objects.get(isolate_id=obs_tracker_glycerol_stock_form.cleaned_data['isolate__isolate_id'])
+
+					gstock = GlycerolStock.objects.get(id=glycerol_stock_id)
+					gstock.glycerol_stock_id = obs_tracker_glycerol_stock_form.cleaned_data['glycerol_stock__glycerol_stock_id']
+					gstock.stock_date = obs_tracker_glycerol_stock_form.cleaned_data['glycerol_stock__stock_date']
+					gstock.extract_color = obs_tracker_glycerol_stock_form.cleaned_data['glycerol_stock__extract_color']
+					gstock.organism = obs_tracker_glycerol_stock_form.cleaned_data['glycerol_stock__organism']
+					gstock.comments = obs_tracker_glycerol_stock_form.cleaned_data['glycerol_stock__comments']
+					gstock.save()
+					obs_tracker.save()
+					context_dict['updated'] = True
+				except Exception:
+					context_dict['failed'] = True
+		else:
+			print(obs_tracker_glycerol_stock_form.errors)
+	else:
+		glycerol_stock_data = ObsTracker.objects.filter(obs_entity_type='glycerol_stock', glycerol_stock_id=glycerol_stock_id).values('experiment', 'glycerol_stock__glycerol_stock_id', 'location', 'glycerol_stock__stock_date', 'glycerol_stock__extract_color', 'glycerol_stock__organism', 'glycerol_stock__comments', 'field', 'obs_dna__dna_id', 'obs_microbe__microbe_id', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'obs_culture__culture_id', 'obs_plate__plate_id', 'obs_well__well_id', 'obs_sample__sample_id', 'isolate__isolate_id')
+		obs_tracker_glycerol_stock_form = LogGlycerolStocksOnlineForm(initial=glycerol_stock_data[0])
+	context_dict['glycerol_stock_id'] = glycerol_stock_id
+	context_dict['obs_tracker_glycerol_stock_form'] = obs_tracker_glycerol_stock_form
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/glycerol_stock_info_update.html', context_dict, context)
 
 def select_taxonomy(request):
 	context = RequestContext(request)
@@ -3789,6 +3836,74 @@ def log_data_online(request, data_type):
 							new_passport, created = Passport.objects.get_or_create(taxonomy=new_taxonomy, people_id=1, collecting_id=1)
 							new_isolate, created = Isolate.objects.get_or_create(passport=new_passport, location=location, disease_info=disease, isolate_id=isolate_id, isolate_name=isolate_name, plant_organ=plant_organ, comments=isolate_comments)
 							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='isolate', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate=new_isolate, location=location, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=ObsDNA.objects.get(dna_id=dna_id), obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
+						except Exception as e:
+							print("Error: %s %s" % (e.message, e.args))
+							failed = True
+					except KeyError:
+						pass
+			else:
+				sent = False
+				print(log_data_online_form_set.errors)
+		else:
+			sent = False
+			log_data_online_form_set = LogDataOnlineFormSet
+
+	if data_type == 'glycerol_stock':
+		data_type_title = 'Load Glycerol Stock Info'
+		LogDataOnlineFormSet = formset_factory(LogGlycerolStocksOnlineForm, extra=10)
+		if request.method == 'POST':
+			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
+			if log_data_online_form_set.is_valid():
+				sent = True
+				for form in log_data_online_form_set:
+					try:
+						experiment = form.cleaned_data['experiment']
+						glycerol_stock_id = form.cleaned_data['glycerol_stock__glycerol_stock_id']
+						location = form.cleaned_data['location']
+						stock_date = form.cleaned_data['glycerol_stock__date']
+						extract_color = form.cleaned_data['glycerol_stock__extract_color']
+						organism = form.cleaned_data['glycerol_stock__organism']
+						glycerol_stock_comments = form.cleaned_data['glycerol_stock__comments']
+						field = form.cleaned_data['field']
+						culture_id = form.cleaned_data['obs_culture__culture_id']
+						dna_id = form.cleaned_data['obs_dna__dna_id']
+						plate_id = form.cleaned_data['obs_plate__plate_id']
+						row_id = form.cleaned_data['obs_row__row_id']
+						plant_id = form.cleaned_data['obs_plant__plant_id']
+						tissue_id = form.cleaned_data['obs_tissue__tissue_id']
+						seed_id = form.cleaned_data['stock__seed_id']
+						sample_id = form.cleaned_data['obs_sample__sample_id']
+						well_id = form.cleaned_data['obs_well__well_id']
+						microbe_id = form.cleaned_data['obs_microbe__microbe_id']
+						isolate_id = form.cleaned_data['isolate__isolate_id']
+						user = request.user
+
+						if row_id == '':
+							row_id = 'No Row'
+						if dna_id == '':
+							dna_id = 'No DNA'
+						if plant_id == '':
+							plant_id = 'No Plant'
+						if seed_id == '':
+							seed_id = 'No Stock'
+						if tissue_id == '':
+							tissue_id = 'No Tissue'
+						if culture_id == '':
+							culture_id = 'No Culture'
+						if microbe_id == '':
+							microbe_id = 'No Microbe'
+						if plate_id == '':
+							plate_id = 'No Plate'
+						if well_id == '':
+							well_id = 'No Well'
+						if sample_id == '':
+							sample_id = 'No Sample'
+						if isolate_id == '':
+							isolate_id = 'No Isolate'
+
+						try:
+							new_glycerol_stock, created = GlycerolStock.objects.get_or_create(glycerol_stock_id=glycerol_stock_id, stock_date=stock_date, extract_color=extract_color, organism=organism, comments=glycerol_stock_comments)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='glycerol_stock', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, glycerol_stock=new_glycerol_stock, isolate=Isolate.objects.get(isolate_id=isolate_id), location=location, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=ObsDNA.objects.get(dna_id=dna_id), obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample=ObsSample.objects.get(sample_id=sample_id), obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True

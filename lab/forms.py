@@ -393,6 +393,27 @@ class LogIsolatesOnlineForm(forms.Form):
 	isolate__passport__taxonomy__subtaxa = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Subtaxa'}), help_text="Subtaxa:", required=False)
 	isolate__comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), help_text="Additional Comments:", required=False)
 
+class LogGlycerolStocksOnlineForm(forms.Form):
+	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", help_text="Experiment:", required=True)
+	glycerol_stock__glycerol_stock_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Glycerol Stock ID'}), help_text="Glycerol Stock ID:", required=True)
+	location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Location Name ---", help_text="Location:", required=True)
+	glycerol_stock__stock_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Stock Date'}), help_text="Stock Date:", required=False)
+	glycerol_stock__extract_color = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Extract Color'}), help_text="Extract Color:", required=False)
+	glycerol_stock__organism = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Organism'}), help_text="Organism:", required=False)
+	glycerol_stock__comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments'}), help_text="Comments:", required=False)
+	field = forms.ModelChoiceField(queryset=Field.objects.all(), empty_label="--- Source Field Name ---", help_text="Source Field Name:", required=True)
+	obs_culture__culture_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Culture ID'}), help_text="Source Culture ID:", required=False)
+	obs_dna__dna_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source DNA ID'}), help_text="Source DNA ID:", required=False)
+	obs_plate__plate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Plate ID'}), help_text="Source Plate ID:", required=False)
+	obs_row__row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Row ID'}), help_text="Source Row ID:", required=False)
+	obs_plant__plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Plant ID'}), help_text="Source Plant ID:", required=False)
+	obs_tissue__tissue_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Tissue ID'}), help_text="Source Tissue ID:", required=False)
+	stock__seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Seed ID'}), help_text="Source Seed ID:", required=False)
+	obs_sample__sample_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Sample ID'}), help_text="Source Sample ID:", required=False)
+	obs_well__well_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Well ID'}), help_text="Source Well ID:", required=False)
+	obs_microbe__microbe_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Microbe ID'}), help_text="Source Microbe ID:", required=False)
+	isolate__isolate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Isolate ID'}), help_text="Source Isolate ID:", required=False)
+
 class LogMeasurementsOnlineForm(forms.Form):
 	observation_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Observation ID'}), required=True)
 	measurement_parameter = forms.ModelChoiceField(queryset=MeasurementParameter.objects.all(), empty_label="--- Parameter ---", required=True)

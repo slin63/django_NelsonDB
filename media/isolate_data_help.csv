@@ -4,7 +4,6 @@ NelsonLab Isolate Invetory Template Help,,,
 Template Name: isolate_inventory_v0.1,,,
 Authored 02/25/2015,,,
 ,,,
-,,,
 DataBase Header Dictionary,,,
 ,,,
 Field + Locality,For if isolates collected from fields. Can be left blank if not applicable.,,
@@ -42,7 +41,7 @@ Source Microbe ID,lab_obstracker,obs_microbe_id = ObsMicrobe(microbe_id).id,The 
 Source Well ID,lab_obstracker,obs_well_id = ObsWell(well_id).id,The Well ID from which the isolate was collected. Leave blank if not applicable.
 Source Plate ID,lab_obstracker,obs_plate_id = ObsPlate(plate_id).id,The Plate ID from which the isolate was collected. Leave blank if not applicable.
 Source DNA ID,lab_obstracker,obs_dna_id = ObsDNA(dna_id).id,The DNA ID from which the isolate was collected. Leave blank if not applicable.
-SourceCulture ID,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,The Culture ID from which the isolate was collected. Leave blank if not applicable.
+Source Culture ID,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,The Culture ID from which the isolate was collected. Leave blank if not applicable.
 ,,,
 Username,lab_collecting,user_id = User(username).id,The username of the person which collected the isolate. Example: firstname_lastname. Leave blank if isolate not collected.
 Collection Date,lab_collecting,collection_date,The date when the isolate was collected. Format 2015-01-30. Leave blank if isolate not collected

@@ -11,7 +11,7 @@ Template Header,Database Table,Database Field,Definition
 Observation ID,lab_measurement,obs_tracker_id = ObsTracker(observation_id).id,"The observation ID being measured, whther it is a row ID, plant ID, sample ID, tissue ID, plate ID, culture ID, well ID, DNA ID, microbe ID, extract ID, env ID"
 Paramter,lab_measurement,measurement_parameter_id = MeasurementParameter(parameter).id,The parameter being measured. The measurement paraemter is unique.
 Username,lab_measurement,user_id = User(username).id,The username of the user taking the measurement. Example: firstname_lastname
-DateTime,lab_measurement,time_of_measurement,The datetime when the measuremnt was taken. Format: 2015-01-30 14:50
+DateTime,lab_measurement,time_of_measurement,The datetime when the measuremnt was taken. Recommended format: 2015-01-30 14:50
 Value,lab_measurement,value,The actual result or value of the measurement.
 Measurement Comments,lab_measurement,comments,Any additional comments about the measurement. 
 ,,,
