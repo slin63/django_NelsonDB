@@ -1373,6 +1373,34 @@ def download_maize_data(request):
 		writer.writerow([row.experiment.name, row.maize_sample.maize_id, row.maize_sample.county, row.maize_sample.sub_location, row.maize_sample.village, row.maize_sample.weight, row.maize_sample.harvest_date, row.maize_sample.storage_months, row.maize_sample.storage_conditions, row.maize_sample.maize_variety, row.maize_sample.seed_source, row.maize_sample.moisture_content, row.maize_sample.source_type, row.maize_sample.appearance, row.maize_sample.gps_latitude, row.maize_sample.gps_longitude, row.maize_sample.gps_altitude, row.maize_sample.gps_accuracy, row.maize_sample.photo])
 	return response
 
+def find_glycerol_stock_from_experiment(experiment_name):
+	try:
+		glycerol_stock_data = ObsTracker.objects.filter(obs_entity_type='glycerol_stock', experiment__name=experiment_name)
+	except ObsTracker.DoesNotExist:
+		glycerol_stock_data = None
+	return glycerol_stock_data
+
+@login_required
+def glycerol_stock_data_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	glycerol_stock_data = find_glycerol_stock_from_experiment(experiment_name)
+	context_dict['glycerol_stock_data'] = glycerol_stock_data
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/glycerol_stock_experiment_data.html', context_dict, context)
+
+@login_required
+def download_glycerol_stocks_experiment(request, experiment_name):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="%s_glycerol_stocks.csv"' % (experiment_name)
+	glycerol_stock_data = find_glycerol_stock_from_experiment(experiment_name)
+	writer = csv.writer(response)
+	writer.writerow(['Glycerol Stock ID', 'Stock Date', 'Extract Color', 'Organism', 'Location Name', 'Source Seed ID', 'Source Row ID', 'Source Culture ID', 'Source Isolate ID', 'Comments'])
+	for row in glycerol_stock_data:
+		writer.writerow([row.glycerol_stock.glycerol_stock_id, row.glycerol_stock.stock_date, row.glycerol_stock.extract_color, row.glycerol_stock.organism, row.location, row.stock.seed_id, row.obs_row.row_id, row.obs_culture.culture_id, row.isolate.isolate_id, row.glycerol_stock.comments])
+	return response
+
 @login_required
 def row_data_browse(request):
 	context = RequestContext(request)
