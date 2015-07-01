@@ -48,6 +48,7 @@ urlpatterns = patterns('',
     url(r'^isolate_inventory/show_all_taxonomy/$', views.show_all_isolate_taxonomy, name='show_all_isolate_taxonomy'),
     url(r'^isolate_inventory/checkbox_clear/(?P<clear_selected>\w+)/$', views.checkbox_isolate_inventory_clear, name='checkbox_isolate_inventory_clear'),
     url(r'^isolate_inventory/select_isolates/$', views.select_isolates, name='select_isolates'),
+    url(r'^isolate_inventory/update/(?P<isolate_id>\d+)/$', views.update_isolate_info, name='update_isolate_info'),
 
     url(r'^data/medium/$', views.browse_medium_data, name='browse_medium_data'),
     url(r'^data/measurement_parameter/$', views.browse_parameter_data, name='browse_parameter_data'),

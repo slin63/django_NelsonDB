@@ -569,7 +569,6 @@ def update_seed_info(request, stock_id):
 					obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_stock_form.cleaned_data['obs_row__row_id'])
 					obs_tracker.obs_plant = ObsPlant.objects.get(plant_id=obs_tracker_stock_form.cleaned_data['obs_plant__plant_id'])
 					obs_tracker.field = obs_tracker_stock_form.cleaned_data['field']
-					obs_tracker.save()
 
 					stock = Stock.objects.get(id=stock_id)
 					stock.seed_id = obs_tracker_stock_form.cleaned_data['stock__seed_id']
@@ -580,11 +579,13 @@ def update_seed_info(request, stock_id):
 					stock.stock_date = obs_tracker_stock_form.cleaned_data['stock__stock_date']
 					stock.inoculated = obs_tracker_stock_form.cleaned_data['stock__inoculated']
 					stock.comments = obs_tracker_stock_form.cleaned_data['stock__comments']
-					stock.passport.collecting, created = Collecting.objects.get_or_create(collection_date=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__collection_date'], collection_method=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__collection_method'], comments=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__comments'], user=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__user'])
-					stock.passport.people, created = People.objects.get_or_create(first_name=obs_tracker_stock_form.cleaned_data['stock__passport__people__first_name'], last_name=obs_tracker_stock_form.cleaned_data['stock__passport__people__last_name'], organization=obs_tracker_stock_form.cleaned_data['stock__passport__people__organization'], phone=obs_tracker_stock_form.cleaned_data['stock__passport__people__phone'], email=obs_tracker_stock_form.cleaned_data['stock__passport__people__email'], comments=obs_tracker_stock_form.cleaned_data['stock__passport__people__comments'])
-					stock.passport.taxonomy, created = Taxonomy.objects.get_or_create(genus=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__genus'], species=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__species'], population=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__population'], common_name='Maize', alias='', race='', subtaxa='')
-					stock.passport, created = Passport.objects.get_or_create(collecting=stock.passport.collecting, people=stock.passport.people, taxonomy=stock.passport.taxonomy)
+					updated_collecting, created = Collecting.objects.get_or_create(collection_date=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__collection_date'], collection_method=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__collection_method'], comments=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__comments'], user=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__user'])
+					updated_people, created = People.objects.get_or_create(first_name=obs_tracker_stock_form.cleaned_data['stock__passport__people__first_name'], last_name=obs_tracker_stock_form.cleaned_data['stock__passport__people__last_name'], organization=obs_tracker_stock_form.cleaned_data['stock__passport__people__organization'], phone=obs_tracker_stock_form.cleaned_data['stock__passport__people__phone'], email=obs_tracker_stock_form.cleaned_data['stock__passport__people__email'], comments=obs_tracker_stock_form.cleaned_data['stock__passport__people__comments'])
+					updated_taxonomy, created = Taxonomy.objects.get_or_create(genus=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__genus'], species=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__species'], population=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__population'], common_name='Maize', alias='', race='', subtaxa='')
+					updated_passport, created = Passport.objects.get_or_create(collecting=updated_collecting, people=updated_people, taxonomy=updated_taxonomy)
+					stock.passport = updated_passport
 					stock.save()
+					obs_tracker.save()
 					context_dict['updated'] = True
 				except Exception:
 					context_dict['failed'] = True
@@ -636,6 +637,55 @@ def update_seed_packet_info(request, stock_id):
 	context_dict['stock_id'] = stock_id
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/stockpacket_info_update.html', context_dict, context)
+
+@login_required
+def update_isolate_info(request, isolate_id):
+	context = RequestContext(request)
+	context_dict = {}
+	if request.method == 'POST':
+		obs_tracker_isolate_form = LogIsolatesOnlineForm(data=request.POST)
+		if obs_tracker_isolate_form.is_valid():
+			with transaction.atomic():
+				try:
+					obs_tracker = ObsTracker.objects.get(obs_entity_type='isolate', isolate_id=isolate_id, experiment=obs_tracker_isolate_form.cleaned_data['experiment'])
+					obs_tracker.glycerol_stock_id = 1
+					obs_tracker.maize_sample_id = 1
+					obs_tracker.obs_extract_id = 1
+					obs_tracker.location = obs_tracker_isolate_form.cleaned_data['location']
+					obs_tracker.field = obs_tracker_isolate_form.cleaned_data['field']
+					obs_tracker.obs_dna = ObsDNA.objects.get(dna_id=obs_tracker_isolate_form.cleaned_data['obs_dna__dna_id'])
+					obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id=obs_tracker_isolate_form.cleaned_data['obs_microbe__microbe_id'])
+					obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_isolate_form.cleaned_data['obs_row__row_id'])
+					obs_tracker.stock = Stock.objects.get(seed_id=obs_tracker_isolate_form.cleaned_data['stock__seed_id'])
+					obs_tracker.obs_plant = ObsPlant.objects.get(plant_id=obs_tracker_isolate_form.cleaned_data['obs_plant__plant_id'])
+					obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id=obs_tracker_isolate_form.cleaned_data['obs_tissue__tissue_id'])
+					obs_tracker.obs_culture = ObsCulture.objects.get(culture_id=obs_tracker_isolate_form.cleaned_data['obs_culture__culture_id'])
+					obs_tracker.obs_plate = ObsPlate.objects.get(plate_id=obs_tracker_isolate_form.cleaned_data['obs_plate__plate_id'])
+					obs_tracker.obs_well = ObsWell.objects.get(well_id=obs_tracker_isolate_form.cleaned_data['obs_well__well_id'])
+
+					isolate = Isolate.objects.get(id=isolate_id)
+					isolate.isolate_id = obs_tracker_isolate_form.cleaned_data['isolate__isolate_id']
+					isolate.isolate_name = obs_tracker_isolate_form.cleaned_data['isolate__isolate_name']
+					isolate.disease_info = obs_tracker_isolate_form.cleaned_data['isolate__disease_info']
+					isolate.plant_organ = obs_tracker_isolate_form.cleaned_data['isolate__plant_organ']
+					isolate.comments = obs_tracker_isolate_form.cleaned_data['isolate__comments']
+					updated_taxonomy, created = Taxonomy.objects.get_or_create(genus=obs_tracker_isolate_form.cleaned_data['isolate__passport__taxonomy__genus'], species='', population='', common_name='Isolate', alias=obs_tracker_isolate_form.cleaned_data['isolate__passport__taxonomy__alias'], race=obs_tracker_isolate_form.cleaned_data['isolate__passport__taxonomy__race'], subtaxa=obs_tracker_isolate_form.cleaned_data['isolate__passport__taxonomy__subtaxa'])
+					updated_passport, created = Passport.objects.get_or_create(collecting=isolate.passport.collecting, people=isolate.passport.people, taxonomy=updated_taxonomy)
+					isolate.passport = updated_passport
+					isolate.save()
+					obs_tracker.save()
+					context_dict['updated'] = True
+				except Exception:
+					context_dict['failed'] = True
+		else:
+			print(obs_tracker_isolate_form.errors)
+	else:
+		isolate_data = ObsTracker.objects.filter(obs_entity_type='isolate', isolate_id=isolate_id).values('experiment', 'isolate__isolate_id', 'location', 'field', 'obs_dna__dna_id', 'obs_microbe__microbe_id', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'obs_culture__culture_id', 'obs_plate__plate_id', 'obs_well__well_id', 'isolate__isolate_name', 'isolate__disease_info', 'isolate__plant_organ', 'isolate__passport__taxonomy__genus', 'isolate__passport__taxonomy__alias', 'isolate__passport__taxonomy__race', 'isolate__passport__taxonomy__subtaxa', 'isolate__comments')
+		obs_tracker_isolate_form = LogIsolatesOnlineForm(initial=isolate_data[0])
+	context_dict['isolate_id'] = isolate_id
+	context_dict['obs_tracker_isolate_form'] = obs_tracker_isolate_form
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/isolate_info_update.html', context_dict, context)
 
 def select_taxonomy(request):
 	context = RequestContext(request)
@@ -3693,27 +3743,26 @@ def log_data_online(request, data_type):
 				for form in log_data_online_form_set:
 					try:
 						experiment = form.cleaned_data['experiment']
-						isolate_id = form.cleaned_data['isolate_id']
+						isolate_id = form.cleaned_data['isolate__isolate_id']
 						location = form.cleaned_data['location']
 						field = form.cleaned_data['field']
-						dna_id = form.cleaned_data['dna_id']
-						microbe_id = form.cleaned_data['microbe_id']
-						row_id = form.cleaned_data['row_id']
-						plant_id = form.cleaned_data['plant_id']
-						seed_id = form.cleaned_data['seed_id']
-						tissue_id = form.cleaned_data['tissue_id']
-						culture_id = form.cleaned_data['culture_id']
-						plate_id = form.cleaned_data['plate_id']
-						well_id = form.cleaned_data['well_id']
-						isolate_name = form.cleaned_data['isolate_name']
-						disease = form.cleaned_data['disease']
-						plant_organ = form.cleaned_data['plant_organ']
-						tube_type = form.cleaned_data['tube_type']
-						genus = form.cleaned_data['genus']
-						alias = form.cleaned_data['alias']
-						race = form.cleaned_data['race']
-						subtaxa = form.cleaned_data['subtaxa']
-						isolate_comments = form.cleaned_data['isolate_comments']
+						dna_id = form.cleaned_data['obs_dna__dna_id']
+						microbe_id = form.cleaned_data['obs_microbe__microbe_id']
+						row_id = form.cleaned_data['obs_row__row_id']
+						plant_id = form.cleaned_data['obs_plant__plant_id']
+						seed_id = form.cleaned_data['stock__seed_id']
+						tissue_id = form.cleaned_data['obs_tissue__tissue_id']
+						culture_id = form.cleaned_data['obs_culture__culture_id']
+						plate_id = form.cleaned_data['obs_plate__plate_id']
+						well_id = form.cleaned_data['obs_well__well_id']
+						isolate_name = form.cleaned_data['isolate__isolate_name']
+						disease = form.cleaned_data['isolate__disease_info']
+						plant_organ = form.cleaned_data['isolate__plant_organ']
+						genus = form.cleaned_data['isolate__passport__taxonomy__genus']
+						alias = form.cleaned_data['isolate__passport__taxonomy__alias']
+						race = form.cleaned_data['isolate__passport__taxonomy__race']
+						subtaxa = form.cleaned_data['isolate__passport__taxonomy__subtaxa']
+						isolate_comments = form.cleaned_data['isolate__comments']
 						user = request.user
 
 						if row_id == '':
