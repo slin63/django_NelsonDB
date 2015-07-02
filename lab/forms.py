@@ -415,7 +415,7 @@ class LogGlycerolStocksOnlineForm(forms.Form):
 	isolate__isolate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Source Isolate ID'}), help_text="Source Isolate ID:", required=False)
 
 class LogMeasurementsOnlineForm(forms.Form):
-	observation_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Observation ID'}), required=True)
+	observation_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Observation Unit'}), required=True)
 	measurement_parameter = forms.ModelChoiceField(queryset=MeasurementParameter.objects.all(), empty_label="--- Parameter ---", required=True)
 	user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Username ---", required=True)
 	time_of_measurement = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Time of Measurement'}), required=False)

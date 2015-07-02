@@ -454,8 +454,8 @@ def seed_packet_loader_prep(upload_file, user):
     #--- Key = (city, state, country, zipcode)
     #--- Value = (locality_id)
 
-    stock_packet_hash_table = loader_db_mirror.stock_packet_hash_mirror()
-    stock_packet_id = loader_db_mirror.stock_packet_id_mirror()
+    stock_packet_hash_table = loader_db_mirror.stockpacket_hash_mirror()
+    stock_packet_id = loader_db_mirror.stockpacket_id_mirror()
     location_hash_table = loader_db_mirror.location_hash_mirror()
     location_id = loader_db_mirror.location_id_mirror()
     locality_hash_table = loader_db_mirror.locality_hash_mirror()
@@ -487,11 +487,11 @@ def seed_packet_loader_prep(upload_file, user):
         location_comments = row["Location Comments"]
 
         if seed_id != '':
-            seed_id_fix = row_id + '\r'
+            seed_id_fix = seed_id + '\r'
             if seed_id in seed_id_table:
-                stock_id = seed_id_table[seed_id]
+                stock_id = seed_id_table[seed_id][0]
             elif seed_id_fix in seed_id_table:
-                stock_id = seed_id_table[seed_id_fix]
+                stock_id = seed_id_table[seed_id_fix][0]
             else:
                 seed_id_error[(seed_id, weight, num_seeds, packet_comments, location_name, building_name, room, shelf, column, box_name, city, state, country, zipcode, location_comments)] = error_count
                 error_count = error_count + 1
@@ -522,10 +522,10 @@ def seed_packet_loader_prep(upload_file, user):
         location_hash_fix = location_hash + '\r'
         if location_hash not in location_hash_table and location_hash_fix not in location_hash_table:
             location_hash_table[location_hash] = location_id
-            location_new[(location_id, location_name, building_name, room, shelf, column, box_name, location_comments)] = location_id
+            location_new[(location_id, temp_locality_id, location_name, building_name, room, shelf, column, box_name, location_comments)] = location_id
             location_id = location_id + 1
         else:
-            location_hash_exists[(location_name, building_name, room, shelf, column, box_name, location_comments)] = location_id
+            location_hash_exists[(temp_locality_id, location_name, building_name, room, shelf, column, box_name, location_comments)] = location_id
 
         if location_hash in location_hash_table:
             temp_location_id = location_hash_table[location_hash]
