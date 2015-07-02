@@ -4598,7 +4598,7 @@ def upload_online(request, template_type):
 			elif template_type == 'separation_data':
 				results_dict = loader_scripts.separation_loader_prep(request.FILES['file_name'], new_upload_user)
 			elif template_type == 'maize_data':
-				results_dict = loader_scripts.maize_loader_prep(request.FILES['file_name'], new_upload_user)
+				results_dict = loader_scripts.maize_loader_prep(request, request.FILES['file_name'], new_upload_user)
 			elif template_type == 'glycerol_stock_data':
 				results_dict = loader_scripts.glycerol_stock_loader_prep(request.FILES['file_name'], new_upload_user)
 			else:

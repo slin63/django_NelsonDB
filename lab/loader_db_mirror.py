@@ -512,8 +512,6 @@ def measurement_parameter_hash_mirror():
     measurement_param_file = MeasurementParameter.objects.all()
     for row in measurement_param_file:
         param_hash = row.parameter + row.parameter_type + row.unit_of_measure + row.protocol + row.trait_id_buckler
-        param_hash.rstrip('\r')
-        param_hash.rstrip('\n')
         measurement_param_hash_table[param_hash] = row.id
     return measurement_param_hash_table
 
@@ -549,8 +547,6 @@ def measurement_hash_mirror():
     measurement_file = Measurement.objects.all()
     for row in measurement_file:
         measurement_hash = str(row.obs_tracker_id) + str(row.user_id) + str(row.measurement_parameter_id) + row.time_of_measurement + row.value + row.comments
-        measurement_hash.rstrip('\r')
-        measurement_hash.rstrip('\n')
         measurement_hash_table[measurement_hash] = row.id
     return measurement_hash_table
 
@@ -575,13 +571,11 @@ def maize_sample_hash_mirror():
 
     maize_file = MaizeSample.objects.all()
     for row in maize_file:
-        maize_hash = str(row.locality_id) + row.maize_id + row.type_of_source + row.sample_source + row.weight + row.description + row.photo + row.comments
-        maize_hash.rstrip('\r')
-        maize_hash.rstrip('\n')
+        maize_hash = row.maize_id + row.gps_altitude + row.county + row.weight + row.appearance + row.photo + row.gps_accuracy + row.gps_latitude + row.gps_longitude + row.harvest_date + row.maize_variety + row.moisture_content + row.seed_source + row.source_type + row.storage_conditions + row.storage_months + row.sub_location + row.village
         maize_sample_hash_table[maize_hash] = row.id
     return maize_sample_hash_table
 
-def maize_sample_maize_id_mirror():
+def maize_id_mirror():
     maize_id_table = OrderedDict({})
     #--- Key = (maize_id)
     #--- Value = (maize_sample_id, locality_id, maize_id, type_of_source, sample_source, weight, description, photo, comments)
@@ -589,9 +583,7 @@ def maize_sample_maize_id_mirror():
     maize_file = MaizeSample.objects.all()
     for row in maize_file:
         maize_id = row.maize_id
-        maize_id.rstrip('\r')
-        maize_id.rstrip('\n')
-        maize_id_table[maize_id] = (row.id, row.locality_id, row.maize_id, row.type_of_source, row.sample_source, row.weight, row.description, row.photo, row.comments)
+        maize_id_table[maize_id] = (row.id, row.maize_id, row.gps_altitude, row.county, row.weight, row.appearance, row.photo, row.gps_accuracy, row.gps_latitude, row.gps_longitude, row.harvest_date, row.maize_variety, row.moisture_content, row.seed_source, row.source_type, row.storage_conditions, row.storage_months, row.sub_location, row.village)
     return maize_id_table
 
 def obs_extract_id_mirror():

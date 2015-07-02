@@ -2823,7 +2823,7 @@ def samples_loader(results_dict):
         return False
     return True
 
-def maize_loader_prep(upload_file, user):
+def maize_loader_prep(request, upload_file, user):
     start = time.clock()
 
     maize_sample_new = OrderedDict({})
@@ -2836,6 +2836,7 @@ def maize_loader_prep(upload_file, user):
     user_hash_table = loader_db_mirror.user_hash_mirror()
     maize_sample_hash_table = loader_db_mirror.maize_sample_hash_mirror()
     maize_sample_id = loader_db_mirror.maize_sample_id_mirror()
+    maize_id_table = loader_db_mirror.maize_id_mirror()
     obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
     obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
     experiment_name_table = loader_db_mirror.experiment_name_mirror()
@@ -2876,9 +2877,9 @@ def maize_loader_prep(upload_file, user):
                 maize_id_table[maize_id] = (maize_sample_id, maize_id, gps_altitude, county, weight, appearance, photo, gps_accuracy, gps_latitude, gps_longitude, harvest_date, maize_variety, moisture_content, seed_source, source_type, storage_conditions, storage_months, sub_location, village)
                 maize_sample_id = maize_sample_id + 1
             else:
-                sample_hash_exists[(maize_id, gps_altitude, county, weight, appearance, photo, gps_accuracy, gps_latitude, gps_longitude, harvest_date, maize_variety, moisture_content, seed_source, source_type, storage_conditions, storage_months, sub_location, village)] = maize_sample_id
+                maize_sample_hash_exists[(maize_id, gps_altitude, county, weight, appearance, photo, gps_accuracy, gps_latitude, gps_longitude, harvest_date, maize_variety, moisture_content, seed_source, source_type, storage_conditions, storage_months, sub_location, village)] = maize_sample_id
         else:
-            sample_hash_exists[(maize_id, gps_altitude, county, weight, appearance, photo, gps_accuracy, gps_latitude, gps_longitude, harvest_date, maize_variety, moisture_content, seed_source, source_type, storage_conditions, storage_months, sub_location, village)] = maize_sample_id
+            maize_sample_hash_exists[(maize_id, gps_altitude, county, weight, appearance, photo, gps_accuracy, gps_latitude, gps_longitude, harvest_date, maize_variety, moisture_content, seed_source, source_type, storage_conditions, storage_months, sub_location, village)] = maize_sample_id
 
         if maize_id in maize_id_table:
             temp_maizesample_id = maize_id_table[maize_id][0]
@@ -2908,7 +2909,7 @@ def maize_loader_prep(upload_file, user):
     results_dict = {}
     results_dict['maize_sample_new'] = maize_sample_new
     results_dict['obs_tracker_new'] = obs_tracker_new
-    results_dict['sample_hash_exists'] = sample_hash_exists
+    results_dict['maize_sample_hash_exists'] = maize_sample_hash_exists
     results_dict['obs_tracker_hash_exists'] = obs_tracker_hash_exists
     results_dict['stats'] = stats
     return results_dict
@@ -2935,7 +2936,7 @@ def maize_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['---------------------------------------------------------------------------------------------------'])
     writer.writerow([''])
     writer.writerow(['Maize Sample Entry Already Exists'])
-    for key in results_dict['sample_hash_exists'].iterkeys():
+    for key in results_dict['maize_sample_hash_exists'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['ObsTracker Entry Already Exists'])
