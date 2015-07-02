@@ -733,8 +733,6 @@ def location_hash_mirror():
     location_file = Location.objects.all()
     for row in location_file:
         location_hash = str(row.locality_id) + row.building_name + row.location_name + row.room + row.shelf + row.column + row.box_name + row.comments
-        location_hash.rstrip('\r')
-        location_hash.rstrip('\n')
         location_hash_table[location_hash] = row.id
     return location_hash_table
 
