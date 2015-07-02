@@ -665,8 +665,6 @@ def medium_hash_mirror():
     medium_file = Medium.objects.all()
     for row in medium_file:
         medium_hash = str(row.citation_id) + row.media_name + row.media_type + row.media_description + row.media_preparation + row.comments
-        medium_hash.rstrip('\r')
-        medium_hash.rstrip('\n')
         medium_hash_table[medium_hash] = row.id
     return medium_hash_table
 
@@ -674,7 +672,7 @@ def medium_id_mirror():
     medium_id = Medium.objects.latest('id').id + 1
     return medium_id
 
-def medium_id_table_mirror():
+def medium_name_mirror():
     medium_id_table = OrderedDict({})
     #--- Key = (medium_id, citation_id, media_name, media_type, media_description, media_preparation, comments)
     #--- Value = (media_name)
@@ -682,8 +680,6 @@ def medium_id_table_mirror():
     medium_file = Medium.objects.all()
     for row in medium_file:
         media_name = row.media_name
-        media_name.rstrip('\r')
-        media_name.rstrip('\n')
         medium_id_table[media_name] = (row.id, row.citation_id, row.media_name, row.media_type, row.media_description, row.media_preparation, row.comments)
     return medium_id_table
 
@@ -727,6 +723,16 @@ def location_hash_mirror():
         location_hash = str(row.locality_id) + row.building_name + row.location_name + row.room + row.shelf + row.column + row.box_name + row.comments
         location_hash_table[location_hash] = row.id
     return location_hash_table
+
+def location_name_mirror():
+    location_name_table = OrderedDict({})
+    #--- Key = (location_id, locality_id, building_name, location_name, room, shelf, column, box_name, comments)
+    #--- Value = (location_name)
+
+    location_file = Location.objects.all()
+    for row in location_file:
+        location_name_table[row.location_name] = (row.id, row.locality_id, row.building_name, row.location_name, row.room, row.shelf, row.column, row.box_name, row.comments)
+    return location_name_table
 
 def location_id_mirror():
     location_id = Location.objects.latest('id').id + 1

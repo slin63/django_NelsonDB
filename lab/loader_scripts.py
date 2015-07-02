@@ -1219,7 +1219,7 @@ def culture_loader_prep(upload_file, user):
     obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
     obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
     experiment_name_table = loader_db_mirror.experiment_name_mirror()
-    media_name_table = loader_db_mirror.media_name_mirror()
+    media_name_table = loader_db_mirror.medium_name_mirror()
     location_name_table = loader_db_mirror.location_name_mirror()
 
     error_count = 0
@@ -1345,18 +1345,18 @@ def culture_loader_prep(upload_file, user):
         else:
             location_id = 1
 
-        culture_hash = str(medium_id) + culture_id + culture_name + microbe_type + plating_cycle + dilution + image_filename + tissue_comments + num_colonies + num_microbes
+        culture_hash = str(medium_id) + culture_id + culture_name + microbe_type + plating_cycle + dilution + image_filename + culture_comments + num_colonies + num_microbes
         culture_hash_fix = culture_hash + '\r'
         if culture_id not in culture_id_table and culture_id + '\r' not in culture_id_table:
             if culture_hash not in obs_culture_hash_table and culture_hash_fix not in obs_culture_hash_table:
                 obs_culture_hash_table[culture_hash] = obs_culture_id
-                obs_culture_new[(obs_culture_id, medium_id, culture_id, culture_name, microbe_type, plating_cycle, dilution, image_filename, tissue_comments, num_colonies, num_microbes)] = obs_culture_id
-                culture_id_table[culture_id] = (obs_culture_id, medium_id, culture_id, culture_name, microbe_type, plating_cycle, dilution, image_filename, tissue_comments, num_colonies, num_microbes)
+                obs_culture_new[(obs_culture_id, medium_id, culture_id, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, num_colonies, num_microbes)] = obs_culture_id
+                culture_id_table[culture_id] = (obs_culture_id, medium_id, culture_id, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, num_colonies, num_microbes)
                 obs_culture_id = obs_culture_id + 1
             else:
-                culture_hash_exists[(medium_id, culture_id, culture_name, microbe_type, plating_cycle, dilution, image_filename, tissue_comments, num_colonies, num_microbes)] = obs_culture_id
+                culture_hash_exists[(medium_id, culture_id, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, num_colonies, num_microbes)] = obs_culture_id
         else:
-            culture_hash_exists[(medium_id, culture_id, culture_name, microbe_type, plating_cycle, dilution, image_filename, tissue_comments, num_colonies, num_microbes)] = obs_culture_id
+            culture_hash_exists[(medium_id, culture_id, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, num_colonies, num_microbes)] = obs_culture_id
 
         if culture_id in culture_id_table:
             temp_obsculture_id = culture_id_table[culture_id][0]
