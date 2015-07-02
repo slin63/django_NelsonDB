@@ -839,8 +839,8 @@ def plant_loader_prep(upload_file, user):
     for row in plant_file:
         plant_id = row["Plant ID"]
         experiment_name = row["Experiment Name"]
-        row_id = row["Row ID"]
-        seed_id = row["Seed ID"]
+        row_id = row["Source Row ID"]
+        seed_id = row["Source Seed ID"]
         plant_num = row["Plant Number"]
         comments = row["Plant Comments"]
         user = request.user
@@ -3075,9 +3075,6 @@ def isolate_loader_prep(upload_file, user):
     isolate_new = OrderedDict({})
     #--- Key = (isolate_table_id, passport_id, location_id, disease_info_id, isolate_id, isolate_name, plant_organ, comments)
     #--- Value = (isolate_table_id)
-    location_new = OrderedDict({})
-    #--- Key = (location_id, locality_id, building_name, location_name, room, shelf, column, box_name, comments)
-    #--- Value = (location_id)
     passport_new = OrderedDict({})
     #--- Key = (passport_id, collecting_id, people_id, taxonomy_id)
     #--- Value = (passport_id)
@@ -3095,8 +3092,6 @@ def isolate_loader_prep(upload_file, user):
     #--- Value = (obs_tracker_id)
 
     user_hash_table = loader_db_mirror.user_hash_mirror()
-    location_hash_table = loader_db_mirror.location_hash_mirror()
-    location_id = loader_db_mirror.location_id_mirror()
     passport_hash_table = loader_db_mirror.passport_hash_mirror()
     passport_id = loader_db_mirror.passport_id_mirror()
     collecting_hash_table = loader_db_mirror.collecting_hash_mirror()
@@ -3122,6 +3117,7 @@ def isolate_loader_prep(upload_file, user):
     experiment_name_table = loader_db_mirror.experiment_name_mirror()
     field_name_table = loader_db_mirror.field_name_mirror()
     disease_name_table = loader_db_mirror.disease_name_mirror()
+    location_name_table = loader_db_mirror.location_name_mirror()
 
     error_count = 0
     seed_id_error = OrderedDict({})
@@ -3133,6 +3129,7 @@ def isolate_loader_prep(upload_file, user):
     well_id_error = OrderedDict({})
     dna_id_error = OrderedDict({})
     microbe_id_error = OrderedDict({})
+    location_name_error = OrderedDict({})
     disease_common_name_error = OrderedDict({})
     field_name_error = OrderedDict({})
     isolate_hash_exists = OrderedDict({})
@@ -3173,17 +3170,6 @@ def isolate_loader_prep(upload_file, user):
         email = row["Email"]
         source_comments = row["Source Comments"]
         location_name = row["Location Name"]
-        locality = row["Locality"]
-        building_name = row["Building Name"]
-        room = row["Room"]
-        shelf = row["Shelf"]
-        column = row["Column"]
-        box_name = row["Box Name"]
-        city = row["City"]
-        state = row["State"]
-        country = row["Country"]
-        zipcode = row["Zipcode"]
-        location_comments = row["Location Comments"]
         user = request.user
 
         if seed_id != '':
@@ -3211,6 +3197,19 @@ def isolate_loader_prep(upload_file, user):
                 field_id = 1
         else:
             field_id = 1
+
+        if location_name != '':
+            location_name_fix = location_name + '\r'
+            if location_name in location_name_table:
+                location_id = location_name_table[location_name][0]
+            elif location_name_fix in location_name_table:
+                location_id = location_name_table[location_name_fix][0]
+            else:
+                location_name_error[(isolate_id, experiment_name, isolate_name, plant_organ, isolate_comments, genus, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name, building_name, room, shelf, column, box_name, location_comments)] = error_count
+                error_count = error_count + 1
+                location_id = 1
+        else:
+            location_id = 1
 
         if row_id != '':
             row_id_fix = row_id + '\r'
@@ -3407,35 +3406,18 @@ def isolate_loader_prep(upload_file, user):
             temp_passport_id = 1
             error_count = error_count + 1
 
-        location_hash = str(locality.id) + building_name + location_name + room + shelf + column + box_name + location_comments
-        location_hash_fix = location_hash + '\r'
-        if location_hash not in location_hash_table and location_hash_fix not in location_hash_table:
-            location_hash_table[location_hash] = location_id
-            location_new[(location_id, locality.id, building_name, location_name, room, shelf, column, box_name, location_comments)] = location_id
-            location_id = location_id + 1
-        else:
-            location_hash_exists[(locality.id, building_name, location_name, room, shelf, column, box_name, location_comments)] = location_id
-
-        if location_hash in location_hash_table:
-            temp_location_id = location_hash_table[location_hash]
-        elif location_hash_fix in location_hash_table:
-            temp_location_id = location_hash_table[location_hash_fix]
-        else:
-            temp_location_id = 1
-            error_count = error_count + 1
-
-        isolate_hash = str(temp_passport_id) + str(temp_location_id) + str(disease_info_id) + isolate_id + isolate_name + plant_organ + isolate_comments
+        isolate_hash = str(temp_passport_id) + str(location_id) + str(disease_info_id) + isolate_id + isolate_name + plant_organ + isolate_comments
         isolate_hash_fix = isolate_hash + '\r'
         if isolate_id not in isolate_id_table and isolate_id + '\r' not in isolate_id_table:
             if isolate_hash not in isolate_hash_table and isolate_hash_fix not in isolate_hash_table:
                 isolate_hash_table[isolate_hash] = isolate_table_id
-                isolate_new[(isolate_table_id, temp_passport_id, temp_location_id, disease_info_id, isolate_id, isolate_name, plant_organ, isolate_comments)] = isolate_table_id
-                isolate_id_table[isolate_id] = (isolate_table_id, temp_passport_id, temp_location_id, disease_info_id, isolate_id, isolate_name, plant_organ, isolate_comments)
+                isolate_new[(isolate_table_id, temp_passport_id, location_id, disease_info_id, isolate_id, isolate_name, plant_organ, isolate_comments)] = isolate_table_id
+                isolate_id_table[isolate_id] = (isolate_table_id, temp_passport_id, location_id, disease_info_id, isolate_id, isolate_name, plant_organ, isolate_comments)
                 isolate_table_id = isolate_table_id + 1
             else:
-                isolate_hash_exists[(temp_passport_id, temp_location_id, disease_info_id, isolate_id, isolate_name, plant_organ, isolate_comments)] = isolate_table_id
+                isolate_hash_exists[(temp_passport_id, location_id, disease_info_id, isolate_id, isolate_name, plant_organ, isolate_comments)] = isolate_table_id
         else:
-            isolate_hash_exists[(temp_passport_id, temp_location_id, disease_info_id, isolate_id, isolate_name, plant_organ, isolate_comments)] = isolate_table_id
+            isolate_hash_exists[(temp_passport_id, location_id, disease_info_id, isolate_id, isolate_name, plant_organ, isolate_comments)] = isolate_table_id
 
         if isolate_id in isolate_id_table:
             temp_isolate_id = isolate_id_table[isolate_id][0]
@@ -3449,14 +3431,14 @@ def isolate_loader_prep(upload_file, user):
             temp_isolate_id = 1
             error_count = error_count + 1
 
-        obs_tracker_isolate_hash = 'isolate' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(temp_isolate_id) + str(temp_location_id) + str(1) + str(obs_culture_id) + str(obs_dna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_row_id) + str(1) + str(obs_tissue_id) + str(obs_well_id) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_isolate_hash = 'isolate' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(temp_isolate_id) + str(location_id) + str(1) + str(obs_culture_id) + str(obs_dna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_row_id) + str(1) + str(obs_tissue_id) + str(obs_well_id) + str(stock_id) + str(user_hash_table[user.username])
         obs_tracker_isolate_hash_fix = obs_tracker_well_hash + '\r'
         if obs_tracker_isolate_hash not in obs_tracker_hash_table and obs_tracker_isolate_hash_fix not in obs_tracker_hash_table:
             obs_tracker_hash_table[obs_tracker_isolate_hash] = obs_tracker_id
-            obs_tracker_new[(obs_tracker_id, 'isolate', experiment_name_table[experiment_name][0], field_id, 1, temp_isolate_id, temp_location_id, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'isolate', experiment_name_table[experiment_name][0], field_id, 1, temp_isolate_id, location_id, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
             obs_tracker_id = obs_tracker_id + 1
         else:
-            obs_tracker_hash_exists[('isolate', experiment_name_table[experiment_name][0], field_id, 1, temp_isolate_id, temp_location_id, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_hash_exists[('isolate', experiment_name_table[experiment_name][0], field_id, 1, temp_isolate_id, location_id, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
     end = time.clock()
     stats = {}
@@ -3464,7 +3446,6 @@ def isolate_loader_prep(upload_file, user):
 
     results_dict = {}
     results_dict['isolate_new'] = isolate_new
-    results_dict['location_new'] = location_new
     results_dict['passport_new'] = passport_new
     results_dict['collecting_new'] = collecting_new
     results_dict['people_new'] = people_new
@@ -3481,6 +3462,7 @@ def isolate_loader_prep(upload_file, user):
     results_dict['microbe_id_error'] = microbe_id_error
     results_dict['dna_id_error'] = dna_id_error
     results_dict['well_id_error'] = well_id_error
+    results_dict['location_name_error'] = location_name_error
     results_dict['isolate_hash_exists'] = well_hash_exists
     results_dict['obs_tracker_hash_exists'] = obs_tracker_hash_exists
     results_dict['stats'] = stats
@@ -3518,11 +3500,6 @@ def isolate_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['New Passport Table'])
     writer.writerow(['passport_id', 'collecting_id', 'people_id', 'taxonomy_id'])
     for key in results_dict['passport_new'].iterkeys():
-        writer.writerow(key)
-    writer.writerow([''])
-    writer.writerow(['New Location Table'])
-    writer.writerow(['location_id', 'location_name', 'building_name', 'room', 'shelf', 'column', 'box_name', 'comments'])
-    for key in results_dict['location_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New ObsTracker Table'])
@@ -3577,6 +3554,21 @@ def isolate_loader_prep_output(results_dict, new_upload_exp, template_type):
     for key in results_dict['dna_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
+    writer.writerow(['Field Name Errors'])
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    for key in results_dict['field_name_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Location Name Errors'])
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    for key in results_dict['location_name_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Disease Common Name Errors'])
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    for key in results_dict['disease_common_name_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
     writer.writerow(['Collecting Entries Already Exist'])
     for key in results_dict['collecting_hash_exists'].iterkeys():
         writer.writerow(key)
@@ -3595,10 +3587,6 @@ def isolate_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow([''])
     writer.writerow(['Isolate Entry Already Exists'])
     for key in results_dict['isolate_hash_exists'].iterkeys():
-        writer.writerow(key)
-    writer.writerow([''])
-    writer.writerow(['Location Entry Already Exists'])
-    for key in results_dict['location_hash_exists'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['ObsTracker Entry Already Exists'])
@@ -3642,13 +3630,6 @@ def isolate_loader(results_dict):
                     new_isolate = Taxonomy.objects.create(id=key[0], genus=key[1], species=key[2], population=key[3], common_name=key[4], alias=key[5], race=key[6], subtaxa=key[7])
             except Exception as e:
                 print("Taxonomy Error: %s %s" % (e.message, e.args))
-                return False
-        for key in results_dict['location_new'].iterkeys():
-            try:
-                with transaction.atomic():
-                    new_isolate = Location.objects.create(id=key[0], locality_id=key[1], building_name=key[2], location_name=key[3], room=key[4], shelf=key[5], column=key[6], box_name=key[7], comments=key[8])
-            except Exception as e:
-                print("Location Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
@@ -3982,7 +3963,7 @@ def glycerol_stock_loader_prep_output(results_dict, new_upload_exp, template_typ
     writer.writerow([''])
     writer.writerow(['Seed ID Errors'])
     writer.writerow(['glycerol_stock_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_row_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolate_id'])
-    for key in results_dict['seed_id_error'].iterkeysorganism
+    for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Row ID Errors'])
@@ -4091,6 +4072,7 @@ def measurement_loader_prep(upload_file, user):
     obs_tracker_tissue_id_table = loader_db_mirror.obs_tracker_tissue_id_mirror()
     obs_tracker_extract_id_table = loader_db_mirror.obs_tracker_extract_id_mirror()
     obs_tracker_culture_id_table = loader_db_mirror.obs_tracker_culture_id_mirror()
+    obs_tracker_seed_id_table = loader_db_mirror.obs_tracker_seed_id_mirror()
     user_hash_table = loader_db_mirror.user_hash_mirror()
     measurement_param_name_table = loader_db_mirror.measurement_parameter_name_mirror()
 
@@ -4102,7 +4084,7 @@ def measurement_loader_prep(upload_file, user):
 
     measurement_file = csv.DictReader(upload_file)
     for row in measurement_file:
-        obs_id = row["Observation ID"]
+        obs_id = row["Observation Unit"]
         parameter = row["Parameter"]
         username = row["Username"]
         time_of_measurement = row["DateTime"]
@@ -4131,27 +4113,34 @@ def measurement_loader_prep(upload_file, user):
             obs_tracker_id = obs_tracker_extract_id_table[obs_id][0]
         elif obs_id in obs_tracker_culture_id_table:
             obs_tracker_id = obs_tracker_culture_id_table[obs_id][0]
+        elif obs_id in obs_tracker_seed_id_table:
+            obs_tracker_id = obs_tracker_seed_id_table[obs_id][0]
         else:
             obs_tracker_id = 1
             obs_id_error[(obs_id, parameter, username, time_of_measurement, value, comments)] = obs_id
             error_count = error_count + 1
 
-        if username in user_hash_table:
-            user_id = user_hash_table[username]
+        if username != '':
+            if username in user_hash_table:
+                user_id = user_hash_table[username]
+            else:
+                user_id = user_hash_table['unknown_person']
+                username_error[(obs_id, parameter, username, time_of_measurement, value, comments)] = obs_id
+                error_count = error_count + 1
         else:
             user_id = user_hash_table['unknown_person']
-            username_error[(obs_id, parameter, username, time_of_measurement, value, comments)] = obs_id
-            error_count = error_count + 1
 
         if parameter in measurement_param_name_table:
             parameter_id = measurement_param_name_table[parameter][0]
+        elif parameter + '\r' in measurement_param_name_table:
+            parameter_id = measurement_param_name_table[parameter + '\r'][0]
         else:
             parameter_id = 1
             parameter_error[(obs_id, parameter, username, time_of_measurement, value, comments)] = obs_id
             error_count = error_count + 1
 
-        measurement_hash_fix = str(obs_tracker_id) + str(parameter_id) + str(user_id) + time_of_measurement + value + comments + '\r'
         measurement_hash = str(obs_tracker_id) + str(parameter_id) + str(user_id) + time_of_measurement + value + comments
+        measurement_hash_fix = measurement_hash + '\r'
         if measurement_hash not in measurement_hash_table and measurement_hash_fix not in measurement_hash_table:
             measurement_hash_table[measurement_hash] = measurement_id
             measurement_new[(measurement_id, obs_tracker_id, parameter_id, user_id, time_of_measurement, value, comments)] = measurement_id

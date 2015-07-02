@@ -1,29 +1,29 @@
-NelsonLab Mycotoxin Template Help,,,
-"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,
-,,,
-Template Name: maize_survey_v0.1,,,
-Authored: 05/05/2015,,,
-,,,
-DataBase Header Dictionary,,,
-,,,
-Maize Sample,For recording maize samples that were collected or sourced from somewhere. This is an alternative to the Stock Seed template. The Stock Seed template should be used for INVENTORYING.,,
-Template Header,Database Table,Database Field,Definition
-Experiment Name,lab_obstracker,ObsTracker(experiment).id,The experiment name to which this maize sample is a part of.
-Maize ID,lab_maizesample,maize_id,A unique ID for the maize sample. MUST BE UNIQUE
-County,lab_maizesample,county,The county where the maize sample is from.
-Sub Location,lab_maizesample,sub_location,The sub_location where the maize sample is from.
-Village,lab_maizesample,village,The village where the maize sample is from.
-Weight,lab_maizesample,weight,The weight in grams of the sample.
-Harvest Date,lab_maizesample,harvest_date,The harvest date of the sample. 
-Storage Months,lab_maizesample,storage_months,The number of months the sample was is storage.
-Storage Conditions,lab_maizesample,storage_conditions,A descriptor of the storage conditions.
-Maize Variety,lab_maizesample,maize_variety,"A classification of the genotype, in a way similar to pedigree."
-Seed Source,lab_maizesample,seed_source,The name of the organization where the maize was sourced.
-Moisture Content,lab_maizesample,moisture_content,A measure of the maize sample's moisture content in percent.
-Source Type,lab_maizesample,source_type,A descriptor for the type of organization where the maize was sourced.
-Appearance,lab_maizesample,appearance,A general description of how the maize looks.
-Latitude,lab_maizesample,latitude,The GPS latitude for where the sample was collected.
-Longitude,lab_maizesample,longitude,The GPS longitude for where the sample was collected.
-Altitude,lab_maizesample,altitude,The GPS altitude for where the sample was collected.
-GPS Accuracy,lab_maizesample,gps_accuracy,The GPS accuracy for where the sample was collected.
-Photo,lab_maizesample,photo,The filename of a photo of the maize sample.
+NelsonLab Mycotoxin Template Help,,,,,,
+"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
+,,,,,,
+Template Name: maize_survey_v0.2,,,,,,
+Authored: 07/01/2015,,,,,,
+,,,,,,
+DataBase Header Dictionary,,,,,,
+,,,,,,
+Maize Sample Template,For recording maize sample survey data.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Experiment Name,1,1,0,lab_obstracker,experiment_id=Experiment(experiment_name).id,The experiment name to which this maize sample is a part of.
+Maize ID,0,1,1,lab_maizesample,maize_id,A unique ID for the maize sample. MUST BE UNIQUE
+County,0,0,0,lab_maizesample,county,The county where the maize sample is from.
+Sub Location,0,0,0,lab_maizesample,sub_location,The sub_location where the maize sample is from.
+Village,0,0,0,lab_maizesample,village,The village where the maize sample is from.
+Weight,0,0,0,lab_maizesample,weight,The weight in grams of the sample.
+Harvest Date,0,0,0,lab_maizesample,harvest_date,The harvest date of the sample. 
+Storage Months,0,0,0,lab_maizesample,storage_months,The number of months the sample was is storage.
+Storage Conditions,0,0,0,lab_maizesample,storage_conditions,A descriptor of the storage conditions.
+Maize Variety,0,0,0,lab_maizesample,maize_variety,"A classification of the genotype, in a way similar to pedigree."
+Seed Source,0,0,0,lab_maizesample,seed_source,The name of the organization where the maize was sourced.
+Moisture Content,0,0,0,lab_maizesample,moisture_content,A measure of the maize sample's moisture content in percent.
+Source Type,0,0,0,lab_maizesample,source_type,A descriptor for the type of organization where the maize was sourced.
+Appearance,0,0,0,lab_maizesample,appearance,A general description of how the maize looks.
+GPS Latitude,0,0,0,lab_maizesample,latitude,The GPS latitude for where the sample was collected.
+GPS Longitude,0,0,0,lab_maizesample,longitude,The GPS longitude for where the sample was collected.
+GPS Altitude,0,0,0,lab_maizesample,altitude,The GPS altitude for where the sample was collected.
+GPS Accuracy,0,0,0,lab_maizesample,gps_accuracy,The GPS accuracy for where the sample was collected.
+Photo,0,0,0,lab_maizesample,photo,The filename of a photo of the maize sample.

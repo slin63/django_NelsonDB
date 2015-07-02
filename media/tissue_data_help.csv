@@ -1,21 +1,20 @@
-NelsonLab Tissue Data Template Help,,,
-"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,
-,,,
-Template Name: tissue_data_v0.1,,,
-Authored 03/04/2015,,,
-,,,
-,,,
-DataBase Header Dictionary,,,
-,,,
-Template Header,Database Table,Database Field,Definition
-Experiment Name,lab_obstracker,ObsTracker(experiment).id,The experiment name to which the tissue is a part of.
-Tissue ID,lab_obstissue,tissue_id,"A unique ID for the tissue. Formats may vary, but this needs to be unique. MUST BE UNIQUE"
-Tissue Name,lab_obstissue,tissue_name,A human readable name for the tissue.
-Tissue Type,lab_obstissue,tissue_type,"The type of tissue. Example: Leaf, Immature Ear, Prop Root, Stem"
-Date Ground,lab_obstissue,date_ground,The date the tissue was ground. Format: 2015-01-30
-Tissue Comments,lab_obstissue,comments,Any additional comments about the Tissue.
-,,,
-Source Seed ID,lab_obstracker,stock_id = Stock(seed_id).id,"If the sample was selected using seed, provide the Seed ID here. If not applicable, leave blank."
-Source Row ID,lab_obstracker,obs_row_id = ObsRow(row_id).id,"If the sample was selected from a row, provide the Row ID here. If not applicable, leave blank."
-Source Plant ID,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,"If the sample was selected from a plant, provide the Plant ID here. If not applicable, leave blank."
-Source Culture ID,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,"If the sample was selected from a separate culture, provide the Culture ID here. If not applicable, leave blank."
+NelsonLab Tissue Data Template Help,,,,,,
+"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
+,,,,,,
+Template Name: tissue_data_v0.2,,,,,,
+Authored 07/01/2015,,,,,,
+,,,,,,
+DataBase Header Dictionary,,,,,,
+,,,,,,
+Tissue Template,For recording info about a tissue.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Experiment Name,1,1,0,lab_obstracker,experiment_id=Experiment(experiment_name).id,The experiment name to which the tissue is a part of.
+Tissue ID,0,1,1,lab_obstissue,tissue_id,"A unique ID for the tissue. Formats may vary, but this needs to be unique. MUST BE UNIQUE"
+Tissue Name,0,0,0,lab_obstissue,tissue_name,A human readable name for the tissue.
+Tissue Type,0,0,0,lab_obstissue,tissue_type,"The type of tissue. Example: Leaf, Immature Ear, Prop Root, Stem"
+Date Ground,0,0,0,lab_obstissue,date_ground,The date the tissue was ground. Recommended format: 2015-01-30
+Tissue Comments,0,0,0,lab_obstissue,comments,Any additional comments about the Tissue.
+Source Seed ID,1,0,0,lab_obstracker,stock_id = Stock(seed_id).id,"If the sample was selected using seed, provide the Seed ID here. If not applicable, leave blank."
+Source Row ID,1,0,0,lab_obstracker,obs_row_id = ObsRow(row_id).id,"If the sample was selected from a row, provide the Row ID here. If not applicable, leave blank."
+Source Plant ID,1,0,0,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,"If the sample was selected from a plant, provide the Plant ID here. If not applicable, leave blank."
+Source Culture ID,1,0,0,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,"If the sample was selected from a separate culture, provide the Culture ID here. If not applicable, leave blank."

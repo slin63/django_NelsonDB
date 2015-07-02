@@ -1,41 +1,53 @@
-NelsonLab Seed Stock Template Help,,,
-"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,
-,,,
-Template Name: seed_stock_v0.1,,,
-Authored 02/25/2015,,,
-,,,
-DataBase Header Dictionary,,,
-,,,
-Seed Stocks,For recording seed information.,,
-Template Header,Database Table,Database Field,Definition
-Used,,,"If the seed was used in this experiment, as in planted or ground up, place 1 in this fied. Leave blank otherwise."
-Collected,,,"If the seed was collected in this experiment, as in harvested, place 1 in this field. Leave blank otherwise."
-Experiment Name,lab_obstracker,experiment_id = Experiment(name).id,The experiment's name to which this seed is being used for OR collected from. The upload method is different for if seed is being used or collected. Leave blank if not applicable.
-Seed ID,lab_stock,seed_id,A unique ID in the format 08PN0023_001x. This is the ID that is printed on seed packets. MUST BE UNIQUE
-Seed Name,lab_stock,seed_name,A more human readable name for the seed.
-Cross Type,lab_stock,cross_type,"Options: sib, self, cross"
-Pedigree,lab_stock,pedigree,"The genotype of the seed. Examples: B73, Mo17, CML52xCML322"
-Stock Status,lab_stock,stock_status,An indicator if the seed is available and whether it has been inventoried.
-Stock Date,lab_stock,stock_date,The date when the seed was stocked. Format: 2015-01-30
-Inoculated,lab_stock,inoculated,"If the seed was inoculated or not. Use 1 for inoculated, 0 for uninoculated. "
-Stock Comments,lab_stock,comments,Any additional comments about the seed.
-,,,
-Genus,lab_taxonomy,genus,The genus of the seed. Example: Zea
-Species,lab_taxonomy,species,The species of the seed. Example: Mays
-Population,lab_taxonomy,population,A more general classification of the seed's genotype. Example: NAM
-,,,
-Row ID,lab_obstracker,obs_row_id = ObsRow(row_id).id,The Row ID from which the seed was collected. Example 08PN0023. Leave blank if seed not collected from a row.
-Field Name,lab_obstracker,field_id = Field(field_name).id,The Field Name from which the seed was collected. Example Aurora NY. Leave blank if not relevant. 
-Plant ID,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,The Plant ID from which the seed was collected. Example 08PN0023_001. Leave blank if seed not collected from a plant.
-,,,
-Username,lab_collecting,user_id = User(username).id,The username of the person which collected the seed. Example: firstname_lastname. Leave blank if seed not collected.
-Collection Date,lab_collecting,collection_date,The date when the seed was collected. Format 2015-01-30. Leave blank if seed not collected
-Method,lab_collecting,collection_method,The method which seed was collected by. Example: Manual field harvest. Leave blank if seed not collected
-Collection Comments,lab_collecting,comments,Any additional comments about the collection. Leave blank if seed not collected.
-,,,
-Organization,lab_people,organization,The organization from which seed was provided by. Leave blank if seed not sourced from somewhere.
-First Name,lab_people,first_name,The first name of the person who provided the seed. Leave blank if seed not sourced from somewhere.
-Last Name,lab_people,last_name,The last name of the person who provided the seed. Leave blank if seed not sourced from somewhere.
-Phone,lab_people,phone,The phone of the person who provided the seed. Leave blank if seed not sourced from somewhere.
-Email,lab_people,email,The email of the person who provided the seed. Leave blank if seed not sourced from somewhere.
-Source Comments,lab_people,comments,Any additional comments about the seed provider. Leave blank if seed not sourced from somewhere.
+NelsonLab Seed Stock Template Help,,,,,,
+"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
+,,,,,,
+Template Name: seed_stock_v0.2,,,,,,
+Authored 07/01/2015,,,,,,
+,,,,,,
+DataBase Header Dictionary,,,,,,
+,,,,,,
+Seed Stocks,For recording seed stock information.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Used,..,1,..,..,..,"If the seed was used in this experiment, as in planted or grinded, place 1 in this fied. Leave blank otherwise."
+Collected,..,1,..,..,..,"If the seed was collected in this experiment, as in harvested or sourced, place 1 in this field. Leave blank otherwise."
+Experiment Name,1,1,0,lab_obstracker,experiment_id = Experiment(experiment_name).id,The experiment's name to which this seed is being used for OR collected from. The upload method is different for if seed is being used or collected. Leave blank if not applicable.
+Seed ID,0,1,1,lab_stock,seed_id,A unique ID in the format 08PN0023_001x. This is the ID that is printed on seed packets. MUST BE UNIQUE
+Seed Name,0,0,0,lab_stock,seed_name,A more human readable name for the seed.
+Cross Type,0,0,0,lab_stock,cross_type,"Options: sib, self, cross"
+Pedigree,0,0,0,lab_stock,pedigree,"The genotype of the seed. Examples: B73, Mo17, CML52xCML322"
+Stock Status,0,0,0,lab_stock,stock_status,An indicator if the seed is available and whether it has been inventoried.
+Stock Date,0,0,0,lab_stock,stock_date,The date when the seed was stocked. Format: 2015-01-30
+Inoculated,0,0,0,lab_stock,inoculated,"If the seed was inoculated or not. Use 1 for inoculated, 0 for uninoculated. "
+Stock Comments,0,0,0,lab_stock,comments,Any additional comments about the seed.
+Genus,0,0,0,lab_taxonomy,genus,The genus of the seed. Example: Zea
+Species,0,0,0,lab_taxonomy,species,The species of the seed. Example: Mays
+Population,0,0,0,lab_taxonomy,population,A more general classification of the seed's genotype. Example: NAM
+Row ID,1,0,0,lab_obstracker,obs_row_id = ObsRow(row_id).id,The Row ID from which the seed was collected. Example 08PN0023. Leave blank if seed not collected from a row.
+Field Name,1,0,0,lab_obstracker,field_id = Field(field_name).id,The Field Name from which the seed was collected. Example Aurora NY. Leave blank if not relevant. 
+Plant ID,1,0,0,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,The Plant ID from which the seed was collected. Example 08PN0023_001. Leave blank if seed not collected from a plant.
+Username,1,0,0,lab_collecting,user_id = User(username).id,The username of the person which collected the seed. Example: firstname_lastname. Leave blank if seed not collected.
+Collection Date,0,0,0,lab_collecting,collection_date,The date when the seed was collected. Format 2015-01-30. Leave blank if seed not collected
+Method,0,0,0,lab_collecting,collection_method,The method which seed was collected by. Example: Manual field harvest. Leave blank if seed not collected
+Collection Comments,0,0,0,lab_collecting,comments,Any additional comments about the collection. Leave blank if seed not collected.
+Organization,0,0,0,lab_people,organization,The organization from which seed was provided by. Leave blank if seed not sourced from somewhere.
+First Name,0,0,0,lab_people,first_name,The first name of the person who provided the seed. Leave blank if seed not sourced from somewhere.
+Last Name,0,0,0,lab_people,last_name,The last name of the person who provided the seed. Leave blank if seed not sourced from somewhere.
+Phone,0,0,0,lab_people,phone,The phone of the person who provided the seed. Leave blank if seed not sourced from somewhere.
+Email,0,0,0,lab_people,email,The email of the person who provided the seed. Leave blank if seed not sourced from somewhere.
+Source Comments,0,0,0,lab_people,comments,Any additional comments about the seed provider. Leave blank if seed not sourced from somewhere.
+,,,,,,
+DEPENDENCIES,,,,,,
+,,,,,,
+Field Template,For recording information about a specific field.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Locality,1,1,0,lab_field,locality_id-Locality(locality).id,"The city,state,country,zipcode in which the field is located."
+Field Name,0,1,1,lab_field,field_name,The field's unique name. MUST BE UNIQUE
+Field Num,0,0,0,lab_field,field_num,The field's number.
+Field Comments,0,0,0,lab_field,comments,Any additional comments about the field.
+,,,,,,
+Locality Template,For recording information about a locality.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+City,0,0,0,lab_locality,city,The locality's city name.
+State,0,0,0,lab_locality,state,The locality's state.
+Country,0,0,0,lab_locality,country,The locality's country.
+Zipcode,0,0,0,lab_locality,zipcode,The locality's zipcode.

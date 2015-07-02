@@ -1,27 +1,32 @@
-NelsonLab Environment Data Template Help,,,
-"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,
-,,,
-Template Name: environment_data_v0.1,,,
-Authored 03/04/2015,,,
-,,,
-,,,
-DataBase Header Dictionary,,,
-,,,
-Field + Locality,For if seed collected from fields. Can be left blank if not applicable.,,
-Template Header,Database Table,Database Field,Definition
-Field Name,lab_field,field_name,The field's unique name. MUST BE UNIQUE
-Field Num,lab_field,field_num,The field's number.
-Field Comments,lab_field,comments,Any additional comments about the field.
-City,lab_locality,city,The locality's city name.
-State,lab_locality,state,The locality's state.
-Country,lab_locality,country,The locality's country.
-Zipcode,lab_locality,zipcode,The locality's zipcode.
-,,,
-Environment,,,
-Template Header,Database Table,Database Field,Definition
-Experiment Name,lab_ObsTracker(experiment).id,experiment,The experiment to which this environment is a part of.
-Field Name,lab_ObsEnv,field_id = Field(field_name).id,The unique field name of the environemnt.
-Environment ID,lab_ObsEnv,environment_id,"A unique ID for the sample. Formats may vary, but this needs to be unique. MUST BE UNIQUE"
-Longitude,lab_ObsEnv,longitude,"The type of sample. Example: Seed Kernels, Single Kernels, DNA "
-Latitude,lab_ObsEnv,latitude,"The number of seed kernels in the sample. If not applicable, leave blank."
-Environment Comments,lab_ObsEnv,comments,"The weight of the sample. If not applicable, leave blank."
+NelsonLab Environment Data Template Help,,,,,,
+"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
+,,,,,,
+Template Name: environment_data_v0.2,,,,,,
+Authored 07/01/2015,,,,,,
+,,,,,,
+DataBase Header Dictionary,,,,,,
+,,,,,,
+Environment Template,"For recording information about a specific environment. Useful for recording environmental measurements like rain, wind, temperature, etc.",,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Experiment Name,1,1,0,lab_obstracker,experiment_id=Experiment(experiment_name).id,The experiment name to which this environment is a part of.
+Field Name,1,0,0,lab_obstracker,field_id = Field(field_name).id,The unique field name of the environment.
+Environment ID,0,1,1,lab_obsenv,environment_id,"A unique ID for the sample. Formats may vary, but this needs to be unique. MUST BE UNIQUE"
+Longitude,0,0,0,lab_obsenv,longitude,The GPS longitude coordinates of the environment.
+Latitude,0,0,0,lab_obsenv,latitude,The GPS latitude coordinates of the environment.
+Environment Comments,0,0,0,lab_obsenv,comments,Any additional comments about the environment.
+,,,,,,
+DEPENDENCIES,,,,,,
+,,,,,,
+Field Template,For recording information about a specific field.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Locality,1,1,0,lab_field,locality_id-Locality(locality).id,"The city,state,country,zipcode in which the field is located."
+Field Name,0,1,1,lab_field,field_name,The field's unique name. MUST BE UNIQUE
+Field Num,0,0,0,lab_field,field_num,The field's number.
+Field Comments,0,0,0,lab_field,comments,Any additional comments about the field.
+,,,,,,
+Locality Template,For recording information about a locality.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+City,0,0,0,lab_locality,city,The locality's city name.
+State,0,0,0,lab_locality,state,The locality's state.
+Country,0,0,0,lab_locality,country,The locality's country.
+Zipcode,0,0,0,lab_locality,zipcode,The locality's zipcode.

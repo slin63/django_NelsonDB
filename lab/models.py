@@ -255,7 +255,7 @@ class ObsMicrobe(models.Model):
 class Location(models.Model):
   locality = models.ForeignKey(Locality)
   building_name = models.CharField(max_length=200, blank=True)
-  location_name = models.CharField(max_length=200, blank=True)
+  location_name = models.CharField(max_length=200, unique=True)
   room = models.CharField(max_length=200, blank=True)
   shelf = models.CharField(max_length=200, blank=True)
   column = models.CharField(max_length=200, blank=True)
@@ -263,7 +263,7 @@ class Location(models.Model):
   comments = models.CharField(max_length=1000, blank=True)
 
   def __unicode__(self):
-    return self.building_name
+    return self.location_name
 
 class Collecting(models.Model):
   user = models.ForeignKey(User)

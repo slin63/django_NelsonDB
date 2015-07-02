@@ -1,64 +1,76 @@
-NelsonLab Isolate Invetory Template Help,,,
-"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,
-,,,
-Template Name: isolate_inventory_v0.1,,,
-Authored 02/25/2015,,,
-,,,
-DataBase Header Dictionary,,,
-,,,
-Field + Locality,For if isolates collected from fields. Can be left blank if not applicable.,,
-Template Header,Database Table,Database Field,Definition
-Field Name,lab_field,field_name,The field's unique name. MUST BE UNIQUE
-Field Num,lab_field,field_num,The field's number.
-Field Comments,lab_field,comments,Any additional comments about the field.
-City,lab_locality,city,The locality's city name.
-State,lab_locality,state,The locality's state.
-Country,lab_locality,country,The locality's country.
-Zipcode,lab_locality,zipcode,The locality's zipcode.
-,,,
-,,,
-Isolates,For inventory of individual isolates. ,,
-Template Header,Database Table,Database Field,Definition
-Experiment Name,lab_obstracker,ObsTracker(experiment).id,The experiment name to which this isolate is a part of.
-Isolate ID,lab_isolate,isolate_id,A unique ID in the format Af0001i. This is the ID that is printed on the isolate tubes. MUST BE UNIQUE
-Isolate Name,lab_isolate,isolate_name,A human readable name for the isolate.
-Plant Organ,lab_isolate,plant_organ,"The plant organ that the isolate came from, if relevant."
-Isolate Comments,lab_isolate,comments,Any additional comments about the isolates.
-,,,
-Genus,lab_taxonomy,genus,The genus of the isolate.
-Species,lab_taxonomy,species,The species of the isolate.
-Population,lab_taxonomy,population,A more general classification of the isolate's genotype.
-Alias,lab_taxonomy,alias,The isolate's alias.
-Race,lab_taxonomy,race,The isolate's race classification.
-Subtaxa,lab_taxonomy,subtaxa,The isolate's subtaxa classification.
-Disease Common Name,lab_diseaseinfo,common_name,The common name for the disease this isolate is known to be linked to.
-Source Row ID,lab_obstracker,obs_row_id = ObsRow(row_id).id,The Row ID from which the isolate was collected. Example 08PN0023. Leave blank if isolate not collected from a row.
-Source Field Name,lab_obstracker,field_id = Field(field_name).id,The Field Name from which the isolate was collected. Example Aurora NY. Leave blank if not relevant. 
-Source Plant ID,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,The Plant ID from which the isolate was collected. Example 08PN0023_001. Leave blank if isolate not collected from a plant.
-Source Seed ID,lab_obstracker,stock_id=Stock(seed_id).id,The Seed ID from which the isolate is associated. Leave blank if not applicable.
-Source Tissue ID,lab_obstracker,obs_tissue_id = ObsTissue(tissue_id).id,The Tissue ID from which the isolate was collected. Leave blank if isolate not collected from a tissue.
-Source Microbe ID,lab_obstracker,obs_microbe_id = ObsMicrobe(microbe_id).id,The Microbe ID from which the isolate was collected. Leave blank if not applicable.
-Source Well ID,lab_obstracker,obs_well_id = ObsWell(well_id).id,The Well ID from which the isolate was collected. Leave blank if not applicable.
-Source Plate ID,lab_obstracker,obs_plate_id = ObsPlate(plate_id).id,The Plate ID from which the isolate was collected. Leave blank if not applicable.
-Source DNA ID,lab_obstracker,obs_dna_id = ObsDNA(dna_id).id,The DNA ID from which the isolate was collected. Leave blank if not applicable.
-Source Culture ID,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,The Culture ID from which the isolate was collected. Leave blank if not applicable.
-,,,
-Username,lab_collecting,user_id = User(username).id,The username of the person which collected the isolate. Example: firstname_lastname. Leave blank if isolate not collected.
-Collection Date,lab_collecting,collection_date,The date when the isolate was collected. Format 2015-01-30. Leave blank if isolate not collected
-Method,lab_collecting,collection_method,The method which isolate was collected by. Example: Manual field harvest. Leave blank if isolate not collected
-Collection Comments,lab_collecting,comments,Any additional comments about the collection. Leave blank if isolate not collected.
-,,,
-Organization,lab_people,organization,The organization from which isolate was provided by. Leave blank if isolate not sourced from somewhere.
-First Name,lab_people,first_name,The first name of the person who provided the isolate. Leave blank if isolate not sourced from somewhere.
-Last Name,lab_people,last_name,The last name of the person who provided the isolate. Leave blank if isolate not sourced from somewhere.
-Phone,lab_people,phone,The phone of the person who provided the isolate. Leave blank if isolate not sourced from somewhere.
-Email,lab_people,email,The email of the person who provided the isolate. Leave blank if isolate not sourced from somewhere.
-Source Comments,lab_people,comments,Any additional comments about the isolate provider. Leave blank if isolate not sourced from somewhere.
-,,,
-Location Name,lab_location,location_name,A unique location name. Example: Plant Science 303G. MUST BE UNIQUE
-Building Name,lab_location,building_name,"The exact building name. Example: Plant Science, Weil Hall, or Emerson Hall"
-Room,lab_location,room,The exact room number. Example: 303
-Shelf,lab_location,shelf,"The shelf on which the isolate is located. Example: 1, 2, 3"
-Column,lab_location,column,"The column in which the isolate is located. Example: A, B, C"
-Box Name,lab_location,box_name,The exact box name in which the isolate is located. Example: 08PN_box01
-Location Comments,lab_location,comments,Any additional comments about the location. 
+NelsonLab Isolate Invetory Template Help,,,,,,
+"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
+,,,,,,
+Template Name: isolate_inventory_v0.2,,,,,,
+Authored 07/01/2015,,,,,,
+,,,,,,
+DataBase Header Dictionary,,,,,,
+,,,,,,
+Isolate Template,For recording information aobut isolates.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Experiment Name,1,1,0,lab_obstracker,experiment_id=Experiment(experiment).id,The experiment name to which this isolate is a part of.
+Location Name,1,0,0,lab_obstracker,location_name,The location name for where the isolate is located.
+Isolate ID,0,1,1,lab_isolate,isolate_id,A unique ID in the format Af0001i. This is the ID that is printed on the isolate tubes. MUST BE UNIQUE
+Isolate Name,0,0,0,lab_isolate,isolate_name,A human readable name for the isolate.
+Plant Organ,0,0,0,lab_isolate,plant_organ,"The plant organ that the isolate came from, if relevant."
+Isolate Comments,0,0,0,lab_isolate,comments,Any additional comments about the isolates.
+Genus,0,0,0,lab_taxonomy,genus,The genus of the isolate.
+Species,0,0,0,lab_taxonomy,species,The species of the isolate.
+Population,0,0,0,lab_taxonomy,population,A more general classification of the isolate's genotype.
+Alias,0,0,0,lab_taxonomy,alias,The isolate's alias.
+Race,0,0,0,lab_taxonomy,race,The isolate's race classification.
+Subtaxa,0,0,0,lab_taxonomy,subtaxa,The isolate's subtaxa classification.
+Disease Common Name,1,0,0,lab_isolate,disease_info_id=DiseaseInfo(common_name).id,The common name for the disease this isolate is known to be linked to.
+Source Row ID,1,0,0,lab_obstracker,obs_row_id = ObsRow(row_id).id,The Row ID from which the isolate was collected. Example 08PN0023. Leave blank if isolate not collected from a row.
+Source Field Name,1,0,0,lab_obstracker,field_id = Field(field_name).id,The Field Name from which the isolate was collected. Example Aurora NY. Leave blank if not relevant. 
+Source Plant ID,1,0,0,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,The Plant ID from which the isolate was collected. Example 08PN0023_001. Leave blank if isolate not collected from a plant.
+Source Seed ID,1,0,0,lab_obstracker,stock_id=Stock(seed_id).id,The Seed ID from which the isolate is associated. Leave blank if not applicable.
+Source Tissue ID,1,0,0,lab_obstracker,obs_tissue_id = ObsTissue(tissue_id).id,The Tissue ID from which the isolate was collected. Leave blank if isolate not collected from a tissue.
+Source Microbe ID,1,0,0,lab_obstracker,obs_microbe_id = ObsMicrobe(microbe_id).id,The Microbe ID from which the isolate was collected. Leave blank if not applicable.
+Source Well ID,1,0,0,lab_obstracker,obs_well_id = ObsWell(well_id).id,The Well ID from which the isolate was collected. Leave blank if not applicable.
+Source Plate ID,1,0,0,lab_obstracker,obs_plate_id = ObsPlate(plate_id).id,The Plate ID from which the isolate was collected. Leave blank if not applicable.
+Source DNA ID,1,0,0,lab_obstracker,obs_dna_id = ObsDNA(dna_id).id,The DNA ID from which the isolate was collected. Leave blank if not applicable.
+Source Culture ID,1,0,0,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,The Culture ID from which the isolate was collected. Leave blank if not applicable.
+Username,1,0,0,lab_collecting,user_id = User(username).id,The username of the person which collected the isolate. Example: firstname_lastname. Leave blank if isolate not collected.
+Collection Date,0,0,0,lab_collecting,collection_date,The date when the isolate was collected. Format 2015-01-30. Leave blank if isolate not collected
+Method,0,0,0,lab_collecting,collection_method,The method which isolate was collected by. Example: Manual field harvest. Leave blank if isolate not collected
+Collection Comments,0,0,0,lab_collecting,comments,Any additional comments about the collection. Leave blank if isolate not collected.
+Organization,0,0,0,lab_people,organization,The organization from which isolate was provided by. Leave blank if isolate not sourced from somewhere.
+First Name,0,0,0,lab_people,first_name,The first name of the person who provided the isolate. Leave blank if isolate not sourced from somewhere.
+Last Name,0,0,0,lab_people,last_name,The last name of the person who provided the isolate. Leave blank if isolate not sourced from somewhere.
+Phone,0,0,0,lab_people,phone,The phone of the person who provided the isolate. Leave blank if isolate not sourced from somewhere.
+Email,0,0,0,lab_people,email,The email of the person who provided the isolate. Leave blank if isolate not sourced from somewhere.
+Source Comments,0,0,0,lab_people,comments,Any additional comments about the isolate provider. Leave blank if isolate not sourced from somewhere.
+,,,,,,
+DEPENDENCIES,,,,,,
+,,,,,,
+Location,For recording the isolates location,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Locality,1,1,0,lab_location,locality_id=Locality(locality).id,"The city, state, country, zipcode where the location is."
+Location Name,0,1,1,lab_location,location_name,A descriptive name for the location. MUST BE UNIQUE
+Building Name,0,0,0,lab_location,buiding_name,"The building name. Example: Plant Science, Emerson"
+Room,0,0,0,lab_location,room,The room number or name
+Shelf,0,0,0,lab_location,shelf,"The shelf in which the isolate is located. Example: 1, 2, 3"
+Column,0,0,0,lab_location,column,"The column in which the isolate is located. Example: A, B, C"
+Box Name,0,0,0,lab_location,box_name,The box which the isolate is in.
+Location Comments,0,0,0,lab_location,comments,Any additional comments about the location of the isolate. 
+,,,,,,
+Locality Template,For recording information about a locality.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+City,0,0,0,lab_locality,city,The locality's city name.
+State,0,0,0,lab_locality,state,The locality's state.
+Country,0,0,0,lab_locality,country,The locality's country.
+Zipcode,0,0,0,lab_locality,zipcode,The locality's zipcode.
+,,,,,,
+Field Template,For recording information about a specific field.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Locality,1,1,0,lab_field,locality_id-Locality(locality).id,"The city,state,country,zipcode in which the field is located."
+Field Name,0,1,1,lab_field,field_name,The field's unique name. MUST BE UNIQUE
+Field Num,0,0,0,lab_field,field_num,The field's number.
+Field Comments,0,0,0,lab_field,comments,Any additional comments about the field.
+,,,,,,
+Disease Info Template,For recording information about a disease.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Common Name,0,1,1,lab_diseaseinfo,common_name,The common name for the disease. MUST BE UNIQUE
+Abbrev,0,0,0,lab_diseaseinfo,abbrev,An abbreviation for the disease name.
+Comments,0,0,0,lab_diseaseinfo,comments,Any additional comments about the disease.

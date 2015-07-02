@@ -1,16 +1,16 @@
-NelsonLab Plant Data Template Help,,,
-"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,
-,,,
-Template Name: plant_data_v0.1,,,
-Authored 02/25/2015,,,
-,,,
-,,,
-DataBase Header Dictionary,,,
-,,,
-Template Header,Database Table,Database Field,Definition
-Experiment Name,lab_obstracker,ObsTracker(experiment).id,The experiment name to which the plant is a part of.
-Plant ID,lab_obsplant,plant_id,A unique ID for the plant in the format 08PN0023_001. MUST BE UNIQUE
-Row ID,lab_obstracker,obs_row_id = ObsRow(row_id).id,The row ID that the plant was planted in. The Row ID is a unique ID in the format 08PN0023. Leave blank if not applicable.
-Seed ID,lab_obstracker,stock_id = Stock(seed_id).id,The seed ID for the seed that was planted. The Seed ID is a unique ID in the format 08PN0023_001x. This is the ID that is printed on seed packets. Leave blank if not applicable.
-Plant Number,lab_obsplant,plant_num,A number or name given to the plant. Example: 002
-Plant Comments,lab_obsplant,comments,Any additional comments about the plant.
+NelsonLab Plant Data Template Help,,,,,,
+"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
+,,,,,,
+Template Name: plant_data_v0.2,,,,,,
+Authored 07/01/2015,,,,,,
+,,,,,,
+DataBase Header Dictionary,,,,,,
+,,,,,,
+Plant Template,For recording information about an individual plant.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Experiment Name,1,1,0,lab_obstracker,experiment_id=Experiment(experiment_name).id,The experiment name to which the plant is a part of.
+Plant ID,0,1,1,lab_obsplant,plant_id,A unique ID for the plant in the format 08PN0023_001. MUST BE UNIQUE
+Plant Number,0,0,0,lab_obsplant,plant_num,A number or name given to the plant. Example: 002
+Plant Comments,0,0,0,lab_obsplant,comments,Any additional comments about the plant.
+Source Row ID,1,0,0,lab_obstracker,obs_row_id = ObsRow(row_id).id,The row ID that the plant was planted in. The Row ID is a unique ID in the format 08PN0023. Leave blank if not applicable.
+Source Seed ID,1,0,0,lab_obstracker,stock_id = Stock(seed_id).id,The seed ID for the seed that was planted. The Seed ID is a unique ID in the format 08PN0023_001x. This is the ID that is printed on seed packets. Leave blank if not applicable.

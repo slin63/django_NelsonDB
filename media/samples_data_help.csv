@@ -1,23 +1,23 @@
-NelsonLab Samples Data Template Help,,,
-"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,
-,,,
-Template Name: sample_data_v0.1,,,
-Authored 03/04/2015,,,
-,,,
-DataBase Header Dictionary,,,
-,,,
-Template Header,Database Table,Database Field,Definition
-Experiment Name,lab_obstracker,ObsTracker(experiment).id,The experiment name to which this sample is a part of.
-Sample ID,lab_obssample,sample_id,"A unique ID for the sample. Formats may vary, but this needs to be unique. MUST BE UNIQUE"
-Sample Type,lab_obssample,sample_type,"The type of sample. Example: Seed Kernels, Single Kernels, DNA "
-Sample Name,lab_obssample,sample_name,A human readable name or ID for the sample.
-Weight,lab_obssample,weight,"The weight of the sample in g. If not applicable, leave blank."
-Volume,lab_obssample,volume,"The volume of the sample in mL. If not applicable, leave blank."
-Density,lab_obssample,density,The density of the sample in g/mL. Leave blank if not applicable.
-Kernel Number,lab_obssample,kernel_num,"The number of seed kernels in the sample. If not applicable, leave blank."
-Photo,lab_obssample,photo,The image filename of the sample. Leave blank if not applicable.
-Sample Comments,lab_obssample,comments,Any additional comments about the sample.
-,,,
-Source Seed ID,lab_obstracker,stock_id = Stock(seed_id).id,"If the sample was selected using seed, provide the Seed ID here. If not applicable, leave blank."
-Source Row ID,lab_obstracker,obs_row_id = ObsRow(row_id).id,"If the sample was selected from a row, provide the Row ID here. If not applicable, leave blank."
-Source Plant ID,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,"If the sample was selected from a plant, provide the Plant ID here. If not applicable, leave blank."
+NelsonLab Samples Data Template Help,,,,,,
+"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
+,,,,,,
+Template Name: sample_data_v0.2,,,,,,
+Authored 07/01/2015,,,,,,
+,,,,,,
+DataBase Header Dictionary,,,,,,
+,,,,,,
+Samples Template,For recording information about a sample.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Experiment Name,1,1,0,lab_obstracker,experiment_id=Experiment(experiment_name).id,The experiment name to which this sample is a part of.
+Sample ID,0,1,1,lab_obssample,sample_id,"A unique ID for the sample. Formats may vary, but this needs to be unique. MUST BE UNIQUE"
+Sample Type,0,0,0,lab_obssample,sample_type,"The type of sample. Example: Seed Kernels, Single Kernels, DNA "
+Sample Name,0,0,0,lab_obssample,sample_name,A human readable name or ID for the sample.
+Weight,0,0,0,lab_obssample,weight,"The weight of the sample in g. If not applicable, leave blank."
+Volume,0,0,0,lab_obssample,volume,"The volume of the sample in mL. If not applicable, leave blank."
+Density,0,0,0,lab_obssample,density,The density of the sample in g/mL. Leave blank if not applicable.
+Kernel Number,0,0,0,lab_obssample,kernel_num,"The number of seed kernels in the sample. If not applicable, leave blank."
+Photo,0,0,0,lab_obssample,photo,The image filename of the sample. Leave blank if not applicable.
+Sample Comments,0,0,0,lab_obssample,comments,Any additional comments about the sample.
+Source Seed ID,1,0,0,lab_obstracker,stock_id = Stock(seed_id).id,"If the sample was selected using seed, provide the Seed ID here. If not applicable, leave blank."
+Source Row ID,1,0,0,lab_obstracker,obs_row_id = ObsRow(row_id).id,"If the sample was selected from a row, provide the Row ID here. If not applicable, leave blank."
+Source Plant ID,1,0,0,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,"If the sample was selected from a plant, provide the Plant ID here. If not applicable, leave blank."

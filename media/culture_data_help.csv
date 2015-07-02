@@ -1,53 +1,64 @@
-NelsonLab Culture Template Help,,,
-"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,
-,,,
-Template Name: culture_v0.1,,,
-Authored 03/04/2015,,,
-,,,
-DataBase Header Dictionary,,,
-,,,
-Citation,For recording citation info regarding the culture's media. Can be left blank if not applicable.,,
-Template Header,Database Table,Database Field,Definition
-Citation Type,lab_citation,citation_type,"The type of citation. Example: Journal, Website, Textbook"
-URL,lab_citation,url,The url pointing to the paper or article. MUST BE UNIQUE
-Pubmed ID,lab_citation,pubmed_id,The pubmed ID pointing to the paper or article.
-Citation Comments,lab_citation,comments,Any additional comments about the citation. 
-,,,
-Medium,For recording culture's media's info. Can be left blank if not applicable.,,
-Template Header,Database Table,Database Field,Definition
-Citation URL,lab_medium,citation_id = Citation(citation_url).id,The citation which supports the use of the medium.
-Media Name,lab_medium,media_name,A unique name for the media. MUST BE UNIQUE
-Media Type,lab_medium,media_type,The type of media being used.
-Description,lab_medium,media_description,A brief description of the media .
-Preparation,lab_medium,media_preparation,A breif description of the preparation of the media.
-Media Comments,lab_medium,comments,Any additional comments about the medium.
-,,,
-Location,For recording the culture's location. Can be left blank if not applicable. ,,
-Template Header,Database Table,Database Field,Definition
-Location Name,lab_location,location_name,A descriptive name for the location. MUST BE UNIQUE
-Building Name,lab_location,buiding_name,"The building name. Example: Plant Science, Emerson"
-Room,lab_location,room,The room number or name
-Shelf,lab_location,shelf,"The shelf in which the culture is located. Example: 1, 2, 3"
-Column,lab_location,column,"The column in which the culture is located. Example: A, B, C"
-Box Name,lab_location,box_name,The box which the culture is in.
-Location Comments,lab_location,comments,Any additional comments about the location of the culture. 
-,,,
-Culture,For recording all info about the culture. ,,
-Template Header,Database Table,Database Field,Definition
-Experiment Name,lab_obstracker,ObsTracker(experiment).id,The experiment name to which the culture is a part of.
-Culture ID,lab_obsculture,culture_id,A unique ID for individual cultures. MUST BE UNIQUE.
-Media Name,lab_obsculture,medium_id,The media in which the culture was grown.
-Location Name,lab_obstracker,ObsTracker(location).id,The location name of where the culture is located.
-Culture Name,lab_obsculture,culture_name,A more human readable name for the culture.
-Microbe Type,lab_obsculture,culture_microbe_type,The type of microbe that is observed in the culture.
-Plating Cycle,lab_obsculture,culture_plating_cycle,Cultures are often plated many times to try to isolate unique isolates. This tracks progress in this cycle.
-Dilution,lab_obsculture,culture_dilution,If the culture has been diluted. Example 1:10
-Image File,lab_obsculture,culture_image,The location and/or filename of an image of the culture.
-Culture Comments,lab_obsculture,culture_comments,Any additional comments about the culture. 
-Num Colonies,lab_obsculture,num_colonies,The number of colonies observed
-Num Microbes,lab_obsculture,num_microbes,The number of microbes observed.
-Source Seed ID,lab_obstracker,stock_id = Stock(seed_id).id,"If the culture was grown using seed, provide the Seed ID here. If not applicable, leave blank."
-Source Row ID,lab_obstracker,obs_row_id = ObsRow(row_id).id,"If the culture was grown from a row, provide the Row ID here. If not applicable, leave blank."
-Source Plant ID,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,"If the culture was grown from a plant, provide the Plant ID here. If not applicable, leave blank."
-Source Microbe ID,lab_obstracker,obs_microbe_id = ObsMicrobe(microbe_id).id,"If the culture was grown from a microbe, provide the Microbe ID here. If not applicable, leave blank."
-Source Tissue ID,lab_obstracker,obs_tissue_id = ObsTissue(tissue_id).id,"If the culture was grown from a tissue, provide the Tissue ID here. If not applicable, leave blank."
+NelsonLab Culture Template Help,,,,,,
+"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
+,,,,,,
+Template Name: culture_v0.2,,,,,,
+Authored 07/01/2015,,,,,,
+,,,,,,
+DataBase Header Dictionary,,,,,,
+,,,,,,
+Culture Template,For recording all info about the culture. ,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Experiment Name,1,1,0,lab_obstracker,experiment_id=Experiment(experiment_name).id,The experiment name to which the culture is a part of.
+Culture ID,0,1,1,lab_obsculture,culture_id,A unique ID for individual cultures. MUST BE UNIQUE.
+Media Name,1,0,0,lab_obsculture,medium_id,The media in which the culture was grown.
+Location Name,1,0,0,lab_obstracker,location_id=Location(location_name).id,The location name of where the culture is located.
+Culture Name,0,0,0,lab_obsculture,culture_name,A more human readable name for the culture.
+Microbe Type,0,0,0,lab_obsculture,culture_microbe_type,The type of microbe that is observed in the culture.
+Plating Cycle,0,0,0,lab_obsculture,culture_plating_cycle,Cultures are often plated many times to try to isolate unique isolates. This tracks progress in this cycle.
+Dilution,0,0,0,lab_obsculture,culture_dilution,If the culture has been diluted. Example 1:10
+Image File,0,0,0,lab_obsculture,culture_image,The location and/or filename of an image of the culture.
+Culture Comments,0,0,0,lab_obsculture,culture_comments,Any additional comments about the culture. 
+Num Colonies,0,0,0,lab_obsculture,num_colonies,The number of colonies observed
+Num Microbes,0,0,0,lab_obsculture,num_microbes,The number of microbes observed.
+Source Seed ID,1,0,0,lab_obstracker,stock_id = Stock(seed_id).id,"If the culture was grown using seed, provide the Seed ID here. If not applicable, leave blank."
+Source Row ID,1,0,0,lab_obstracker,obs_row_id = ObsRow(row_id).id,"If the culture was grown from a row, provide the Row ID here. If not applicable, leave blank."
+Source Plant ID,1,0,0,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,"If the culture was grown from a plant, provide the Plant ID here. If not applicable, leave blank."
+Source Microbe ID,1,0,0,lab_obstracker,obs_microbe_id = ObsMicrobe(microbe_id).id,"If the culture was grown from a microbe, provide the Microbe ID here. If not applicable, leave blank."
+Source Tissue ID,1,0,0,lab_obstracker,obs_tissue_id = ObsTissue(tissue_id).id,"If the culture was grown from a tissue, provide the Tissue ID here. If not applicable, leave blank."
+,,,,,,
+DEPENDENCIES,,,,,,
+,,,,,,
+Location,For recording the culture's location.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Locality,1,1,0,lab_location,locality_id=Locality(locality).id,"The city, state, country, zipcode where the location is."
+Location Name,0,1,1,lab_location,location_name,A descriptive name for the location. MUST BE UNIQUE
+Building Name,0,0,0,lab_location,buiding_name,"The building name. Example: Plant Science, Emerson"
+Room,0,0,0,lab_location,room,The room number or name
+Shelf,0,0,0,lab_location,shelf,"The shelf in which the culture is located. Example: 1, 2, 3"
+Column,0,0,0,lab_location,column,"The column in which the culture is located. Example: A, B, C"
+Box Name,0,0,0,lab_location,box_name,The box which the culture is in.
+Location Comments,0,0,0,lab_location,comments,Any additional comments about the location of the culture. 
+,,,,,,
+Medium,For recording culture's media's info.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Citation Title,1,1,0,lab_medium,citation_id = Citation(citation_title).id,The citation title which supports the use of the medium.
+Media Name,0,1,1,lab_medium,media_name,A unique name for the media. MUST BE UNIQUE
+Media Type,0,0,0,lab_medium,media_type,The type of media being used.
+Description,0,0,0,lab_medium,media_description,A brief description of the media .
+Preparation,0,0,0,lab_medium,media_preparation,A breif description of the preparation of the media.
+Media Comments,0,0,0,lab_medium,comments,Any additional comments about the medium.
+,,,,,,
+Citation,For recording citation info regarding the culture's media. ,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Citation Type,0,0,0,lab_citation,citation_type,"The type of citation. Example: Journal, Website, Textbook"
+Title,0,1,1,lab_citation,title,The title of the publication or reference. MUST BE UNIQUE
+URL,0,0,0,lab_citation,url,The url pointing to the paper or article.
+Pubmed ID,0,0,0,lab_citation,pubmed_id,The pubmed ID pointing to the paper or article.
+Citation Comments,0,0,0,lab_citation,comments,Any additional comments about the citation. 
+,,,,,,
+Locality Template,For recording information about a locality.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+City,0,0,0,lab_locality,city,The locality's city name.
+State,0,0,0,lab_locality,state,The locality's state.
+Country,0,0,0,lab_locality,country,The locality's country.
+Zipcode,0,0,0,lab_locality,zipcode,The locality's zipcode.

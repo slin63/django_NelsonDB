@@ -1,26 +1,26 @@
-NelsonLab DNA Data Template Help,,,
-"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,
-,,,
-Template Name: dna_data_v0.1,,,
-Authored 03/04/2015,,,
-,,,
-DataBase Header Dictionary,,,
-,,,
-Template Header,Database Table,Database Field,Definition
-Experiment Name,lab_obstracker,ObsTracker(experiment).id,The experiment name to which the dna is a part of.
-DNA ID,lab_obsdna,dna_id,"A unique ID for the DNA. Formats may vary, but this needs to be unique. MUST BE UNIQUE"
-Extraction Method,lab_obsdna,extraction_method,A brief description of the extraction method. Mention any equipment used.
-Date,lab_obsdna,date,The date the DNA was extracted. Format: 2015-01-30
-Tube ID,lab_obsdna,tube_id,"The ID given to the storage tube. Should be the same as the DNA ID above, but if for some reason it is not, include this.  Leave blank if not applicable."
-Tube Type,lab_obsdna,tube_type,The type of tube in which the DNA is stored. Example: 1ml Test Tube
-DNA Comments,lab_obsdna,comments,Any additional comments about the DNA.
-,,,
-Source Seed ID,lab_obstracker,stock_id = Stock(seed_id).id,"If the sample was selected using seed, provide the Seed ID here. If not applicable, leave blank."
-Source Row ID,lab_obstracker,obs_row_id = ObsRow(row_id).id,"If the sample was selected from a row, provide the Row ID here. If not applicable, leave blank."
-Source Plant ID,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,"If the sample was selected from a plant, provide the Plant ID here. If not applicable, leave blank."
-Source Well ID,lab_obstracker,obs_well_id = ObsWellr(well_id).id,"If the sample was selected from a specific well, provide the Well ID here. If not applicable, leave blank."
-Source Microbe ID,lab_obstracker,obs_microbe_id = ObsMicrobe(microbe_id).id,"If the sample was selected from a microbe, provide the Microbe ID here. If not applicable, leave blank."
-Source Culture ID,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,"If the sample was selected from a separate culture, provide the Culture ID here. If not applicable, leave blank."
-Source Tissue ID,lab_obstracker,obs_tissue_id = ObsTissue(tissue_id).id,"If the sample was selected from a tissue, provide the Tissue ID here. If not applicable, leave blank."
-Source Plate ID,lab_obstracker,obs_plate_id = ObsPlate(plate_id).id,"If the sample was selected from a specific plate, provide the Plate ID here. If not applicable leave blank."
-Source Sample ID,lab_obstracker,obs_sample_id = ObsSample(samplee_id).id,"If the sample was selected from a specific plate, provide the Plate ID here. If not applicable leave blank."
+NelsonLab DNA Data Template Help,,,,,,
+"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
+,,,,,,
+Template Name: dna_data_v0.2,,,,,,
+Authored 07/01/2015,,,,,,
+,,,,,,
+DataBase Header Dictionary,,,,,,
+,,,,,,
+DNA Template,For recording all info about a DNA sample.,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Experiment Name,1,1,0,lab_obstracker,ObsTracker(experiment).id,The experiment name to which the dna is a part of.
+DNA ID,0,1,1,lab_obsdna,dna_id,"A unique ID for the DNA. Formats may vary, but this needs to be unique. MUST BE UNIQUE"
+Extraction Method,0,0,0,lab_obsdna,extraction_method,A brief description of the extraction method. Mention any equipment used.
+Date,0,0,0,lab_obsdna,date,The date the DNA was extracted. Recommended format: 2015-01-30
+Tube ID,0,0,0,lab_obsdna,tube_id,"The ID given to the storage tube. Should be the same as the DNA ID above, but if for some reason it is not, include this.  Leave blank if not applicable."
+Tube Type,0,0,0,lab_obsdna,tube_type,The type of tube in which the DNA is stored. Example: 1ml Test Tube
+DNA Comments,0,0,0,lab_obsdna,comments,Any additional comments about the DNA.
+Source Seed ID,1,0,0,lab_obstracker,stock_id = Stock(seed_id).id,"If the sample was selected using seed, provide the Seed ID here. If not applicable, leave blank."
+Source Row ID,1,0,0,lab_obstracker,obs_row_id = ObsRow(row_id).id,"If the sample was selected from a row, provide the Row ID here. If not applicable, leave blank."
+Source Plant ID,1,0,0,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,"If the sample was selected from a plant, provide the Plant ID here. If not applicable, leave blank."
+Source Well ID,1,0,0,lab_obstracker,obs_well_id = ObsWell(well_id).id,"If the sample was selected from a specific well, provide the Well ID here. If not applicable, leave blank."
+Source Microbe ID,1,0,0,lab_obstracker,obs_microbe_id = ObsMicrobe(microbe_id).id,"If the sample was selected from a microbe, provide the Microbe ID here. If not applicable, leave blank."
+Source Culture ID,1,0,0,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,"If the sample was selected from a separate culture, provide the Culture ID here. If not applicable, leave blank."
+Source Tissue ID,1,0,0,lab_obstracker,obs_tissue_id = ObsTissue(tissue_id).id,"If the sample was selected from a tissue, provide the Tissue ID here. If not applicable, leave blank."
+Source Plate ID,1,0,0,lab_obstracker,obs_plate_id = ObsPlate(plate_id).id,"If the sample was selected from a specific plate, provide the Plate ID here. If not applicable leave blank."
+Source Sample ID,1,0,0,lab_obstracker,obs_sample_id = ObsSample(sample_id).id,"If the sample was selected from a specific plate, provide the Plate ID here. If not applicable leave blank."
