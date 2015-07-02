@@ -385,6 +385,46 @@ def tissue_id_mirror():
         tissue_id_table[row.tissue_id] = (row.id, row.tissue_id, row.tissue_type, row.tissue_name, row.date_ground, row.comments)
     return tissue_id_table
 
+def well_id_mirror():
+    well_id_table = OrderedDict({})
+    #--- Key = (well_id)
+    #--- Value = (obs_well_id, well_id, well, well_inventory, tube_label, comments)
+
+    obs_well_file = ObsWell.objects.all()
+    for row in obs_well_file:
+        well_id_table[row.well_id] = (row.id, row.well_id, row.well, row.well_inventory, row.tube_label, row.comments)
+    return well_id_table
+
+def dna_id_mirror():
+    dna_id_table = OrderedDict({})
+    #--- Key = (dna_id)
+    #--- Value = (obs_dna_id, dna_id, extraction_method, date, tube_id, tube_type, comments)
+
+    obs_dna_file = ObsDNA.objects.all()
+    for row in obs_dna_file:
+        dna_id_table[row.dna_id] = (row.id, row.dna_id, row.extraction_method, row.date, row.tube_id, row.tube_type, row.comments)
+    return dna_id_table
+
+def plate_id_mirror():
+    plate_id_table = OrderedDict({})
+    #--- Key = (plate_id)
+    #--- Value = (obs_plate_id, plate_id, plate_name, date, contents, rep, plate_type, plate_status, comments)
+
+    obs_plate_file = ObsPlate.objects.all()
+    for row in obs_plate_file:
+        plate_id_table[row.plate_id] = (row.id, row.plate_id, row.plate_name, row.date, row.contents, row.rep, row.plate_type, row.plate_status, row.comments)
+    return plate_id_table
+
+def sample_id_mirror():
+    sample_id_table = OrderedDict({})
+    #--- Key = (sample_id)
+    #--- Value = (obs_sample_id, sample_id, sample_type, sample_name, weight, volume, density, kernel_num, photo, comments)
+
+    obs_sample_file = ObsSample.objects.all()
+    for row in obs_sample_file:
+        sample_id_table[row.sample_id] = (row.id, row.sample_id, row.sample_type, row.sample_name, row.weight, row.volume, row.density, row.kernel_num, row.photo, row.comments)
+    return sample_id_table
+
 def row_id_mirror():
     row_id_table = OrderedDict({})
     #--- Key = (row_id)
@@ -771,6 +811,21 @@ def obs_dna_hash_mirror():
 def obs_dna_id_mirror():
     obs_dna_id = ObsDNA.objects.latest('id').id + 1
     return obs_dna_id
+
+def obs_microbe_hash_mirror():
+    obs_microbe_hash_table = OrderedDict({})
+    #--- Key = (microbe_id + microbe_type + comments)
+    #--- Value = (obs_microbe_id)
+
+    microbe_file = ObsMicrobe.objects.all()
+    for row in microbe_file:
+        microbe_hash = row.microbe_id + row.microbe_type + row.comments
+        obs_microbe_hash_table[microbe_hash] = row.id
+    return obs_microbe_hash_table
+
+def obs_microbe_id_mirror():
+    obs_microbe_id = ObsMicrobe.objects.latest('id').id + 1
+    return obs_microbe_id
 
 def collecting_hash_mirror():
     collecting_hash_table = OrderedDict({})
