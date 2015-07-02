@@ -1,0 +1,7 @@
+Experiment Name,Plant ID,Plant Number,Plant Comments,Source Row ID,Source Seed ID
+15NMTest,15NMTest_plant_01,1,,15NMTest_row_01,stock_upload_test_001
+15NMTest,15NMTest_plant_02,2,,15NMTest_row_02,stock_upload_test_002
+15NMTest,15NMTest_plant_03,3,,15NMTest_row_03,stock_upload_test_003
+15NMTest,15NMTest_plant_04,4,,15NMTest_row_04,
+15NMTest,15NMTest_plant_05,5,,,stock_upload_test_003
+15NMTest,15NMTest_plant_06,6,,,

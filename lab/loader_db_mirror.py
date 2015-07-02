@@ -860,6 +860,21 @@ def obs_row_id_mirror():
     obs_row_id = ObsRow.objects.latest('id').id + 1
     return obs_row_id
 
+def obs_plant_hash_mirror():
+    obs_plant_hash_table = OrderedDict({})
+    #--- Key = (row_id + row_name + range_num + plot + block + rep + kernel_num + planting_date + harvest_date + comments)
+    #--- Value = (obs_row_id)
+
+    row_file = ObsPlant.objects.all()
+    for row in row_file:
+        obs_plant_hash = row.plant_id + row.plant_num + row.comments
+        obs_plant_hash_table[obs_plant_hash] = row.id
+    return obs_plant_hash_table
+
+def obs_plant_id_mirror():
+    obs_plant_id = ObsPlant.objects.latest('id').id + 1
+    return obs_plant_id
+
 def people_hash_mirror():
     people_hash_table = OrderedDict({})
     #--- Key = (first_name + last_name + organization + phone + email + comments)

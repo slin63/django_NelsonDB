@@ -843,7 +843,7 @@ def plant_loader_prep(upload_file, user):
         seed_id = row["Source Seed ID"]
         plant_num = row["Plant Number"]
         comments = row["Plant Comments"]
-        user = request.user
+        user = user
 
         if seed_id != '':
             seed_id_fix = seed_id + '\r'
@@ -875,7 +875,7 @@ def plant_loader_prep(upload_file, user):
         plant_hash_fix = plant_hash + '\r'
         if plant_id not in plant_id_table and plant_id + '\r' not in plant_id_table:
             if plant_hash not in obs_plant_hash_table and plant_hash_fix not in obs_plant_hash_table:
-                obs_row_hash_table[plant_hash] = obs_plant_id
+                obs_plant_hash_table[plant_hash] = obs_plant_id
                 obs_plant_new[(obs_plant_id, plant_id, plant_num, comments)] = obs_plant_id
                 plant_id_table[plant_id] = (obs_plant_id, plant_id, plant_num, comments)
                 obs_plant_id = obs_plant_id + 1
@@ -1022,7 +1022,7 @@ def tissue_loader_prep(upload_file, user):
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
         culture_id = row["Source Culture ID"]
-        user = request.user
+        user = user
 
         if seed_id != '':
             seed_id_fix = seed_id + '\r'
@@ -1252,7 +1252,7 @@ def culture_loader_prep(upload_file, user):
         plant_id = row["Source Plant ID"]
         tissue_id = row["Source Tissue ID"]
         microbe_id = row["Source Microbe ID"]
-        user = request.user
+        user = user
 
         if seed_id != '':
             seed_id_fix = seed_id + '\r'
@@ -1532,7 +1532,7 @@ def dna_loader_prep(upload_file, user):
         culture_id = row["Source Culture ID"]
         plate_id = row["Source Plate ID"]
         sample_id = row["Source Sample ID"]
-        user = request.user
+        user = user
 
         if seed_id != '':
             seed_id_fix = seed_id + '\r'
@@ -1845,7 +1845,7 @@ def microbe_loader_prep(upload_file, user):
         plant_id = row["Source Plant ID"]
         tissue_id = row["Source Tissue ID"]
         culture_id = row["Source Culture ID"]
-        user = request.user
+        user = user
 
         if seed_id != '':
             seed_id_fix = seed_id + '\r'
@@ -2075,7 +2075,7 @@ def plate_loader_prep(upload_file, user):
         plate_type = row["Plate Type"]
         plate_status = row["Plate Status"]
         plate_comments = row["Plate Comments"]
-        user = request.user
+        user = user
 
         if location_name != '':
             location_name_fix = location_name + '\r'
@@ -2224,7 +2224,7 @@ def env_loader_prep(upload_file, user):
         longitude = row["Longitude"]
         latitude = row["Latitude"]
         env_comments = row["Environment Comments"]
-        user = request.user
+        user = user
 
         if field_name != '':
             field_name_fix = field_name + '\r'
@@ -2392,7 +2392,7 @@ def well_loader_prep(upload_file, user):
         culture_id = row["Source Culture ID"]
         microbe_id = row["Source Microbe ID"]
         plate_id = row["Source Plate ID"]
-        user = request.user
+        user = user
 
         if seed_id != '':
             seed_id_fix = seed_id + '\r'
@@ -2667,7 +2667,7 @@ def samples_loader_prep(upload_file, user):
         row_id = row["Source Row ID"]
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
-        user = request.user
+        user = user
 
         if seed_id != '':
             seed_id_fix = seed_id + '\r'
@@ -2823,7 +2823,7 @@ def samples_loader(results_dict):
         return False
     return True
 
-def maize_loader_prep(request, upload_file, user):
+def maize_loader_prep(upload_file, user):
     start = time.clock()
 
     maize_sample_new = OrderedDict({})
@@ -2866,7 +2866,7 @@ def maize_loader_prep(request, upload_file, user):
         gps_altitude = row["GPS Altitude"]
         gps_accuracy = row["GPS Accuracy"]
         photo = row["Photo"]
-        user = request.user
+        user = user
 
         maize_hash = maize_id + gps_altitude + county + weight + appearance + photo + gps_accuracy + gps_latitude + gps_longitude + harvest_date + maize_variety + moisture_content + seed_source + source_type + storage_conditions + storage_months + sub_location + village
         maize_hash_fix = maize_hash + '\r'
@@ -3171,7 +3171,7 @@ def isolate_loader_prep(upload_file, user):
         email = row["Email"]
         source_comments = row["Source Comments"]
         location_name = row["Location Name"]
-        user = request.user
+        user = user
 
         if seed_id != '':
             seed_id_fix = seed_id + '\r'
@@ -3711,7 +3711,7 @@ def glycerol_stock_loader_prep(upload_file, user):
         plate_id = row["Source Plate ID"]
         well_id = row["Source Well ID"]
         dna_id = row["Source DNA ID"]
-        user = request.user
+        user = user
 
         if seed_id != '':
             seed_id_fix = seed_id + '\r'
