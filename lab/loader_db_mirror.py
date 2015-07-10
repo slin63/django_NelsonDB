@@ -546,7 +546,7 @@ def seed_id_mirror():
     return seed_id_table
 
 def obs_sample_id_mirror():
-    obs_sample_id = ObsSample.objects.latest('id').id
+    obs_sample_id = ObsSample.objects.latest('id').id + 1
     return obs_sample_id
 
 def obs_sample_table_mirror():
