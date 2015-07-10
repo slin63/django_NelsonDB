@@ -445,6 +445,16 @@ def env_id_mirror():
         env_id_table[row.environment_id] = (row.id, row.environment_id, row.longitude, row.latitude, row.comments)
     return env_id_table
 
+def glycerol_stock_id_mirror():
+    glycerol_stock_id_table = OrderedDict({})
+    #--- Key = (glycerol_stock_id)
+    #--- Value = (glycerol_stock_table_id, glycerol_stock_id, stock_date, extract_color, organism, comments)
+
+    glycerol_file = GlycerolStock.objects.all()
+    for row in glycerol_file:
+        glycerol_stock_id_table[row.glycerol_stock_id] = (row.id, row.glycerol_stock_id, row.stock_date, row.extract_color, row.organism, row.comments)
+    return glycerol_stock_id_table
+
 def isolate_id_mirror():
     isolate_id_table = OrderedDict({})
     #--- Key = (isolate_id)
@@ -917,7 +927,7 @@ def glycerol_stock_hash_mirror():
         glycerol_stock_hash_table[glycerol_hash] = row.id
     return glycerol_stock_hash_table
 
-def glycerol_stock_id_mirror():
+def glycerol_stock_table_id_mirror():
     glycerol_stock_table_id = GlycerolStock.objects.latest('id').id + 1
     return glycerol_stock_table_id
 

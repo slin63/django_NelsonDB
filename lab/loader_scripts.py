@@ -3666,6 +3666,7 @@ def glycerol_stock_loader_prep(upload_file, user):
     user_hash_table = loader_db_mirror.user_hash_mirror()
     glycerol_stock_hash_table = loader_db_mirror.glycerol_stock_hash_mirror()
     glycerol_stock_table_id = loader_db_mirror.glycerol_stock_table_id_mirror()
+    glycerol_stock_id_table = loader_db_mirror.glycerol_stock_id_mirror()
     row_id_table = loader_db_mirror.row_id_mirror()
     seed_id_table = loader_db_mirror.seed_id_mirror()
     plant_id_table = loader_db_mirror.plant_id_mirror()
@@ -3891,18 +3892,18 @@ def glycerol_stock_loader_prep(upload_file, user):
         else:
             location_id = 1
 
-        glycerol_stock_hash = glycerol_stock_id + stock_date + extract_color + organism + comments
+        glycerol_stock_hash = glycerol_stock_id + date + extract_color + organism + comments
         glycerol_stock_hash_fix = glycerol_stock_hash + '\r'
         if glycerol_stock_id not in glycerol_stock_id_table and glycerol_stock_id + '\r' not in glycerol_stock_id_table:
             if glycerol_stock_hash not in glycerol_stock_hash_table and glycerol_stock_hash_fix not in glycerol_stock_hash_table:
                 glycerol_stock_hash_table[glycerol_stock_hash] = glycerol_stock_table_id
-                glycerol_stock_new[(glycerol_stock_table_id, glycerol_stock_id, stock_date, extract_color, organism, comments)] = glycerol_stock_table_id
-                glycerol_stock_id_table[glycerol_stock_id] = (glycerol_stock_table_id, glycerol_stock_id, stock_date, extract_color, organism, comments)
+                glycerol_stock_new[(glycerol_stock_table_id, glycerol_stock_id, date, extract_color, organism, comments)] = glycerol_stock_table_id
+                glycerol_stock_id_table[glycerol_stock_id] = (glycerol_stock_table_id, glycerol_stock_id, date, extract_color, organism, comments)
                 glycerol_stock_table_id = glycerol_stock_table_id + 1
             else:
-                glycerol_stock_hash_exists[(glycerol_stock_id + stock_date + extract_color + organism + comments)] = glycerol_stock_table_id
+                glycerol_stock_hash_exists[(glycerol_stock_id + date + extract_color + organism + comments)] = glycerol_stock_table_id
         else:
-            glycerol_stock_hash_exists[(glycerol_stock_id + stock_date + extract_color + organism + comments)] = glycerol_stock_table_id
+            glycerol_stock_hash_exists[(glycerol_stock_id + date + extract_color + organism + comments)] = glycerol_stock_table_id
 
         if glycerol_stock_id in glycerol_stock_id_table:
             temp_glycerol_id = glycerol_stock_id_table[glycerol_stock_id][0]
