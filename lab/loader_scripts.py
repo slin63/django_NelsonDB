@@ -4096,7 +4096,7 @@ def measurement_loader_prep(upload_file, user):
     measurement_file = csv.DictReader(upload_file)
     for row in measurement_file:
         obs_id = row["Observation Unit"]
-        parameter = row["Parameter"]
+        parameter = row["Parameter Name"]
         username = row["Username"]
         time_of_measurement = row["DateTime"]
         value = row["Value"]
