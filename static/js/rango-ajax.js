@@ -165,6 +165,32 @@ $('#show_all_microbe_experiment').click(function(){
 	});
 });
 
+$('#env_experimentsuggestion').keyup(function(){
+	var query;
+	query = $(this).val();
+	$.get('/lab/data/environment/suggest_env_experiment/', {suggestion: query}, function(data){
+		$('#env_experiment').html(data);
+		$('#selected_env_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
+$('#show_all_env_experiment').click(function(){
+	$.get('/lab/data/environment/show_all_experiment/', {}, function(data){
+		$('#env_experiment').html(data);
+		$('#selected_env_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
 $('#tissue_experimentsuggestion').keyup(function(){
 	var query;
 	query = $(this).val();
@@ -443,6 +469,18 @@ $('#clear_culture_experiment').click(function(){
 
 $('#clear_dna_experiment').click(function(){
 	$.get('/lab/data/dna/checkbox_clear/', {}, function(data){
+		$('body').html(data);
+	});
+});
+
+$('#clear_microbe_experiment').click(function(){
+	$.get('/lab/data/microbe/checkbox_clear/', {}, function(data){
+		$('body').html(data);
+	});
+});
+
+$('#clear_env_experiment').click(function(){
+	$.get('/lab/data/environment/checkbox_clear/', {}, function(data){
 		$('body').html(data);
 	});
 });

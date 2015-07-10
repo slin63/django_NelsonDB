@@ -431,6 +431,8 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_sample_experiment'] = request.session.get('checkbox_sample_experiment')
 	if request.session.get('checkbox_microbe_experiment', None):
 		context_dict['checkbox_microbe_experiment'] = request.session.get('checkbox_microbe_experiment')
+	if request.session.get('checkbox_env_experiment', None):
+		context_dict['checkbox_env_experiment'] = request.session.get('checkbox_env_experiment')
 	if request.session.get('checkbox_measurement_experiment', None):
 		context_dict['checkbox_measurement_experiment'] = request.session.get('checkbox_measurement_experiment')
 	return context_dict
@@ -1516,6 +1518,121 @@ def download_microbe_experiment(request, experiment_name):
 	writer.writerow(['Microbe ID', 'Microbe Type', 'Comments', 'Source Row ID', 'Source Seed ID', 'Source Plant ID', 'Source Tissue ID', 'Source Culture ID'])
 	for row in microbe_data:
 		writer.writerow([row.obs_microbe.microbe_id, row.obs_microbe.microbe_type, row.obs_microbe.comments, row.obs_row.row_id, row.stock.seed_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.obs_culture.culture_id])
+	return response
+
+@login_required
+def env_data_browse(request):
+	context = RequestContext(request)
+	context_dict = {}
+	env_data = sort_env_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['env_data'] = env_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/env_data.html', context_dict, context)
+
+def sort_env_data(request):
+	env_data = {}
+	if request.session.get('checkbox_env_experiment_id_list', None):
+		checkbox_env_experiment_id_list = request.session.get('checkbox_env_experiment_id_list')
+		for e in checkbox_env_experiment_id_list:
+			envs = ObsTracker.objects.filter(obs_entity_type='environment', experiment__id=e)
+			env_data = list(chain(envs, env_data))
+	else:
+		env_data = ObsTracker.objects.filter(obs_entity_type='environment')[:2000]
+	return env_data
+
+@login_required
+def download_env_data(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="selected_experiment_environments.csv"'
+	env_data = sort_env_data(request)
+	writer = csv.writer(response)
+	writer.writerow(['Exp ID', 'Environment ID', 'Field Name', 'Longitude', 'Latitude', 'Comments'])
+	for row in env_data:
+		writer.writerow([row.experiment.name, row.obs_env.environment_id, row.field.field_name, row.obs_env.longitude, row.obs_env.latitude, row.obs_env.comments])
+	return response
+
+def suggest_env_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	env_experiment_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with = request.GET['suggestion']
+	else:
+		starts_with = request.POST['suggestion']
+	if starts_with:
+		env_experiment_list = ObsTracker.objects.filter(obs_entity_type='environment', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
+	else:
+		env_experiment_list = None
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['env_experiment_list'] = env_experiment_list
+	return render_to_response('lab/env_experiment_list.html', context_dict, context)
+
+def select_env_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	env_data = []
+	checkbox_env_experiment_name_list = []
+	checkbox_env_experiment_list = request.POST.getlist('checkbox_env_experiment')
+	for env_experiment in checkbox_env_experiment_list:
+		env = ObsTracker.objects.filter(obs_entity_type='environment', experiment__id=env_experiment)
+		env_data = list(chain(env, env_data))
+	for experiment_id in checkbox_env_experiment_list:
+		experiment_name = Experiment.objects.filter(id=experiment_id).values('name')
+		checkbox_env_experiment_name_list = list(chain(experiment_name, checkbox_env_experiment_name_list))
+	request.session['checkbox_env_experiment'] = checkbox_env_experiment_name_list
+	request.session['checkbox_env_experiment_id_list'] = checkbox_env_experiment_list
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['env_data'] = env_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/env_data.html', context_dict, context)
+
+def checkbox_env_data_clear(request):
+	context = RequestContext(request)
+	context_dict = {}
+	del request.session['checkbox_env_experiment']
+	del request.session['checkbox_env_experiment_id_list']
+	env_data = sort_env_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['env_data'] = env_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/env_data.html', context_dict, context)
+
+def show_all_env_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	env_experiment_list = ObsTracker.objects.filter(obs_entity_type='environment').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['env_experiment_list'] = env_experiment_list
+	return render_to_response('lab/env_experiment_list.html', context_dict, context)
+
+def find_env_from_experiment(experiment_name):
+	try:
+		env_data = ObsTracker.objects.filter(obs_entity_type='environment', experiment__name=experiment_name)
+	except ObsTracker.DoesNotExist:
+		env_data = None
+	return env_data
+
+@login_required
+def env_data_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	env_data = find_env_from_experiment(experiment_name)
+	context_dict['env_data'] = env_data
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/env_experiment_data.html', context_dict, context)
+
+@login_required
+def download_env_experiment(request, experiment_name):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="%s_environments.csv"' % (experiment_name)
+	env_data = find_env_from_experiment(experiment_name)
+	writer = csv.writer(response)
+	writer.writerow(['Environment ID', 'Field Name', 'Longitude', 'Latitude', 'Comments'])
+	for row in env_data:
+		writer.writerow([row.obs_env.environment_id, row.field.field_name, row.obs_env.longitude, row.obs_env.latitude, row.obs_env.comments])
 	return response
 
 @login_required

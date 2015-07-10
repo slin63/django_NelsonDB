@@ -1,0 +1,76 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Environment Data{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Environment Data</h1>
+</div>
+  <br />
+
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <div class="row-fluid">
+        <div class="span3">
+          <ul class="nav nav-list">
+            <li class="nav-header">Select Experiments</li>
+            <form>
+              <label></label>
+              <li><input  class="search-query" type="text" name="env_experimentsuggestion" id="env_experimentsuggestion" placeholder="Type Experiment (e.g. 08PN)"/></li>
+            </form>
+          </ul>
+        </div>
+        <div class="span3 offset1">
+          <button class="btn btn-info" id="show_all_env_experiment" name="show_all_env_experiment" type="submit">Show All Experiments</button>
+        </div>
+        {% if checkbox_env_experiment %}
+        <div class="span2 offset3">
+          <button class="btn btn-warning" id="clear_env_experiment" name="clear_env_experiment" type="submit">Clear Experiments</button>
+        </div>
+        {% endif %}
+      </div>
+      <div id="env_experiment">
+        {% include 'lab/env_experiment_list.html' with env_experiment_list=env_experiment_list %}
+      </div>
+      {% if checkbox_env_experiment %}
+        <hr>
+        <h5>Selected Experiments</h5>
+        {% for exp in checkbox_env_experiment %}
+          <li>{{ exp.name }}</li>
+        {% endfor %}
+      {% endif %}
+    </div><br/>
+
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <h2>Environment Data</h2><br/>
+        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+          <tr>
+            <th>Exp</th>
+            <th>Environment ID</th>
+            <th>Field Name</th>
+            <th>Longitude</th>
+            <th>Latitude</th>
+            <th>Comments</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for data in env_data %}
+          <tr>
+            <td><a href='/lab/experiment/{{data.experiment.name}}/'>{{data.experiment.name}}</a></td>
+            <td><a href='/lab/environment/{{data.obs_env.id}}/'>{{data.obs_env.environment_id}}</a></td>
+            <td><a href='/lab/field/{{data.field.id}}/'>{{data.field.field_name}}</a></td>
+            <td>{{data.obs_env.longitude}}</td>
+            <td>{{data.obs_env.latitude}}</td>
+            <td>{{data.obs_env.comments}}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <br/>
+      <form action='/lab/download/data/environment/'>
+        <input class="btn btn-primary" type="submit" name="submit" value="Export Data"/>
+      </form>
+    </div><br/><br/>
+
+
+
+{% endblock %}

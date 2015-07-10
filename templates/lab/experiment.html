@@ -285,7 +285,7 @@
 										<h3>Microbe Data</h3>
 										{% if microbe_data %}
 										<h5><a href='/lab/data/microbe/{{experiment.name}}/'>View</a></h5>
-										<h5><a href='/lab/download/data/microbe/{{experiment.name}}/'>Download</a></h5>
+										<h5><a href='/lab/download/microbe/{{experiment.name}}/'>Download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}
@@ -305,7 +305,7 @@
 										<h3>Environment Data</h3>
 										{% if environment_data %}
 										<h5><a href='/lab/data/environment/{{experiment.name}}/'>View</a></h5>
-										<h5><a href='/lab/download/data/environment/{{experiment.name}}/'>Download</a></h5>
+										<h5><a href='/lab/download/environment/{{experiment.name}}/'>Download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}
