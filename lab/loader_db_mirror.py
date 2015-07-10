@@ -445,6 +445,26 @@ def env_id_mirror():
         env_id_table[row.environment_id] = (row.id, row.environment_id, row.longitude, row.latitude, row.comments)
     return env_id_table
 
+def isolate_id_mirror():
+    isolate_id_table = OrderedDict({})
+    #--- Key = (isolate_id)
+    #--- Value = (isolate_table_id, passport_id, location_id, disease_info_id, isolate_id, isolate_name, plant_organ, comments)
+
+    isolate_file = Isolate.objects.all()
+    for row in isolate_file:
+        isolate_id_table[row.isolate_id] = (row.id, row.passport_id, row.location_id, row.disease_info_id, row.isolate_id, row.isolate_name, row.plant_organ, row.comments)
+    return isolate_id_table
+
+def disease_name_mirror():
+    disease_name_table = OrderedDict({})
+    #--- Key = (common_name)
+    #--- Value = (disease_info_id, common_name, abbrev, comments)
+
+    disease_file = DiseaseInfo.objects.all()
+    for row in disease_file:
+        disease_name_table[row.common_name] = (row.id, row.common_name, row.abbrev, row.comments)
+    return disease_name_table
+
 def row_id_seed_id_mirror():
     row_id_seed_id_table = OrderedDict({})
     #--- Key = (row_id)
@@ -880,7 +900,7 @@ def isolate_hash_mirror():
         isolate_hash_table[isolate_hash] = row.id
     return isolate_hash_table
 
-def isolate_id_mirror():
+def isolate_table_id_mirror():
     isolate_table_id = Isolate.objects.latest('id').id + 1
     return isolate_table_id
 
