@@ -1457,7 +1457,7 @@ def suggest_microbe_experiment(request):
 def select_microbe_experiment(request):
 	context = RequestContext(request)
 	context_dict = {}
-	row_data = []
+	microbe_data = []
 	checkbox_microbe_experiment_name_list = []
 	checkbox_microbe_experiment_list = request.POST.getlist('checkbox_microbe_experiment')
 	for microbe_experiment in checkbox_microbe_experiment_list:
