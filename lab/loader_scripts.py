@@ -2374,7 +2374,7 @@ def well_loader_prep(upload_file, user):
     tissue_id_error = OrderedDict({})
     culture_id_error = OrderedDict({})
     plate_id_error = OrderedDict({})
-    microbe_hash_exists = OrderedDict({})
+    well_hash_exists = OrderedDict({})
     obs_tracker_hash_exists = OrderedDict({})
 
     well_file = csv.DictReader(upload_file)
@@ -2512,8 +2512,8 @@ def well_loader_prep(upload_file, user):
 
         obs_tracker_well_hash = 'well' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_culture_id) + str(1) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_row_id) + str(1) + str(obs_tissue_id) + str(temp_obswell_id) + str(stock_id) + str(user_hash_table[user.username])
         obs_tracker_well_hash_fix = obs_tracker_well_hash + '\r'
-        if obs_tracker_microbe_hash not in obs_tracker_hash_table and obs_tracker_microbe_hash_fix not in obs_tracker_hash_table:
-            obs_tracker_hash_table[obs_tracker_microbe_hash] = obs_tracker_id
+        if obs_tracker_well_hash not in obs_tracker_hash_table and obs_tracker_well_hash_fix not in obs_tracker_hash_table:
+            obs_tracker_hash_table[obs_tracker_well_hash] = obs_tracker_id
             obs_tracker_new[(obs_tracker_id, 'well', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, temp_obswell_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
             obs_tracker_id = obs_tracker_id + 1
         else:
