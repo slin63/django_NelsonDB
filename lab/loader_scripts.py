@@ -2207,6 +2207,7 @@ def env_loader_prep(upload_file, user):
     obs_env_hash_table = loader_db_mirror.obs_env_hash_mirror()
     obs_env_id = loader_db_mirror.obs_env_id_mirror()
     field_name_table = loader_db_mirror.field_name_mirror()
+    env_id_table = loader_db_mirror.env_id_mirror()
     obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
     obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
     experiment_name_table = loader_db_mirror.experiment_name_mirror()

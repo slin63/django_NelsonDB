@@ -435,6 +435,16 @@ def row_id_mirror():
         row_id_table[row.row_id] = (row.id, row.row_id, row.row_name, row.range_num, row.plot, row.block, row.rep, row.kernel_num, row.planting_date, row.harvest_date, row.comments)
     return row_id_table
 
+def env_id_mirror():
+    env_id_table = OrderedDict({})
+    #--- Key = (environment_id)
+    #--- Value = (obs_env_id, environment_id, longitude, latitude, comments)
+
+    obs_env_file = ObsEnv.objects.all()
+    for row in obs_env_file:
+        env_id_table[row.environment_id] = (row.id, row.environment_id, row.longitude, row.latitude, row.comments)
+    return env_id_table
+
 def row_id_seed_id_mirror():
     row_id_seed_id_table = OrderedDict({})
     #--- Key = (row_id)
@@ -935,6 +945,21 @@ def obs_well_hash_mirror():
 def obs_well_id_mirror():
     obs_well_id = ObsWell.objects.latest('id').id + 1
     return obs_well_id
+
+def obs_env_hash_mirror():
+    obs_env_hash_table = OrderedDict({})
+    #--- Key = (environment_id + longitude + latitude + comments)
+    #--- Value = (obs_env_id)
+
+    env_file = ObsEnv.objects.all()
+    for row in env_file:
+        obs_env_hash = row.environment_id + row.longitude + row.latitude + row.comments
+        obs_env_hash_table[obs_env_hash] = row.id
+    return obs_env_hash_table
+
+def obs_env_id_mirror():
+    obs_env_id = ObsEnv.objects.latest('id').id + 1
+    return obs_env_id
 
 def obs_plant_hash_mirror():
     obs_plant_hash_table = OrderedDict({})
