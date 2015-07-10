@@ -1,0 +1,81 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Microbe Data{% endblock %}
+{% block body_block %}
+
+<div class="hero-unit">
+  <h1>Microbe Data</h1>
+</div>
+<br />
+
+<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+  <div class="row-fluid">
+    <div class="span3">
+      <ul class="nav nav-list">
+        <li class="nav-header">Select Experiments</li>
+        <form>
+          <label></label>
+          <li><input  class="search-query" type="text" name="microbe_experimentsuggestion" id="microbe_experimentsuggestion" placeholder="Type Experiment (e.g. 08PN)"/></li>
+        </form>
+      </ul>
+    </div>
+    <div class="span3 offset1">
+      <button class="btn btn-info" id="show_all_microbe_experiment" name="show_all_microbe_experiment" type="submit">Show All Experiments</button>
+    </div>
+    {% if checkbox_microbe_experiment %}
+    <div class="span2 offset3">
+      <button class="btn btn-warning" id="clear_microbe_experiment" name="clear_microbe_experiment" type="submit">Clear Experiments</button>
+    </div>
+    {% endif %}
+  </div>
+  <div id="microbe_experiment">
+    {% include 'lab/microbe_experiment_list.html' with microbe_experiment_list=microbe_experiment_list %}
+  </div>
+  {% if checkbox_microbe_experiment %}
+  <hr>
+  <h5>Selected Experiments</h5>
+  {% for exp in checkbox_microbe_experiment %}
+  <li>{{ exp.name }}</li>
+  {% endfor %}
+  {% endif %}
+</div><br/>
+
+<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+  <h2>Microbe Data</h2><br/>
+  <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th>Exp</th>
+        <th>Microbe ID</th>
+        <th>Microbe Type</th>
+        <th>Comments</th>
+        <th>Source Row ID</th>
+        <th>Source Seed ID</th>
+        <th>Source Plant ID</th>
+        <th>Source Tissue ID</th>
+        <th>Source Culture ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for data in microbe_data %}
+      <tr>
+        <td><a href='/lab/experiment/{{data.experiment.name}}/'>{{data.experiment.name}}</a></td>
+        <td><a href='/lab/microbe/{{data.obs_microbe.id}}/'>{{data.obs_microbe.microbe_id}}</a></td>
+        <td>{{data.obs_microbe.microbe_type}}</td>
+        <td>{{data.obs_microbe.comments}}</td>
+        <td><a href='/lab/row/{{data.obs_microbe.id}}/'>{{data.obs_row.row_id}}</a></td>
+        <td><a href='/lab/stock/{{data.stock.id}}/'>{{data.stock.seed_id}}</a></td>
+        <td><a href='/lab/plant/{{data.obs_plant.id}}/'>{{data.obs_plant.plant_id}}</a></td>
+        <td><a href='/lab/tissue/{{data.obs_tissue.id}}/'>{{data.obs_tissue.tissue_id}}</a></td>
+        <td><a href='/lab/culture/{{data.obs_culture.id}}/'>{{data.obs_culture.culture_id}}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <br/>
+  <form action='/lab/download/data/microbe/'>
+    <input class="btn btn-primary" type="submit" name="submit" value="Download Data"/>
+  </form>
+</div><br/><br/>
+
+{% endblock %}

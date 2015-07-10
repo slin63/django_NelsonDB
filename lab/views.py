@@ -429,6 +429,8 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_maize_experiment'] = request.session.get('checkbox_maize_experiment')
 	if request.session.get('checkbox_sample_experiment', None):
 		context_dict['checkbox_sample_experiment'] = request.session.get('checkbox_sample_experiment')
+	if request.session.get('checkbox_microbe_experiment', None):
+		context_dict['checkbox_microbe_experiment'] = request.session.get('checkbox_microbe_experiment')
 	if request.session.get('checkbox_measurement_experiment', None):
 		context_dict['checkbox_measurement_experiment'] = request.session.get('checkbox_measurement_experiment')
 	return context_dict
@@ -1399,6 +1401,121 @@ def download_glycerol_stocks_experiment(request, experiment_name):
 	writer.writerow(['Glycerol Stock ID', 'Stock Date', 'Extract Color', 'Organism', 'Location Name', 'Source Seed ID', 'Source Row ID', 'Source Culture ID', 'Source Isolate ID', 'Comments'])
 	for row in glycerol_stock_data:
 		writer.writerow([row.glycerol_stock.glycerol_stock_id, row.glycerol_stock.stock_date, row.glycerol_stock.extract_color, row.glycerol_stock.organism, row.location, row.stock.seed_id, row.obs_row.row_id, row.obs_culture.culture_id, row.isolate.isolate_id, row.glycerol_stock.comments])
+	return response
+
+@login_required
+def microbe_data_browse(request):
+	context = RequestContext(request)
+	context_dict = {}
+	microbe_data = sort_microbe_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['microbe_data'] = microbe_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/microbe_data.html', context_dict, context)
+
+def sort_microbe_data(request):
+	microbe_data = {}
+	if request.session.get('checkbox_microbe_experiment_id_list', None):
+		checkbox_microbe_experiment_id_list = request.session.get('checkbox_microbe_experiment_id_list')
+		for m in checkbox_microbe_experiment_id_list:
+			microbes = ObsTracker.objects.filter(obs_entity_type='microbe', experiment__id=m)
+			microbe_data = list(chain(microbes, microbe_data))
+	else:
+		microbe_data = ObsTracker.objects.filter(obs_entity_type='microbe')[:2000]
+	return microbe_data
+
+@login_required
+def download_microbe_data(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="selected_experiment_microbes.csv"'
+	microbe_data = sort_microbe_data(request)
+	writer = csv.writer(response)
+	writer.writerow(['Exp ID', 'Microbe ID', 'Microbe Type', 'Comments', 'Source Row ID', 'Source Seed ID', 'Source Plant ID', 'Source Tissue ID', 'Source Culture ID'])
+	for row in microbe_data:
+		writer.writerow([row.experiment.name, row.obs_microbe.microbe_id, row.obs_microbe.microbe_type, row.obs_microbe.comments, row.obs_row.row_id, row.stock.seed_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.obs_culture.culture_id])
+	return response
+
+def suggest_microbe_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	microbe_experiment_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with = request.GET['suggestion']
+	else:
+		starts_with = request.POST['suggestion']
+	if starts_with:
+		microbe_experiment_list = ObsTracker.objects.filter(obs_entity_type='microbe', experiment__name__contains=starts_with).values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
+	else:
+		microbe_experiment_list = None
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['microbe_experiment_list'] = microbe_experiment_list
+	return render_to_response('lab/microbe_experiment_list.html', context_dict, context)
+
+def select_microbe_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	row_data = []
+	checkbox_microbe_experiment_name_list = []
+	checkbox_microbe_experiment_list = request.POST.getlist('checkbox_microbe_experiment')
+	for microbe_experiment in checkbox_microbe_experiment_list:
+		microbes = ObsTracker.objects.filter(obs_entity_type='microbe', experiment__id=microbe_experiment)
+		microbe_data = list(chain(microbes, microbe_data))
+	for experiment_id in checkbox_microbe_experiment_list:
+		experiment_name = Experiment.objects.filter(id=experiment_id).values('name')
+		checkbox_microbe_experiment_name_list = list(chain(experiment_name, checkbox_microbe_experiment_name_list))
+	request.session['checkbox_microbe_experiment'] = checkbox_microbe_experiment_name_list
+	request.session['checkbox_microbe_experiment_id_list'] = checkbox_microbe_experiment_list
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['microbe_data'] = microbe_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/microbe_data.html', context_dict, context)
+
+def checkbox_microbe_data_clear(request):
+	context = RequestContext(request)
+	context_dict = {}
+	del request.session['checkbox_microbe_experiment']
+	del request.session['checkbox_microbe_experiment_id_list']
+	microbe_data = sort_microbe_data(request)
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['microbe_data'] = microbe_data
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/microbe_data.html', context_dict, context)
+
+def show_all_microbe_experiment(request):
+	context = RequestContext(request)
+	context_dict = {}
+	microbe_experiment_list = ObsTracker.objects.filter(obs_entity_type='microbe').values('experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[:2000]
+	context_dict = checkbox_session_variable_check(request)
+	context_dict['microbe_experiment_list'] = microbe_experiment_list
+	return render_to_response('lab/microbe_experiment_list.html', context_dict, context)
+
+def find_microbe_from_experiment(experiment_name):
+	try:
+		microbe_data = ObsTracker.objects.filter(obs_entity_type='microbe', experiment__name=experiment_name)
+	except ObsTracker.DoesNotExist:
+		microbe_data = None
+	return microbe_data
+
+@login_required
+def microbe_data_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	microbe_data = find_microbe_from_experiment(experiment_name)
+	context_dict['microbe_data'] = microbe_data
+	context_dict['experiment_name'] = experiment_name
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/microbe_experiment_data.html', context_dict, context)
+
+@login_required
+def download_microbe_experiment(request, experiment_name):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="%s_microbes.csv"' % (experiment_name)
+	microbe_data = find_microbe_from_experiment(experiment_name)
+	writer = csv.writer(response)
+	writer.writerow(['Microbe ID', 'Microbe Type', 'Comments', 'Source Row ID', 'Source Seed ID', 'Source Plant ID', 'Source Tissue ID', 'Source Culture ID'])
+	for row in microbe_data:
+		writer.writerow([row.obs_microbe.microbe_id, row.obs_microbe.microbe_type, row.obs_microbe.comments, row.obs_row.row_id, row.stock.seed_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.obs_culture.culture_id])
 	return response
 
 @login_required

@@ -139,6 +139,32 @@ $('#show_all_row_experiment').click(function(){
 	});
 });
 
+$('#microbe_experimentsuggestion').keyup(function(){
+	var query;
+	query = $(this).val();
+	$.get('/lab/data/microbe/suggest_microbe_experiment/', {suggestion: query}, function(data){
+		$('#microbe_experiment').html(data);
+		$('#selected_microbe_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
+$('#show_all_microbe_experiment').click(function(){
+	$.get('/lab/data/microbe/show_all_experiment/', {}, function(data){
+		$('#microbe_experiment').html(data);
+		$('#selected_microbe_experiment').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
 $('#tissue_experimentsuggestion').keyup(function(){
 	var query;
 	query = $(this).val();
