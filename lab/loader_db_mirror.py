@@ -921,21 +921,6 @@ def obs_row_id_mirror():
     obs_row_id = ObsRow.objects.latest('id').id + 1
     return obs_row_id
 
-def obs_well_hash_mirror():
-    obs_well_hash_table = OrderedDict({})
-    #--- Key = (well_id + well + well_inventory + tube_label + comments)
-    #--- Value = (obs_well_id)
-
-    well_file = ObsWell.objects.all()
-    for row in well_file:
-        obs_well_hash = row.well_id + row.well + row.well_inventory + row.tube_label + row.comments
-        obs_well_hash_table[obs_well_hash] = row.id
-    return obs_well_hash_table
-
-def obs_well_id_mirror():
-    obs_well_id = ObsWell.objects.latest('id').id + 1
-    return obs_well_id
-
 def obs_plant_hash_mirror():
     obs_plant_hash_table = OrderedDict({})
     #--- Key = (row_id + row_name + range_num + plot + block + rep + kernel_num + planting_date + harvest_date + comments)

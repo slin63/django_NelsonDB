@@ -1,3 +1,0 @@
-Well ID,Experiment Name,Well,Inventory,Tube Label,Well Comments,Source Seed ID,Source Row ID,Source Plant ID,Source Microbe ID,Source Culture ID,Source Tissue ID,Source Plate ID
-15NMTest_well_01,15NMTest,A1,,,,stock_upload_test_999,,15NMTest_plant_01,,15NMTest_culture_01,,15NMTest_plate_01
-15NMTest_well_02,15NMTest,A2,,,,,15NMTest_row_01,,15NMTest_microbe_01,,15NMTest_tissue_01,
