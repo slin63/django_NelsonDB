@@ -13,6 +13,10 @@
   <p>Country: {{locality_info.country}}</p>
   <p>Zipcode: {{locality_info.zipcode}}</p>
 
+  <hr>
+  <a href='/lab/edit/locality/{{locality_info.id}}/'><input class="btn btn-info" type="submit" name="submit" value="Edit Locality"/></a>
+  <hr>
+
 {% else %}
   <br/>
   <h2>Locality Does Not Exist</h2>

@@ -820,6 +820,31 @@ def edit_info(request, obj_type, obj_id):
 		context_dict['logged_in_user'] = request.user.username
 		return render_to_response('lab/edit_field.html', context_dict, context)
 
+	elif obj_type == 'locality':
+		if request.method == 'POST':
+			locality_form = NewLocalityForm(data=request.POST)
+			if locality_form.is_valid():
+				with transaction.atomic():
+					try:
+						locality = Locality.objects.get(id=obj_id)
+						locality.city = locality_form.cleaned_data['city']
+						locality.state = locality_form.cleaned_data['state']
+						locality.country = locality_form.cleaned_data['country']
+						locality.zipcode = locality_form.cleaned_data['zipcode']
+						locality.save()
+						context_dict['updated'] = True
+					except Exception:
+						context_dict['failed'] = True
+			else:
+				print(locality_form.errors)
+		else:
+			locality_data = Locality.objects.filter(id=obj_id).values('city', 'state', 'country', 'zipcode')
+			locality_form = NewLocalityForm(initial=locality_data[0])
+		context_dict['locality_id'] = obj_id
+		context_dict['locality_form'] = locality_form
+		context_dict['logged_in_user'] = request.user.username
+		return render_to_response('lab/edit_locality.html', context_dict, context)
+
 def select_taxonomy(request):
 	context = RequestContext(request)
 	context_dict = {}

@@ -81,8 +81,8 @@ class NewFieldForm(forms.Form):
 
 class NewLocalityForm(forms.Form):
 	city = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'City'}), help_text="Type a city name:", required=True)
-	state = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'State'}), help_text="What state is the city in:", required=True)
-	country = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Country'}), help_text="What country is the state in:", required=True)
+	state = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'State'}), help_text="What state is the city in:", required=False)
+	country = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Country'}), help_text="What country is the state in:", required=False)
 	zipcode = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Zipcode'}), help_text="Type the zipcode:", required=False)
 
 class NewMeasurementParameterForm(forms.Form):
