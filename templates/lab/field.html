@@ -16,6 +16,10 @@
   <p>Country: {{field_info.locality.country}}</p>
   <p>Zipcode: {{field_info.locality.zipcode}}</p>
 
+  <hr>
+  <a href='/lab/edit/field/{{field_info.id}}/'><input class="btn btn-info" type="submit" name="submit" value="Edit Field"/></a>
+  <hr>
+
 {% else %}
   <br/>
   <h2>Field Does Not Exist</h2>

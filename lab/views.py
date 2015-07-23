@@ -786,7 +786,7 @@ def edit_info(request, obj_type, obj_id):
 					except Exception:
 						context_dict['failed'] = True
 			else:
-				print(measurement_parameter_form.errors)
+				print(medium_form.errors)
 		else:
 			medium_data = Medium.objects.filter(id=obj_id).values('citation', 'media_name', 'media_type', 'media_description', 'media_preparation', 'comments')
 			medium_form = NewMediumForm(initial=medium_data[0])
@@ -794,6 +794,31 @@ def edit_info(request, obj_type, obj_id):
 		context_dict['medium_form'] = medium_form
 		context_dict['logged_in_user'] = request.user.username
 		return render_to_response('lab/edit_medium.html', context_dict, context)
+
+	elif obj_type == 'field':
+		if request.method == 'POST':
+			field_form = NewFieldForm(data=request.POST)
+			if field_form.is_valid():
+				with transaction.atomic():
+					try:
+						field = Field.objects.get(id=obj_id)
+						field.locality = field_form.cleaned_data['locality']
+						field.field_name = field_form.cleaned_data['field_name']
+						field.field_num = field_form.cleaned_data['field_num']
+						field.comments = field_form.cleaned_data['comments']
+						field.save()
+						context_dict['updated'] = True
+					except Exception:
+						context_dict['failed'] = True
+			else:
+				print(field_form.errors)
+		else:
+			field_data = Field.objects.filter(id=obj_id).values('locality', 'field_name', 'field_num', 'comments')
+			field_form = NewFieldForm(initial=field_data[0])
+		context_dict['field_id'] = obj_id
+		context_dict['field_form'] = field_form
+		context_dict['logged_in_user'] = request.user.username
+		return render_to_response('lab/edit_field.html', context_dict, context)
 
 def select_taxonomy(request):
 	context = RequestContext(request)

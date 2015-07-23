@@ -1,12 +1,12 @@
 {% extends "lab/base.html" %}
 
-{% block title %}Medium{% endblock %}
+{% block title %}Field{% endblock %}
 
 {% block body_block %}
 <div class="hero-unit">
-  <h1>Edit Medium</h1>
+  <h1>Edit Field</h1>
   <hr>
-  <a href='/lab/medium/{{medium_id}}/'><input class="btn btn-info" type="submit" name="submit" value="Back to Medium Page"/></a>
+  <a href='/lab/field/{{field_id}}/'><input class="btn btn-info" type="submit" name="submit" value="Back to Field Page"/></a>
   <hr>
   {% if updated %}
   <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Edit Was Saved!<br/>&nbsp;</h4>
@@ -14,9 +14,9 @@
   <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Edit Was Not Saved! Fix Errors.<br/>&nbsp;</h4>
   {% endif %}
   <div class="container-fluid">
-    <form class="form-signin" id="update_medium" method="post" action="/lab/edit/medium/{{medium_id}}/">
+    <form class="form-signin" id="update_field" method="post" action="/lab/edit/field/{{field_id}}/">
       {% csrf_token %}
-      {% for field in medium_form.visible_fields %}
+      {% for field in field_form.visible_fields %}
       <div class="row">
         <div class="span4 offset1"><font color="247eca">{{ field.help_text }}</font></div>
         <div class="span3">{{ field }}</div>
