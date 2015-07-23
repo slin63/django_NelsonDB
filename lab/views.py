@@ -845,6 +845,35 @@ def edit_info(request, obj_type, obj_id):
 		context_dict['logged_in_user'] = request.user.username
 		return render_to_response('lab/edit_locality.html', context_dict, context)
 
+	elif obj_type == 'location':
+		if request.method == 'POST':
+			location_form = NewLocationForm(data=request.POST)
+			if location_form.is_valid():
+				with transaction.atomic():
+					try:
+						location = Location.objects.get(id=obj_id)
+						location.locality = location_form.cleaned_data['locality']
+						location.location_name = location_form.cleaned_data['location_name']
+						location.building_name = location_form.cleaned_data['building_name']
+						location.room = location_form.cleaned_data['room']
+						location.shelf = location_form.cleaned_data['shelf']
+						location.column = location_form.cleaned_data['column']
+						location.box_name = location_form.cleaned_data['box_name']
+						location.comments = location_form.cleaned_data['comments']
+						location.save()
+						context_dict['updated'] = True
+					except Exception:
+						context_dict['failed'] = True
+			else:
+				print(location_form.errors)
+		else:
+			location_data = Location.objects.filter(id=obj_id).values('locality', 'location_name', 'building_name', 'room', 'shelf', 'column', 'box_name', 'comments')
+			location_form = NewLocationForm(initial=location_data[0])
+		context_dict['location_id'] = obj_id
+		context_dict['location_form'] = location_form
+		context_dict['logged_in_user'] = request.user.username
+		return render_to_response('lab/edit_location.html', context_dict, context)
+
 def select_taxonomy(request):
 	context = RequestContext(request)
 	context_dict = {}
