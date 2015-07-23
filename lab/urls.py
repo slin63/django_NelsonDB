@@ -180,6 +180,8 @@ urlpatterns = patterns('',
     url(r'^isolate/(?P<isolate_table_id>\d+)/$', views.single_isolate_info, name='single_isolate_info'),
     url(r'^glycerol_stock/(?P<glycerol_stock_table_id>\d+)/$', views.single_glycerol_stock_info, name='single_glycerol_stock_info'),
 
+    url(r'^edit/(?P<obj_type>\w+)/(?P<obj_id>\d+)/$', views.edit_info, name='edit_info'),
+
     url(r'^new_experiment/$', views.new_experiment, name='new_experiment'),
     url(r'^new_treatment/$', views.new_treatment, name='new_treatment'),
     url(r'^log_data/select_obs/$', views.log_data_select_obs, name='log_data_select_obs'),
