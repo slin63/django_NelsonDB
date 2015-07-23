@@ -898,6 +898,33 @@ def edit_info(request, obj_type, obj_id):
 		context_dict['logged_in_user'] = request.user.username
 		return render_to_response('lab/edit_disease.html', context_dict, context)
 
+	elif obj_type == 'taxonomy':
+		if request.method == 'POST':
+			taxonomy_form = NewTaxonomyForm(data=request.POST)
+			if taxonomy_form.is_valid():
+				with transaction.atomic():
+					try:
+						taxonomy = Taxonomy.objects.get(id=obj_id)
+						taxonomy.genus = taxonomy_form.cleaned_data['genus']
+						taxonomy.species = taxonomy_form.cleaned_data['species']
+						taxonomy.population = taxonomy_form.cleaned_data['population']
+						taxonomy.alias = taxonomy_form.cleaned_data['alias']
+						taxonomy.race = taxonomy_form.cleaned_data['race']
+						taxonomy.subtaxa = taxonomy_form.cleaned_data['subtaxa']
+						taxonomy.save()
+						context_dict['updated'] = True
+					except Exception:
+						context_dict['failed'] = True
+			else:
+				print(taxonomy_form.errors)
+		else:
+			taxonomy_data = Taxonomy.objects.filter(id=obj_id).values('genus', 'species', 'population', 'alias', 'race', 'subtaxa')
+			taxonomy_form = NewTaxonomyForm(initial=taxonomy_data[0])
+		context_dict['taxonomy_id'] = obj_id
+		context_dict['taxonomy_form'] = taxonomy_form
+		context_dict['logged_in_user'] = request.user.username
+		return render_to_response('lab/edit_taxonomy.html', context_dict, context)
+
 def select_taxonomy(request):
 	context = RequestContext(request)
 	context_dict = {}

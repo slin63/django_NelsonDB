@@ -1,12 +1,12 @@
 {% extends "lab/base.html" %}
 
-{% block title %}Location{% endblock %}
+{% block title %}Taxonomy{% endblock %}
 
 {% block body_block %}
 <div class="hero-unit">
-  <h1>Edit Location</h1>
+  <h1>Edit Taxonomy</h1>
   <hr>
-  <a href='/lab/location/{{location_id}}/'><input class="btn btn-info" type="submit" name="submit" value="Back to Location Page"/></a>
+  <a href='/lab/taxonomy/{{taxonomy_id}}/'><input class="btn btn-info" type="submit" name="submit" value="Back to Taxonomy Page"/></a>
   <hr>
   {% if updated %}
   <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Edit Was Saved!<br/>&nbsp;</h4>
@@ -14,9 +14,9 @@
   <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Edit Was Not Saved! Fix Errors.<br/>&nbsp;</h4>
   {% endif %}
   <div class="container-fluid">
-    <form class="form-signin" id="update_location" method="post" action="/lab/edit/location/{{location_id}}/">
+    <form class="form-signin" id="update_taxonomy" method="post" action="/lab/edit/taxonomy/{{taxonomy_id}}/">
       {% csrf_token %}
-      {% for field in location_form.visible_fields %}
+      {% for field in taxonomy_form.visible_fields %}
       <div class="row">
         <div class="span4 offset1"><font color="247eca">{{ field.help_text }}</font></div>
         <div class="span3">{{ field }}</div>

@@ -16,6 +16,10 @@
   <p>Race: {{taxonomy_info.race}}</p>
   <p>Subtaxa: {{taxonomy_info.subtaxa}}</p>
 
+  <hr>
+  <a href='/lab/edit/taxonomy/{{taxonomy_info.id}}/'><input class="btn btn-info" type="submit" name="submit" value="Edit Taxonomy Info"/></a>
+  <hr>
+
 {% else %}
   <br/>
   <h2>Taxonomy Does Not Exist</h2>
