@@ -742,30 +742,58 @@ def update_glycerol_stock_info(request, glycerol_stock_id):
 def edit_info(request, obj_type, obj_id):
 	context = RequestContext(request)
 	context_dict = {}
-	if request.method == 'POST':
-		measurement_parameter_form = NewMeasurementParameterForm(data=request.POST)
-		if measurement_parameter_form.is_valid():
-			with transaction.atomic():
-				try:
-					parameter = MeasurementParameter.objects.get(id=obj_id)
-					parameter.parameter = measurement_parameter_form.cleaned_data['parameter']
-					parameter.parameter_type = measurement_parameter_form.cleaned_data['parameter_type']
-					parameter.protocol = measurement_parameter_form.cleaned_data['protocol']
-					parameter.trait_id_buckler = measurement_parameter_form.cleaned_data['trait_id_buckler']
-					parameter.unit_of_measure = measurement_parameter_form.cleaned_data['unit_of_measure']
-					parameter.save()
-					context_dict['updated'] = True
-				except Exception:
-					context_dict['failed'] = True
+	if obj_type == 'measurement_parameter':
+		if request.method == 'POST':
+			measurement_parameter_form = NewMeasurementParameterForm(data=request.POST)
+			if measurement_parameter_form.is_valid():
+				with transaction.atomic():
+					try:
+						parameter = MeasurementParameter.objects.get(id=obj_id)
+						parameter.parameter = measurement_parameter_form.cleaned_data['parameter']
+						parameter.parameter_type = measurement_parameter_form.cleaned_data['parameter_type']
+						parameter.protocol = measurement_parameter_form.cleaned_data['protocol']
+						parameter.trait_id_buckler = measurement_parameter_form.cleaned_data['trait_id_buckler']
+						parameter.unit_of_measure = measurement_parameter_form.cleaned_data['unit_of_measure']
+						parameter.save()
+						context_dict['updated'] = True
+					except Exception:
+						context_dict['failed'] = True
+			else:
+				print(measurement_parameter_form.errors)
 		else:
-			print(measurement_parameter_form.errors)
-	else:
-		parameter_data = MeasurementParameter.objects.filter(id=obj_id).values('parameter', 'parameter_type', 'protocol', 'trait_id_buckler', 'unit_of_measure')
-		measurement_parameter_form = NewMeasurementParameterForm(initial=parameter_data[0])
-	context_dict['measurement_parameter_id'] = obj_id
-	context_dict['measurement_parameter_form'] = measurement_parameter_form
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/edit_measurement_parameter.html', context_dict, context)
+			parameter_data = MeasurementParameter.objects.filter(id=obj_id).values('parameter', 'parameter_type', 'protocol', 'trait_id_buckler', 'unit_of_measure')
+			measurement_parameter_form = NewMeasurementParameterForm(initial=parameter_data[0])
+		context_dict['measurement_parameter_id'] = obj_id
+		context_dict['measurement_parameter_form'] = measurement_parameter_form
+		context_dict['logged_in_user'] = request.user.username
+		return render_to_response('lab/edit_measurement_parameter.html', context_dict, context)
+
+	elif obj_type == 'medium':
+		if request.method == 'POST':
+			medium_form = NewMediumForm(data=request.POST)
+			if medium_form.is_valid():
+				with transaction.atomic():
+					try:
+						medium = Medium.objects.get(id=obj_id)
+						medium.citation = medium_form.cleaned_data['citation']
+						medium.media_name = medium_form.cleaned_data['media_name']
+						medium.media_type = medium_form.cleaned_data['media_type']
+						medium.media_description = medium_form.cleaned_data['media_description']
+						medium.media_preparation = medium_form.cleaned_data['media_preparation']
+						medium.comments = medium_form.cleaned_data['comments']
+						medium.save()
+						context_dict['updated'] = True
+					except Exception:
+						context_dict['failed'] = True
+			else:
+				print(measurement_parameter_form.errors)
+		else:
+			medium_data = Medium.objects.filter(id=obj_id).values('citation', 'media_name', 'media_type', 'media_description', 'media_preparation', 'comments')
+			medium_form = NewMediumForm(initial=medium_data[0])
+		context_dict['medium_id'] = obj_id
+		context_dict['medium_form'] = medium_form
+		context_dict['logged_in_user'] = request.user.username
+		return render_to_response('lab/edit_medium.html', context_dict, context)
 
 def select_taxonomy(request):
 	context = RequestContext(request)
