@@ -874,6 +874,30 @@ def edit_info(request, obj_type, obj_id):
 		context_dict['logged_in_user'] = request.user.username
 		return render_to_response('lab/edit_location.html', context_dict, context)
 
+	elif obj_type == 'disease':
+		if request.method == 'POST':
+			disease_form = NewDiseaseInfoForm(data=request.POST)
+			if disease_form.is_valid():
+				with transaction.atomic():
+					try:
+						disease = DiseaseInfo.objects.get(id=obj_id)
+						disease.common_name = disease_form.cleaned_data['common_name']
+						disease.abbrev = disease_form.cleaned_data['abbrev']
+						disease.comments = disease_form.cleaned_data['comments']
+						disease.save()
+						context_dict['updated'] = True
+					except Exception:
+						context_dict['failed'] = True
+			else:
+				print(disease_form.errors)
+		else:
+			disease_data = DiseaseInfo.objects.filter(id=obj_id).values('common_name', 'abbrev', 'comments')
+			disease_form = NewDiseaseInfoForm(initial=disease_data[0])
+		context_dict['disease_info_id'] = obj_id
+		context_dict['disease_form'] = disease_form
+		context_dict['logged_in_user'] = request.user.username
+		return render_to_response('lab/edit_disease.html', context_dict, context)
+
 def select_taxonomy(request):
 	context = RequestContext(request)
 	context_dict = {}

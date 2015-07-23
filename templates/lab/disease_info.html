@@ -12,6 +12,10 @@
   <p>Abrreviation: {{disease_info.abbrev}}</p>
   <p>Comments: {{disease_info.comments}}</p>
 
+  <hr>
+  <a href='/lab/edit/disease/{{disease_info.id}}/'><input class="btn btn-info" type="submit" name="submit" value="Edit Disease Info"/></a>
+  <hr>
+
 {% else %}
   <br/>
   <h2>Disease Does Not Exist</h2>
