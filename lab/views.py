@@ -460,9 +460,7 @@ def checkbox_session_variable_check(request):
 def seed_inventory(request):
 	context = RequestContext(request)
 	context_dict = {}
-	selected_stocks = checkbox_seed_inventory_sort(request)
 	context_dict = checkbox_session_variable_check(request)
-	context_dict['selected_stocks'] = selected_stocks
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_inventory.html', context_dict, context)
 
