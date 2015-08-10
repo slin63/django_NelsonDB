@@ -565,7 +565,30 @@ $(document).ready(function() {
 		$('#selected_stocks').dataTable({
 			"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
 		});
-} );
+		$('#seed_inventory_datatable').dataTable({
+			"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			"ajax": "/lab/datatable/seed_inventory/",
+			"deferRender": true,
+			"aoColumns": [
+				{ "mData": "input"},
+				{ "mData": "seed_id",
+					"mRender": function (data, type, full) {
+						return '<a href=/lab/stock/' + full.id + '/>' + full.seed_id + '</a>';
+					}
+				},
+		  	{ "mData": "cross_type"},
+		  	{ "mData": "pedigree"},
+		  	{ "mData": "population"},
+		  	{ "mData": "status"},
+				{ "mData": "collector",
+					"mRender": function (data, type, full) {
+						return '<a href=/lab/profile/' + full.collector + '/>' + full.collector + '</a>';
+					}
+				},
+				{ "mData": "comments"},
+		  ],
+		});
+});
 
 $(document).ready(function() {
 	$('.selected_stocks').dataTable({

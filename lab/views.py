@@ -22,6 +22,7 @@ from django.template.defaulttags import register
 from operator import itemgetter
 from django.db import transaction
 from django.core.files import File
+from django.http import JsonResponse
 
 """Used to handle data from URL, to ensure blank spaces don't mess things up"""
 def encode_url(str):
@@ -375,6 +376,24 @@ def find_stock_collected_from_experiment(experiment_name):
 		collected_stock_data = None
 	return collected_stock_data
 
+def datatable_seed_inventory(request):
+	selected_stocks = checkbox_seed_inventory_sort(request)
+	count = selected_stocks.count()
+	arr = []
+	for data in selected_stocks:
+		arr.append({
+			'input': '<input type="checkbox" name="checkbox_stock" value="%s">'%(data.id),
+        	'id': data.id,
+        	'seed_id': data.seed_id,
+        	'cross_type': data.cross_type,
+        	'pedigree': data.pedigree,
+        	'population': data.passport.taxonomy.population,
+        	'status': data.stock_status,
+        	'collector': data.passport.collecting.user.username,
+        	'comments': data.comments,
+    	})
+	return JsonResponse({'data':arr, 'recordsTotal':count}, safe=True)
+
 def checkbox_seed_inventory_sort(request):
 	selected_stocks = {}
 	checkbox_taxonomy_list = []
@@ -398,7 +417,7 @@ def checkbox_seed_inventory_sort(request):
 				stocks = Stock.objects.filter(pedigree=pedigree)
 				selected_stocks = list(chain(selected_stocks, stocks))
 		else:
-			selected_stocks = Stock.objects.exclude(seed_id='0').exclude(passport_id='2')[:2000]
+			selected_stocks = Stock.objects.exclude(seed_id='0').exclude(passport_id='2').exclude(id=1)[:2000]
 	return selected_stocks
 
 def checkbox_session_variable_check(request):

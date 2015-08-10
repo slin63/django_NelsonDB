@@ -26,6 +26,7 @@ urlpatterns = patterns('',
     url(r'^glycerol_stock/$', views.glycerol_stock_inventory, name='glycerol_stock_inventory'),
     url(r'^glycerol_stock/update/(?P<glycerol_stock_id>\d+)/$', views.update_glycerol_stock_info, name='update_glycerol_stock_info'),
 
+    url(r'^datatable/seed_inventory/$', views.datatable_seed_inventory, name='datatable_seed_inventory'),
     url(r'^seed_inventory/$', views.seed_inventory, name='seed_inventory'),
     url(r'^seed_inventory/select_pedigree/$', views.select_pedigree, name='select_pedigree'),
     url(r'^seed_inventory/select_taxonomy/$', views.select_taxonomy, name='select_taxonomy'),
