@@ -3180,6 +3180,18 @@ def get_obs_tracker(obs_type, obs_id):
 			tracker = make_obs_tracker_info(tracker)
 	return obs_tracker
 
+def get_obs_source(obs_type, obs_id):
+	obs_tracker_type = 'target_obs__%s'%(obs_type)
+	kwargs = {obs_tracker_type:obs_id}
+	try:
+		obs_source = ObsTrackerSource.objects.filter(**kwargs)
+	except ObsTrackerSource.DoesNotExist:
+		obs_source = None
+	if obs_source is not None:
+		for tracker in obs_source:
+			tracker = make_obs_tracker_info(tracker.source_obs)
+	return obs_source
+
 @login_required
 def single_stock_info(request, stock_id):
 	context = RequestContext(request)
@@ -3190,12 +3202,17 @@ def single_stock_info(request, stock_id):
 		stock_info = None
 	if stock_info is not None:
 		obs_tracker = get_obs_tracker('stock_id', stock_id)
+		obs_source = get_obs_source('stock_id', stock_id)
+	else:
+		obs_tracker = None
+		obs_source = None
 	try:
 		stock_packets = StockPacket.objects.filter(stock_id=stock_id)
 	except StockPacket.DoesNotExist:
 		stock_packets = None
 	context_dict['stock_info'] = stock_info
 	context_dict['obs_tracker'] = obs_tracker
+	context_dict['obs_source'] = obs_source
 	context_dict['stock_packets'] = stock_packets
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/stock_info.html', context_dict, context)
@@ -3210,8 +3227,13 @@ def single_row_info(request, obs_row_id):
 		row_info = None
 	if row_info is not None:
 		obs_tracker = get_obs_tracker('obs_row_id', obs_row_id)
+		obs_source = get_obs_source('obs_row_id', obs_row_id)
+	else:
+		obs_tracker = None
+		obs_source = None
 	context_dict['row_info'] = row_info
 	context_dict['obs_tracker'] = obs_tracker
+	context_dict['obs_source'] = obs_source
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/row_info.html', context_dict, context)
 
