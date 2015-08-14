@@ -428,23 +428,23 @@ class Primer(models.Model):
 
 class MapFeature(models.Model):
 	chromosome = models.CharField(max_length=200, blank=True)
-    genetic_bin = models.CharField(max_length=200, blank=True)
-    genetic_map = models.CharField(max_length=200, blank=True)
-    genetic_position = models.CharField(max_length=200, blank=True)
-    locus_type = models.CharField(max_length=200, blank=True)
-    locus_name = models.CharField(max_length=200, blank=True)
-    physical_position = models.CharField(max_length=200, blank=True)
-    comments = models.CharField(max_length=1000, blank=True)
+	genetic_bin = models.CharField(max_length=200, blank=True)
+	genetic_map = models.CharField(max_length=200, blank=True)
+	genetic_position = models.CharField(max_length=200, blank=True)
+	locus_type = models.CharField(max_length=200, blank=True)
+	locus_name = models.CharField(max_length=200, blank=True)
+	physical_position = models.CharField(max_length=200, blank=True)
+	comments = models.CharField(max_length=1000, blank=True)
 
-    def __unicode__(self):
+	def __unicode__(self):
 		return self.physical_position
 
 class MapFeatureAnnotation(models.Model):
-    map_feature = models.ForeignKey(MapFeature)
-    annotation_type = models.CharField(max_length=200, blank=True)
-    annotation_value = models.CharField(max_length=200, blank=True)
+	map_feature = models.ForeignKey(MapFeature)
+	annotation_type = models.CharField(max_length=200, blank=True)
+	annotation_value = models.CharField(max_length=200, blank=True)
 
-    def __unicode__(self):
+	def __unicode__(self):
 		return self.annotation_value
 
 class Marker(models.Model):
@@ -474,7 +474,6 @@ class MeasurementParameter(models.Model):
 
 class GWASResults(models.Model):
     parameter = models.ForeignKey(MeasurementParameter)
-    marker = models.ForeignKey(Marker)
     p_value = models.CharField(max_length=200)
     strand = models.CharField(max_length=200)
     relationship_to_hit = models.CharField(max_length=200)
