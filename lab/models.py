@@ -422,11 +422,13 @@ class Primer(models.Model):
 	temp_min = models.CharField(max_length=200, blank=True)
 	temp_max = models.CharField(max_length=200, blank=True)
 	order_date = models.CharField(max_length=200, blank=True)
+	comments = models.CharField(max_length=1000, blank=True)
 
 	def __unicode__(self):
 		return self.primer_id
 
 class MapFeature(models.Model):
+	map_feature_id = models.CharField(max_length=200, unique=True)
 	chromosome = models.CharField(max_length=200, blank=True)
 	genetic_bin = models.CharField(max_length=200, blank=True)
 	genetic_map = models.CharField(max_length=200, blank=True)
@@ -457,6 +459,7 @@ class Marker(models.Model):
 	nam_marker = models.CharField(max_length=200, blank=True)
 	poly_type = models.CharField(max_length=200, blank=True)
 	ref_seq = models.CharField(max_length=200, blank=True)
+	comments = models.CharField(max_length=1000, blank=True)
 
 	def __unicode__(self):
 		return self.marker_id
