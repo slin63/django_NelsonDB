@@ -3192,6 +3192,18 @@ def get_obs_source(obs_type, obs_id):
 			tracker = make_obs_tracker_info(tracker.source_obs)
 	return obs_source
 
+def get_seed_collected_from_row(obs_type, obs_id):
+	obs_tracker_type = 'source_obs__%s'%(obs_type)
+	kwargs = {obs_tracker_type:obs_id, 'target_obs__obs_entity_type':'stock'}
+	try:
+		obs_source = ObsTrackerSource.objects.filter(**kwargs)
+	except ObsTrackerSource.DoesNotExist:
+		obs_source = None
+	if obs_source is not None:
+		for tracker in obs_source:
+			tracker = make_obs_tracker_info(tracker.target_obs)
+	return obs_source
+
 @login_required
 def single_stock_info(request, stock_id):
 	context = RequestContext(request)
@@ -3227,7 +3239,7 @@ def single_row_info(request, obs_row_id):
 		row_info = None
 	if row_info is not None:
 		obs_tracker = get_obs_tracker('obs_row_id', obs_row_id)
-		obs_source = get_obs_source('obs_row_id', obs_row_id)
+		obs_source = get_seed_collected_from_row('obs_row_id', obs_row_id)
 	else:
 		obs_tracker = None
 		obs_source = None

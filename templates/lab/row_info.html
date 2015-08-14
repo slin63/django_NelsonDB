@@ -48,7 +48,7 @@
 
   <hr>
   {% if obs_source %}
-  <h2>Row Planted From</h2>
+  <h2>Seed Harvested</h2>
   <table class="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
     <thead>
       <tr>
@@ -60,9 +60,9 @@
     <tbody>
       {% for t in obs_source %}
       <tr>
-        <td>{{ t.source_obs.obs_entity_type }}</td>
-        <td><a href='{{ t.source_obs.obs_id_url }}'>{{ t.source_obs.obs_id }}</a></td>
-        <td><a href='/lab/experiment/{{t.source_obs.experiment}}/'>{{ t.source_obs.experiment }}</a></td>
+        <td>{{ t.target_obs.obs_entity_type }}</td>
+        <td><a href='{{ t.target_obs.obs_id_url }}'>{{ t.target_obs.obs_id }}</a></td>
+        <td><a href='/lab/experiment/{{t.target_obs.experiment}}/'>{{ t.source_obs.experiment }}</a></td>
       </tr>
       {% endfor %}
     </tbody>

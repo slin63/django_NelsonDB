@@ -217,11 +217,11 @@
     </thead>
     <tbody>
       {% for t in obs_tracker %}
-      <tr>
-        <td>{{ t.obs_entity_type }}</td>
-        <td><a href='{{ t.obs_id_url }}'>{{ t.obs_id }}</a></td>
-        <td><a href='/lab/experiment/{{t.experiment}}/'>{{ t.experiment }}</a></td>
-      </tr>
+          <tr>
+            <td>{{ t.obs_entity_type }}</td>
+            <td><a href='{{ t.obs_id_url }}'>{{ t.obs_id }}</a></td>
+            <td><a href='/lab/experiment/{{t.experiment}}/'>{{ t.experiment }}</a></td>
+          </tr>
       {% endfor %}
     </tbody>
   </table>
