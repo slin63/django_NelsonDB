@@ -67,3 +67,4 @@ jmaize/migrations/0001_initial.py
 legacy/migrations/0001_initial.py
 lab/migrations/0002_auto_20150519_1214.py
 lab/migrations/0002_auto_20150618_1045.py
+lab/migrations/0002_auto_20150814_1028.py
