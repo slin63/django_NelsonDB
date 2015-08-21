@@ -3537,6 +3537,8 @@ def log_data_online(request, data_type):
 									new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=new_stock, experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=obs_plant, obs_plate_id=1, obs_row=obs_row, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 									new_obs_tracker_exp, created = ObsTracker.objects.get_or_create(obs_entity_type='experiment', stock_id=1, experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 									new_obs_tracker_source, created = ObsTrackerSource.objects.get_or_create(source_obs=new_obs_tracker_exp, target_obs=new_obs_tracker)
+									source_row = ObsTracker.objects.get(obs_entity_type='row', obs_row=obs_row)
+									new_obs_tracker_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=source_row, target_obs=new_obs_tracker)
 							except Exception as e:
 								print("Error: %s %s" % (e.message, e.args))
 								failed = True
