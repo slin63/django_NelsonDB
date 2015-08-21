@@ -588,6 +588,33 @@ $(document).ready(function() {
 				{ "mData": "comments"},
 		  ],
 		});
+
+		$('#isolate_inventory_datatable').dataTable({
+			"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			"ajax": "/lab/datatable/isolate_inventory/",
+			"deferRender": true,
+			"aoColumns": [
+			  { "mData": "input"},
+			  { "mData": "isolate_id",
+			    "mRender": function (data, type, full) {
+				    return '<a href=/lab/isolate/' + full.id + '/>' + full.isolate_id + '</a>';
+			    }
+		    },
+		    { "mData": "isolate_name"},
+		    { "mData": "disease_name",
+				  "mRender": function (data, type, full) {
+					  return '<a href=/lab/disease_info/' + full.disease_id + '/>' + full.disease_name + '</a>';
+				  }
+				},
+		    { "mData": "plant_organ"},
+		    { "mData": "genus"},
+		    { "mData": "alias"},
+		    { "mData": "race"},
+		    { "mData": "subtaxa"},
+	      { "mData": "comments"},
+	    ],
+    });
+
 });
 
 $(document).ready(function() {

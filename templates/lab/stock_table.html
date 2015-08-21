@@ -1,9 +1,11 @@
+
+
 <hr>
 <h2>Seed Stocks</h2>
   <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
     <form id="select_stocks_form" method="post" action="/lab/seed_inventory/select_stocks/">
       {% csrf_token %}
-      <table id="seed_inventory_datatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <table id="isolate_inventory_datatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
         <tr>
           <th>Select<br/>All <input type="checkbox" onClick="toggle(this)" /></th>

@@ -1079,13 +1079,32 @@ def glycerol_stock_inventory(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/glycerol_stock_inventory.html', context_dict, context)
 
+def datatable_isolate_inventory(request):
+	selected_isolates = checkbox_isolate_sort(request)
+	count = selected_isolates.count()
+	arr = []
+	for data in selected_isolates:
+		arr.append({
+			'input': '<input type="checkbox" name="checkbox_isolates" value="%s">'%(data.id),
+        	'id': data.id,
+        	'isolate_id': data.isolate_id,
+        	'isolate_name': data.isolate_name,
+        	'disease_name': data.disease_info.common_name,
+        	'disease_id': data.disease_info.id,
+        	'plant_organ': data.plant_organ,
+        	'genus': data.passport.taxonomy.genus,
+        	'alias': data.passport.taxonomy.alias,
+        	'race': data.passport.taxonomy.race,
+        	'subtaxa': data.passport.taxonomy.subtaxa,
+        	'comments': data.comments,
+    	})
+	return JsonResponse({'data':arr, 'recordsTotal':count}, safe=True)
+
 @login_required
 def isolate_inventory(request):
 	context = RequestContext(request)
 	context_dict = {}
 	context_dict = checkbox_session_variable_check(request)
-	selected_isolates = checkbox_isolate_sort(request)
-	context_dict['selected_isolates'] = selected_isolates
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/isolate_inventory.html', context_dict, context)
 
@@ -1112,7 +1131,7 @@ def checkbox_isolate_sort(request):
 				isolates = Isolate.objects.filter(disease_info__id=disease_id)
 				selected_isolates = list(chain(selected_isolates, isolates))
 		else:
-			selected_isolates = Isolate.objects.all()[:2000]
+			selected_isolates = Isolate.objects.all().exclude(id=1)[:2000]
 	return selected_isolates
 
 def show_all_isolate_taxonomy(request):

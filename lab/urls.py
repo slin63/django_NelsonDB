@@ -41,6 +41,7 @@ urlpatterns = patterns('',
     url(r'^seed_inventory/update/(?P<stock_id>\d+)/$', views.update_seed_info, name='update_seed_info'),
     url(r'^seed_inventory/packet_update/(?P<stock_id>\d+)/$', views.update_seed_packet_info, name='update_seed_packet_info'),
 
+    url(r'^datatable/isolate_inventory/$', views.datatable_isolate_inventory, name='datatable_isolate_inventory'),
     url(r'^isolate_inventory/$', views.isolate_inventory, name='isolate_inventory'),
     url(r'^isolate_inventory/suggest_isolate_taxonomy/$', views.suggest_isolate_taxonomy, name='suggest_isolate_taxonomy'),
     url(r'^isolate_inventory/suggest_isolate_disease/$', views.suggest_isolate_disease, name='suggest_isolate_disease'),
