@@ -614,7 +614,6 @@ $(document).ready(function() {
 	      { "mData": "comments"},
 	    ],
     });
-
 });
 
 $(document).ready(function() {
