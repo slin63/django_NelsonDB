@@ -1080,25 +1080,27 @@ def datatable_glycerol_inventory(request):
 			pass
 		else:
 			check.append(data.glycerol_stock_id)
-			arr.append({
-	    	'id': data.glycerol_stock_id,
-	    	'glycerol_stock_id': data.glycerol_stock.glycerol_stock_id,
-	    	'experiment_name': data.experiment.name,
-	    	'field_id': data.field_id,
-	    	'field_name': data.field.field_name,
-	    	'isolate_table_id': data.isolate_id,
-	    	'isolate_id': data.isolate.isolate_id,
-	    	'obs_dna_id': data.obs_dna_id,
-	    	'dna_id': data.obs_dna.dna_id,
-	    	'location_id': data.location_id,
-	    	'location_name': data.location.location_name,
-	    	'stock_date': data.glycerol_stock.stock_date,
-	    	'extract_color': data.glycerol_stock.extract_color,
-	    	'organism': data.glycerol_stock.organism,
-	    	'username': data.user.username,
-	    	'comments': data.glycerol_stock.comments,
-			})
-
+			try:
+				arr.append({
+		    	'id': data.glycerol_stock_id,
+		    	'glycerol_stock_id': data.glycerol_stock.glycerol_stock_id,
+		    	'experiment_name': data.experiment.name,
+		    	'field_id': data.field_id,
+		    	'field_name': data.field.field_name,
+		    	'isolate_table_id': data.isolate_id,
+		    	'isolate_id': data.isolate.isolate_id,
+		    	'obs_dna_id': data.obs_dna_id,
+		    	'dna_id': data.obs_dna.dna_id,
+		    	'location_id': data.location_id,
+		    	'location_name': data.location.location_name,
+		    	'stock_date': data.glycerol_stock.stock_date,
+		    	'extract_color': data.glycerol_stock.extract_color,
+		    	'organism': data.glycerol_stock.organism,
+		    	'username': data.user.username,
+		    	'comments': data.glycerol_stock.comments,
+				})
+			except GlycerolStock.DoesNotExist:
+				pass
 	return JsonResponse({'data':arr, 'recordsTotal':count}, safe=True)
 
 @login_required
