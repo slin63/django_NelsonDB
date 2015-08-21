@@ -662,6 +662,40 @@ $(document).ready(function() {
 			],
 		});
 
+		$('#measurement_data_datatable').dataTable({
+			"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			"ajax": "/lab/datatable/measurement_data/",
+			"deferRender": true,
+			"aoColumns": [
+				{ "mData": "experiment",
+					"mRender": function (data, type, full) {
+						return '<a href=/lab/experiment/' + full.experiment_name + '/>' + full.experiment_name + '</a>';
+					}
+				},
+				{ "mData": "obs_id",
+					"mRender": function (data, type, full) {
+						return '<a href=' + full.obs_url + '>' + full.obs_id + '</a>';
+					}
+				},
+				{ "mData": "username",
+					"mRender": function (data, type, full) {
+						return '<a href=/lab/profile/' + full.username + '/>' + full.username + '</a>';
+					}
+				},
+				{ "mData": "time_of_measurement"},
+				{ "mData": "parameter_type"},
+				{ "mData": "parameter_name",
+				  "mRender": function (data, type, full) {
+						return '<a href=/lab/measurement_parameter/' + full.parameter_id + '/>' + full.parameter_name + '</a>';
+					}
+				},
+				{ "mData": "value"},
+				{ "mData": "unit_of_measure"},
+				{ "mData": "trait_id_buckler"},
+				{ "mData": "comments"},
+			],
+		});
+
 });
 
 $(document).ready(function() {

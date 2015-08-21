@@ -2841,13 +2841,32 @@ def download_dna_experiment(request, experiment_name):
 		writer.writerow([row.obs_dna.dna_id, row.obs_dna.extraction_method, row.obs_dna.date, row.obs_dna.tube_id, row.obs_dna.tube_type, row.obs_dna.comments, row.obs_well.well_id, row.obs_plate.plate_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.obs_row.row_id, row.stock.seed_id, row.user])
 	return response
 
+def datatable_measurement_data(request):
+	measurement_data = sort_measurement_data(request)
+	count = measurement_data.count()
+	arr = []
+	for data in measurement_data:
+		arr.append({
+        	'experiment_name': data.obs_tracker.experiment.name,
+        	'obs_id': data.obs_tracker.obs_id,
+        	'obs_url': data.obs_tracker.obs_id_url,
+        	'username': data.user.username,
+        	'time_of_measurement': data.time_of_measurement,
+        	'parameter_type': data.measurement_parameter.parameter_type,
+        	'parameter_name': data.measurement_parameter.parameter,
+        	'parameter_id': data.measurement_parameter_id,
+        	'value': data.value,
+        	'unit_of_measure': data.measurement_parameter.unit_of_measure,
+        	'trait_id_buckler': data.measurement_parameter.trait_id_buckler,
+        	'comments': data.comments,
+    	})
+	return JsonResponse({'data':arr, 'recordsTotal':count}, safe=True)
+
 @login_required
 def measurement_data_browse(request):
 	context = RequestContext(request)
 	context_dict = {}
-	measurement_data = sort_measurement_data(request)
 	context_dict = checkbox_session_variable_check(request)
-	context_dict['measurement_data'] = measurement_data
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/measurement_data.html', context_dict, context)
 
