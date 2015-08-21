@@ -3284,6 +3284,18 @@ def single_stock_info(request, stock_id):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/stock_info.html', context_dict, context)
 
+def get_obs_measurements(obs_type, obs_id):
+	obs_tracker_type = 'obs_tracker__%s'%(obs_type)
+	kwargs = {obs_tracker_type:obs_id}
+	try:
+		obs_measurements = Measurement.objects.filter(**kwargs)
+	except ObsTrackerSource.DoesNotExist:
+		obs_measurements = None
+	if obs_measurements is not None:
+		for measurement in obs_measurements:
+			measurement = make_obs_tracker_info(measurement.obs_tracker)
+	return obs_measurements
+
 @login_required
 def single_row_info(request, obs_row_id):
 	context = RequestContext(request)
@@ -3295,12 +3307,14 @@ def single_row_info(request, obs_row_id):
 	if row_info is not None:
 		obs_tracker = get_obs_tracker('obs_row_id', obs_row_id)
 		obs_source = get_seed_collected_from_row('obs_row_id', obs_row_id)
+		obs_measurements = get_obs_measurements('obs_row_id', obs_row_id)
 	else:
 		obs_tracker = None
 		obs_source = None
 	context_dict['row_info'] = row_info
 	context_dict['obs_tracker'] = obs_tracker
 	context_dict['obs_source'] = obs_source
+	context_dict['obs_measurements'] = obs_measurements
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/row_info.html', context_dict, context)
 

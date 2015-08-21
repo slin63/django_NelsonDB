@@ -1,0 +1,25 @@
+NelsonLab SNP Genotyping Template Help,,,,,,
+"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
+,,,,,,
+Template Name: snp_genotype_v0.1,,,,,,
+Authored 08/21/2015,,,,,,
+,,,,,,
+DataBase Header Dictionary,,,,,,
+,,,,,,
+Culture Template,For recording all info about the culture. ,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
+Experiment Name,1,1,0,lab_obstracker,experiment_id=Experiment(experiment_name).id,The experiment name to which the snp genotype measurement is a part of.
+Well ID,0,1,1,lab_measurement,obs_tracker = ObsTracker(obs_well=well_id),The Well ID on which the snp genotype was run. The Well ID should encapsulate everything there is to know about the sample.
+SNP Assay Name,1,0,0,lab_measurementparameter,parameter,The name of the SNP assay procedure. 
+Allele1 Name,1,0,0,lab_marker,marker_id,
+Allele1 Color,0,0,0,lab_marker,marker_color,
+Allele2 Name,0,0,0,lab_marker,marker_id,
+Allele2 Color,0,0,0,lab_marker,marker_color,
+Allele1 Delta Rn,0,0,0,lab_measurement,value,The x coordinate result.
+Allele2 Delta Rn,0,0,0,lab_measurement,value,The y coordinate result.
+Quality(%),0,0,0,lab_measurement,value,The quality of the snp genotype result.
+Call,0,0,0,lab_measurement,value,The call for the snp genotype.
+Method,0,0,0,lab_measurement,value,The method for the call.
+Comments,0,0,0,lab_measurement,comments,Any additional comments about the sn genotype measurement.
+,,,,,,
+DEPENDENCIES,,,,,,
