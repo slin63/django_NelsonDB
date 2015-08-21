@@ -53,6 +53,7 @@ def seed_stock_loader_prep(upload_file, user):
     seed_id_table = loader_db_mirror.seed_id_mirror()
     obs_tracker_source_hash_table = loader_db_mirror.obs_tracker_source_hash_mirror()
     obs_tracker_source_id = loader_db_mirror.obs_tracker_source_id_mirror()
+    obs_tracker_obs_row_id_table = loader_db_mirror.obs_tracker_obs_row_id_mirror()
 
     error_count = 0
     row_id_error = OrderedDict({})
@@ -271,6 +272,12 @@ def seed_stock_loader_prep(upload_file, user):
             if obs_tracker_source_hash not in obs_tracker_source_hash_table:
                 obs_tracker_source_hash_table[obs_tracker_source_hash] = obs_tracker_source_id
                 obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_exp_hash], temp_targetobs_id)] = obs_tracker_source_id
+                obs_tracker_source_id = obs_tracker_source_id + 1
+
+            obs_tracker_source_row_hash = str(obs_tracker_obs_row_id_table[obs_row_id][0]) + str(temp_targetobs_id)
+            if obs_tracker_source_row_hash not in obs_tracker_source_hash_table:
+                obs_tracker_source_hash_table[obs_tracker_source_row_hash] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], temp_targetobs_id)] = obs_tracker_source_id
                 obs_tracker_source_id = obs_tracker_source_id + 1
 
     end = time.clock()

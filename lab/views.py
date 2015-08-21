@@ -3212,6 +3212,11 @@ def make_obs_tracker_info(tracker):
 			obs_tracker_id_info = [tracker.maize_sample.maize_id, obs_entity_type, tracker.maize_sample_id]
 		except MaizeSample.DoesNotExist:
 			obs_tracker_id_info = ['No Maize Sample', obs_entity_type, 1]
+	elif obs_entity_type == 'experiment':
+		try:
+			obs_tracker_id_info = [tracker.experiment.experiment_name, obs_entity_type, tracker.experiment.experiment_name]
+		except Experiment.DoesNotExist:
+			obs_tracker_id_info = ['No Experiment', obs_entity_type, 1]
 	else:
 		obs_tracker_id_info = ['None', 'No Type', 1]
 
