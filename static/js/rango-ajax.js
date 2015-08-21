@@ -614,6 +614,54 @@ $(document).ready(function() {
 	      { "mData": "comments"},
 	    ],
     });
+
+		$('#glycerol_inventory_datatable').dataTable({
+			"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			"ajax": "/lab/datatable/glycerol_stock_inventory/",
+			"deferRender": true,
+			"aoColumns": [
+			  { "mData": "glycerol_stock_id",
+			    "mRender": function (data, type, full) {
+				    return '<a href=/lab/glycerol_stock/' + full.id + '/>' + full.glycerol_stock_id + '</a>';
+			    }
+		    },
+			  { "mData": "experiment_name",
+			    "mRender": function (data, type, full) {
+				    return '<a href=/lab/experiment/' + full.experiment_name + '/>' + full.experiment_name + '</a>';
+			    }
+		    },
+			  { "mData": "field_name",
+			    "mRender": function (data, type, full) {
+				    return '<a href=/lab/field/' + full.field_id + '/>' + full.field_name + '</a>';
+			    }
+		    },
+			  { "mData": "isolate_id",
+			    "mRender": function (data, type, full) {
+				    return '<a href=/lab/isolate/' + full.isolate_table_id + '/>' + full.isolate_id + '</a>';
+			    }
+		    },
+			  { "mData": "dna_id",
+			    "mRender": function (data, type, full) {
+				    return '<a href=/lab/dna/' + full.obs_dna_id + '/>' + full.dna_id + '</a>';
+			    }
+		    },
+			  { "mData": "location_name",
+			    "mRender": function (data, type, full) {
+				    return '<a href=/lab/location/' + full.location_id + '/>' + full.location_name + '</a>';
+			    }
+		    },
+		    { "mData": "stock_date"},
+		    { "mData": "extract_color"},
+		    { "mData": "organism"},
+		    { "mData": "username",
+		      "mRender": function (data, type, full) {
+			      return '<a href=/lab/profile/' + full.username + '/>' + full.username + '</a>';
+		      }
+	      },
+				{ "mData": "comments"},
+			],
+		});
+
 });
 
 $(document).ready(function() {

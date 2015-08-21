@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     url(r'^experiment/(?P<experiment_name_url>\w+)/$', views.experiment, name='experiment'),
     url(r'^profile/(?P<profile_name>\w+)/$', views.profile, name ='profile'),
 
+    url(r'^datatable/glycerol_stock_inventory/$', views.datatable_glycerol_inventory, name='datatable_glycerol_inventory'),
     url(r'^glycerol_stock/$', views.glycerol_stock_inventory, name='glycerol_stock_inventory'),
     url(r'^glycerol_stock/update/(?P<glycerol_stock_id>\d+)/$', views.update_glycerol_stock_info, name='update_glycerol_stock_info'),
 

@@ -1070,12 +1070,35 @@ def passport(request, passport_id):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/passport.html', context_dict, context)
 
+def datatable_glycerol_inventory(request):
+	glycerol_stocks = ObsTracker.objects.filter(obs_entity_type='glycerol_stock')
+	count = glycerol_stocks.count()
+	arr = []
+	for data in glycerol_stocks:
+		arr.append({
+        	'id': data.glycerol_stock_id,
+        	'glycerol_stock_id': data.glycerol_stock.glycerol_stock_id,
+        	'experiment_name': data.experiment.name,
+        	'field_id': data.field_id,
+        	'field_name': data.field.field_name,
+        	'isolate_table_id': data.isolate_id,
+        	'isolate_id': data.isolate.isolate_id,
+        	'obs_dna_id': data.obs_dna_id,
+        	'dna_id': data.obs_dna.dna_id,
+        	'location_id': data.location_id,
+        	'location_name': data.location.location_name,
+        	'stock_date': data.glycerol_stock.stock_date,
+        	'extract_color': data.glycerol_stock.extract_color,
+        	'organism': data.glycerol_stock.organism,
+        	'username': data.user.username,
+        	'comments': data.glycerol_stock.comments,
+    	})
+	return JsonResponse({'data':arr, 'recordsTotal':count}, safe=True)
+
 @login_required
 def glycerol_stock_inventory(request):
 	context = RequestContext(request)
 	context_dict = {}
-	glycerol_stocks = ObsTracker.objects.filter(obs_entity_type='glycerol_stock')
-	context_dict['glycerol_stocks'] = glycerol_stocks
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/glycerol_stock_inventory.html', context_dict, context)
 
