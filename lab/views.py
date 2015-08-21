@@ -3270,6 +3270,7 @@ def single_stock_info(request, stock_id):
 	if stock_info is not None:
 		obs_tracker = get_obs_tracker('stock_id', stock_id)
 		obs_source = get_obs_source('stock_id', stock_id)
+		obs_measurements = get_obs_measurements('stock_id', stock_id)
 	else:
 		obs_tracker = None
 		obs_source = None
@@ -3280,6 +3281,7 @@ def single_stock_info(request, stock_id):
 	context_dict['stock_info'] = stock_info
 	context_dict['obs_tracker'] = obs_tracker
 	context_dict['obs_source'] = obs_source
+	context_dict['obs_measurements'] = obs_measurements
 	context_dict['stock_packets'] = stock_packets
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/stock_info.html', context_dict, context)
