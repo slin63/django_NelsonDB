@@ -1075,7 +1075,8 @@ def datatable_glycerol_inventory(request):
 	count = glycerol_stocks.count()
 	arr = []
 	for data in glycerol_stocks:
-		arr.append({
+		try:
+			arr.append({
         	'id': data.glycerol_stock_id,
         	'glycerol_stock_id': data.glycerol_stock.glycerol_stock_id,
         	'experiment_name': data.experiment.name,
@@ -1092,7 +1093,9 @@ def datatable_glycerol_inventory(request):
         	'organism': data.glycerol_stock.organism,
         	'username': data.user.username,
         	'comments': data.glycerol_stock.comments,
-    	})
+    		})
+		except GlycerolStock.DoesNotExist:
+			pass
 	return JsonResponse({'data':arr, 'recordsTotal':count}, safe=True)
 
 @login_required
