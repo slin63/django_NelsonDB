@@ -54,16 +54,16 @@
 			<div class="row-fluid">
 				<div class="span2">
 					<div class="well sidebar-nav">
-						<ul class="nav nav-list">
-							<li class="nav-header">Search</li>
+						<div style="margin-left:-5px">
+							<h5>Search</h5>
 							<form>
-								<label></label>
-								<li><input  class="input-medium search-query" type="text" name="sidebarsearch" id="sidebarsearch" placeholder="Type Anything"/></li>
+								<input  class="input-medium search-query" type="text" name="sidebarsearch" id="sidebarsearch" placeholder="Type Anything"/>
 							</form>
 							<div id="sidebar_search_results">
 								{% include 'lab/sidebar_search_results_list.html' with results_list=results_list %}
 							</div>
-						</ul>
+						</div>
+
 							<ul class="nav nav-list">
 								<li class="nav-header"><h4>About</h4></li>
 								<li class="nav-list"><a href='/lab/about/help/'>Help</a></li>

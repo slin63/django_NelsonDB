@@ -11,8 +11,10 @@
   <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
   <h3>How To Upload Online: </h3>
   <h5>1. Fill in the form below and leave the verified check box UNCHECKED. Click Submit.</h5>
-  <h5>2. Open the file that is returned and verify that Errors = 0.</h5>
+  <h5>2. Open the file that is returned and verify that Errors = 0. Errors can be due to required columns being left blank or dependencies not being met.</h5>
   <h5>3. If Errors = 0, select verified. Click Submit.</h5>
+  <hr>
+  <h4 class="bg-default">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Contact nm529@cornell.edu if you need assistance.<br/>&nbsp;</h4>
   <hr>
   {% csrf_token %}
   <h3 class="form-signin-heading">Upload New Data: {{template_type}}</h3>
