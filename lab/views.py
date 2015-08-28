@@ -354,10 +354,7 @@ def experiment(request, experiment_name_url):
 				measurement_data = None
 			context_dict['measurement_data'] = measurement_data
 
-			try:
-				genotype_data = GWASExperimentSet.objects.filter(experiment__name=experiment_name)
-			except GWASExperimentSet.DoesNotExist:
-				genotype_data = None
+			genotype_data = None
 			context_dict['genotype_data'] = genotype_data
 
 		except Experiment.DoesNotExist:
@@ -459,9 +456,7 @@ def checkbox_session_variable_check(request):
 def seed_inventory(request):
 	context = RequestContext(request)
 	context_dict = {}
-	selected_stocks = checkbox_seed_inventory_sort(request)
 	context_dict = checkbox_session_variable_check(request)
-	context_dict['selected_stocks'] = selected_stocks
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/seed_inventory.html', context_dict, context)
 
@@ -1075,22 +1070,72 @@ def passport(request, passport_id):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/passport.html', context_dict, context)
 
+def datatable_glycerol_inventory(request):
+	glycerol_stocks = ObsTracker.objects.filter(obs_entity_type='glycerol_stock')
+	count = glycerol_stocks.count()
+	arr = []
+	check = []
+	for data in glycerol_stocks:
+		if data.glycerol_stock_id in check:
+			pass
+		else:
+			check.append(data.glycerol_stock_id)
+			try:
+				arr.append({
+		    	'id': data.glycerol_stock_id,
+		    	'glycerol_stock_id': data.glycerol_stock.glycerol_stock_id,
+		    	'experiment_name': data.experiment.name,
+		    	'field_id': data.field_id,
+		    	'field_name': data.field.field_name,
+		    	'isolate_table_id': data.isolate_id,
+		    	'isolate_id': data.isolate.isolate_id,
+		    	'obs_dna_id': data.obs_dna_id,
+		    	'dna_id': data.obs_dna.dna_id,
+		    	'location_id': data.location_id,
+		    	'location_name': data.location.location_name,
+		    	'stock_date': data.glycerol_stock.stock_date,
+		    	'extract_color': data.glycerol_stock.extract_color,
+		    	'organism': data.glycerol_stock.organism,
+		    	'username': data.user.username,
+		    	'comments': data.glycerol_stock.comments,
+				})
+			except GlycerolStock.DoesNotExist:
+				pass
+	return JsonResponse({'data':arr, 'recordsTotal':count}, safe=True)
+
 @login_required
 def glycerol_stock_inventory(request):
 	context = RequestContext(request)
 	context_dict = {}
-	glycerol_stocks = ObsTracker.objects.filter(obs_entity_type='glycerol_stock')
-	context_dict['glycerol_stocks'] = glycerol_stocks
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/glycerol_stock_inventory.html', context_dict, context)
+
+def datatable_isolate_inventory(request):
+	selected_isolates = checkbox_isolate_sort(request)
+	count = selected_isolates.count()
+	arr = []
+	for data in selected_isolates:
+		arr.append({
+			'input': '<input type="checkbox" name="checkbox_isolates" value="%s">'%(data.id),
+        	'id': data.id,
+        	'isolate_id': data.isolate_id,
+        	'isolate_name': data.isolate_name,
+        	'disease_name': data.disease_info.common_name,
+        	'disease_id': data.disease_info.id,
+        	'plant_organ': data.plant_organ,
+        	'genus': data.passport.taxonomy.genus,
+        	'alias': data.passport.taxonomy.alias,
+        	'race': data.passport.taxonomy.race,
+        	'subtaxa': data.passport.taxonomy.subtaxa,
+        	'comments': data.comments,
+    	})
+	return JsonResponse({'data':arr, 'recordsTotal':count}, safe=True)
 
 @login_required
 def isolate_inventory(request):
 	context = RequestContext(request)
 	context_dict = {}
 	context_dict = checkbox_session_variable_check(request)
-	selected_isolates = checkbox_isolate_sort(request)
-	context_dict['selected_isolates'] = selected_isolates
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/isolate_inventory.html', context_dict, context)
 
@@ -1117,7 +1162,7 @@ def checkbox_isolate_sort(request):
 				isolates = Isolate.objects.filter(disease_info__id=disease_id)
 				selected_isolates = list(chain(selected_isolates, isolates))
 		else:
-			selected_isolates = Isolate.objects.all()[:2000]
+			selected_isolates = Isolate.objects.all().exclude(id=1)[:2000]
 	return selected_isolates
 
 def show_all_isolate_taxonomy(request):
@@ -2796,13 +2841,32 @@ def download_dna_experiment(request, experiment_name):
 		writer.writerow([row.obs_dna.dna_id, row.obs_dna.extraction_method, row.obs_dna.date, row.obs_dna.tube_id, row.obs_dna.tube_type, row.obs_dna.comments, row.obs_well.well_id, row.obs_plate.plate_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.obs_row.row_id, row.stock.seed_id, row.user])
 	return response
 
+def datatable_measurement_data(request):
+	measurement_data = sort_measurement_data(request)
+	count = measurement_data.count()
+	arr = []
+	for data in measurement_data:
+		arr.append({
+        	'experiment_name': data.obs_tracker.experiment.name,
+        	'obs_id': data.obs_tracker.obs_id,
+        	'obs_url': data.obs_tracker.obs_id_url,
+        	'username': data.user.username,
+        	'time_of_measurement': data.time_of_measurement,
+        	'parameter_type': data.measurement_parameter.parameter_type,
+        	'parameter_name': data.measurement_parameter.parameter,
+        	'parameter_id': data.measurement_parameter_id,
+        	'value': data.value,
+        	'unit_of_measure': data.measurement_parameter.unit_of_measure,
+        	'trait_id_buckler': data.measurement_parameter.trait_id_buckler,
+        	'comments': data.comments,
+    	})
+	return JsonResponse({'data':arr, 'recordsTotal':count}, safe=True)
+
 @login_required
 def measurement_data_browse(request):
 	context = RequestContext(request)
 	context_dict = {}
-	measurement_data = sort_measurement_data(request)
 	context_dict = checkbox_session_variable_check(request)
-	context_dict['measurement_data'] = measurement_data
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/measurement_data.html', context_dict, context)
 
@@ -3167,6 +3231,11 @@ def make_obs_tracker_info(tracker):
 			obs_tracker_id_info = [tracker.maize_sample.maize_id, obs_entity_type, tracker.maize_sample_id]
 		except MaizeSample.DoesNotExist:
 			obs_tracker_id_info = ['No Maize Sample', obs_entity_type, 1]
+	elif obs_entity_type == 'experiment':
+		try:
+			obs_tracker_id_info = [tracker.experiment.experiment_name, obs_entity_type, tracker.experiment.experiment_name]
+		except Experiment.DoesNotExist:
+			obs_tracker_id_info = ['No Experiment', obs_entity_type, 1]
 	else:
 		obs_tracker_id_info = ['None', 'No Type', 1]
 
@@ -3185,6 +3254,30 @@ def get_obs_tracker(obs_type, obs_id):
 			tracker = make_obs_tracker_info(tracker)
 	return obs_tracker
 
+def get_obs_source(obs_type, obs_id):
+	obs_tracker_type = 'target_obs__%s'%(obs_type)
+	kwargs = {obs_tracker_type:obs_id}
+	try:
+		obs_source = ObsTrackerSource.objects.filter(**kwargs)
+	except ObsTrackerSource.DoesNotExist:
+		obs_source = None
+	if obs_source is not None:
+		for tracker in obs_source:
+			tracker = make_obs_tracker_info(tracker.source_obs)
+	return obs_source
+
+def get_seed_collected_from_row(obs_type, obs_id):
+	obs_tracker_type = 'source_obs__%s'%(obs_type)
+	kwargs = {obs_tracker_type:obs_id, 'target_obs__obs_entity_type':'stock'}
+	try:
+		obs_source = ObsTrackerSource.objects.filter(**kwargs)
+	except ObsTrackerSource.DoesNotExist:
+		obs_source = None
+	if obs_source is not None:
+		for tracker in obs_source:
+			tracker = make_obs_tracker_info(tracker.target_obs)
+	return obs_source
+
 @login_required
 def single_stock_info(request, stock_id):
 	context = RequestContext(request)
@@ -3195,15 +3288,34 @@ def single_stock_info(request, stock_id):
 		stock_info = None
 	if stock_info is not None:
 		obs_tracker = get_obs_tracker('stock_id', stock_id)
+		obs_source = get_obs_source('stock_id', stock_id)
+		obs_measurements = get_obs_measurements('stock_id', stock_id)
+	else:
+		obs_tracker = None
+		obs_source = None
 	try:
 		stock_packets = StockPacket.objects.filter(stock_id=stock_id)
 	except StockPacket.DoesNotExist:
 		stock_packets = None
 	context_dict['stock_info'] = stock_info
 	context_dict['obs_tracker'] = obs_tracker
+	context_dict['obs_source'] = obs_source
+	context_dict['obs_measurements'] = obs_measurements
 	context_dict['stock_packets'] = stock_packets
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/stock_info.html', context_dict, context)
+
+def get_obs_measurements(obs_type, obs_id):
+	obs_tracker_type = 'obs_tracker__%s'%(obs_type)
+	kwargs = {obs_tracker_type:obs_id}
+	try:
+		obs_measurements = Measurement.objects.filter(**kwargs)
+	except ObsTrackerSource.DoesNotExist:
+		obs_measurements = None
+	if obs_measurements is not None:
+		for measurement in obs_measurements:
+			measurement = make_obs_tracker_info(measurement.obs_tracker)
+	return obs_measurements
 
 @login_required
 def single_row_info(request, obs_row_id):
@@ -3215,8 +3327,15 @@ def single_row_info(request, obs_row_id):
 		row_info = None
 	if row_info is not None:
 		obs_tracker = get_obs_tracker('obs_row_id', obs_row_id)
+		obs_source = get_seed_collected_from_row('obs_row_id', obs_row_id)
+		obs_measurements = get_obs_measurements('obs_row_id', obs_row_id)
+	else:
+		obs_tracker = None
+		obs_source = None
 	context_dict['row_info'] = row_info
 	context_dict['obs_tracker'] = obs_tracker
+	context_dict['obs_source'] = obs_source
+	context_dict['obs_measurements'] = obs_measurements
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/row_info.html', context_dict, context)
 
@@ -3453,6 +3572,8 @@ def log_data_online(request, data_type):
 									new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=new_stock, experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=obs_plant, obs_plate_id=1, obs_row=obs_row, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 									new_obs_tracker_exp, created = ObsTracker.objects.get_or_create(obs_entity_type='experiment', stock_id=1, experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 									new_obs_tracker_source, created = ObsTrackerSource.objects.get_or_create(source_obs=new_obs_tracker_exp, target_obs=new_obs_tracker)
+									source_row = ObsTracker.objects.get(obs_entity_type='row', obs_row=obs_row)
+									new_obs_tracker_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=source_row, target_obs=new_obs_tracker)
 							except Exception as e:
 								print("Error: %s %s" % (e.message, e.args))
 								failed = True

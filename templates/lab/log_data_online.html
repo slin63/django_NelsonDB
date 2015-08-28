@@ -49,6 +49,106 @@
 
     {% endif %}
 
+    {% if data_type == 'seed_inventory' %}
+      <hr>
+      <h3>Upload From File: </h3>
+      <h5><a href='/lab/download/template/seed_stock/'>Download Template</a></h5>
+      <h5><a href='/lab/download/template/seed_stock_help/'>Download Template Help</a></h5>
+      <h5><a href='/lab/upload_online/seed_stock/'>Upload Online</a></h5>
+      <hr>
+      <h3>Or Upload Using Online Form: </h3>
+    {% endif %}
+    {% if data_type == 'row' %}
+      <hr>
+      <h3>Upload From File: </h3>
+      <h5><a href='/lab/download/template/row_data/'>Download Template</a></h5>
+      <h5><a href='/lab/download/template/row_data_help/'>Download Template Help</a></h5>
+      <h5><a href='/lab/upload_online/row_data/'>Upload Online</a></h5>
+      <hr>
+      <h3>Or Upload Using Online Form: </h3>
+    {% endif %}
+    {% if data_type == 'plant' %}
+      <hr>
+      <h3>Upload From File: </h3>
+      <h5><a href='/lab/download/template/plant_data/'>Download Template</a></h5>
+      <h5><a href='/lab/download/template/plant_data_help/'>Download Template Help</a></h5>
+      <h5><a href='/lab/upload_online/plant_data/'>Upload Online</a></h5>
+      <hr>
+      <h3>Or Upload Using Online Form: </h3>
+    {% endif %}
+    {% if data_type == 'tissue' %}
+      <hr>
+      <h3>Upload From File: </h3>
+      <h5><a href='/lab/download/template/tissue_data/'>Download Template</a></h5>
+      <h5><a href='/lab/download/template/tissue_data_help/'>Download Template Help</a></h5>
+      <h5><a href='/lab/upload_online/tissue_data/'>Upload Online</a></h5>
+      <hr>
+      <h3>Or Upload Using Online Form: </h3>
+    {% endif %}
+    {% if data_type == 'culture' %}
+      <hr>
+      <h3>Upload From File: </h3>
+      <h5><a href='/lab/download/template/culture_data/'>Download Template</a></h5>
+      <h5><a href='/lab/download/template/culture_data_help/'>Download Template Help</a></h5>
+      <h5><a href='/lab/upload_online/culture_data/'>Upload Online</a></h5>
+      <hr>
+      <h3>Or Upload Using Online Form: </h3>
+    {% endif %}
+    {% if data_type == 'microbe' %}
+      <hr>
+      <h3>Upload From File: </h3>
+      <h5><a href='/lab/download/template/microbe_data/'>Download Template</a></h5>
+      <h5><a href='/lab/download/template/microbe_data_help/'>Download Template Help</a></h5>
+      <h5><a href='/lab/upload_online/microbe_data/'>Upload Online</a></h5>
+      <hr>
+      <h3>Or Upload Using Online Form: </h3>
+    {% endif %}
+    {% if data_type == 'dna' %}
+      <hr>
+      <h3>Upload From File: </h3>
+      <h5><a href='/lab/download/template/dna_data/'>Download Template</a></h5>
+      <h5><a href='/lab/download/template/dna_data_help/'>Download Template Help</a></h5>
+      <h5><a href='/lab/upload_online/dna_data/'>Upload Online</a></h5>
+      <hr>
+      <h3>Or Upload Using Online Form: </h3>
+    {% endif %}
+    {% if data_type == 'plate' %}
+      <hr>
+      <h3>Upload From File: </h3>
+      <h5><a href='/lab/download/template/plate_data/'>Download Template</a></h5>
+      <h5><a href='/lab/download/template/plate_data_help/'>Download Template Help</a></h5>
+      <h5><a href='/lab/upload_online/plate_data/'>Upload Online</a></h5>
+      <hr>
+      <h3>Or Upload Using Online Form: </h3>
+    {% endif %}
+    {% if data_type == 'well' %}
+      <hr>
+      <h3>Upload From File: </h3>
+      <h5><a href='/lab/download/template/wells_data/'>Download Template</a></h5>
+      <h5><a href='/lab/download/template/wells_data_help/'>Download Template Help</a></h5>
+      <h5><a href='/lab/upload_online/well_data/'>Upload Online</a></h5>
+      <hr>
+      <h3>Or Upload Using Online Form: </h3>
+    {% endif %}
+    {% if data_type == 'isolate' %}
+      <hr>
+      <h3>Upload From File: </h3>
+      <h5><a href='/lab/download/template/isolate_data/'>Download Template</a></h5>
+      <h5><a href='/lab/download/template/isolate_data_help/'>Download Template Help</a></h5>
+      <h5><a href='/lab/upload_online/isolate_data/'>Upload Online</a></h5>
+      <hr>
+      <h3>Or Upload Using Online Form: </h3>
+    {% endif %}
+    {% if data_type == 'sample' %}
+      <hr>
+      <h3>Upload From File: </h3>
+      <h5><a href='/lab/download/template/samples_data/'>Download Template</a></h5>
+      <h5><a href='/lab/download/template/samples_data_help/'>Download Template Help</a></h5>
+      <h5><a href='/lab/upload_online/samples_data/'>Upload Online</a></h5>
+      <hr>
+      <h3>Or Upload Using Online Form: </h3>
+    {% endif %}
+
     <br/>
     <form class="form-signin" id="log_data_online" method="post" action="/lab/log_data/{{data_type}}/">
       {% csrf_token %}

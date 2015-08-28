@@ -41,11 +41,10 @@
 
     <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
 
-    {% if measurement_data %}
       <h2>Measurement Data</h2><br/>
       <form id="select_stocks_form" method="post" action="/lab/download/data/measurements/">
         {% csrf_token %}
-        <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <table id="measurement_data_datatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
           <tr>
             <th>Exp</th>
@@ -60,27 +59,11 @@
             <th>Comments</th>
           </tr>
           </thead>
-          <tbody>
-          {% for data in measurement_data %}
-          <tr>
-            <td><a href='/lab/experiment/{{data.obs_tracker.experiment.name}}/'>{{data.obs_tracker.experiment.name}}</a></td>
-            <td><a href='{{data.obs_tracker.obs_id_url}}'>{{data.obs_tracker.obs_id}}</a></td>
-            <td><a href='/lab/profile/{{data.user}}/'>{{data.user}}</a></td>
-            <td>{{data.time_of_measurement}}</td>
-            <td>{{data.measurement_parameter.parameter_type}}</td>
-            <td><a href='/lab/measurement_parameter/{{data.measurement_parameter.id}}/'>{{data.measurement_parameter.parameter}}</a></td>
-            <td>{{data.value}}</td>
-            <td>{{data.measurement_parameter.unit_of_measure}}</td>
-            <td>{{data.measurement_parameter.trait_id_buckler}}</td>
-            <td>{{data.comments}}</td>
-          </tr>
-          {% endfor %}
-          </tbody>
+          
         </table>
         <br/>
         <input class="btn btn-primary" type="submit" name="submit" value="Export Data"/>
       </form>
-      {% endif %}
     </div><br/><br/>
 
 

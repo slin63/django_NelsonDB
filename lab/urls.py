@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     url(r'^experiment/(?P<experiment_name_url>\w+)/$', views.experiment, name='experiment'),
     url(r'^profile/(?P<profile_name>\w+)/$', views.profile, name ='profile'),
 
+    url(r'^datatable/glycerol_stock_inventory/$', views.datatable_glycerol_inventory, name='datatable_glycerol_inventory'),
     url(r'^glycerol_stock/$', views.glycerol_stock_inventory, name='glycerol_stock_inventory'),
     url(r'^glycerol_stock/update/(?P<glycerol_stock_id>\d+)/$', views.update_glycerol_stock_info, name='update_glycerol_stock_info'),
 
@@ -41,6 +42,7 @@ urlpatterns = patterns('',
     url(r'^seed_inventory/update/(?P<stock_id>\d+)/$', views.update_seed_info, name='update_seed_info'),
     url(r'^seed_inventory/packet_update/(?P<stock_id>\d+)/$', views.update_seed_packet_info, name='update_seed_packet_info'),
 
+    url(r'^datatable/isolate_inventory/$', views.datatable_isolate_inventory, name='datatable_isolate_inventory'),
     url(r'^isolate_inventory/$', views.isolate_inventory, name='isolate_inventory'),
     url(r'^isolate_inventory/suggest_isolate_taxonomy/$', views.suggest_isolate_taxonomy, name='suggest_isolate_taxonomy'),
     url(r'^isolate_inventory/suggest_isolate_disease/$', views.suggest_isolate_disease, name='suggest_isolate_disease'),
@@ -67,6 +69,7 @@ urlpatterns = patterns('',
     url(r'^data/stock/collected/(?P<experiment_name>\w+)/$', views.stock_collected_from_experiment, name='stock_collected_from_experiment'),
     url(r'^data/stockpackets/collected/(?P<experiment_name>\w+)/$', views.stockpackets_collected_from_experiment, name='stockpackets_collected_from_experiment'),
 
+    url(r'^datatable/measurement_data/$', views.datatable_measurement_data, name='datatable_measurement_data'),
     url(r'^data/measurement/$', views.measurement_data_browse, name='measurement_data_browse'),
     url(r'^data/measurement/suggest_measurement_experiment/$', views.suggest_measurement_experiment, name='suggest_measurement_experiment'),
     url(r'^data/measurement/select_measurement_experiment/$', views.select_measurement_experiment, name='select_measurement_experiment'),
