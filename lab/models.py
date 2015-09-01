@@ -460,6 +460,8 @@ class Marker(models.Model):
 	poly_type = models.CharField(max_length=200, blank=True)
 	ref_seq = models.CharField(max_length=200, blank=True)
 	comments = models.CharField(max_length=1000, blank=True)
+	strand = models.CharField(max_length=200, blank=True)
+	allele = models.CharField(max_length=200, blank=True)
 
 	def __unicode__(self):
 		return self.marker_id
