@@ -275,7 +275,7 @@ def seed_stock_loader_prep(upload_file, user):
                 obs_tracker_source_id = obs_tracker_source_id + 1
 
             obs_tracker_source_row_hash = str(obs_tracker_obs_row_id_table[obs_row_id][0]) + str(temp_targetobs_id)
-            if obs_tracker_source_row_hash not in obs_tracker_source_hash_table:
+            if obs_tracker_source_row_hash not in obs_tracker_source_hash_table and obs_row_id != 1:
                 obs_tracker_source_hash_table[obs_tracker_source_row_hash] = obs_tracker_source_id
                 obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], temp_targetobs_id)] = obs_tracker_source_id
                 obs_tracker_source_id = obs_tracker_source_id + 1
