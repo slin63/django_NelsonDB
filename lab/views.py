@@ -3282,12 +3282,16 @@ def get_seed_collected_from_row(obs_type, obs_id):
 def single_stock_info(request, stock_id):
 	context = RequestContext(request)
 	context_dict = {}
+	obs_tracker_seed = []
 	try:
 		stock_info = Stock.objects.get(id=stock_id)
 	except Stock.DoesNotExist:
 		stock_info = None
 	if stock_info is not None:
 		obs_tracker = get_obs_tracker('stock_id', stock_id)
+		for t in obs_tracker:
+			if t.obs_id != stock_info.seed_id:
+				obs_tracker_seed.append(t)
 		obs_source = get_obs_source('stock_id', stock_id)
 		obs_measurements = get_obs_measurements('stock_id', stock_id)
 	else:
@@ -3298,7 +3302,7 @@ def single_stock_info(request, stock_id):
 	except StockPacket.DoesNotExist:
 		stock_packets = None
 	context_dict['stock_info'] = stock_info
-	context_dict['obs_tracker'] = obs_tracker
+	context_dict['obs_tracker'] = obs_tracker_seed
 	context_dict['obs_source'] = obs_source
 	context_dict['obs_measurements'] = obs_measurements
 	context_dict['stock_packets'] = stock_packets
@@ -3321,19 +3325,23 @@ def get_obs_measurements(obs_type, obs_id):
 def single_row_info(request, obs_row_id):
 	context = RequestContext(request)
 	context_dict = {}
+	obs_tracker_row = []
 	try:
 		row_info = ObsRow.objects.get(id=obs_row_id)
 	except ObsRow.DoesNotExist:
 		row_info = None
 	if row_info is not None:
 		obs_tracker = get_obs_tracker('obs_row_id', obs_row_id)
+		for t in obs_tracker:
+			if t.obs_id != row_info.row_id:
+				obs_tracker_row.append(t)
 		obs_source = get_seed_collected_from_row('obs_row_id', obs_row_id)
 		obs_measurements = get_obs_measurements('obs_row_id', obs_row_id)
 	else:
-		obs_tracker = None
+		obs_tracker_row = None
 		obs_source = None
 	context_dict['row_info'] = row_info
-	context_dict['obs_tracker'] = obs_tracker
+	context_dict['obs_tracker'] = obs_tracker_row
 	context_dict['obs_source'] = obs_source
 	context_dict['obs_measurements'] = obs_measurements
 	context_dict['logged_in_user'] = request.user.username

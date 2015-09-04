@@ -76,7 +76,7 @@
   {% if obs_tracker %}
   <hr>
   <h3>Products of Row</h3>
-  <table class="selected_stocks" class="table table-striped table-bordered" cellspacing="0" widtd="100%">
+  <table class="table table-striped table-bordered" cellspacing="0" widtd="100%">
     <thead>
       <tr>
         <td>Obs Type</td>
@@ -86,13 +86,11 @@
     </thead>
     <tbody>
       {% for t in obs_tracker %}
-        {% if t.obs_id != row_info.row_id %}
-          <tr>
-            <td>{{ t.obs_entity_type }}</td>
-            <td><a href='{{ t.obs_id_url }}'>{{ t.obs_id }}</a></td>
-            <td><a href='/lab/experiment/{{t.experiment}}/'>{{ t.experiment }}</a></td>
-          </tr>
-        {% endif %}
+        <tr>
+          <td>{{ t.obs_entity_type }}</td>
+          <td><a href='{{ t.obs_id_url }}'>{{ t.obs_id }}</a></td>
+          <td><a href='/lab/experiment/{{t.experiment}}/'>{{ t.experiment }}</a></td>
+        </tr>
       {% endfor %}
     </tbody>
   </table>
