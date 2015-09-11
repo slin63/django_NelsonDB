@@ -1,1 +1,3 @@
 Experiment Name,Sample ID,Sample Type,Sample Name,Kernel Number,Weight,Volume,Density,Photo,Sample Comments,Source Seed ID,Source Row ID,Source Plant ID,Source Sample ID
+15NMTest,15NMTest_sample_a1,test,test_a1,,,,,,,,,,
+15NMTest,15NMTest_sample_a2,test,test_a2,,,,,,,,,,15NMTest_sample_a1

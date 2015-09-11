@@ -1,8 +1,8 @@
 NelsonLab Samples Data Template Help,,,,,,
 "This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
 ,,,,,,
-Template Name: sample_data_v0.2,,,,,,
-Authored 07/01/2015,,,,,,
+Template Name: sample_data_v0.3,,,,,,
+Authored 09/11/2015,,,,,,
 ,,,,,,
 DataBase Header Dictionary,,,,,,
 ,,,,,,
@@ -21,3 +21,4 @@ Sample Comments,0,0,0,lab_obssample,comments,Any additional comments about the s
 Source Seed ID,1,0,0,lab_obstracker,stock_id = Stock(seed_id).id,"If the sample was selected using seed, provide the Seed ID here. If not applicable, leave blank."
 Source Row ID,1,0,0,lab_obstracker,obs_row_id = ObsRow(row_id).id,"If the sample was selected from a row, provide the Row ID here. If not applicable, leave blank."
 Source Plant ID,1,0,0,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,"If the sample was selected from a plant, provide the Plant ID here. If not applicable, leave blank."
+Source Sample ID,1,0,0,lab_obstrackersource,source_obs=Obstracker(ObsSource(source_id)),"If the sample was selected from another sample, provide the Sample ID here. If not applicable, leave blank. "

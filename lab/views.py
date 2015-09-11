@@ -583,8 +583,14 @@ def update_seed_info(request, stock_id):
 					obs_tracker.glycerol_stock_id = 1
 					obs_tracker.maize_sample_id = 1
 					obs_tracker.obs_extract_id = 1
-					obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_stock_form.cleaned_data['obs_row__row_id'])
-					obs_tracker.obs_plant = ObsPlant.objects.get(plant_id=obs_tracker_stock_form.cleaned_data['obs_plant__plant_id'])
+					if obs_tracker_stock_form.cleaned_data['obs_row__row_id'] != '':
+						obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_stock_form.cleaned_data['obs_row__row_id'])
+					else:
+						obs_tracker.obs_row = ObsRow.objects.get(id=1)
+					if obs_tracker_stock_form.cleaned_data['obs_plant__plant_id']:
+						obs_tracker.obs_plant = ObsPlant.objects.get(plant_id=obs_tracker_stock_form.cleaned_data['obs_plant__plant_id'])
+					else:
+						obs_tracker.obs_plant = ObsPlant.objects.get(id=1)
 					obs_tracker.field = obs_tracker_stock_form.cleaned_data['field']
 
 					stock = Stock.objects.get(id=stock_id)
@@ -670,15 +676,42 @@ def update_isolate_info(request, isolate_id):
 					obs_tracker.obs_extract_id = 1
 					obs_tracker.location = obs_tracker_isolate_form.cleaned_data['location']
 					obs_tracker.field = obs_tracker_isolate_form.cleaned_data['field']
-					obs_tracker.obs_dna = ObsDNA.objects.get(dna_id=obs_tracker_isolate_form.cleaned_data['obs_dna__dna_id'])
-					obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id=obs_tracker_isolate_form.cleaned_data['obs_microbe__microbe_id'])
-					obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_isolate_form.cleaned_data['obs_row__row_id'])
-					obs_tracker.stock = Stock.objects.get(seed_id=obs_tracker_isolate_form.cleaned_data['stock__seed_id'])
-					obs_tracker.obs_plant = ObsPlant.objects.get(plant_id=obs_tracker_isolate_form.cleaned_data['obs_plant__plant_id'])
-					obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id=obs_tracker_isolate_form.cleaned_data['obs_tissue__tissue_id'])
-					obs_tracker.obs_culture = ObsCulture.objects.get(culture_id=obs_tracker_isolate_form.cleaned_data['obs_culture__culture_id'])
-					obs_tracker.obs_plate = ObsPlate.objects.get(plate_id=obs_tracker_isolate_form.cleaned_data['obs_plate__plate_id'])
-					obs_tracker.obs_well = ObsWell.objects.get(well_id=obs_tracker_isolate_form.cleaned_data['obs_well__well_id'])
+					if obs_tracker_isolate_form.cleaned_data['obs_dna__dna_id'] != '':
+						obs_tracker.obs_dna = ObsDNA.objects.get(dna_id=obs_tracker_isolate_form.cleaned_data['obs_dna__dna_id'])
+					else:
+						obs_tracker.obs_dna = ObsDNA.objects.get(dna_id='No DNA')
+					if obs_tracker_isolate_form.cleaned_data['obs_microbe__microbe_id'] != '':
+						obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id=obs_tracker_isolate_form.cleaned_data['obs_microbe__microbe_id'])
+					else:
+						obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id='No Microbe')
+					if obs_tracker_isolate_form.cleaned_data['obs_row__row_id'] != '':
+						obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_isolate_form.cleaned_data['obs_row__row_id'])
+					else:
+						obs_tracker.obs_row = ObsRow.objects.get(row_id='No Row')
+					if obs_tracker_isolate_form.cleaned_data['stock__seed_id'] != '':
+						obs_tracker.stock = Stock.objects.get(seed_id=obs_tracker_isolate_form.cleaned_data['stock__seed_id'])
+					else:
+						obs_tracker.stock = Stock.objects.get(seed_id='No Stock')
+					if obs_tracker_isolate_form.cleaned_data['obs_plant__plant_id'] != '':
+						obs_tracker.obs_plant = ObsPlant.objects.get(plant_id=obs_tracker_isolate_form.cleaned_data['obs_plant__plant_id'])
+					else:
+						obs_tracker.obs_plant = ObsPlant.objects.get(plant_id='No Plant')
+					if obs_tracker_isolate_form.cleaned_data['obs_tissue__tissue_id'] != '':
+						obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id=obs_tracker_isolate_form.cleaned_data['obs_tissue__tissue_id'])
+					else:
+						obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id='No Tissue')
+					if obs_tracker_isolate_form.cleaned_data['obs_culture__culture_id'] != '':
+						obs_tracker.obs_culture = ObsCulture.objects.get(culture_id=obs_tracker_isolate_form.cleaned_data['obs_culture__culture_id'])
+					else:
+						obs_tracker.obs_culture = ObsCulture.objects.get(culture_id='No Culture')
+					if obs_tracker_isolate_form.cleaned_data['obs_plate__plate_id'] != '':
+						obs_tracker.obs_plate = ObsPlate.objects.get(plate_id=obs_tracker_isolate_form.cleaned_data['obs_plate__plate_id'])
+					else:
+						obs_tracker.obs_plate = ObsPlate.objects.get(plate_id='No Plate')
+					if obs_tracker_isolate_form.cleaned_data['obs_well__well_id'] != '':
+						obs_tracker.obs_well = ObsWell.objects.get(well_id=obs_tracker_isolate_form.cleaned_data['obs_well__well_id'])
+					else:
+						obs_tracker.obs_well = ObsWell.objects.get(well_id='No Well')
 
 					isolate = Isolate.objects.get(id=isolate_id)
 					isolate.isolate_id = obs_tracker_isolate_form.cleaned_data['isolate__isolate_id']
@@ -718,17 +751,50 @@ def update_glycerol_stock_info(request, glycerol_stock_id):
 					obs_tracker.obs_extract_id = 1
 					obs_tracker.location = obs_tracker_glycerol_stock_form.cleaned_data['location']
 					obs_tracker.field = obs_tracker_glycerol_stock_form.cleaned_data['field']
-					obs_tracker.obs_dna = ObsDNA.objects.get(dna_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_dna__dna_id'])
-					obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_microbe__microbe_id'])
-					obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_row__row_id'])
-					obs_tracker.stock = Stock.objects.get(seed_id=obs_tracker_glycerol_stock_form.cleaned_data['stock__seed_id'])
-					obs_tracker.obs_plant = ObsPlant.objects.get(plant_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_plant__plant_id'])
-					obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_tissue__tissue_id'])
-					obs_tracker.obs_culture = ObsCulture.objects.get(culture_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_culture__culture_id'])
-					obs_tracker.obs_plate = ObsPlate.objects.get(plate_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_plate__plate_id'])
-					obs_tracker.obs_well = ObsWell.objects.get(well_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_well__well_id'])
-					obs_tracker.obs_sample = ObsSample.objects.get(sample_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_sample__sample_id'])
-					obs_tracker.isolate = Isolate.objects.get(isolate_id=obs_tracker_glycerol_stock_form.cleaned_data['isolate__isolate_id'])
+					if obs_tracker_glycerol_stock_form.cleaned_data['obs_dna__dna_id'] != '':
+						obs_tracker.obs_dna = ObsDNA.objects.get(dna_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_dna__dna_id'])
+					else:
+						obs_tracker.obs_dna = ObsDNA.objects.get(dna_id='No DNA')
+					if obs_tracker_glycerol_stock_form.cleaned_data['obs_microbe__microbe_id'] != '':
+						obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_microbe__microbe_id'])
+					else:
+						obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id='No Microbe')
+					if obs_tracker_glycerol_stock_form.cleaned_data['obs_row__row_id'] != '':
+						obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_row__row_id'])
+					else:
+						obs_tracker.obs_row = ObsRow.objects.get(row_id='No Row')
+					if obs_tracker_glycerol_stock_form.cleaned_data['stock__seed_id'] != '':
+						obs_tracker.stock = Stock.objects.get(seed_id=obs_tracker_glycerol_stock_form.cleaned_data['stock__seed_id'])
+					else:
+						obs_tracker.stock = Stock.objects.get(seed_id='No Stock')
+					if obs_tracker_glycerol_stock_form.cleaned_data['obs_plant__plant_id'] != '':
+						obs_tracker.obs_plant = ObsPlant.objects.get(plant_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_plant__plant_id'])
+					else:
+						obs_tracker.obs_plant = ObsPlant.objects.get(plant_id='No Plant')
+					if obs_tracker_glycerol_stock_form.cleaned_data['obs_tissue__tissue_id'] != '':
+						obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_tissue__tissue_id'])
+					else:
+						obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id='No Tissue')
+					if obs_tracker_glycerol_stock_form.cleaned_data['obs_culture__culture_id'] != '':
+						obs_tracker.obs_culture = ObsCulture.objects.get(culture_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_culture__culture_id'])
+					else:
+						obs_tracker.obs_culture = ObsCulture.objects.get(culture_id='No Culture')
+					if obs_tracker_glycerol_stock_form.cleaned_data['obs_plate__plate_id'] != '':
+						obs_tracker.obs_plate = ObsPlate.objects.get(plate_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_plate__plate_id'])
+					else:
+						obs_tracker.obs_plate = ObsPlate.objects.get(plate_id='No Plate')
+					if obs_tracker_glycerol_stock_form.cleaned_data['obs_well__well_id'] != '':
+						obs_tracker.obs_well = ObsWell.objects.get(well_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_well__well_id'])
+					else:
+						obs_tracker.obs_well = ObsWell.objects.get(well_id='No Well')
+					if obs_tracker_glycerol_stock_form.cleaned_data['obs_sample__sample_id'] != '':
+						obs_tracker.obs_sample = ObsSample.objects.get(sample_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_sample__sample_id'])
+					else:
+						obs_tracker.obs_sample = ObsSample.objects.get(sample_id='No Sample')
+					if obs_tracker_glycerol_stock_form.cleaned_data['isolate__isolate_id'] != '':
+						obs_tracker.isolate = Isolate.objects.get(isolate_id=obs_tracker_glycerol_stock_form.cleaned_data['isolate__isolate_id'])
+					else:
+						obs_tracker.isolate = Isolate.objects.get(isolate_id='No Isolate')
 
 					gstock = GlycerolStock.objects.get(id=glycerol_stock_id)
 					gstock.glycerol_stock_id = obs_tracker_glycerol_stock_form.cleaned_data['glycerol_stock__glycerol_stock_id']
@@ -2086,6 +2152,72 @@ def download_sample_experiment(request, experiment_name):
 	return response
 
 @login_required
+def update_sample_info(request, obs_sample_id):
+	context = RequestContext(request)
+	context_dict = {}
+	if request.method == 'POST':
+		obs_tracker_samples_form = LogSamplesOnlineForm(data=request.POST)
+		if obs_tracker_samples_form.is_valid():
+			with transaction.atomic():
+				try:
+					obs_tracker = ObsTracker.objects.get(obs_entity_type='sample', obs_sample_id=obs_sample_id, experiment=obs_tracker_samples_form.cleaned_data['experiment'])
+					obs_tracker.glycerol_stock_id = 1
+					obs_tracker.maize_sample_id = 1
+					obs_tracker.obs_extract_id = 1
+					if obs_tracker_samples_form.cleaned_data['stock__seed_id'] != '':
+						obs_tracker.stock = Stock.objects.get(seed_id=obs_tracker_samples_form.cleaned_data['stock__seed_id'])
+					else:
+						obs_tracker.stock = Stock.objects.get(id=1)
+					if obs_tracker_samples_form.cleaned_data['obs_row__row_id'] != '':
+						obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_samples_form.cleaned_data['obs_row__row_id'])
+					else:
+						obs_tracker.obs_row = ObsRow.objects.get(id=1)
+					if obs_tracker_samples_form.cleaned_data['obs_plant__plant_id'] != '':
+						obs_tracker.obs_plant = ObsPlant.objects.get(plant_id=obs_tracker_samples_form.cleaned_data['obs_plant__plant_id'])
+					else:
+						obs_tracker.obs_plant = ObsPlant.objects.get(id=1)
+
+					obs_sample = ObsSample.objects.get(id=obs_sample_id)
+					obs_sample.sample_id = obs_tracker_samples_form.cleaned_data['obs_sample__sample_id']
+					obs_sample.sample_name = obs_tracker_samples_form.cleaned_data['obs_sample__sample_name']
+					obs_sample.sample_type = obs_tracker_samples_form.cleaned_data['obs_sample__sample_type']
+					obs_sample.weight = obs_tracker_samples_form.cleaned_data['obs_sample__weight']
+					obs_sample.volume = obs_tracker_samples_form.cleaned_data['obs_sample__volume']
+					obs_sample.density = obs_tracker_samples_form.cleaned_data['obs_sample__density']
+					obs_sample.kernel_num = obs_tracker_samples_form.cleaned_data['obs_sample__kernel_num']
+					obs_sample.photo = obs_tracker_samples_form.cleaned_data['obs_sample__photo']
+					obs_sample.comments = obs_tracker_samples_form.cleaned_data['obs_sample__comments']
+
+					if obs_tracker_samples_form.cleaned_data['source_sample_id'] != '':
+						try:
+							obs_tracker_source_sample = ObsTrackerSource.objects.get(target_obs=obs_tracker, source_obs__obs_entity_type='sample')
+							obs_tracker_source_sample.source_obs = ObsTracker.objects.get(obs_entity_type='sample', obs_sample__sample_id=obs_tracker_samples_form.cleaned_data['source_sample_id'])
+							obs_tracker_source_sample.save()
+						except ObsTrackerSource.DoesNotExist:
+							new_source_sample = ObsTrackerSource.objects.create(source_obs = ObsTracker.objects.get(obs_entity_type='sample', obs_sample__sample_id=obs_tracker_samples_form.cleaned_data['source_sample_id']), target_obs=obs_tracker)
+					else:
+						try:
+							obs_tracker_source_sample = ObsTrackerSource.objects.get(target_obs=obs_tracker, source_obs__obs_entity_type='sample')
+							obs_tracker_source_sample.delete()
+						except ObsTrackerSource.DoesNotExist:
+							pass
+
+					obs_sample.save()
+					obs_tracker.save()
+					context_dict['updated'] = True
+				except Exception:
+					context_dict['failed'] = True
+		else:
+			print(obs_tracker_samples_form.errors)
+	else:
+		samples_data = ObsTracker.objects.filter(obs_entity_type='sample', obs_sample_id=obs_sample_id).values('experiment', 'obs_sample__sample_id', 'obs_sample__sample_type', 'obs_sample__sample_name', 'stock__seed_id', 'obs_row__row_id', 'obs_plant__plant_id', 'obs_sample__weight', 'obs_sample__volume', 'obs_sample__density', 'obs_sample__kernel_num', 'obs_sample__photo', 'obs_sample__comments')
+		obs_tracker_samples_form = LogSamplesOnlineForm(initial=samples_data[0])
+	context_dict['obs_sample_id'] = obs_sample_id
+	context_dict['obs_tracker_samples_form'] = obs_tracker_samples_form
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/samples_info_update.html', context_dict, context)
+
+@login_required
 def tissue_data_browse(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -3266,6 +3398,18 @@ def get_obs_source(obs_type, obs_id):
 			tracker = make_obs_tracker_info(tracker.source_obs)
 	return obs_source
 
+def get_obs_target(obs_type, obs_id):
+	obs_tracker_type = 'source_obs__%s'%(obs_type)
+	kwargs = {obs_tracker_type:obs_id}
+	try:
+		obs_target = ObsTrackerSource.objects.filter(**kwargs)
+	except ObsTrackerSource.DoesNotExist:
+		obs_target = None
+	if obs_target is not None:
+		for tracker in obs_target:
+			tracker = make_obs_tracker_info(tracker.target_obs)
+	return obs_target
+
 def get_seed_collected_from_row(obs_type, obs_id):
 	obs_tracker_type = 'source_obs__%s'%(obs_type)
 	kwargs = {obs_tracker_type:obs_id, 'target_obs__obs_entity_type':'stock'}
@@ -3282,12 +3426,16 @@ def get_seed_collected_from_row(obs_type, obs_id):
 def single_stock_info(request, stock_id):
 	context = RequestContext(request)
 	context_dict = {}
+	obs_tracker_seed = []
 	try:
 		stock_info = Stock.objects.get(id=stock_id)
 	except Stock.DoesNotExist:
 		stock_info = None
 	if stock_info is not None:
 		obs_tracker = get_obs_tracker('stock_id', stock_id)
+		for t in obs_tracker:
+			if t.obs_id != stock_info.seed_id:
+				obs_tracker_seed.append(t)
 		obs_source = get_obs_source('stock_id', stock_id)
 		obs_measurements = get_obs_measurements('stock_id', stock_id)
 	else:
@@ -3298,7 +3446,7 @@ def single_stock_info(request, stock_id):
 	except StockPacket.DoesNotExist:
 		stock_packets = None
 	context_dict['stock_info'] = stock_info
-	context_dict['obs_tracker'] = obs_tracker
+	context_dict['obs_tracker'] = obs_tracker_seed
 	context_dict['obs_source'] = obs_source
 	context_dict['obs_measurements'] = obs_measurements
 	context_dict['stock_packets'] = stock_packets
@@ -3321,19 +3469,23 @@ def get_obs_measurements(obs_type, obs_id):
 def single_row_info(request, obs_row_id):
 	context = RequestContext(request)
 	context_dict = {}
+	obs_tracker_row = []
 	try:
 		row_info = ObsRow.objects.get(id=obs_row_id)
 	except ObsRow.DoesNotExist:
 		row_info = None
 	if row_info is not None:
 		obs_tracker = get_obs_tracker('obs_row_id', obs_row_id)
+		for t in obs_tracker:
+			if t.obs_id != row_info.row_id:
+				obs_tracker_row.append(t)
 		obs_source = get_seed_collected_from_row('obs_row_id', obs_row_id)
 		obs_measurements = get_obs_measurements('obs_row_id', obs_row_id)
 	else:
-		obs_tracker = None
+		obs_tracker_row = None
 		obs_source = None
 	context_dict['row_info'] = row_info
-	context_dict['obs_tracker'] = obs_tracker
+	context_dict['obs_tracker'] = obs_tracker_row
 	context_dict['obs_source'] = obs_source
 	context_dict['obs_measurements'] = obs_measurements
 	context_dict['logged_in_user'] = request.user.username
@@ -3409,8 +3561,12 @@ def single_sample_info(request, obs_sample_id):
 		sample_info = None
 	if sample_info is not None:
 		obs_tracker = get_obs_tracker('obs_sample_id', obs_sample_id)
+		obs_tracker_source_obs = get_obs_source('obs_sample_id', obs_sample_id)
+		obs_tracker_target_obs = get_obs_target('obs_sample_id', obs_sample_id)
 	context_dict['sample_info'] = sample_info
 	context_dict['obs_tracker'] = obs_tracker
+	context_dict['obs_tracker_source_obs'] = obs_tracker_source_obs
+	context_dict['obs_tracker_target_obs'] = obs_tracker_target_obs
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/sample_info.html', context_dict, context)
 
@@ -3955,18 +4111,19 @@ def log_data_online(request, data_type):
 				for form in log_data_online_form_set:
 					try:
 						experiment = form.cleaned_data['experiment']
-						sample_id = form.cleaned_data['sample_id']
-						sample_type = form.cleaned_data['sample_type']
-						sample_name = form.cleaned_data['sample_name']
-						source_seed_id = form.cleaned_data['source_seed_id']
-						source_row_id = form.cleaned_data['source_row_id']
-						source_plant_id = form.cleaned_data['source_plant_id']
-						weight = form.cleaned_data['weight']
-						volume = form.cleaned_data['volume']
-						density = form.cleaned_data['density']
-						kernel_num = form.cleaned_data['kernel_num']
-						photo = form.cleaned_data['photo']
-						sample_comments = form.cleaned_data['sample_comments']
+						sample_id = form.cleaned_data['obs_sample__sample_id']
+						sample_type = form.cleaned_data['obs_sample__sample_type']
+						sample_name = form.cleaned_data['obs_sample__sample_name']
+						source_seed_id = form.cleaned_data['stock__seed_id']
+						source_row_id = form.cleaned_data['obs_row__row_id']
+						source_plant_id = form.cleaned_data['obs_plant__plant_id']
+						source_sample_id = form.cleaned_data['source_sample_id']
+						weight = form.cleaned_data['obs_sample__weight']
+						volume = form.cleaned_data['obs_sample__volume']
+						density = form.cleaned_data['obs_sample__density']
+						kernel_num = form.cleaned_data['obs_sample__kernel_num']
+						photo = form.cleaned_data['obs_sample__photo']
+						sample_comments = form.cleaned_data['obs_sample__comments']
 						user = request.user
 
 						if source_row_id == '':
@@ -3975,10 +4132,16 @@ def log_data_online(request, data_type):
 							source_plant_id = 'No Plant'
 						if source_seed_id == '':
 							source_seed_id = 'No Stock'
+						if source_sample_id == '':
+							source_sample_id = 'No Sample'
 
 						try:
 							new_obssample, created = ObsSample.objects.get_or_create(sample_id=sample_id, sample_type=sample_type, sample_name=sample_name, weight=weight, volume=volume, density=density, kernel_num=kernel_num, photo=photo, comments=sample_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='sample', stock=Stock.objects.get(seed_id=source_seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=ObsPlant.objects.get(plant_id=source_plant_id), obs_plate_id=1, obs_row=ObsRow.objects.get(row_id=source_row_id), obs_sample=new_obssample, obs_tissue_id=1, obs_well_id=1)
+							new_obs_tracker, new_obs_tracker_created = ObsTracker.objects.get_or_create(obs_entity_type='sample', stock=Stock.objects.get(seed_id=source_seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=ObsPlant.objects.get(plant_id=source_plant_id), obs_plate_id=1, obs_row=ObsRow.objects.get(row_id=source_row_id), obs_sample=new_obssample, obs_tissue_id=1, obs_well_id=1)
+							try:
+								new_obs_tracker_source, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='sample', obs_sample__sample_id=source_sample_id), target_obs=new_obs_tracker)
+							except ObsTracker.DoesNotExist:
+								pass
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
