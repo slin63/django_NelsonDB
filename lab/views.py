@@ -3266,6 +3266,18 @@ def get_obs_source(obs_type, obs_id):
 			tracker = make_obs_tracker_info(tracker.source_obs)
 	return obs_source
 
+def get_obs_target(obs_type, obs_id):
+	obs_tracker_type = 'source_obs__%s'%(obs_type)
+	kwargs = {obs_tracker_type:obs_id}
+	try:
+		obs_target = ObsTrackerSource.objects.filter(**kwargs)
+	except ObsTrackerSource.DoesNotExist:
+		obs_target = None
+	if obs_target is not None:
+		for tracker in obs_target:
+			tracker = make_obs_tracker_info(tracker.target_obs)
+	return obs_target
+
 def get_seed_collected_from_row(obs_type, obs_id):
 	obs_tracker_type = 'source_obs__%s'%(obs_type)
 	kwargs = {obs_tracker_type:obs_id, 'target_obs__obs_entity_type':'stock'}
@@ -3417,8 +3429,12 @@ def single_sample_info(request, obs_sample_id):
 		sample_info = None
 	if sample_info is not None:
 		obs_tracker = get_obs_tracker('obs_sample_id', obs_sample_id)
+		obs_tracker_source_obs = get_obs_source('obs_sample_id', obs_sample_id)
+		obs_tracker_target_obs = get_obs_target('obs_sample_id', obs_sample_id)
 	context_dict['sample_info'] = sample_info
 	context_dict['obs_tracker'] = obs_tracker
+	context_dict['obs_tracker_source_obs'] = obs_tracker_source_obs
+	context_dict['obs_tracker_target_obs'] = obs_tracker_target_obs
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/sample_info.html', context_dict, context)
 
