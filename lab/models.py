@@ -433,8 +433,6 @@ class MapFeature(models.Model):
 	genetic_bin = models.CharField(max_length=200, blank=True)
 	genetic_map = models.CharField(max_length=200, blank=True)
 	genetic_position = models.CharField(max_length=200, blank=True)
-	locus_type = models.CharField(max_length=200, blank=True)
-	locus_name = models.CharField(max_length=200, blank=True)
 	physical_position = models.CharField(max_length=200, blank=True)
 	comments = models.CharField(max_length=1000, blank=True)
 
@@ -449,8 +447,46 @@ class MapFeatureAnnotation(models.Model):
 	def __unicode__(self):
 		return self.annotation_value
 
+class MapFeatureInterval(models.Model):
+	map_feature_start = models.ForeignKey(MapFeature, related_name='map_feature_interval_start')
+	map_feature_end = models.ForeignKey(MapFeature, related_name='map_feature_interval_end')
+	interval_type = models.CharField(max_length=200, blank=True)
+	interval_name = models.CharField(max_length=200, blank=True)
+	comments = models.CharField(max_length=1000, blank=True)
+
+	def __unicode__(self):
+		return self.interval_name
+
+class MeasurementParameter(models.Model):
+	parameter = models.CharField(max_length=200, unique=True)
+	parameter_type = models.CharField(max_length=200, blank=True)
+	unit_of_measure = models.CharField(max_length=200, blank=True)
+	protocol = models.CharField(max_length=1000, blank=True)
+	trait_id_buckler = models.CharField(max_length=200, blank=True)
+	marker = models.ForeignKey(Marker)
+
+	def __unicode__(self):
+		return self.parameter
+
+class QTL(models.Model):
+	map_feature_interval = models.ForeignKey(MapFeatureInterval)
+	parameter = models.ForeignKey(MeasurementParameter)
+	comments = models.CharField(max_length=1000, blank=True)
+
+	def __unicode__(self):
+		return self.map_feature_interval.interval_name
+
+class MapFeatureExpression(models.Model):
+	map_feature_interval = models.ForeignKey(MapFeatureInterval)
+	parameter = models.ForeignKey(MeasurementParameter)
+	value = models.CharField(max_length=200, blank=True)
+	comments = models.CharField(max_length=1000, blank=True)
+
+	def __unicode__(self):
+		return self.map_feature_interval.interval_name
+
 class Marker(models.Model):
-	map_feature = models.ForeignKey(MapFeature)
+	map_feature_interval = models.ForeignKey(MapFeatureInterval)
 	primer_f = models.ForeignKey(Primer, related_name='f_primer')
 	primer_r = models.ForeignKey(Primer, related_name='r_primer')
 	marker_id = models.CharField(max_length=200, unique=True)
@@ -465,17 +501,6 @@ class Marker(models.Model):
 
 	def __unicode__(self):
 		return self.marker_id
-
-class MeasurementParameter(models.Model):
-	parameter = models.CharField(max_length=200, unique=True)
-	parameter_type = models.CharField(max_length=200, blank=True)
-	unit_of_measure = models.CharField(max_length=200, blank=True)
-	protocol = models.CharField(max_length=1000, blank=True)
-	trait_id_buckler = models.CharField(max_length=200, blank=True)
-	marker = models.ForeignKey(Marker)
-
-	def __unicode__(self):
-		return self.parameter
 
 class GWASResults(models.Model):
     parameter = models.ForeignKey(MeasurementParameter)
