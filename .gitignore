@@ -70,3 +70,6 @@ lab/migrations/0002_auto_20150618_1045.py
 lab/migrations/0002_auto_20150814_1028.py
 media/files/tissue_data_test.csv
 media/files/samples_data_2.csv
+media/files/jmk_genes_expr_2050909.csv
+lab/migrations/0002_filedump_experiment.py
+media/files/15NMTest_samples_data_prep_1.csv

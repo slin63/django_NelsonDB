@@ -17,13 +17,14 @@ class UserForm(forms.ModelForm):
 
 class FileDumpForm(forms.ModelForm):
 	user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Username ---", help_text="Select the primary user:", required=True)
+	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", help_text="Select the experiment if relevant:", required=True)
 	file_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'File Name'}), help_text="Give an informative name to the file:")
 	file = forms.FileField(help_text="Select your file:")
 	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments:'}), help_text="Any additional comments:", required=False)
 
 	class Meta:
 		model = FileDump
-		fields = ['user', 'file_name', 'file', 'comments']
+		fields = ['user', 'experiment', 'file_name', 'file', 'comments']
 
 class UserProfileForm(forms.ModelForm):
 	phone = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Phone Number'}), help_text="Add your phone number:")

@@ -28,16 +28,6 @@ class UserProfile(models.Model):
 	def __unicode__(self):
 		return self.user.username
 
-class FileDump(models.Model):
-	user = models.ForeignKey(User)
-	file_name = models.CharField(max_length=250, blank=True)
-	file = models.FileField(upload_to='files', blank=True)
-	date = models.DateTimeField(auto_now_add=True, blank=True)
-	comments = models.CharField(max_length=1000, blank=True)
-
-	def __unicode__(self):
-		return self.file_name
-
 class Locality(models.Model):
   city = models.CharField(max_length=200, blank=True)
   state = models.CharField(max_length=200, blank=True)
@@ -66,6 +56,17 @@ class Experiment(models.Model):
 
   def __unicode__(self):
     return self.name
+
+class FileDump(models.Model):
+	user = models.ForeignKey(User)
+	experiment = models.ForeignKey(Experiment)
+	file_name = models.CharField(max_length=250, blank=True)
+	file = models.FileField(upload_to='files', blank=True)
+	date = models.DateTimeField(auto_now_add=True, blank=True)
+	comments = models.CharField(max_length=1000, blank=True)
+
+	def __unicode__(self):
+		return self.file_name
 
 class Publication(models.Model):
   user = models.ForeignKey(User)
