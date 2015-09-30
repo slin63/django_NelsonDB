@@ -1,11 +1,12 @@
 
+import os, tempfile, zipfile
 import csv
 import loader_scripts
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, GlycerolStock
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolatesOnlineForm, LogSeparationsOnlineForm, LogMaizeSurveyOnlineForm, LogGlycerolStocksOnlineForm
+from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, GlycerolStock, FileDump
+from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolatesOnlineForm, LogSeparationsOnlineForm, LogMaizeSurveyOnlineForm, LogGlycerolStocksOnlineForm, FileDumpForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -22,6 +23,10 @@ from operator import itemgetter
 from django.db import transaction
 from django.core.files import File
 from django.http import JsonResponse
+from django.utils.encoding import smart_str
+from django.core.servers.basehttp import FileWrapper
+from django.conf import settings
+import mimetypes
 
 """Used to handle data from URL, to ensure blank spaces don't mess things up"""
 def encode_url(str):
@@ -189,6 +194,39 @@ def register(request):
 		user_form = UserForm()
 		profile_form = UserProfileForm()
 	return render_to_response('lab/register.html', {'user_form': user_form, 'profile_form': profile_form, 'registered': registered}, context)
+
+@login_required
+def file_storage(request):
+	context = RequestContext(request)
+	saved = False
+	if request.method == 'POST':
+		file_form = FileDumpForm(request.POST, request.FILES)
+		if file_form.is_valid():
+			file = file_form.save(commit=False)
+			if 'file' in request.FILES:
+				file.file = request.FILES['file']
+			file.save()
+			saved = True
+		else:
+			print(file_form.errors)
+	else:
+		file_form = FileDumpForm()
+
+	all_files = FileDump.objects.all()
+	return render_to_response('lab/file_storage.html', {'file_form': file_form, 'saved': saved, 'all_files': all_files}, context)
+
+@login_required
+def download_file_dump(request, file_id):
+	file = FileDump.objects.get(id=file_id)
+
+	filename     = '%s/%s' % (settings.MEDIA_ROOT,file.file)
+	download_name = file.file
+	wrapper      = FileWrapper(open(filename))
+	content_type = mimetypes.guess_type(filename)[0]
+	response     = HttpResponse(wrapper,content_type=content_type)
+	response['Content-Length']      = os.path.getsize(filename)
+	response['Content-Disposition'] = "attachment; filename=%s"%download_name
+	return response
 
 def user_login(request):
 	context = RequestContext(request)

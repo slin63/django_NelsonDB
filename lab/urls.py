@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     url(r'^about/odk/$', views.about_odk, name='about_odk'),
 
 	url(r'^error_prelim/$', views.error_prelim, name='error_prelim'),
+	url(r'^file_storage/$', views.file_storage, name='file_storage'),
 	url(r'^register/$', views.register, name='register'),
 	url(r'^login/$', views.user_login, name='login'),
 	url(r'^logout/$', views.user_logout, name='logout'),
@@ -225,6 +226,7 @@ urlpatterns = patterns('',
     url(r'^download/data/separation/$', views.download_separation_data, name='download_separation_data'),
     url(r'^download/data/environment/$', views.download_env_data, name='download_env_data'),
     url(r'^download/data/measurements/$', views.download_measurement_data, name='download_measurement_data'),
+    url(r'^download/file_storage/(?P<file_id>\d+)/$', views.download_file_dump, name='download_file_dump'),
 
     url(r'^upload_online/(?P<template_type>\w+)/', views.upload_online, name='upload_online'),
 

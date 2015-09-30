@@ -1,0 +1,49 @@
+{% extends 'lab/base.html' %}
+{% block title %}File Storage{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>File Storage</h1>
+  <br />
+</div>
+
+<div class="well">
+  <form class="form-signin" id="file_storage_upload_form" method="post" action="/lab/file_storage/" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h2 class="form-signin-heading">Upload New File</h2><br/>
+    {% for field in file_form.visible_fields %}
+      <div class="row">
+        <div class="span4 offset1"><font color="247eca">{{ field.help_text }}</font></div>
+        <div class="span3">{{ field }}</div>
+        <div class="span4"><font color="red">{{ field.errors }}</font></div>
+      </div>
+    {% endfor %}
+    <br />
+    <input class="btn btn-primary" type="submit" name="submit" value="Submit"/>
+  </form>
+</div>
+
+<div class="well">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Username</th>
+        <th>File Name</th>
+        <th>File (Click to Download)</th>
+        <th>Comments</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in all_files %}
+      <tr>
+        <td>{{f.date}}</td>
+        <td><a href="/lab/profile/{{f.user}}/">{{f.user}}</a></td>
+        <td>{{f.file_name}}</td>
+        <td><a href="/lab/download/file_storage/{{f.id}}/">{{f.file}}</a></td>
+        <td>{{f.comments}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
