@@ -470,6 +470,7 @@ class MapFeatureInterval(models.Model):
 
 class Marker(models.Model):
 	map_feature_interval = models.ForeignKey(MapFeatureInterval)
+	marker_map_feature = models.ForeignKey(MapFeature)
 	primer_f = models.ForeignKey(Primer, related_name='f_primer', blank=True, null=True)
 	primer_r = models.ForeignKey(Primer, related_name='r_primer', blank=True, null=True)
 	marker_id = models.CharField(max_length=200, unique=True)
