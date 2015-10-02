@@ -1,0 +1,56 @@
+{% extends 'lab/base.html' %}
+{% block title %}File Storage{% endblock %}
+{% block body_block %}
+{% load staticfiles %}
+<div class="hero-unit">
+  <h1>File Storage <img src='{% static '/media/site_images/files.png' %}' /></h1>
+  <br />
+</div>
+
+<div class="well">
+  <form class="form-signin" id="file_storage_upload_form" method="post" action="/lab/file_storage/" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h3 class="form-signin-heading">Upload New File</h3><br/>
+    {% for field in file_form.visible_fields %}
+      <div class="row">
+        <div class="span4 offset1"><font color="247eca">{{ field.help_text }}</font></div>
+        <div class="span3">{{ field }}</div>
+        <div class="span4"><font color="red">{{ field.errors }}</font></div>
+      </div>
+    {% endfor %}
+    <br />
+    <input class="btn btn-primary" type="submit" name="submit" value="Submit"/>
+  </form>
+</div>
+
+<div class="well">
+  <h3>Files</h3>
+  <hr>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Username</th>
+        <th>Experiment</th>
+        <th>File Name</th>
+        <th>File (Click to Download)</th>
+        <th>Comments</th>
+        <th>Size</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in all_files %}
+      <tr>
+        <td>{{f.date}}</td>
+        <td><a href="/lab/profile/{{f.user}}/">{{f.user}}</a></td>
+        <td><a href="/lab/experiment/{{f.experiment}}/">{{f.experiment}}</a></td>
+        <td>{{f.file_name}}</td>
+        <td><a href="/lab/download/file_storage/{{f.id}}/">{{f.file}}</a></td>
+        <td>{{f.comments}}</td>
+        <td>{{f.file.size|filesizeformat}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

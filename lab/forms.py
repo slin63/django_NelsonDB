@@ -1,6 +1,6 @@
 from django import forms
 
-from lab.models import UserProfile, Experiment, Field, ObsRow, ObsPlant, Locality, Stock, ObsRow, ObsPlant, ObsSample, ObsEnv, MeasurementParameter, Citation, Medium, Location, DiseaseInfo
+from lab.models import UserProfile, Experiment, Field, ObsRow, ObsPlant, Locality, Stock, ObsRow, ObsPlant, ObsSample, ObsEnv, MeasurementParameter, Citation, Medium, Location, DiseaseInfo, FileDump
 from django.contrib.auth.models import User
 from django.core.validators import EmailValidator
 
@@ -14,6 +14,17 @@ class UserForm(forms.ModelForm):
 	class Meta:
 		model = User
 		fields = ['username', 'password', 'email', 'first_name', 'last_name']
+
+class FileDumpForm(forms.ModelForm):
+	user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Username ---", help_text="Select the primary user:", required=True)
+	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", help_text="Select the experiment if relevant:", required=True)
+	file_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'File Name'}), help_text="Give an informative name to the file:")
+	file = forms.FileField(help_text="Select your file:")
+	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments:'}), help_text="Any additional comments:", required=False)
+
+	class Meta:
+		model = FileDump
+		fields = ['user', 'experiment', 'file_name', 'file', 'comments']
 
 class UserProfileForm(forms.ModelForm):
 	phone = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Phone Number'}), help_text="Add your phone number:")
