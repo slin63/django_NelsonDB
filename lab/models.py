@@ -425,15 +425,119 @@ class ObsTrackerSource(models.Model):
 	def __unicode__(self):
 		return self.target_obs
 
+class Primer(models.Model):
+	primer_id = models.CharField(max_length=200, unique=True)
+	primer_name = models.CharField(max_length=200, blank=True)
+	primer_tail = models.CharField(max_length=200, blank=True)
+	size_range = models.CharField(max_length=200, blank=True)
+	temp_min = models.CharField(max_length=200, blank=True)
+	temp_max = models.CharField(max_length=200, blank=True)
+	order_date = models.CharField(max_length=200, blank=True)
+	comments = models.CharField(max_length=1000, blank=True)
+
+	def __unicode__(self):
+		return self.primer_id
+
+class MapFeature(models.Model):
+	map_feature_id = models.CharField(max_length=200, unique=True)
+	chromosome = models.CharField(max_length=200, blank=True)
+	genetic_bin = models.CharField(max_length=200, blank=True)
+	physical_map = models.CharField(max_length=200, blank=True)
+	genetic_position = models.CharField(max_length=200, blank=True)
+	physical_position = models.CharField(max_length=200, blank=True)
+	comments = models.CharField(max_length=1000, blank=True)
+
+	def __unicode__(self):
+		return self.physical_position
+
+class MapFeatureAnnotation(models.Model):
+	map_feature = models.ForeignKey(MapFeature)
+	annotation_type = models.CharField(max_length=200, blank=True)
+	annotation_value = models.CharField(max_length=200, blank=True)
+
+	def __unicode__(self):
+		return self.annotation_value
+
+class MapFeatureInterval(models.Model):
+	map_feature_start = models.ForeignKey(MapFeature, related_name='map_feature_interval_start')
+	map_feature_end = models.ForeignKey(MapFeature, related_name='map_feature_interval_end')
+	interval_type = models.CharField(max_length=200, blank=True)
+	interval_name = models.CharField(max_length=200, blank=True)
+	comments = models.CharField(max_length=1000, blank=True)
+
+	def __unicode__(self):
+		return self.interval_name
+
+class Marker(models.Model):
+	map_feature_interval = models.ForeignKey(MapFeatureInterval)
+	primer_f = models.ForeignKey(Primer, related_name='f_primer', blank=True, null=True)
+	primer_r = models.ForeignKey(Primer, related_name='r_primer', blank=True, null=True)
+	marker_id = models.CharField(max_length=200, unique=True)
+	length = models.CharField(max_length=200, blank=True)
+	bac = models.CharField(max_length=200, blank=True)
+	nam_marker = models.CharField(max_length=200, blank=True)
+	poly_type = models.CharField(max_length=200, blank=True)
+	ref_seq = models.CharField(max_length=200, blank=True)
+	comments = models.CharField(max_length=1000, blank=True)
+	strand = models.CharField(max_length=200, blank=True)
+	allele = models.CharField(max_length=200, blank=True)
+
+	def __unicode__(self):
+		return self.marker_id
+
 class MeasurementParameter(models.Model):
 	parameter = models.CharField(max_length=200, unique=True)
 	parameter_type = models.CharField(max_length=200, blank=True)
 	unit_of_measure = models.CharField(max_length=200, blank=True)
 	protocol = models.CharField(max_length=1000, blank=True)
 	trait_id_buckler = models.CharField(max_length=200, blank=True)
+	marker = models.ForeignKey(Marker, blank=True, null=True)
 
 	def __unicode__(self):
 		return self.parameter
+
+class QTL(models.Model):
+	map_feature_interval = models.ForeignKey(MapFeatureInterval)
+	parameter = models.ForeignKey(MeasurementParameter)
+	comments = models.CharField(max_length=1000, blank=True)
+
+	def __unicode__(self):
+		return self.map_feature_interval.interval_name
+
+class MapFeatureExpression(models.Model):
+	map_feature_interval = models.ForeignKey(MapFeatureInterval)
+	parameter = models.ForeignKey(MeasurementParameter)
+	value = models.CharField(max_length=200, blank=True)
+	comments = models.CharField(max_length=1000, blank=True)
+
+	def __unicode__(self):
+		return self.map_feature_interval.interval_name
+
+class GWASResults(models.Model):
+    parameter = models.ForeignKey(MeasurementParameter)
+    p_value = models.CharField(max_length=200)
+    strand = models.CharField(max_length=200)
+    relationship_to_hit = models.CharField(max_length=200)
+    interpro_domain = models.CharField(max_length=200)
+    distance_from_gene = models.CharField(max_length=200)
+    f_value = models.CharField(max_length=200)
+    perm_p_value = models.CharField(max_length=200)
+    r2 = models.CharField(max_length=200)
+    alleles = models.CharField(max_length=200)
+    bpp = models.CharField(max_length=200)
+    effect = models.CharField(max_length=200)
+    cM = models.CharField(max_length=200)
+    comments = models.CharField(max_length=1000)
+
+    def __unicode__(self):
+		return self.p_value
+
+class GWASExperimentSet(models.Model):
+	experiment = models.ForeignKey(Experiment)
+	gwas_results = models.ForeignKey(GWASResults)
+
+	def __unicode__(self):
+		return self.gwas_results
 
 class Measurement(models.Model):
 	obs_tracker = models.ForeignKey(ObsTracker)
