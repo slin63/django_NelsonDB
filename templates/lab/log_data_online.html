@@ -154,8 +154,8 @@
       {% csrf_token %}
       <table id="log_data_online_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
-          <tr>
-            {% if data_type == 'seed_inventory' %}
+          {% if data_type == 'seed_inventory' %}
+          <tr><th colspan=2>Choose One: Required</th><th colspan=25></th></tr>
               <th>Used</th>
               <th>Collected</th>
               <th>Experiment</th>

@@ -170,7 +170,7 @@ class UpdateSeedDataOnlineForm(forms.Form):
 
 class LogSeedDataOnlineForm(forms.Form):
 	experiment_used = forms.BooleanField(help_text="Used", required=False)
-	experiment_collected = forms.BooleanField(help_text="Collected", required=False)
+	experiment_collected = forms.BooleanField(help_text="Collected", required=False, initial=True)
 	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", help_text="Experiment", required=True)
 	stock__seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Seed ID'}), help_text="Seed ID:", required=True)
 	stock__seed_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Seed Name'}), help_text="Seed Name:", required=False)
