@@ -3150,14 +3150,6 @@ def download_measurement_experiment(request, experiment_name):
 	return response
 
 @login_required
-def genotype_data_browse(request):
-	context = RequestContext(request)
-	context_dict = {}
-
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/index.html', context_dict, context)
-
-@login_required
 def stock_for_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}

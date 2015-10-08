@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from lab import views
+from lab import views, views_genotype
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
@@ -77,8 +77,6 @@ urlpatterns = patterns('',
     url(r'^data/measurement/checkbox_clear/$', views.checkbox_measurement_data_clear, name='checkbox_measurement_data_clear'),
     url(r'^data/measurement/show_all_experiment/$', views.show_all_measurement_experiment, name='show_all_measurement_experiment'),
     url(r'^data/measurement/(?P<experiment_name>\w+)/$', views.measurement_data_from_experiment, name='measurement_data_from_experiment'),
-
-    url(r'^data/genotype/$', views.genotype_data_browse, name='genotype_data_browse'),
 
     url(r'^data/tissue/$', views.tissue_data_browse, name='tissue_data_browse'),
     url(r'^data/tissue/suggest_tissue_experiment/$', views.suggest_tissue_experiment, name='suggest_tissue_experiment'),
@@ -162,6 +160,9 @@ urlpatterns = patterns('',
     url(r'^data/row/show_all_experiment/$', views.show_all_row_experiment, name='show_all_row_experiment'),
     url(r'^data/row/checkbox_clear/$', views.checkbox_row_data_clear, name='checkbox_row_data_clear'),
     url(r'^data/row/(?P<experiment_name>\w+)/$', views.row_data_from_experiment, name='row_data_from_experiment'),
+
+    url(r'^data/genotype/$', views_genotype.genotype_data_browse, name='genotype_data_browse'),
+    url(r'^data/genotype/browse/plot/$', views_genotype.genotype_data_browse_plot, name='genotype_data_browse_plot'),
 
     url(r'^passport/(?P<passport_id>\d+)/$', views.passport, name='passport'),
     url(r'^disease_info/(?P<disease_id>\d+)/$', views.single_disease_info, name='single_disease_info'),
