@@ -2,13 +2,30 @@
 {% block title %}Genotypic Data{% endblock %}
 {% block body_block %}
 
+<style>
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.dot {
+  stroke: #000;
+}
+
+</style>
+
 <div class="container-fluid">
   <div class="well">
     <h1>Browse Genotypic Data</h1>
   </div>
 
+  <br/><br/>
   <div id="overview_chart">
   </div>
 
 </div>
+
 {% endblock %}
