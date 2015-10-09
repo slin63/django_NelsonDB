@@ -48,6 +48,5 @@ def genotype_data_browse_plot(request):
     for e in all_expression:
         data.append({'position':e.map_feature_interval.map_feature_start.physical_position, 'chromosome':e.map_feature_interval.map_feature_start.chromosome, 'name':'%s Start Value: %s'%(e.parameter, e.value), 'type':'Expression'})
         data.append({'position':e.map_feature_interval.map_feature_end.physical_position, 'chromosome':e.map_feature_interval.map_feature_end.chromosome, 'name':'%s End Value: %s'%(e.parameter, e.value), 'type':'Expression'})
-    print(data)
 
     return JsonResponse({'data':data}, safe=True)

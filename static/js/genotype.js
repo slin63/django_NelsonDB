@@ -5,7 +5,7 @@ $(document).ready(function(){
     dataType: "json",
     url: "/lab/data/genotype/browse/plot/",
     success: function(data) {
-      console.log(data);
+      //console.log(data);
       var margin = {top: 20, right: 20, bottom: 30, left: 40},
       width = 1280 - margin.left - margin.right,
       height = 600 - margin.top - margin.bottom;
