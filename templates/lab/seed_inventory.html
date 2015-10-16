@@ -61,15 +61,24 @@
 				</div>
 				{% if checkbox_taxonomy %}
 				<div class="span2 offset3">
-					<form id="clear_taxonomy" method="post" action="/lab/seed_inventory/checkbox_clear/checkbox_taxonomy/">
-						{% csrf_token %}
-						<button class="btn btn-warning" type="submit">Clear Taxonomies</button>
-					</form>
+					<button id="seed_inventory_clear_taxonomy" class="btn btn-warning" type="submit">Clear Taxonomies</button>
 				</div>
 				{% endif %}
 			</div>
-			<div id="taxonomies">
-				{% include 'lab/seed_taxonomy_list.html' with taxonomy_list=taxonomy_list %}
+			<div id="suggested_taxonomy" class="container-fluid" style="display:none">
+				<table id="selected_taxonomy" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					<thead>
+						<tr>
+							<th>Select</th>
+							<th>Species</th>
+							<th>Population</th>
+							<th>Pedigree</th>
+						</tr>
+					</thead>
+					<tbody>
+				</table>
+				<br/>
+				<input id="select_taxonomy_form_submit" class="btn btn-primary" type="submit" name="submit" value="Select Taxonomies"/>
 			</div>
 			{% if checkbox_taxonomy %}
 				<hr>
@@ -95,15 +104,23 @@
 				</div>
 				{% if checkbox_pedigree %}
 				<div class="span2 offset3">
-					<form id="checkbox_pedigree" method="post" action="/lab/seed_inventory/checkbox_clear/checkbox_pedigree/">
-						{% csrf_token %}
-						<button class="btn btn-warning" type="submit">Clear Pedigrees</button>
-					</form>
+					<button id="seed_inventory_clear_pedigree" class="btn btn-warning" type="submit">Clear Pedigrees</button>
 				</div>
 				{% endif %}
 			</div>
-			<div id="pedigrees">
-				{% include 'lab/seed_pedigree_list.html' with pedigree_list=pedigree_list %}
+			<div id="suggested_pedigrees" class="container-fluid" style="display:none">
+				<table id="selected_pedigree" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					<thead>
+						<tr>
+							<th>Select</th>
+							<th>Pedigree</th>
+							<th>Population</th>
+						</tr>
+					</thead>
+					<tbody>
+				</table>
+				<br/>
+				<button id="select_pedigree_form_submit" class="btn btn-primary" type="submit" name="submit" >Select Pedigrees</button>
 			</div>
 			{% if checkbox_pedigree %}
 				<hr>

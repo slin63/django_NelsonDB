@@ -27,6 +27,7 @@ from django.utils.encoding import smart_str
 from django.core.servers.basehttp import FileWrapper
 from django.conf import settings
 import mimetypes
+import json
 
 """Used to handle data from URL, to ensure blank spaces don't mess things up"""
 def encode_url(str):
@@ -413,8 +414,9 @@ def find_stock_collected_from_experiment(experiment_name):
 	return collected_stock_data
 
 def datatable_seed_inventory(request):
+	selected_stocks = []
 	selected_stocks = checkbox_seed_inventory_sort(request)
-	count = selected_stocks.count()
+	count = 0
 	arr = []
 	for data in selected_stocks:
 		arr.append({
@@ -428,7 +430,7 @@ def datatable_seed_inventory(request):
         	'collector': data.passport.collecting.user.username,
         	'comments': data.comments,
     	})
-	return JsonResponse({'data':arr, 'recordsTotal':count}, safe=True)
+	return JsonResponse({'data':arr, 'count':count}, safe=True)
 
 def checkbox_seed_inventory_sort(request):
 	selected_stocks = {}
@@ -453,7 +455,7 @@ def checkbox_seed_inventory_sort(request):
 				stocks = Stock.objects.filter(pedigree=pedigree)
 				selected_stocks = list(chain(selected_stocks, stocks))
 		else:
-			selected_stocks = Stock.objects.exclude(seed_id='0').exclude(passport_id='2').exclude(id=1)[:2000]
+			selected_stocks = list(Stock.objects.exclude(seed_id='0').exclude(passport_id='2').exclude(id=1))[:1000]
 	return selected_stocks
 
 def checkbox_session_variable_check(request):
@@ -490,6 +492,8 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_env_experiment'] = request.session.get('checkbox_env_experiment')
 	if request.session.get('checkbox_measurement_experiment', None):
 		context_dict['checkbox_measurement_experiment'] = request.session.get('checkbox_measurement_experiment')
+	if request.session.get('checkbox_measurement_parameter', None):
+		context_dict['checkbox_measurement_parameter'] = request.session.get('checkbox_measurement_parameter')
 	return context_dict
 
 @login_required
@@ -508,12 +512,17 @@ def show_all_seedinv_taxonomy(request):
 		checkbox_pedigree_list = request.session.get('checkbox_pedigree')
 		for pedigree in checkbox_pedigree_list:
 			taxonomy = Stock.objects.filter(pedigree=pedigree).values('pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()
-			taxonomy_list = list(chain(taxonomy, taxonomy_list))[:2000]
+			taxonomy_list = list(chain(taxonomy, taxonomy_list))
+		for t in taxonomy_list:
+			t['input'] = '<input type="checkbox" name="checkbox_taxonomy" value="%s">' % (t['passport__taxonomy__population'])
 	else:
-		taxonomy_list = Taxonomy.objects.filter(common_name='Maize')
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['taxonomy_list'] = taxonomy_list
-	return render_to_response('lab/seed_taxonomy_list.html', context_dict, context)
+		taxonomy_list = list(Taxonomy.objects.filter(common_name='Maize').values('population', 'species').distinct())
+		for t in taxonomy_list:
+			t['input'] = '<input type="checkbox" name="checkbox_taxonomy" value="%s">' % (t['population'])
+			t['passport__taxonomy__population'] = t['population']
+			t['passport__taxonomy__species'] = t['species']
+			t['pedigree'] = ''
+	return JsonResponse({'data':taxonomy_list})
 
 def show_all_seedinv_pedigree(request):
 	context = RequestContext(request)
@@ -523,12 +532,15 @@ def show_all_seedinv_pedigree(request):
 		checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
 		for taxonomy in checkbox_taxonomy_list:
 			pedigree = Stock.objects.filter(passport__taxonomy__population=taxonomy).values('pedigree', 'passport__taxonomy__population').distinct()
-			pedigree_list = list(chain(pedigree, pedigree_list))[:2000]
+			pedigree_list = list(chain(pedigree, pedigree_list))
+		for p in pedigree_list:
+			p['input'] = '<input type="checkbox" name="checkbox_pedigree" value="%s">' % (p['pedigree'])
 	else:
-		pedigree_list = Stock.objects.all().values('pedigree').distinct()[:2000]
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['pedigree_list'] = pedigree_list
-	return render_to_response('lab/seed_pedigree_list.html', context_dict, context)
+		pedigree_list = list(Stock.objects.all().values('pedigree').distinct())
+		for p in pedigree_list:
+			p['input'] = '<input type="checkbox" name="checkbox_pedigree" value="%s">' % (p['pedigree'])
+			p['passport__taxonomy__population'] = ''
+	return JsonResponse({'data':pedigree_list})
 
 def suggest_pedigree(request):
 	context = RequestContext(request)
@@ -536,22 +548,23 @@ def suggest_pedigree(request):
 	pedigree_list = []
 	starts_with = ''
 	if request.method == 'GET':
-		starts_with = request.GET['suggestion']
+		starts_with = request.GET.get('suggestion', False)
 	else:
-		starts_with = request.POST['suggestion']
+		starts_with = request.POST.get('suggestion', False)
 	if starts_with:
 		if request.session.get('checkbox_taxonomy', None):
 			checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
 			for taxonomy in checkbox_taxonomy_list:
 				pedigree = Stock.objects.filter(pedigree__contains=starts_with, passport__taxonomy__population=taxonomy).values('pedigree', 'passport__taxonomy__population').distinct()
-				pedigree_list = list(chain(pedigree, pedigree_list))[:2000]
+				pedigree_list = list(chain(pedigree, pedigree_list))
+			for p in pedigree_list:
+				p['input'] = '<input type="checkbox" name="checkbox_pedigree" value="%s">' % (p['pedigree'])
 		else:
-			pedigree_list = Stock.objects.filter(pedigree__contains=starts_with).values('pedigree').distinct()[:2000]
-	else:
-		pedigree_list = None
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['pedigree_list'] = pedigree_list
-	return render_to_response('lab/seed_pedigree_list.html', context_dict, context)
+			pedigree_list = list(Stock.objects.filter(pedigree__contains=starts_with).values('pedigree').distinct())
+			for p in pedigree_list:
+				p['input'] = '<input type="checkbox" name="checkbox_pedigree" value="%s">' % (p['pedigree'])
+				p['passport__taxonomy__population'] = ''
+	return JsonResponse({'data':pedigree_list})
 
 def suggest_taxonomy(request):
 	context = RequestContext(request)
@@ -567,25 +580,33 @@ def suggest_taxonomy(request):
 			checkbox_pedigree_list = request.session.get('checkbox_pedigree')
 			for pedigree in checkbox_pedigree_list:
 				taxonomy = Stock.objects.filter(pedigree=pedigree, passport__taxonomy__population__contains=starts_with).values('pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()
-				taxonomy_list = list(chain(taxonomy, taxonomy_list))[:2000]
+				taxonomy_list = list(chain(taxonomy, taxonomy_list))
+			for t in taxonomy_list:
+				t['input'] = '<input type="checkbox" name="checkbox_taxonomy" value="%s">' % (t['passport__taxonomy__population'])
 		else:
-			taxonomy_list = Taxonomy.objects.filter(population__contains=starts_with, common_name='Maize')[:2000]
-	else:
-		taxonomy_list = None
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['taxonomy_list'] = taxonomy_list
-	return render_to_response('lab/seed_taxonomy_list.html', context_dict, context)
+			taxonomy_list = list(Taxonomy.objects.filter(population__contains=starts_with, common_name='Maize').values('population', 'species').distinct())
+			for t in taxonomy_list:
+				t['input'] = '<input type="checkbox" name="checkbox_taxonomy" value="%s">' % (t['population'])
+				t['passport__taxonomy__population'] = t['population']
+				t['passport__taxonomy__species'] = t['species']
+				t['pedigree'] = ''
+	return JsonResponse({'data':taxonomy_list})
 
 def select_pedigree(request):
-	context = RequestContext(request)
-	context_dict = {}
-	checkbox_pedigree_list = request.POST.getlist('checkbox_pedigree')
-	request.session['checkbox_pedigree'] = checkbox_pedigree_list
-	selected_stocks = checkbox_seed_inventory_sort(request)
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['selected_stocks'] = selected_stocks
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/seed_inventory.html', context_dict, context)
+	pedigrees = request.POST['pedigrees']
+	pedigree_list = json.loads(pedigrees)
+	request.session['checkbox_pedigree'] = pedigree_list
+	return JsonResponse({'success':True})
+
+def select_taxonomy(request):
+	taxonomy = request.POST['taxonomy']
+	taxonomy_list = json.loads(taxonomy)
+	request.session['checkbox_taxonomy'] = taxonomy_list
+	return JsonResponse({'success':True})
+
+def checkbox_seed_inventory_clear(request, clear_selected):
+	del request.session[clear_selected]
+	return JsonResponse({'success':True})
 
 def sort_seed_set(set_type):
 	packet_data = []
@@ -1043,27 +1064,6 @@ def edit_info(request, obj_type, obj_id):
 		context_dict['taxonomy_form'] = taxonomy_form
 		context_dict['logged_in_user'] = request.user.username
 		return render_to_response('lab/edit_taxonomy.html', context_dict, context)
-
-def select_taxonomy(request):
-	context = RequestContext(request)
-	context_dict = {}
-	checkbox_taxonomy_list = request.POST.getlist('checkbox_taxonomy')
-	request.session['checkbox_taxonomy'] = checkbox_taxonomy_list
-	selected_stocks = checkbox_seed_inventory_sort(request)
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['selected_stocks'] = selected_stocks
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/seed_inventory.html', context_dict, context)
-
-def checkbox_seed_inventory_clear(request, clear_selected):
-	context = RequestContext(request)
-	context_dict = {}
-	del request.session[clear_selected]
-	selected_stocks = checkbox_seed_inventory_sort(request)
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['selected_stocks'] = selected_stocks
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/seed_inventory.html', context_dict, context)
 
 def select_stockpacket_from_stock(request):
 	context = RequestContext(request)

@@ -9,56 +9,208 @@ $(document).ready(function() {
 	});
 });
 
+function getCookie(name) {
+	var cookieValue = null;
+	if (document.cookie && document.cookie != '') {
+		var cookies = document.cookie.split(';');
+		for (var i = 0; i < cookies.length; i++) {
+			var cookie = jQuery.trim(cookies[i]);
+			// Does this cookie string begin with the name we want?
+			if (cookie.substring(0, name.length + 1) == (name + '=')) {
+				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+				break;
+			}
+		}
+	}
+	return cookieValue;
+}
+
+function csrfSafeMethod(method) {
+	// these HTTP methods do not require CSRF protection
+	return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+function sameOrigin(url) {
+	// test that a given url is a same-origin URL
+	// url could be relative or scheme relative or absolute
+	var host = document.location.host; // host + port
+	var protocol = document.location.protocol;
+	var sr_origin = '//' + host;
+	var origin = protocol + sr_origin;
+	// Allow absolute or scheme relative URLs to same origin
+	return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+	(url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+	// or any other URL that isn't scheme relative or absolute i.e relative.
+	!(/^(\/\/|http:|https:).*/.test(url));
+}
+
 $('#show_all_seedinv_taxonomy').click(function(){
-	$.get('/lab/seed_inventory/show_all_taxonomy/', {}, function(data){
-		$('#taxonomies').html(data);
-		$('#selected_taxonomy').dataTable({
-			"searching": false,
-			"scrollY": "300px",
-			"scrollCollapse": true,
-			"paginate": false
-		});
+	$('#suggested_taxonomy').css('display', 'block');
+	$('#selected_taxonomy').dataTable({
+		"destroy": true,
+		"searching": false,
+		"scrollY": "300px",
+		"scrollCollapse": true,
+		"paginate": false,
+		"ajax": "/lab/seed_inventory/show_all_taxonomy/",
+		"deferRender": true,
+		"aoColumns": [
+		{ "mData": "input"},
+		{ "mData": "passport__taxonomy__species"},
+		{ "mData": "passport__taxonomy__population"},
+		{ "mData": "pedigree"}
+		],
 	});
 });
 
 $('#show_all_seedinv_pedigree').click(function(){
-	$.get('/lab/seed_inventory/show_all_pedigree/', {}, function(data){
-		$('#pedigrees').html(data);
-		$('#selected_pedigree').dataTable({
-			"searching": false,
-			"scrollY": "300px",
-			"scrollCollapse": true,
-			"paginate": false
-		});
+	$('#suggested_pedigrees').css('display', 'block');
+	$('#selected_pedigree').dataTable({
+		"destroy": true,
+		"searching": false,
+		"scrollY": "300px",
+		"scrollCollapse": true,
+		"paginate": false,
+		"ajax": "/lab/seed_inventory/show_all_pedigree/",
+		"deferRender": true,
+		"aoColumns": [
+		  { "mData": "input"},
+		  { "mData": "pedigree"},
+		  { "mData": "passport__taxonomy__population"}
+		],
 	});
 });
 
 $('#pedigreesuggestion').keyup(function(){
-				var query;
-				query = $(this).val();
-				$.get('/lab/seed_inventory/suggest_pedigree/', {suggestion: query}, function(data){
-			$('#pedigrees').html(data);
-			$('#selected_pedigree').dataTable({
-				"searching": false,
-				"scrollY": "300px",
-  			"scrollCollapse": true,
-  			"paginate": false
-				});
-		});
+  var query = $(this).val();
+	if (query == '') { $('#suggested_pedigrees').css('display', 'none'); }
+	else { $('#suggested_pedigrees').css('display', 'block'); }
+	$('#selected_pedigree').dataTable({
+		"destroy": true,
+		"searching": false,
+		"scrollY": "300px",
+		"scrollCollapse": true,
+		"paginate": false,
+		"ajax": {
+			"url": "/lab/seed_inventory/suggest_pedigree/",
+			"type": 'POST',
+			"data": {'suggestion':query},
+			beforeSend: function(xhr, settings) {
+				var csrftoken = getCookie('csrftoken');
+				if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+					xhr.setRequestHeader("X-CSRFToken", csrftoken);
+				}
+			}
+		},
+		"deferRender": true,
+		"aoColumns": [
+		  { "mData": "input"},
+		  { "mData": "pedigree"},
+	    { "mData": "passport__taxonomy__population"}
+    ],
+  });
+});
+
+$('#select_pedigree_form_submit').click(function(){
+	var pedigrees = [];
+	$("input[name='checkbox_pedigree']:checked").each(function() {
+		pedigrees.push($(this).val());
+	});
+	$.ajax({
+		"url": "/lab/seed_inventory/select_pedigree/",
+		"type": "POST",
+		"data": {'pedigrees': JSON.stringify(pedigrees)},
+		beforeSend: function(xhr, settings) {
+			var csrftoken = getCookie('csrftoken');
+			if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+				xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			}
+		},
+		success: function() {
+			location.reload(true);
+		},
+		error: function() {
+			alert("Error selecting pedigree!");
+		}
+	});
+});
+
+$('#select_taxonomy_form_submit').click(function(){
+	var taxonomy = [];
+	$("input[name='checkbox_taxonomy']:checked").each(function() {
+		taxonomy.push($(this).val());
+	});
+	$.ajax({
+		"url": "/lab/seed_inventory/select_taxonomy/",
+		"type": "POST",
+		"data": {'taxonomy': JSON.stringify(taxonomy)},
+		beforeSend: function(xhr, settings) {
+			var csrftoken = getCookie('csrftoken');
+			if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+				xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			}
+		},
+		success: function() {
+			location.reload(true);
+		},
+		error: function() {
+			alert("Error selecting taxonomy!");
+		}
+	});
 });
 
 $('#taxonomysuggestion').keyup(function(){
-				var query;
-				query = $(this).val();
-				$.get('/lab/seed_inventory/suggest_taxonomy/', {suggestion: query}, function(data){
-			$('#taxonomies').html(data);
+	var query = $(this).val();
+	if (query == '') { $('#suggested_taxonomy').css('display', 'none'); }
+	else { $('#suggested_taxonomy').css('display', 'block'); }
 			$('#selected_taxonomy').dataTable({
+				"destroy": true,
 				"searching": false,
 				"scrollY": "300px",
 				"scrollCollapse": true,
-				"paginate": false
-				});
-		});
+				"paginate": false,
+				"ajax": {
+					"url": "/lab/seed_inventory/suggest_taxonomy/",
+					"type": 'POST',
+					"data": {'suggestion':query},
+					beforeSend: function(xhr, settings) {
+						var csrftoken = getCookie('csrftoken');
+						if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+							xhr.setRequestHeader("X-CSRFToken", csrftoken);
+						}
+					}
+				},
+				"deferRender": true,
+				"aoColumns": [
+				{ "mData": "input"},
+				{ "mData": "passport__taxonomy__species"},
+				{ "mData": "passport__taxonomy__population"},
+				{ "mData": "pedigree"}
+				],
+			});
+});
+
+$('#seed_inventory_clear_taxonomy').click(function(){
+	$.ajax({
+		"url": "/lab/seed_inventory/checkbox_clear/checkbox_taxonomy/",
+		success: function() {
+			location.reload(true);
+		},
+		error: function() {
+			alert("Error clearing selected taxonomy!");
+		}
+	});
+});
+
+$('#seed_inventory_clear_pedigree').click(function(){
+	$.ajax({
+		"url": "/lab/seed_inventory/checkbox_clear/checkbox_pedigree/",
+		success: function() {
+			location.reload(true);
+		},
+		error: function() {
+			alert("Error clearing selected pedigree!");
+		}
+	});
 });
 
 $('#show_all_isolate_taxonomy').click(function(){
@@ -425,14 +577,34 @@ $('#show_all_measurement_experiment').click(function(){
 	});
 });
 
-$('#clear_plant_experiment').click(function(){
-	$.get('/lab/data/plant/checkbox_clear/', {}, function(data){
-		$('body').html(data);
+$('#measurement_parametersuggestion').keyup(function(){
+	var query;
+	query = $(this).val();
+	$.get('/lab/data/measurement/suggest_measurement_parameter/', {suggestion: query}, function(data){
+		$('#measurement_parameter').html(data);
+		$('#selected_measurement_parameter').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
 	});
 });
 
-$('#clear_measurement_experiment').click(function(){
-	$.get('/lab/data/measurement/checkbox_clear/', {}, function(data){
+$('#show_all_measurement_parameter').click(function(){
+	$.get('/lab/data/measurement/show_all_parameter/', {}, function(data){
+		$('#measurement_parameter').html(data);
+		$('#selected_measurement_parameter').dataTable({
+			"searching": false,
+			"scrollY": "300px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
+$('#clear_plant_experiment').click(function(){
+	$.get('/lab/data/plant/checkbox_clear/', {}, function(data){
 		$('body').html(data);
 	});
 });

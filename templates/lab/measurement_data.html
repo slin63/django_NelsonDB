@@ -23,7 +23,12 @@
         </div>
         {% if checkbox_measurement_experiment %}
         <div class="span2 offset3">
-          <button class="btn btn-warning" id="clear_measurement_experiment" name="clear_measurement_experiment" type="submit">Clear Experiments</button>
+          <div class="span2 offset3">
+            <form id="clear_taxonomy" method="post" action="/lab/measurement/checkbox_clear/checkbox_experiment/">
+              {% csrf_token %}
+              <button class="btn btn-warning" type="submit">Clear Experiments</button>
+            </form>
+          </div>
         </div>
         {% endif %}
       </div>
@@ -55,7 +60,10 @@
         </div>
         {% if checkbox_measurement_parameter %}
         <div class="span2 offset3">
-          <button class="btn btn-warning" id="clear_measurement_parameter" name="clear_measurement_parameter" type="submit">Clear Parameters</button>
+          <form id="clear_taxonomy" method="post" action="/lab/measurement/checkbox_clear/checkbox_parameter/">
+            {% csrf_token %}
+            <button class="btn btn-warning" type="submit">Clear Parameters</button>
+          </form>
         </div>
         {% endif %}
       </div>

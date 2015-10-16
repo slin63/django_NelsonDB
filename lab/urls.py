@@ -74,7 +74,7 @@ urlpatterns = patterns('',
     url(r'^data/measurement/$', views.measurement_data_browse, name='measurement_data_browse'),
     url(r'^data/measurement/suggest_measurement_experiment/$', views.suggest_measurement_experiment, name='suggest_measurement_experiment'),
     url(r'^data/measurement/select_measurement_experiment/$', views.select_measurement_experiment, name='select_measurement_experiment'),
-    url(r'^data/measurement/checkbox_clear/$', views.checkbox_measurement_data_clear, name='checkbox_measurement_data_clear'),
+    url(r'^data/measurement/checkbox_clear/(?P<clear_selected>\w+)/$', views.checkbox_measurement_data_clear, name='checkbox_measurement_data_clear'),
     url(r'^data/measurement/show_all_experiment/$', views.show_all_measurement_experiment, name='show_all_measurement_experiment'),
     url(r'^data/measurement/(?P<experiment_name>\w+)/$', views.measurement_data_from_experiment, name='measurement_data_from_experiment'),
 
