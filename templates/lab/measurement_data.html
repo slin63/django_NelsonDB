@@ -2,11 +2,21 @@
 {% load static %}
 {% block title %}Measurement Data{% endblock %}
 {% block body_block %}
+
+
+
 <div class="hero-unit">
   <h1>Measurement Data</h1>
 </div>
   <br />
 
+  <hr>
+  <a href='/lab/log_data/measurement/'><input class="btn btn-warning" type="submit" name="submit" value="Add New Measurements"/></a>
+  <a href='/lab/log_data/parameter/'><input class="btn btn-warning" type="submit" name="submit" value="Add New Parameters"/></a>
+  <hr>
+
+  <hr>
+  <h2>Filters</h2>
     <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
       <div class="row-fluid">
         <div class="span3">
@@ -23,17 +33,23 @@
         </div>
         {% if checkbox_measurement_experiment %}
         <div class="span2 offset3">
-          <div class="span2 offset3">
-            <form id="clear_taxonomy" method="post" action="/lab/measurement/checkbox_clear/checkbox_experiment/">
-              {% csrf_token %}
-              <button class="btn btn-warning" type="submit">Clear Experiments</button>
-            </form>
-          </div>
+          <button id="clear_selected_measurement_experiments" class="btn btn-warning" type="submit">Clear Experiments</button>
         </div>
         {% endif %}
       </div>
-      <div id="measurement_experiment">
-        {% include 'lab/measurement_experiment_list.html' with measurement_experiment_list=measurement_experiment_list %}
+      <div id="suggested_measurement_experiments" class="container-fluid" style="display:none">
+        <table id="selected_measurement_experiments" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Select</th>
+              <th>Experiment</th>
+              <th>Field</th>
+              <th>Parameter</th>
+            </tr>
+          </thead>
+        </table>
+        <br/>
+        <button id="select_measurement_experiment_form_submit" class="btn btn-primary" type="submit" name="submit" >Select Experiments</button>
       </div>
       {% if checkbox_measurement_experiment %}
         <hr>
@@ -60,22 +76,30 @@
         </div>
         {% if checkbox_measurement_parameter %}
         <div class="span2 offset3">
-          <form id="clear_taxonomy" method="post" action="/lab/measurement/checkbox_clear/checkbox_parameter/">
-            {% csrf_token %}
-            <button class="btn btn-warning" type="submit">Clear Parameters</button>
-          </form>
+          <button id="clear_select_meaurement_parameters" class="btn btn-warning" type="submit">Clear Parameters</button>
         </div>
         {% endif %}
       </div>
-      <div id="measurement_parameter">
-        {% include 'lab/measurement_parameter_list.html' with measurement_parameter_list=measurement_parameter_list %}
+      <div id="suggested_measurement_parameters" class="container-fluid" style="display:none">
+        <table id="selected_measurement_parameters" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Select</th>
+              <th>Parameter</th>
+              <th>Parameter Type</th>
+              <th>Experiment</th>
+            </tr>
+          </thead>
+        </table>
+        <br/>
+        <button id="select_measurement_parameter_form_submit" class="btn btn-primary" type="submit" name="submit" >Select Parameters</button>
       </div>
       {% if checkbox_measurement_parameter %}
-      <hr>
-      <h5>Selected Parameters</h5>
-      {% for exp in checkbox_measurement_parameter %}
-      <li>{{ exp.name }}</li>
-      {% endfor %}
+        <hr>
+        <h5>Selected Parameters</h5>
+        {% for p in checkbox_measurement_parameter %}
+        <li>{{ p }}</li>
+        {% endfor %}
       {% endif %}
     </div><br/>
 

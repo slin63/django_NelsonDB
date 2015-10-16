@@ -191,7 +191,7 @@ $('#taxonomysuggestion').keyup(function(){
 
 $('#seed_inventory_clear_taxonomy').click(function(){
 	$.ajax({
-		"url": "/lab/seed_inventory/checkbox_clear/checkbox_taxonomy/",
+		"url": "/lab/checkbox_clear/checkbox_taxonomy/",
 		success: function() {
 			location.reload(true);
 		},
@@ -203,7 +203,7 @@ $('#seed_inventory_clear_taxonomy').click(function(){
 
 $('#seed_inventory_clear_pedigree').click(function(){
 	$.ajax({
-		"url": "/lab/seed_inventory/checkbox_clear/checkbox_pedigree/",
+		"url": "/lab/checkbox_clear/checkbox_pedigree/",
 		success: function() {
 			location.reload(true);
 		},
@@ -551,55 +551,183 @@ $('#show_all_well_experiment').click(function(){
 	});
 });
 
-$('#measurement_experimentsuggestion').keyup(function(){
-	var query;
-	query = $(this).val();
-	$.get('/lab/data/measurement/suggest_measurement_experiment/', {suggestion: query}, function(data){
-		$('#measurement_experiment').html(data);
-		$('#selected_measurement_experiment').dataTable({
-			"searching": false,
-			"scrollY": "300px",
-			"scrollCollapse": true,
-			"paginate": false
-		});
+$('#show_all_measurement_experiment').click(function(){
+	$('#suggested_measurement_experiments').css('display', 'block');
+	$('#selected_measurement_experiments').dataTable({
+		"destroy": true,
+		"searching": false,
+		"scrollY": "300px",
+		"scrollCollapse": true,
+		"paginate": false,
+		"ajax": "/lab/data/measurement/show_all_experiment/",
+		"deferRender": true,
+		"aoColumns": [
+		{ "mData": "input"},
+		{ "mData": "obs_tracker__experiment__name"},
+		{ "mData": "obs_tracker__experiment__field__field_name"},
+		{ "mData": "measurement_parameter__parameter"},
+		],
 	});
 });
 
-$('#show_all_measurement_experiment').click(function(){
-	$.get('/lab/data/measurement/show_all_experiment/', {}, function(data){
-		$('#measurement_experiment').html(data);
-		$('#selected_measurement_experiment').dataTable({
-			"searching": false,
-			"scrollY": "300px",
-			"scrollCollapse": true,
-			"paginate": false
-		});
+$('#measurement_experimentsuggestion').keyup(function(){
+	var query = $(this).val();
+	if (query == '') { $('#suggested_measurement_experiments').css('display', 'none'); }
+	else { $('#suggested_measurement_experiments').css('display', 'block'); }
+	$('#selected_measurement_experiments').dataTable({
+		"destroy": true,
+		"searching": false,
+		"scrollY": "300px",
+		"scrollCollapse": true,
+		"paginate": false,
+		"ajax": {
+			"url": "/lab/data/measurement/suggest_measurement_experiment/",
+			"type": 'POST',
+			"data": {'suggestion':query},
+			beforeSend: function(xhr, settings) {
+				var csrftoken = getCookie('csrftoken');
+				if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+					xhr.setRequestHeader("X-CSRFToken", csrftoken);
+				}
+			}
+		},
+		"deferRender": true,
+		"aoColumns": [
+		{ "mData": "input"},
+		{ "mData": "obs_tracker__experiment__name"},
+		{ "mData": "obs_tracker__experiment__field__field_name"},
+		{ "mData": "measurement_parameter__parameter"},
+		],
+	});
+});
+
+$('#select_measurement_experiment_form_submit').click(function(){
+	var experiments = [];
+	$("input[name='checkbox_measurement_experiment']:checked").each(function() {
+		experiments.push($(this).val());
+	});
+	$.ajax({
+		"url": "/lab/data/measurement/select_measurement_experiment/",
+		"type": "POST",
+		"data": {'experiments': JSON.stringify(experiments)},
+		beforeSend: function(xhr, settings) {
+			var csrftoken = getCookie('csrftoken');
+			if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+				xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			}
+		},
+		success: function() {
+			location.reload(true);
+		},
+		error: function() {
+			alert("Error selecting experiments!");
+		}
+	});
+});
+
+$('#clear_selected_measurement_experiments').click(function(){
+	$.ajax({
+		"url": "/lab/checkbox_clear/checkbox_measurement_experiment_id_list/",
+		success: function() {
+			$.ajax({
+				"url": "/lab/checkbox_clear/checkbox_measurement_experiment/",
+				success: function() {
+					location.reload(true);
+				},
+				error: function() {
+					alert("Error clearing selected measurements!");
+				}
+			});
+		},
+		error: function() {
+			alert("Error clearing selected measurement ids!");
+		}
 	});
 });
 
 $('#measurement_parametersuggestion').keyup(function(){
-	var query;
-	query = $(this).val();
-	$.get('/lab/data/measurement/suggest_measurement_parameter/', {suggestion: query}, function(data){
-		$('#measurement_parameter').html(data);
-		$('#selected_measurement_parameter').dataTable({
-			"searching": false,
-			"scrollY": "300px",
-			"scrollCollapse": true,
-			"paginate": false
-		});
+	var query = $(this).val();
+	if (query == '') { $('#suggested_measurement_parameters').css('display', 'none'); }
+	else { $('#suggested_measurement_parameters').css('display', 'block'); }
+	$('#selected_measurement_parameters').dataTable({
+		"destroy": true,
+		"searching": false,
+		"scrollY": "300px",
+		"scrollCollapse": true,
+		"paginate": false,
+		"ajax": {
+			"url": "/lab/data/measurement/suggest_measurement_parameter/",
+			"type": 'POST',
+			"data": {'suggestion':query},
+			beforeSend: function(xhr, settings) {
+				var csrftoken = getCookie('csrftoken');
+				if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+					xhr.setRequestHeader("X-CSRFToken", csrftoken);
+				}
+			}
+		},
+		"deferRender": true,
+		"aoColumns": [
+		{ "mData": "input"},
+		{ "mData": "measurement_parameter__parameter"},
+		{ "mData": "measurement_parameter__parameter_type"},
+		{ "mData": "obs_tracker__experiment__name"},
+		],
 	});
 });
 
 $('#show_all_measurement_parameter').click(function(){
-	$.get('/lab/data/measurement/show_all_parameter/', {}, function(data){
-		$('#measurement_parameter').html(data);
-		$('#selected_measurement_parameter').dataTable({
-			"searching": false,
-			"scrollY": "300px",
-			"scrollCollapse": true,
-			"paginate": false
-		});
+	$('#suggested_measurement_parameters').css('display', 'block');
+	$('#selected_measurement_parameters').dataTable({
+		"destroy": true,
+		"searching": false,
+		"scrollY": "300px",
+		"scrollCollapse": true,
+		"paginate": false,
+		"ajax": "/lab/data/measurement/show_all_parameter/",
+		"deferRender": true,
+		"aoColumns": [
+		{ "mData": "input"},
+		{ "mData": "measurement_parameter__parameter"},
+		{ "mData": "measurement_parameter__parameter_type"},
+		{ "mData": "obs_tracker__experiment__name"},
+		],
+	});
+});
+
+$('#select_measurement_parameter_form_submit').click(function(){
+	var parameters = [];
+	$("input[name='checkbox_measurement_parameter']:checked").each(function() {
+		parameters.push($(this).val());
+	});
+	$.ajax({
+		"url": "/lab/data/measurement/select_measurement_parameter/",
+		"type": "POST",
+		"data": {'parameters': JSON.stringify(parameters)},
+		beforeSend: function(xhr, settings) {
+			var csrftoken = getCookie('csrftoken');
+			if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+				xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			}
+		},
+		success: function() {
+			location.reload(true);
+		},
+		error: function() {
+			alert("Error selecting parameters!");
+		}
+	});
+});
+
+$('#clear_select_meaurement_parameters').click(function(){
+	$.ajax({
+		"url": "/lab/checkbox_clear/checkbox_measurement_parameter/",
+		success: function() {
+			location.reload(true);
+		},
+		error: function() {
+			alert("Error clearing selected parameters!");
+		}
 	});
 });
 

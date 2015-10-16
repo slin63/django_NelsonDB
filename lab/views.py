@@ -505,8 +505,6 @@ def seed_inventory(request):
 	return render_to_response('lab/seed_inventory.html', context_dict, context)
 
 def show_all_seedinv_taxonomy(request):
-	context = RequestContext(request)
-	context_dict = {}
 	taxonomy_list = []
 	if request.session.get('checkbox_pedigree', None):
 		checkbox_pedigree_list = request.session.get('checkbox_pedigree')
@@ -525,8 +523,6 @@ def show_all_seedinv_taxonomy(request):
 	return JsonResponse({'data':taxonomy_list})
 
 def show_all_seedinv_pedigree(request):
-	context = RequestContext(request)
-	context_dict = {}
 	pedigree_list = []
 	if request.session.get('checkbox_taxonomy', None):
 		checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
@@ -543,8 +539,6 @@ def show_all_seedinv_pedigree(request):
 	return JsonResponse({'data':pedigree_list})
 
 def suggest_pedigree(request):
-	context = RequestContext(request)
-	context_dict = {}
 	pedigree_list = []
 	starts_with = ''
 	if request.method == 'GET':
@@ -567,8 +561,6 @@ def suggest_pedigree(request):
 	return JsonResponse({'data':pedigree_list})
 
 def suggest_taxonomy(request):
-	context = RequestContext(request)
-	context_dict = {}
 	taxonomy_list = []
 	starts_with = ''
 	if request.method == 'GET':
@@ -604,7 +596,7 @@ def select_taxonomy(request):
 	request.session['checkbox_taxonomy'] = taxonomy_list
 	return JsonResponse({'success':True})
 
-def checkbox_seed_inventory_clear(request, clear_selected):
+def checkbox_clear(request, clear_selected):
 	del request.session[clear_selected]
 	return JsonResponse({'success':True})
 
@@ -3015,7 +3007,7 @@ def download_dna_experiment(request, experiment_name):
 
 def datatable_measurement_data(request):
 	measurement_data = sort_measurement_data(request)
-	count = measurement_data.count()
+	count = 0
 	arr = []
 	for data in measurement_data:
 		arr.append({
@@ -3044,13 +3036,29 @@ def measurement_data_browse(request):
 
 def sort_measurement_data(request):
 	measurement_data = {}
-	if request.session.get('checkbox_measurement_experiment_id_list', None):
-		checkbox_measurement_experiment_id_list = request.session.get('checkbox_measurement_experiment_id_list')
-		for measurement_experiment in checkbox_measurement_experiment_id_list:
-			measurements = Measurement.objects.filter(obs_tracker__experiment__id=measurement_experiment)
-			measurement_data = list(chain(measurements, measurement_data))
+	checkbox_taxonomy_list = []
+	checkbox_pedigree_list = []
+	if request.session.get('checkbox_measurement_experiment', None):
+		checkbox_measurement_experiment = request.session.get('checkbox_measurement_experiment')
+		if request.session.get('checkbox_measurement_parameter', None):
+			checkbox_measurement_parameter = request.session.get('checkbox_measurement_parameter')
+			for e in checkbox_measurement_experiment:
+				for p in checkbox_measurement_parameter:
+					m = Measurement.objects.filter(measurement_parameter__parameter=p, obs_tracker__experiment__name=e['name'])
+					measurement_data = list(chain(measurement_data, m))
+		else:
+			for e in checkbox_measurement_experiment:
+				m = Measurement.objects.filter(obs_tracker__experiment__name=e['name'])
+				measurement_data = list(chain(measurement_data, m))
 	else:
-		measurement_data = Measurement.objects.all()[:2000]
+		if request.session.get('checkbox_measurement_parameter', None):
+			checkbox_measurement_parameter = request.session.get('checkbox_measurement_parameter')
+			for p in checkbox_measurement_parameter:
+				m = Measurement.objects.filter(measurement_parameter__parameter=p)
+				measurement_data = list(chain(measurement_data, m))
+		else:
+			measurement_data = list(Measurement.objects.all())[:1000]
+
 	for data in measurement_data:
 		data = make_obs_tracker_info(data.obs_tracker)
 	return measurement_data
@@ -3067,57 +3075,98 @@ def download_measurement_data(request):
 	return response
 
 def suggest_measurement_experiment(request):
-	context = RequestContext(request)
-	context_dict = {}
 	measurement_experiment_list = []
 	starts_with = ''
 	if request.method == 'GET':
-		starts_with = request.GET['suggestion']
+		starts_with = request.GET.get('suggestion', False)
 	else:
-		starts_with = request.POST['suggestion']
+		starts_with = request.POST.get('suggestion', False)
 	if starts_with:
-		measurement_experiment_list = Measurement.objects.filter(obs_tracker__experiment__name__contains=starts_with).values('obs_tracker__experiment__name', 'obs_tracker__experiment__field__field_name', 'obs_tracker__experiment__field__id', 'obs_tracker__experiment__id').distinct()[:2000]
-	else:
-		measurement_experiment_list = None
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['measurement_experiment_list'] = measurement_experiment_list
-	return render_to_response('lab/measurement_experiment_list.html', context_dict, context)
+		if request.session.get('checkbox_measurement_parameter', None):
+			checkbox_parameter_list = request.session.get('checkbox_measurement_parameter')
+			for parameter in checkbox_parameter_list:
+				e = Measurement.objects.filter(obs_tracker__experiment__name__contains=starts_with, measurement_parameter__parameter=parameter).values('obs_tracker__experiment_id', 'obs_tracker__experiment__name', 'obs_tracker__experiment__field__field_name', 'measurement_parameter__parameter').distinct()
+				measurement_experiment_list = list(chain(e, measurement_experiment_list))
+			for m in measurement_experiment_list:
+				m['input'] = '<input type="checkbox" name="checkbox_measurement_experiment" value="%s">' % (m['obs_tracker__experiment_id'])
+		else:
+			measurement_experiment_list = list(Measurement.objects.filter(obs_tracker__experiment__name__contains=starts_with).values('obs_tracker__experiment_id', 'obs_tracker__experiment__name', 'obs_tracker__experiment__field__field_name').distinct())
+			for m in measurement_experiment_list:
+				m['input'] = '<input type="checkbox" name="checkbox_measurement_experiment" value="%s">' % (m['obs_tracker__experiment_id'])
+				m['measurement_parameter__parameter'] = ''
+	return JsonResponse({'data':measurement_experiment_list})
 
 def select_measurement_experiment(request):
-	context = RequestContext(request)
-	context_dict = {}
-	measurement_data = []
+	experiments = request.POST['experiments']
 	checkbox_measurement_experiment_name_list = []
-	checkbox_measurement_experiment_list = request.POST.getlist('checkbox_measurement_experiment')
+	checkbox_measurement_experiment_list = json.loads(experiments)
 	for experiment_id in checkbox_measurement_experiment_list:
 		experiment_name = Experiment.objects.filter(id=experiment_id).values('name')
 		checkbox_measurement_experiment_name_list = list(chain(experiment_name, checkbox_measurement_experiment_name_list))
 	request.session['checkbox_measurement_experiment'] = checkbox_measurement_experiment_name_list
 	request.session['checkbox_measurement_experiment_id_list'] = checkbox_measurement_experiment_list
-	measurement_data = sort_measurement_data(request)
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['measurement_data'] = measurement_data
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/measurement_data.html', context_dict, context)
-
-def checkbox_measurement_data_clear(request):
-	context = RequestContext(request)
-	context_dict = {}
-	del request.session['checkbox_measurement_experiment']
-	del request.session['checkbox_measurement_experiment_id_list']
-	measurement_data = sort_measurement_data(request)
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['measurement_data'] = measurement_data
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/measurement_data.html', context_dict, context)
+	return JsonResponse({'success':True})
 
 def show_all_measurement_experiment(request):
-	context = RequestContext(request)
-	context_dict = {}
-	measurement_experiment_list = Measurement.objects.all().values('obs_tracker__experiment__name', 'obs_tracker__experiment__field__field_name', 'obs_tracker__experiment__field__id', 'obs_tracker__experiment__id').distinct()[:2000]
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['measurement_experiment_list'] = measurement_experiment_list
-	return render_to_response('lab/measurement_experiment_list.html', context_dict, context)
+	measurement_experiment_list = []
+	if request.session.get('checkbox_measurement_parameter', None):
+		checkbox_parameter_list = request.session.get('checkbox_measurement_parameter')
+		for parameter in checkbox_parameter_list:
+			e = Measurement.objects.filter(measurement_parameter__parameter=parameter).values('obs_tracker__experiment_id', 'obs_tracker__experiment__name', 'obs_tracker__experiment__field__field_name', 'measurement_parameter__parameter').distinct()
+			measurement_experiment_list = list(chain(e, measurement_experiment_list))
+		for m in measurement_experiment_list:
+			m['input'] = '<input type="checkbox" name="checkbox_measurement_experiment" value="%s">' % (m['obs_tracker__experiment_id'])
+	else:
+		measurement_experiment_list = list(Measurement.objects.all().values('obs_tracker__experiment_id', 'obs_tracker__experiment__name', 'obs_tracker__experiment__field__field_name').distinct())
+		for m in measurement_experiment_list:
+			m['input'] = '<input type="checkbox" name="checkbox_measurement_experiment" value="%s">' % (m['obs_tracker__experiment_id'])
+			m['measurement_parameter__parameter'] = ''
+	return JsonResponse({'data':measurement_experiment_list})
+
+def suggest_measurement_parameter(request):
+	measurement_parameter_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with = request.GET.get('suggestion', False)
+	else:
+		starts_with = request.POST.get('suggestion', False)
+	if starts_with:
+		if request.session.get('checkbox_measurement_experiment', None):
+			checkbox_experiment_list = request.session.get('checkbox_measurement_experiment')
+			for experiment in checkbox_experiment_list:
+				p = Measurement.objects.filter(obs_tracker__experiment__name=experiment['name'], measurement_parameter__parameter__contains=starts_with).values('obs_tracker__experiment__name', 'measurement_parameter__parameter_type', 'measurement_parameter__parameter').distinct()
+				measurement_parameter_list = list(chain(p, measurement_parameter_list))
+			for m in measurement_parameter_list:
+				m['input'] = '<input type="checkbox" name="checkbox_measurement_parameter" value="%s">' % (m['measurement_parameter__parameter'])
+		else:
+			measurement_parameter_list = list(Measurement.objects.filter(measurement_parameter__parameter__contains=starts_with).values('measurement_parameter__parameter_type', 'measurement_parameter__parameter').distinct())
+			for m in measurement_parameter_list:
+				m['input'] = '<input type="checkbox" name="checkbox_measurement_parameter" value="%s">' % (m['measurement_parameter__parameter'])
+				m['obs_tracker__experiment__name'] = ''
+	return JsonResponse({'data':measurement_parameter_list})
+
+def select_measurement_parameter(request):
+	parameters = request.POST['parameters']
+	checkbox_measurement_parameter_list = json.loads(parameters)
+	print(checkbox_measurement_parameter_list)
+	request.session['checkbox_measurement_parameter'] = checkbox_measurement_parameter_list
+	return JsonResponse({'success':True})
+
+def show_all_measurement_parameter(request):
+	measurement_parameter_list = []
+	if request.session.get('checkbox_measurement_experiment', None):
+		checkbox_experiment_list = request.session.get('checkbox_measurement_experiment')
+		for experiment in checkbox_experiment_list:
+			p = Measurement.objects.filter(obs_tracker__experiment__name=experiment['name']).values('obs_tracker__experiment__name', 'measurement_parameter__parameter_type', 'measurement_parameter__parameter').distinct()
+			measurement_parameter_list = list(chain(p, measurement_parameter_list))
+		for m in measurement_parameter_list:
+			m['input'] = '<input type="checkbox" name="checkbox_measurement_parameter" value="%s">' % (m['measurement_parameter__parameter'])
+	else:
+		measurement_parameter_list = list(Measurement.objects.all().values('measurement_parameter__parameter_type', 'measurement_parameter__parameter').distinct())
+		for m in measurement_parameter_list:
+			m['input'] = '<input type="checkbox" name="checkbox_measurement_parameter" value="%s">' % (m['measurement_parameter__parameter'])
+			m['obs_tracker__experiment__name'] = ''
+	return JsonResponse({'data':measurement_parameter_list})
 
 def find_measurement_from_experiment(experiment_name):
 	try:
