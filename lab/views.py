@@ -171,7 +171,6 @@ def error_prelim(request, error_message):
 	context_dict = {'errormessage': error_message}
 	return render_to_response('lab/error_prelim.html', context_dict, context)
 
-@login_required
 def register(request):
 	context = RequestContext(request)
 	registered = False
