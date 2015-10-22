@@ -1,14 +1,14 @@
 from django.conf.urls import patterns, url
-from lab import views, views_genotype
+from lab import views, views_genotype, views_about
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
-    url(r'^about/goals/$', views.about_goals, name='about_goals'),
-    url(r'^about/help/$', views.about_help, name='about_help'),
-    url(r'^about/collaborators/$', views.about_collaborators, name='about_collaborators'),
-    url(r'^about/people/(?P<people_selection>\w+)/$', views.about_people, name='about_people'),
-    url(r'^about/literature/$', views.about_literature, name='about_literature'),
-    url(r'^about/odk/$', views.about_odk, name='about_odk'),
+    url(r'^about/goals/$', views_about.about_goals, name='about_goals'),
+    url(r'^about/help/$', views_about.about_help, name='about_help'),
+    url(r'^about/collaborators/$', views_about.about_collaborators, name='about_collaborators'),
+    url(r'^about/people/(?P<people_selection>\w+)/$', views_about.about_people, name='about_people'),
+    url(r'^about/literature/$', views_about.about_literature, name='about_literature'),
+    url(r'^about/odk/$', views_about.about_odk, name='about_odk'),
 
 	url(r'^error_prelim/$', views.error_prelim, name='error_prelim'),
 	url(r'^file_storage/$', views.file_storage, name='file_storage'),
