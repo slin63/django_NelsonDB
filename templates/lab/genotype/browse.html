@@ -1,5 +1,14 @@
 {% extends 'lab/base.html' %}
-{% block title %}Genotypic Data{% endblock %}
+
+{% load static %}
+
+<head>
+  {% block title %}Genotypic Data{% endblock %}
+  {% block js_block %}
+  <script src="{% static 'js/genotype.js' %}"></script>
+  {% endblock %}
+</head>
+
 {% block body_block %}
 
 <style>
@@ -27,5 +36,6 @@
   </div>
 
 </div>
+
 
 {% endblock %}
