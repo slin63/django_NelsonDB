@@ -126,8 +126,6 @@ $('#seedinvparametersuggestion').keyup(function(){
 			{ "mData": "measurement_parameter__parameter"},
 			{ "mData": "measurement_parameter__protocol"},
 			{ "mData": "measurement_parameter__unit_of_measure"},
-			{ "mData": "obs_tracker__stock__pedigree"},
-			{ "mData": "obs_tracker__stock__passport__taxonomy__population"}
 			],
 	});
 });
