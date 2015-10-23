@@ -492,10 +492,9 @@ def show_all_seedinv_pedigree(request):
 		for p in pedigree_list:
 			p['input'] = '<input type="checkbox" name="checkbox_pedigree" value="%s">' % (p['pedigree'])
 	else:
-		pedigree_list = list(Stock.objects.all().values('pedigree').distinct())
+		pedigree_list = list(Stock.objects.all().values('pedigree', 'passport__taxonomy__population').distinct())
 		for p in pedigree_list:
 			p['input'] = '<input type="checkbox" name="checkbox_pedigree" value="%s">' % (p['pedigree'])
-			p['passport__taxonomy__population'] = ''
 	return JsonResponse({'data':pedigree_list})
 
 def show_all_seedinv_parameters(request):
@@ -593,10 +592,9 @@ def suggest_pedigree(request):
 			for p in pedigree_list:
 				p['input'] = '<input type="checkbox" name="checkbox_pedigree" value="%s">' % (p['pedigree'])
 		else:
-			pedigree_list = list(Stock.objects.filter(pedigree__contains=starts_with).values('pedigree').distinct())
+			pedigree_list = list(Stock.objects.filter(pedigree__contains=starts_with).values('pedigree', 'passport__taxonomy__population').distinct())
 			for p in pedigree_list:
 				p['input'] = '<input type="checkbox" name="checkbox_pedigree" value="%s">' % (p['pedigree'])
-				p['passport__taxonomy__population'] = ''
 	return JsonResponse({'data':pedigree_list})
 
 def suggest_taxonomy(request):
