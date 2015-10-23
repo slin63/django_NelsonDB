@@ -508,28 +508,28 @@ def show_all_seedinv_parameters(request):
 			parameter_names_unique = []
 			for taxonomy in checkbox_taxonomy_list:
 				for pedigree in checkbox_pedigree_list:
-					parameters = Measurement.objects.filter(obs_tracker__stock__passport__taxonomy__population=taxonomy, obs_tracker__stock__pedigree=pedigree).values('measurement_parameter__parameter', 'measurement_parameter__protocol', 'measurement_parameter__unit_of_measure', 'obs_tracker__stock__passport__taxonomy__population', 'obs_tracker__stock__pedigree').distinct()
+					parameters = Measurement.objects.filter(obs_tracker__stock__passport__taxonomy__population=taxonomy, obs_tracker__stock__pedigree=pedigree).values('measurement_parameter__parameter', 'measurement_parameter__protocol', 'measurement_parameter__unit_of_measure').distinct()
 					parameter_list = list(chain(parameters, parameter_list))
 			for p in parameter_list:
 				if p['measurement_parameter__parameter'] not in parameter_names_unique:
 					parameter_names_unique.append(p['measurement_parameter__parameter'])
-					parameter_list_unique.append({'measurement_parameter__parameter':p['measurement_parameter__parameter'], 'measurement_parameter__protocol':p['measurement_parameter__protocol'], 'measurement_parameter__unit_of_measure':p['measurement_parameter__unit_of_measure'], 'obs_tracker__stock__passport__taxonomy__population':p['obs_tracker__stock__passport__taxonomy__population'], 'obs_tracker__stock__pedigree':p['obs_tracker__stock__pedigree'], 'input':'<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (p['measurement_parameter__parameter'])})
+					parameter_list_unique.append({'measurement_parameter__parameter':p['measurement_parameter__parameter'], 'measurement_parameter__protocol':p['measurement_parameter__protocol'], 'measurement_parameter__unit_of_measure':p['measurement_parameter__unit_of_measure'], 'input':'<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (p['measurement_parameter__parameter'])})
 			parameter_list = parameter_list_unique
 		else:
 			for taxonomy in checkbox_taxonomy_list:
-				parameters = Measurement.objects.filter(obs_tracker__stock__passport__taxonomy__population=taxonomy).values('measurement_parameter__parameter', 'measurement_parameter__protocol', 'measurement_parameter__unit_of_measure', 'obs_tracker__stock__passport__taxonomy__population', 'obs_tracker__stock__pedigree').distinct()
+				parameters = Measurement.objects.filter(obs_tracker__stock__passport__taxonomy__population=taxonomy).values('measurement_parameter__parameter', 'measurement_parameter__protocol', 'measurement_parameter__unit_of_measure').distinct()
 				parameter_list = list(chain(parameters, parameter_list))
 			for p in parameter_list:
 				p['input'] = '<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (p['measurement_parameter__parameter'])
 	elif request.session.get('checkbox_pedigree', None):
 		checkbox_pedigree_list = request.session.get('checkbox_pedigree')
 		for pedigree in checkbox_pedigree_list:
-			parameters = Measurement.objects.filter(obs_tracker__stock__pedigree=pedigree).values('measurement_parameter__parameter', 'measurement_parameter__protocol', 'measurement_parameter__unit_of_measure', 'obs_tracker__stock__passport__taxonomy__population', 'obs_tracker__stock__pedigree').distinct()
+			parameters = Measurement.objects.filter(obs_tracker__stock__pedigree=pedigree).values('measurement_parameter__parameter', 'measurement_parameter__protocol', 'measurement_parameter__unit_of_measure').distinct()
 			parameter_list = list(chain(parameters, parameter_list))
 		for p in parameter_list:
 			p['input'] = '<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (p['measurement_parameter__parameter'])
 	else:
-		parameter_list = list(Measurement.objects.all().values('measurement_parameter__parameter', 'measurement_parameter__protocol', 'measurement_parameter__unit_of_measure', 'obs_tracker__stock__passport__taxonomy__population', 'obs_tracker__stock__pedigree').distinct())
+		parameter_list = list(Measurement.objects.all().values('measurement_parameter__parameter', 'measurement_parameter__protocol', 'measurement_parameter__unit_of_measure').distinct())
 		for p in parameter_list:
 			p['input'] = '<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (p['measurement_parameter__parameter'])
 	return JsonResponse({'data':parameter_list})
