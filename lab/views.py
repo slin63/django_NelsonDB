@@ -29,15 +29,12 @@ from django.conf import settings
 import mimetypes
 import json
 
-"""Used to handle data from URL, to ensure blank spaces don't mess things up"""
 def encode_url(str):
 	return str.replace(' ', '_')
 
 def decode_url(str):
 	return str.replace('_', ' ')
 
-
-"""This is used to process AJAX requests when something is typed in the "find an experiment" input. It is used to display the experiments on the left side of the templates."""
 def get_experiment_list(max_results=0, starts_with=''):
 	exp_list = []
 	if starts_with:
@@ -65,31 +62,6 @@ def index(request):
 		request.session['visits'] = 1
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/index.html', context_dict, context)
-
-"""Was from tango_with_django project. Not used anymore.
-
-def add_page(request, category_name_url):
-	context = RequestContext(request)
-	category_name = decode_url(category_name_url)
-	context_dict = {'category_name': category_name}
-	if request.method == 'POST':
-		form = PageForm(request.POST)
-		if form.is_valid():
-			page = form.save(commit=False)
-			try:
-				cat = Category.objects.get(name=category_name)
-				page.category = cat
-			except Category.DoesNotExist:
-				return render_to_response('lab/add_category.html', {}, context)
-			page.views = 0
-			page.save()
-			return category(request, category_name_url)
-		else:
-			print(form.errors)
-	else:
-		form = PageForm()
-	return render_to_response('lab/add_page.html', {'category_name_url': category_name_url, 'category_name': category_name, 'form': form}, context)
-"""
 
 def error_prelim(request, error_message):
 	context = RequestContext(request)
@@ -339,22 +311,44 @@ def find_stock_collected_from_experiment(experiment_name):
 
 def datatable_seed_inventory(request):
 	selected_stocks = []
-	selected_stocks = checkbox_seed_inventory_sort(request)
+	(selected_stocks, return_type) = checkbox_seed_inventory_sort(request)
 	count = 0
 	arr = []
 	for data in selected_stocks:
-		arr.append({
-			'input': '<input type="checkbox" name="checkbox_stock" value="%s">'%(data.id),
-        	'id': data.id,
-        	'seed_id': data.seed_id,
-        	'cross_type': data.cross_type,
-        	'pedigree': data.pedigree,
-        	'population': data.passport.taxonomy.population,
-        	'status': data.stock_status,
-        	'collector': data.passport.collecting.user.username,
-        	'comments': data.comments,
-    	})
+		if return_type == 'stock':
+			arr.append({
+				'input': '<input type="checkbox" name="checkbox_stock" value="%s">'%(data.id),
+	        	'id': data.id,
+	        	'seed_id': data.seed_id,
+	        	'cross_type': data.cross_type,
+	        	'pedigree': data.pedigree,
+	        	'population': data.passport.taxonomy.population,
+	        	'status': data.stock_status,
+	        	'collector': data.passport.collecting.user.username,
+	        	'comments': data.comments,
+	    	})
+		if return_type == 'measurement':
+			arr.append({
+				'input': '<input type="checkbox" name="checkbox_stock" value="%s">'%(data['id']),
+	        	'id': data['id'],
+	        	'seed_id': data['seed_id'],
+	        	'cross_type': data['cross_type'],
+	        	'pedigree': data['pedigree'],
+	        	'population': data['population'],
+	        	'status': data['stock_status'],
+	        	'collector': data['collector'],
+	        	'comments': data['comments'],
+	    	})
 	return JsonResponse({'data':arr, 'count':count}, safe=True)
+
+def unique_selected_stocks(selected_stocks):
+	unique_seed_id = []
+	unique_stock_list = []
+	for s in selected_stocks:
+		if s.obs_tracker.stock.seed_id not in unique_seed_id:
+			unique_seed_id.append(s.obs_tracker.stock.seed_id)
+			unique_stock_list.append({'id':s.obs_tracker.stock_id, 'seed_id':s.obs_tracker.stock.seed_id, 'cross_type':s.obs_tracker.stock.cross_type, 'pedigree':s.obs_tracker.stock.pedigree, 'population':s.obs_tracker.stock.passport.taxonomy.population, 'stock_status':s.obs_tracker.stock.stock_status, 'collector':s.obs_tracker.stock.passport.collecting.user.username, 'comments':s.obs_tracker.stock.comments})
+	return unique_stock_list
 
 def checkbox_seed_inventory_sort(request):
 	selected_stocks = {}
@@ -364,23 +358,63 @@ def checkbox_seed_inventory_sort(request):
 		checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
 		if request.session.get('checkbox_pedigree', None):
 			checkbox_pedigree_list = request.session.get('checkbox_pedigree')
-			for pedigree in checkbox_pedigree_list:
-				for taxonomy in checkbox_taxonomy_list:
-					stocks = Stock.objects.filter(pedigree=pedigree, passport__taxonomy__population=taxonomy)
-					selected_stocks = list(chain(selected_stocks, stocks))
+			if request.session.get('checkbox_seedinv_parameters', None):
+				checkbox_parameters_list = request.session.get('checkbox_seedinv_parameters')
+				for parameter in checkbox_parameters_list:
+					for pedigree in checkbox_pedigree_list:
+						for taxonomy in checkbox_taxonomy_list:
+							stocks = Measurement.objects.filter(obs_tracker__stock__pedigree=pedigree, obs_tracker__stock__passport__taxonomy__population=taxonomy, measurement_parameter__parameter=parameter)
+							selected_stocks = list(chain(selected_stocks, stocks))
+				selected_stocks=unique_selected_stocks(selected_stocks)
+				return_type='measurement'
+			else:
+				for pedigree in checkbox_pedigree_list:
+					for taxonomy in checkbox_taxonomy_list:
+						stocks = Stock.objects.filter(pedigree=pedigree, passport__taxonomy__population=taxonomy)
+						selected_stocks = list(chain(selected_stocks, stocks))
+				return_type='stock'
 		else:
-			for taxonomy in checkbox_taxonomy_list:
-				stocks = Stock.objects.filter(passport__taxonomy__population=taxonomy)
-				selected_stocks = list(chain(selected_stocks, stocks))
+			if request.session.get('checkbox_seedinv_parameters', None):
+				checkbox_parameters_list = request.session.get('checkbox_seedinv_parameters')
+				for parameter in checkbox_parameters_list:
+					for taxonomy in checkbox_taxonomy_list:
+						stocks = Measurement.objects.filter(obs_tracker__stock__passport__taxonomy__population=taxonomy, measurement_parameter__parameter=parameter)
+						selected_stocks = list(chain(selected_stocks, stocks))
+				selected_stocks=unique_selected_stocks(selected_stocks)
+				return_type='measurement'
+			else:
+				for taxonomy in checkbox_taxonomy_list:
+					stocks = Stock.objects.filter(passport__taxonomy__population=taxonomy)
+					selected_stocks = list(chain(selected_stocks, stocks))
+				return_type='stock'
 	else:
 		if request.session.get('checkbox_pedigree', None):
 			checkbox_pedigree_list = request.session.get('checkbox_pedigree')
-			for pedigree in checkbox_pedigree_list:
-				stocks = Stock.objects.filter(pedigree=pedigree)
-				selected_stocks = list(chain(selected_stocks, stocks))
+			if request.session.get('checkbox_seedinv_parameters', None):
+				checkbox_parameters_list = request.session.get('checkbox_seedinv_parameters')
+				for parameter in checkbox_parameters_list:
+					for pedigree in checkbox_pedigree_list:
+						stocks = Measurement.objects.filter(obs_tracker__stock__pedigree=pedigree, measurement_parameter__parameter=parameter)
+						selected_stocks = list(chain(selected_stocks, stocks))
+				selected_stocks=unique_selected_stocks(selected_stocks)
+				return_type='measurement'
+			else:
+				for pedigree in checkbox_pedigree_list:
+					stocks = Stock.objects.filter(pedigree=pedigree)
+					selected_stocks = list(chain(selected_stocks, stocks))
+				return_type='stock'
 		else:
-			selected_stocks = list(Stock.objects.exclude(seed_id='0').exclude(passport_id='2').exclude(id=1))[:1000]
-	return selected_stocks
+			if request.session.get('checkbox_seedinv_parameters', None):
+				checkbox_parameters_list = request.session.get('checkbox_seedinv_parameters')
+				for parameter in checkbox_parameters_list:
+					stocks = Measurement.objects.filter(measurement_parameter__parameter=parameter)
+					selected_stocks = list(chain(selected_stocks, stocks))
+				selected_stocks=unique_selected_stocks(selected_stocks)
+				return_type='measurement'
+			else:
+				selected_stocks = list(Stock.objects.exclude(seed_id='0').exclude(passport_id='2').exclude(id=1))[:1000]
+				return_type='stock'
+	return (selected_stocks, return_type)
 
 def checkbox_session_variable_check(request):
 	context_dict = {}
@@ -418,6 +452,8 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_measurement_experiment'] = request.session.get('checkbox_measurement_experiment')
 	if request.session.get('checkbox_measurement_parameter', None):
 		context_dict['checkbox_measurement_parameter'] = request.session.get('checkbox_measurement_parameter')
+	if request.session.get('checkbox_seedinv_parameters', None):
+		context_dict['checkbox_seedinv_parameters'] = request.session.get('checkbox_seedinv_parameters')
 	return context_dict
 
 @login_required
@@ -461,6 +497,85 @@ def show_all_seedinv_pedigree(request):
 			p['input'] = '<input type="checkbox" name="checkbox_pedigree" value="%s">' % (p['pedigree'])
 			p['passport__taxonomy__population'] = ''
 	return JsonResponse({'data':pedigree_list})
+
+def show_all_seedinv_parameters(request):
+	parameter_list = []
+	if request.session.get('checkbox_taxonomy', None):
+		checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
+
+		if request.session.get('checkbox_pedigree', None):
+			checkbox_pedigree_list = request.session.get('checkbox_pedigree')
+			parameter_list_unique = []
+			parameter_names_unique = []
+			for taxonomy in checkbox_taxonomy_list:
+				for pedigree in checkbox_pedigree_list:
+					parameters = Measurement.objects.filter(obs_tracker__stock__passport__taxonomy__population=taxonomy, obs_tracker__stock__pedigree=pedigree).values('measurement_parameter__parameter', 'measurement_parameter__protocol', 'measurement_parameter__unit_of_measure', 'obs_tracker__stock__passport__taxonomy__population', 'obs_tracker__stock__pedigree').distinct()
+					parameter_list = list(chain(parameters, parameter_list))
+			for p in parameter_list:
+				if p['measurement_parameter__parameter'] not in parameter_names_unique:
+					parameter_names_unique.append(p['measurement_parameter__parameter'])
+					parameter_list_unique.append({'measurement_parameter__parameter':p['measurement_parameter__parameter'], 'measurement_parameter__protocol':p['measurement_parameter__protocol'], 'measurement_parameter__unit_of_measure':p['measurement_parameter__unit_of_measure'], 'obs_tracker__stock__passport__taxonomy__population':p['obs_tracker__stock__passport__taxonomy__population'], 'obs_tracker__stock__pedigree':p['obs_tracker__stock__pedigree'], 'input':'<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (p['measurement_parameter__parameter'])})
+			parameter_list = parameter_list_unique
+		else:
+			for taxonomy in checkbox_taxonomy_list:
+				parameters = Measurement.objects.filter(obs_tracker__stock__passport__taxonomy__population=taxonomy).values('measurement_parameter__parameter', 'measurement_parameter__protocol', 'measurement_parameter__unit_of_measure', 'obs_tracker__stock__passport__taxonomy__population', 'obs_tracker__stock__pedigree').distinct()
+				parameter_list = list(chain(parameters, parameter_list))
+			for p in parameter_list:
+				p['input'] = '<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (p['measurement_parameter__parameter'])
+	elif request.session.get('checkbox_pedigree', None):
+		checkbox_pedigree_list = request.session.get('checkbox_pedigree')
+		for pedigree in checkbox_pedigree_list:
+			parameters = Measurement.objects.filter(obs_tracker__stock__pedigree=pedigree).values('measurement_parameter__parameter', 'measurement_parameter__protocol', 'measurement_parameter__unit_of_measure', 'obs_tracker__stock__passport__taxonomy__population', 'obs_tracker__stock__pedigree').distinct()
+			parameter_list = list(chain(parameters, parameter_list))
+		for p in parameter_list:
+			p['input'] = '<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (p['measurement_parameter__parameter'])
+	else:
+		parameter_list = list(Measurement.objects.all().values('measurement_parameter__parameter', 'measurement_parameter__protocol', 'measurement_parameter__unit_of_measure', 'obs_tracker__stock__passport__taxonomy__population', 'obs_tracker__stock__pedigree').distinct())
+		for p in parameter_list:
+			p['input'] = '<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (p['measurement_parameter__parameter'])
+	return JsonResponse({'data':parameter_list})
+
+def seedinv_suggest_parameters(request):
+	parameter_list = []
+	starts_with = ''
+	if request.method == 'GET':
+		starts_with = request.GET.get('suggestion', False)
+	else:
+		starts_with = request.POST.get('suggestion', False)
+	if starts_with:
+		if request.session.get('checkbox_taxonomy', None):
+			checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
+			if request.session.get('checkbox_pedigree', None):
+				checkbox_pedigree_list = request.session.get('checkbox_pedigree')
+				parameter_list_unique = []
+				parameter_names_unique = []
+				for taxonomy in checkbox_taxonomy_list:
+					for pedigree in checkbox_pedigree_list:
+						parameters = Measurement.objects.filter(measurement_parameter__parameter__contains=starts_with, obs_tracker__stock__passport__taxonomy__population=taxonomy, obs_tracker__stock__pedigree=pedigree).values('measurement_parameter__parameter', 'measurement_parameter__protocol', 'measurement_parameter__unit_of_measure', 'obs_tracker__stock__passport__taxonomy__population', 'obs_tracker__stock__pedigree').distinct()
+						parameter_list = list(chain(parameters, parameter_list))
+				for p in parameter_list:
+					if p['measurement_parameter__parameter'] not in parameter_names_unique:
+						parameter_names_unique.append(p['measurement_parameter__parameter'])
+						parameter_list_unique.append({'measurement_parameter__parameter':p['measurement_parameter__parameter'], 'measurement_parameter__protocol':p['measurement_parameter__protocol'], 'measurement_parameter__unit_of_measure':p['measurement_parameter__unit_of_measure'], 'obs_tracker__stock__passport__taxonomy__population':p['obs_tracker__stock__passport__taxonomy__population'], 'obs_tracker__stock__pedigree':p['obs_tracker__stock__pedigree'], 'input':'<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (p['measurement_parameter__parameter'])})
+				parameter_list = parameter_list_unique
+			else:
+				for taxonomy in checkbox_taxonomy_list:
+					parameters = Measurement.objects.filter(measurement_parameter__parameter__contains=starts_with, obs_tracker__stock__passport__taxonomy__population=taxonomy).values('measurement_parameter__parameter', 'measurement_parameter__protocol', 'measurement_parameter__unit_of_measure', 'obs_tracker__stock__passport__taxonomy__population', 'obs_tracker__stock__pedigree').distinct()
+					parameter_list = list(chain(parameters, parameter_list))
+				for p in parameter_list:
+					p['input'] = '<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (p['measurement_parameter__parameter'])
+		elif request.session.get('checkbox_pedigree', None):
+			checkbox_pedigree_list = request.session.get('checkbox_pedigree')
+			for pedigree in checkbox_pedigree_list:
+				parameters = Measurement.objects.filter(measurement_parameter__parameter__contains=starts_with, obs_tracker__stock__pedigree=pedigree).values('measurement_parameter__parameter', 'measurement_parameter__protocol', 'measurement_parameter__unit_of_measure', 'obs_tracker__stock__passport__taxonomy__population', 'obs_tracker__stock__pedigree').distinct()
+				parameter_list = list(chain(parameters, parameter_list))
+			for p in parameter_list:
+				p['input'] = '<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (p['measurement_parameter__parameter'])
+		else:
+			parameter_list = list(Measurement.objects.filter(measurement_parameter__parameter__contains=starts_with).values('measurement_parameter__parameter', 'measurement_parameter__protocol', 'measurement_parameter__unit_of_measure', 'obs_tracker__stock__passport__taxonomy__population', 'obs_tracker__stock__pedigree').distinct())
+			for p in parameter_list:
+				p['input'] = '<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (p['measurement_parameter__parameter'])
+		return JsonResponse({'data':parameter_list})
 
 def suggest_pedigree(request):
 	pedigree_list = []
@@ -518,6 +633,12 @@ def select_taxonomy(request):
 	taxonomy = request.POST['taxonomy']
 	taxonomy_list = json.loads(taxonomy)
 	request.session['checkbox_taxonomy'] = taxonomy_list
+	return JsonResponse({'success':True})
+
+def select_seedinv_parameters(request):
+	parameters = request.POST['parameters']
+	parameters_list = json.loads(parameters)
+	request.session['checkbox_seedinv_parameters'] = parameters_list
 	return JsonResponse({'success':True})
 
 def checkbox_clear(request, clear_selected):

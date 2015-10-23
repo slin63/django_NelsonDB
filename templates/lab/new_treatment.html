@@ -8,7 +8,7 @@
 </div>
 
 <form class="form-signin" id="new_experiment" method="post" action="/lab/new_treatment/">
-  <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+  <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
   {% csrf_token %}
   <h3 class="form-signin-heading">Add a New Treatment</h3>
   {% for field in new_treatment_form.visible_fields %}

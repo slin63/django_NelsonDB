@@ -28,7 +28,7 @@
   <div id="people_list">
     {% if users %}
       {% for user in users %}
-        <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+        <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
           <div class="container-fluid">
             <div class="row-fluid">
               <div class="span2"><img src="{{ user.picture.url }}"/></div>

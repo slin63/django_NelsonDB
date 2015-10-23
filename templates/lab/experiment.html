@@ -17,7 +17,7 @@
 {% if experiment_name != "search" %}
 	<div class="container-fluid">
 		{% if experiment %}
-			<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+			<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 				<h3>Date Started: {{ experiment.start_date }}</h3>
 				<h3>Originator: <a href='/lab/profile/{{ experiment.user }}/'>{{experiment.user}}</a></h3>
 				<h3>Purpose: {{experiment.purpose}}</h3>
@@ -55,7 +55,7 @@
 					<div class="row">
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Seed Used</h3>
 										{% if stock_data %}
@@ -81,7 +81,7 @@
 						</div>
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Seed Packets Used</h3>
 										{% if stockpackets_used %}
@@ -110,7 +110,7 @@
 					<div class="row">
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Isolates Collected</h3>
 										{% if isolate_data %}
@@ -128,7 +128,7 @@
 						</div>
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Glycerol Stock Data</h3>
 										{% if glycerol_stock_data %}
@@ -148,7 +148,7 @@
 					<div class="row">
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Maize Survey Data</h3>
 										{% if maize_data %}
@@ -166,7 +166,7 @@
 						</div>
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Row Data</h3>
 										{% if row_data %}
@@ -186,7 +186,7 @@
 					<div class="row">
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Culture Data</h3>
 										{% if culture_data %}
@@ -204,7 +204,7 @@
 						</div>
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Tissue Data</h3>
 										{% if tissue_data %}
@@ -224,7 +224,7 @@
 					<div class="row">
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Plate Data</h3>
 										{% if plate_data %}
@@ -242,7 +242,7 @@
 						</div>
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Well Data</h3>
 										{% if well_data %}
@@ -262,7 +262,7 @@
 					<div class="row">
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>DNA Data</h3>
 										{% if dna_data %}
@@ -280,7 +280,7 @@
 						</div>
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Microbe Data</h3>
 										{% if microbe_data %}
@@ -300,7 +300,7 @@
 					<div class="row">
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Environment Data</h3>
 										{% if environment_data %}
@@ -318,7 +318,7 @@
 						</div>
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Plant Data</h3>
 										{% if plant_data %}
@@ -338,7 +338,7 @@
 					<div class="row">
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Separations Data</h3>
 										{% if separation_data %}
@@ -356,7 +356,7 @@
 						</div>
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Samples Data</h3>
 										{% if sample_data %}
@@ -376,7 +376,7 @@
 					<div class="row">
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Measurement Data</h3>
 										{% if measurement_data %}
@@ -394,7 +394,7 @@
 						</div>
 						<div class="span6">
 							<div class="container-fluid">
-								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Genotype Data</h3>
 										{% if genotype_data %}

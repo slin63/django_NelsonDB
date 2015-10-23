@@ -14,7 +14,7 @@
 	<hr>
 
 	<h2>Search</h2>
-		<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+		<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px; ">
 			<div class="row-fluid">
 				<div class="span3">
 					<ul class="nav nav-list">
@@ -44,8 +44,8 @@
 			</form>
 		</div><br/>
 	-->
-
-		<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+	<div style="border-style:solid; border-width:1px; border-color:#888888; padding:15px">
+		<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 			<div class="row-fluid">
 				<div class="span3">
 					<ul class="nav nav-list">
@@ -87,7 +87,7 @@
 				{% endfor %}
 			{% endif %}
 		</div><br/>
-		<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+		<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 			<div class="row-fluid">
 				<div class="span3">
 					<ul class="nav nav-list">
@@ -126,6 +126,53 @@
 				{% for ped in checkbox_pedigree %}
 					<li>{{ ped }}</li>
 				{% endfor %}
+			{% endif %}
+		</div>
+	</div>
+	<br/>
+
+		<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
+			<div class="row-fluid">
+				<div class="span3">
+					<ul class="nav nav-list">
+						<li class="nav-header">Measured Parameters</li>
+						<form>
+							<label></label>
+							<li><input  class="search-query" type="text" name="seedinvparametersuggestion" id="seedinvparametersuggestion" placeholder="Type Parameter (e.g. plt.hgt)"/></li>
+						</form>
+					</ul>
+				</div>
+				<div class="span3 offset1">
+					<button class="btn btn-info" id="show_all_seedinv_parameters" name="show_all_seedinv_parameters" type="submit">Show All Measured Parameters</button>
+				</div>
+				{% if checkbox_seedinv_parameters %}
+				<div class="span2 offset3">
+					<button id="seed_inventory_clear_parameters" class="btn btn-warning" type="submit">Clear Measured Parameters</button>
+				</div>
+				{% endif %}
+			</div>
+			<div id="suggested_seedinv_parameters" class="container-fluid" style="display:none">
+				<table id="selected_seedinv_parameters" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					<thead>
+						<tr>
+							<th>Select</th>
+							<th>Parameter</th>
+							<th>Protocol</th>
+							<th>Units</th>
+							<th>Pedigree</th>
+							<th>Population</th>
+						</tr>
+					</thead>
+				</table>
+				<br/>
+				<button id="select_seedinv_parameters_form_submit" class="btn btn-primary" type="submit" name="submit" >Select Parameters</button>
+			</div>
+			{% if checkbox_seedinv_parameters %}
+			<hr>
+			<h5>Selected Pedigrees</h5>
+			{% for p in checkbox_seedinv_parameters %}
+			<li>{{ p }}</li>
+			{% endfor %}
 			{% endif %}
 		</div>
 

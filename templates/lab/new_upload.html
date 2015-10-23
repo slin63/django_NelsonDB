@@ -8,7 +8,7 @@
 </div>
 
 <form class="form-signin" id="new_experiment" enctype="multipart/form-data" method="post" action="/lab/upload/{{data_type}}/">
-  <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
+  <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
   {% csrf_token %}
   <h3 class="form-signin-heading">Upload New Data: {{data_type}}</h3>
   {% for field in upload_form.visible_fields %}
