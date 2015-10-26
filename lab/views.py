@@ -757,6 +757,11 @@ def update_seed_packet_info(request, stock_id):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/stockpacket_info_update.html', context_dict, context)
 
+
+def stock_page_measurement_plot(request):
+	
+	return JsonResponse({'data':data}, safe=True)
+
 @login_required
 def update_isolate_info(request, isolate_id):
 	context = RequestContext(request)
