@@ -68,6 +68,7 @@ urlpatterns = patterns('',
     url(r'^data/publication/$', views.browse_publication_data, name='browse_publication_data'),
     url(r'^data/downloads/$', views.browse_downloads, name='browse_downloads'),
 
+    url(r'^data/stock/measurement/plot/$', views.stock_page_measurement_plot, name='stock_page_measurement_plot'),
     url(r'^data/stock/(?P<experiment_name>\w+)/$', views.stock_for_experiment, name='stock_for_experiment'),
     url(r'^data/stockpackets/(?P<experiment_name>\w+)/$', views.stockpackets_for_experiment, name='stockpackets_for_experiment'),
     url(r'^data/stock/collected/(?P<experiment_name>\w+)/$', views.stock_collected_from_experiment, name='stock_collected_from_experiment'),

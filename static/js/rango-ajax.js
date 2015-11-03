@@ -43,6 +43,47 @@ function sameOrigin(url) {
 	!(/^(\/\/|http:|https:).*/.test(url));
 }
 
+$(document).ready(function(){
+	if ($('#stock_measurement_plot').length > 0 ) {
+		$('#stock_measurement_plot_button').click( function() {
+
+		$.ajax({
+			dataType: "json",
+			url: "/lab/data/stock/measurement/plot/",
+			type: "POST",
+			data: {'stock_id':$('#stock_detail_id').val()},
+			beforeSend: function(xhr, settings) {
+				var csrftoken = getCookie('csrftoken');
+				if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+					xhr.setRequestHeader("X-CSRFToken", csrftoken);
+				}
+			},
+			success: function(data) {
+				console.log(data.data);
+
+				var visualization = d3plus.viz()
+				.container("#stock_measurement_plot")
+				.data(data.data)
+				.type("box")
+				.id("id")
+				.x("parameter")
+				.y("value")
+				.ui([{
+					"label": "Visualization Type",
+					"method": "type",
+					"value": ["scatter","box"]
+				}])
+				.draw()
+
+			}
+		});
+	});
+	
+	}
+
+});
+
+
 $('#show_all_seedinv_taxonomy').click(function(){
 	$('#suggested_taxonomy').css('display', 'block');
 	$('#selected_taxonomy').dataTable({

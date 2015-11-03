@@ -416,7 +416,7 @@ class ObsTracker(models.Model):
 	obs_extract = models.ForeignKey(ObsExtract, blank=True, null=True)
 
 	def __unicode__(self):
-		return self.entity_type
+		return self.obs_entity_type
 
 class ObsTrackerSource(models.Model):
 	target_obs = models.ForeignKey(ObsTracker, related_name='target_obs_tracker')

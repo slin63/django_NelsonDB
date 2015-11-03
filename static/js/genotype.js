@@ -1,5 +1,6 @@
 
 $(document).ready(function(){
+  if ($('#overview_chart').length > 0 ) {
 
   $.ajax({
     dataType: "json",
@@ -101,5 +102,6 @@ $(document).ready(function(){
     }
   });
 
+  }
 
 });
