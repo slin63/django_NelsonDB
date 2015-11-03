@@ -5,6 +5,7 @@
 {% if stock_info %}
   <div class="hero-unit">
     <h1>Stock Info: <a href='/lab/stock/{{stock_info.id}}/'>{{stock_info.seed_id}}</a></h1>
+    <input type="hidden" id="stock_detail_id" value={{stock_info.id}} />
   </div>
 
   <hr>
@@ -267,6 +268,11 @@
       {% endfor %}
     </tbody>
   </table>
+  <br/>
+  <h3>Stock Experimental Results</h3>
+  <div id="stock_measurement_plot">
+    <button class="btn btn-primary" id="stock_measurement_plot_button">Show Box Plots</button>
+  </div>
   {% else %}
   <h3><small>No Measurements For Stock!</small></h3>
   {% endif %}

@@ -759,7 +759,23 @@ def update_seed_packet_info(request, stock_id):
 
 
 def stock_page_measurement_plot(request):
-	
+	data = []
+	stock_id = request.POST.get('stock_id', False)
+	#all stocks used in experiment
+	#stocks with measurements
+	#parameter, stock, value
+	experiments = ObsTracker.objects.filter(stock_id=stock_id)
+	measurements = []
+	for exp in experiments:
+		m = Measurement.objects.filter(obs_tracker__experiment_id=exp.experiment_id)
+		measurements = list(chain(measurements, m))
+	for ms in measurements:
+		ms.obs_tracker = make_obs_tracker_info(ms.obs_tracker)
+		try:
+			value = int(ms.value)
+		except ValueError:
+			value = ms.value
+		data.append({'parameter':ms.measurement_parameter.parameter, 'id':"%s: %s"% (ms.obs_tracker.obs_id, ms.id), 'value':value})
 	return JsonResponse({'data':data}, safe=True)
 
 @login_required
