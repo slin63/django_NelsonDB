@@ -421,6 +421,7 @@ class ObsTracker(models.Model):
 class ObsTrackerSource(models.Model):
 	target_obs = models.ForeignKey(ObsTracker, related_name='target_obs_tracker')
 	source_obs = models.ForeignKey(ObsTracker, related_name='source_obs_tracker')
+	relationship = models.CharField(max_length=200, blank=True, null=True)
 
 	def __unicode__(self):
 		return self.target_obs
