@@ -4488,7 +4488,7 @@ def log_data_online(request, data_type):
 								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_row__row_id=row_id), target_obs=new_obs_tracker, relationship='microbe_from_row')
 							if tissue_id !='' and tissue_id !='No Tissue':
 								new_source_tissue, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue__tissue_id=tissue_id), target_obs=new_obs_tracker, relationship="microbe_from_tissue")
-							if plant_id !='' amd plant_id !='No Plant':
+							if plant_id !='' and plant_id !='No Plant':
 								new_source_plant, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='plant', obs_plant__plant_id=plant_id), target_obs=new_obs_tracker, relationship="microbe_from_plant")
 							if seed_id !='' and seed_id !='No Stock':
 								new_source_stock, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='stock', stock__seed_id=seed_id), target_obs=new_obs_tracker, relationship="microbe_from_stock")
