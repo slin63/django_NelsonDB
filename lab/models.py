@@ -475,6 +475,7 @@ class Marker(models.Model):
 	primer_f = models.ForeignKey(Primer, related_name='f_primer', blank=True, null=True)
 	primer_r = models.ForeignKey(Primer, related_name='r_primer', blank=True, null=True)
 	marker_id = models.CharField(max_length=200, unique=True)
+	marker_name = models.CharField(max_length=200, blank=True)
 	length = models.CharField(max_length=200, blank=True)
 	bac = models.CharField(max_length=200, blank=True)
 	nam_marker = models.CharField(max_length=200, blank=True)
@@ -514,6 +515,17 @@ class MapFeatureExpression(models.Model):
 
 	def __unicode__(self):
 		return self.map_feature_interval.interval_name
+
+class GenotypeResults(models.Model):
+	marker = models.ForeignKey(Marker)
+	parameter = models.ForeignKey(MeasurementParameter)
+	sequence = models.TextField(blank=True)
+	comments = models.CharField(max_length=1000, blank=True)
+	fasta_file = models.FileField(upload_to='fasta_files', blank=True)
+	chromatogram_file = models.FileField(upload_to='chromatogram_files', blank=True)
+
+	def __unicode__(self):
+		return self.sequence
 
 class GWASResults(models.Model):
     parameter = models.ForeignKey(MeasurementParameter)
