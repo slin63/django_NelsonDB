@@ -7,10 +7,8 @@ urlpatterns = patterns('',
     # url(r'^$', 'webapp.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^metamaize/', include('metamaize.urls')),
     url(r'^$', include('lab.urls')),
     url(r'^lab/', include('lab.urls')),
-    url(r'^legacy/', include('legacy.urls')),
     url(r'^admin/', include(admin.site.urls))
 )
 
