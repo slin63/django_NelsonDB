@@ -3265,10 +3265,31 @@ def measurement_data_from_experiment(request, experiment_name):
 	measurement_data = find_measurement_from_experiment(experiment_name)
 	for m in measurement_data:
 		m = make_obs_tracker_info(m.obs_tracker)
+
 	context_dict['measurement_data'] = measurement_data
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/measurement_experiment_data.html', context_dict, context)
+
+def separations_measurement_data_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	measurement_data = find_measurement_from_experiment(experiment_name)
+	measurement_data = measurement_data.filter(obs_tracker__obs_entity_type='sample', measurement_parameter__parameter='AF').exclude(obs_tracker__obs_sample__sample_type='Control')
+
+	data = []
+	unique_types = {}
+	inc = 1
+	for q in measurement_data:
+		if q.obs_tracker.obs_sample.sample_type not in unique_types:
+			unique_types[q.obs_tracker.obs_sample.sample_type] = inc
+			inc = inc + 1
+
+	for q in measurement_data:
+		print(q.obs_tracker.obs_sample.sample_type)
+		data.append({'sample_type_number':unique_types[q.obs_tracker.obs_sample.sample_type], 'sample_type':q.obs_tracker.obs_sample.sample_type, 'm_value':q.value, 'sample_id':q.obs_tracker.obs_sample.sample_id, 'parameter_type':q.measurement_parameter.parameter})
+
+	return JsonResponse({'data':data}, safe=True)
 
 @login_required
 def download_measurement_experiment(request, experiment_name):
