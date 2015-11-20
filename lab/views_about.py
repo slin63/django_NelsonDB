@@ -15,6 +15,7 @@ def about_people(request, people_selection):
     people_all_button = True
     people_staff_button = None
     people_active_button = None
+    people_collaborator_button = None
     users = User.objects.all().exclude(username='NULL').exclude(username='unknown_person').exclude(username='unknown')
     for user in users:
       user_profile = UserProfile.objects.get(user=user)
@@ -24,6 +25,7 @@ def about_people(request, people_selection):
     people_all_button = None
     people_staff_button = True
     people_active_button = None
+    people_collaborator_button = None
     users = User.objects.filter(is_staff='1').exclude(username='NULL').exclude(username='unknown_person').exclude(username='unknown')
     for user in users:
       user_profile = UserProfile.objects.get(user=user)
@@ -33,19 +35,36 @@ def about_people(request, people_selection):
     people_all_button = None
     people_staff_button = None
     people_active_button = True
+    people_collaborator_button = None
     users = User.objects.filter(is_active='1').exclude(username='NULL').exclude(username='unknown_person').exclude(username='unknown')
     for user in users:
       user_profile = UserProfile.objects.get(user=user)
       user.job_title = user_profile.job_title
       user.picture = user_profile.picture
+  elif people_selection == 'collaborators':
+    people_all_button = None
+    people_staff_button = None
+    people_active_button = None
+    people_collaborator_button = True
+    collaborators = []
+    users = User.objects.filter(is_active='1').exclude(username='NULL').exclude(username='unknown_person').exclude(username='unknown')
+    for user in users:
+      user_profile = UserProfile.objects.get(user=user)
+      if ('|Collaborator|' in user_profile.notes):
+          user.job_title = user_profile.job_title
+          user.picture = user_profile.picture
+          collaborators.append(user)
+    users = collaborators
   else:
     people_all_button = None
     people_staff_button = None
     people_active_button = None
+    people_collaborator_button = None
     users = None
   context_dict['people_all_button'] = people_all_button
   context_dict['people_staff_button'] = people_staff_button
   context_dict['people_active_button'] = people_active_button
+  context_dict['people_collaborator_button'] = people_collaborator_button
   context_dict['users'] = users
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('lab/people.html', context_dict, context)

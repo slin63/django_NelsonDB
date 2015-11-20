@@ -3,47 +3,56 @@
 {% block title %}People{{ experiment_name }}{% endblock %}
 {% block body_block %}
 <div class="hero-unit">
-<h1>People</h1>
+  <h1>People</h1>
 </div>
 
 <div class="container-fluid">
   {% if people_all_button %}
-    <a href='/lab/about/people/all/'><button type="button" class="btn btn-primary btn-lg">Show All</button></a>&nbsp;&nbsp;
-    <a href='/lab/about/people/staff/'><button type="button" class="btn btn-default btn-lg">Staff</button></a>&nbsp;&nbsp;
-    <a href='/lab/about/people/active/'><button type="button" class="btn btn-default btn-lg">Active Users</button></a>
+  <a href='/lab/about/people/all/'><button type="button" class="btn btn-primary btn-lg">Show All</button></a>&nbsp;&nbsp;
+  <a href='/lab/about/people/staff/'><button type="button" class="btn btn-default btn-lg">Staff</button></a>&nbsp;&nbsp;
+  <a href='/lab/about/people/active/'><button type="button" class="btn btn-default btn-lg">Active Users</button></a>&nbsp;&nbsp;
+  <a href='/lab/about/people/collaborators/'><button type="button" class="btn btn-default btn-lg">Collaborators</button></a>&nbsp;&nbsp;
   {% elif people_staff_button %}
-    <a href='/lab/about/people/all/'><button type="button" class="btn btn-default btn-lg">Show All</button></a>&nbsp;&nbsp;
-    <a href='/lab/about/people/staff/'><button type="button" class="btn btn-primary btn-lg">Staff</button></a>&nbsp;&nbsp;
-    <a href='/lab/about/people/active/'><button type="button" class="btn btn-default btn-lg">Active Users</button></a>
+  <a href='/lab/about/people/all/'><button type="button" class="btn btn-default btn-lg">Show All</button></a>&nbsp;&nbsp;
+  <a href='/lab/about/people/staff/'><button type="button" class="btn btn-primary btn-lg">Staff</button></a>&nbsp;&nbsp;
+  <a href='/lab/about/people/active/'><button type="button" class="btn btn-default btn-lg">Active Users</button></a>&nbsp;&nbsp;
+  <a href='/lab/about/people/collaborators/'><button type="button" class="btn btn-default btn-lg">Collaborators</button></a>&nbsp;&nbsp;
   {% elif people_active_button %}
-    <a href='/lab/about/people/all/'><button type="button" class="btn btn-default btn-lg">Show All</button></a>&nbsp;&nbsp;
-    <a href='/lab/about/people/staff/'><button type="button" class="btn btn-default btn-lg">Staff</button></a>&nbsp;&nbsp;
-    <a href='/lab/about/people/active/'><button type="button" class="btn btn-primary btn-lg">Active Users</button></a>
+  <a href='/lab/about/people/all/'><button type="button" class="btn btn-default btn-lg">Show All</button></a>&nbsp;&nbsp;
+  <a href='/lab/about/people/staff/'><button type="button" class="btn btn-default btn-lg">Staff</button></a>&nbsp;&nbsp;
+  <a href='/lab/about/people/active/'><button type="button" class="btn btn-primary btn-lg">Active Users</button></a>&nbsp;&nbsp;
+  <a href='/lab/about/people/collaborators/'><button type="button" class="btn btn-default btn-lg">Collaborators</button></a>&nbsp;&nbsp;
+  {% elif people_collaborator_button %}
+  <a href='/lab/about/people/all/'><button type="button" class="btn btn-default btn-lg">Show All</button></a>&nbsp;&nbsp;
+  <a href='/lab/about/people/staff/'><button type="button" class="btn btn-default btn-lg">Staff</button></a>&nbsp;&nbsp;
+  <a href='/lab/about/people/active/'><button type="button" class="btn btn-default btn-lg">Active Users</button></a>&nbsp;&nbsp;
+  <a href='/lab/about/people/collaborators/'><button type="button" class="btn btn-primary btn-lg">Collaborators</button></a>&nbsp;&nbsp;
   {% else %}
-    <a href='/lab/about/people/all/'><button type="button" class="btn btn-primary btn-lg">Show All</button></a>&nbsp;&nbsp;
-    <a href='/lab/about/people/staff/'><button type="button" class="btn btn-default btn-lg">Staff</button></a>&nbsp;&nbsp;
-    <a href='/lab/about/people/active/'><button type="button" class="btn btn-default btn-lg">Active Users</button></a>
+  <a href='/lab/about/people/all/'><button type="button" class="btn btn-primary btn-lg">Show All</button></a>&nbsp;&nbsp;
+  <a href='/lab/about/people/staff/'><button type="button" class="btn btn-default btn-lg">Staff</button></a>&nbsp;&nbsp;
+  <a href='/lab/about/people/active/'><button type="button" class="btn btn-default btn-lg">Active Users</button></a>&nbsp;&nbsp;
+  <a href='/lab/about/people/collaborators/'><button type="button" class="btn btn-default btn-lg">Collaborators</button></a>&nbsp;&nbsp;
   {% endif %}
   <hr>
   <div id="people_list">
     {% if users %}
-      {% for user in users %}
-        <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
-          <div class="container-fluid">
-            <div class="row-fluid">
-              <div class="span2"><img src="{{ user.picture.url }}"/></div>
-              <div class="span8 offset2">
-                <h4><a href='/lab/profile/{{user.username}}/'>{{user.first_name}} {{user.last_name}}</a></h4>
-                <p><b>{{user.job_title}}</b></p>
-                <p>{{user.email}}</p>
-              </div>
-            </div>
+    {% for user in users %}
+    <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span2"><img src="{{ user.picture.url }}"/></div>
+          <div class="span8 offset2">
+            <h4><a href='/lab/profile/{{user.username}}/'>{{user.first_name}} {{user.last_name}}</a></h4>
+            <p><b>{{user.job_title}}</b></p>
+            <p>{{user.email}}</p>
           </div>
         </div>
-        <br/>
-      {% endfor %}
+      </div>
+    </div>
+    <br/>
+    {% endfor %}
     {% else %}
-      <h4>No People!</h4>
+    <h4>No People!</h4>
     {% endif %}
   </div>
 </div>
