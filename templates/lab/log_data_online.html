@@ -148,6 +148,15 @@
       <hr>
       <h3>Or Upload Using Online Form: </h3>
     {% endif %}
+    {% if data_type == 'measurement' %}
+    <hr>
+    <h3>Upload From File: </h3>
+    <h5><a href='/lab/download/template/measurement_data/'>Download Template</a></h5>
+    <h5><a href='/lab/download/template/measurement_data_help/'>Download Template Help</a></h5>
+    <h5><a href='/lab/upload_online/measurement_data/'>Upload Online</a></h5>
+    <hr>
+    <h3>Or Upload Using Online Form: </h3>
+    {% endif %}
 
     <br/>
     <form class="form-signin" id="log_data_online" method="post" action="/lab/log_data/{{data_type}}/">
