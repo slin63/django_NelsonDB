@@ -83,6 +83,25 @@ $(document).ready(function(){
 
 });
 
+$('#stock_detail_delete_button').click(function(){
+	if (confirm("Are you sure you want to delete this stock? It cannot be undone.")) {
+		$.ajax({
+			dataType: "json",
+			url: "/lab/data/stock_delete/",
+			type: "POST",
+			data: {'stock_id':$('#stock_detail_id').val()},
+			beforeSend: function(xhr, settings) {
+				var csrftoken = getCookie('csrftoken');
+				if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+					xhr.setRequestHeader("X-CSRFToken", csrftoken);
+				}
+			},
+			success: function(data) {
+				location.reload();
+			}
+		});
+	}
+});
 
 $('#show_all_seedinv_taxonomy').click(function(){
 	$('#suggested_taxonomy').css('display', 'block');

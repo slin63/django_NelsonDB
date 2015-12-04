@@ -797,6 +797,13 @@ def stock_page_measurement_plot(request):
 	return JsonResponse({'data':data}, safe=True)
 
 @login_required
+def stock_delete(request):
+	stock_id = request.POST.get('stock_id', False)
+	Stock.objects.get(id=stock_id).delete()
+
+	return JsonResponse({'data':True}, safe=True)
+
+@login_required
 def update_isolate_info(request, isolate_id):
 	context = RequestContext(request)
 	context_dict = {}
@@ -3647,6 +3654,8 @@ def single_stock_info(request, stock_id):
 	else:
 		obs_tracker = None
 		obs_source = None
+		obs_measurements = None
+		measured_parameters = None
 	try:
 		stock_packets = StockPacket.objects.filter(stock_id=stock_id)
 	except StockPacket.DoesNotExist:
