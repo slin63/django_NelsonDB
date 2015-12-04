@@ -51,7 +51,7 @@ $(document).ready(function(){
 			dataType: "json",
 			url: "/lab/data/stock/measurement/plot/",
 			type: "POST",
-			data: {'stock_id':$('#stock_detail_id').val()},
+			data: {'stock_id':$('#stock_detail_id').val(), 'parameter_of_interest':$('#select_parameter_to_plot').val()},
 			beforeSend: function(xhr, settings) {
 				var csrftoken = getCookie('csrftoken');
 				if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
@@ -59,7 +59,7 @@ $(document).ready(function(){
 				}
 			},
 			success: function(data) {
-				console.log(data.data);
+				//console.log(data.data);
 
 				var visualization = d3plus.viz()
 				.container("#stock_measurement_plot")
@@ -78,7 +78,7 @@ $(document).ready(function(){
 			}
 		});
 	});
-	
+
 	}
 
 });

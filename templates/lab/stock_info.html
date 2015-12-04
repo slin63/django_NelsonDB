@@ -272,8 +272,13 @@
   </table>
   <br/>
   <h3>Stock Experimental Results</h3>
+  <select id="select_parameter_to_plot">
+    {% for key,value in measured_parameters.items %}
+      <option value='{{key}}'>{{value}}</option>
+    {% endfor %}
+  </select>
+  <button class="btn btn-primary" id="stock_measurement_plot_button">Show Box Plots</button>
   <div id="stock_measurement_plot">
-    <button class="btn btn-primary" id="stock_measurement_plot_button">Show Box Plots</button>
   </div>
   {% else %}
   <h3><small>No Measurements For Stock!</small></h3>

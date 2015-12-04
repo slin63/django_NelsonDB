@@ -762,21 +762,38 @@ def update_seed_packet_info(request, stock_id):
 def stock_page_measurement_plot(request):
 	data = []
 	stock_id = request.POST.get('stock_id', False)
+	parameter_id = request.POST.get('parameter_of_interest', False)
 	#all stocks used in experiment
 	#stocks with measurements
 	#parameter, stock, value
 	experiments = ObsTracker.objects.filter(stock_id=stock_id)
 	measurements = []
 	for exp in experiments:
-		m = Measurement.objects.filter(obs_tracker__experiment_id=exp.experiment_id)
+		m = Measurement.objects.filter(obs_tracker__experiment_id=exp.experiment_id, measurement_parameter_id=parameter_id)
 		measurements = list(chain(measurements, m))
 	for ms in measurements:
 		ms.obs_tracker = make_obs_tracker_info(ms.obs_tracker)
 		try:
 			value = int(ms.value)
 		except ValueError:
-			value = ms.value
-		data.append({'parameter':ms.measurement_parameter.parameter, 'id':"%s: %s"% (ms.obs_tracker.obs_id, ms.id), 'value':value})
+			try:
+				value = float(ms.value)
+			except ValueError:
+				value = ms.value
+		data.append({'parameter':"%s: %s"% (ms.obs_tracker.experiment.name, ms.measurement_parameter.parameter), 'id':"%s: %s"% (ms.obs_tracker.obs_id, ms.id), 'value':value})
+
+	measurements = Measurement.objects.filter(obs_tracker__stock_id=stock_id, measurement_parameter_id=parameter_id)
+	for ms in measurements:
+		ms.obs_tracker = make_obs_tracker_info(ms.obs_tracker)
+		try:
+			value = int(ms.value)
+		except ValueError:
+			try:
+				value = float(ms.value)
+			except ValueError:
+				value = ms.value
+		data.append({'parameter':"%s: %s"% (ms.obs_tracker.stock.seed_id, ms.measurement_parameter.parameter), 'id':"%s: %s"% (ms.obs_tracker.obs_id, ms.id), 'value':value})
+
 	return JsonResponse({'data':data}, safe=True)
 
 @login_required
@@ -3623,6 +3640,10 @@ def single_stock_info(request, stock_id):
 				obs_tracker_seed.append(t)
 		obs_source = get_obs_source('stock_id', stock_id)
 		obs_measurements = get_obs_measurements('stock_id', stock_id)
+		measured_parameters = {}
+		for mp in obs_measurements:
+			if mp.measurement_parameter_id not in measured_parameters:
+				measured_parameters[mp.measurement_parameter_id] = mp.measurement_parameter.parameter
 	else:
 		obs_tracker = None
 		obs_source = None
@@ -3635,6 +3656,7 @@ def single_stock_info(request, stock_id):
 	context_dict['obs_source'] = obs_source
 	context_dict['obs_measurements'] = obs_measurements
 	context_dict['stock_packets'] = stock_packets
+	context_dict['measured_parameters'] = measured_parameters
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/stock_info.html', context_dict, context)
 
