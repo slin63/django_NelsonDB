@@ -5087,6 +5087,12 @@ def log_data_online(request, data_type):
 							obs_tracker_found = True
 						except (GlycerolStock.DoesNotExist, ObsTracker.DoesNotExist):
 							pass
+						try:
+							obs_unit = Stock.objects.get(seed_id=observation_id)
+							obs_tracker = ObsTracker.objects.get(obs_entity_type='stock', stock=obs_unit)
+							obs_tracker_found = True
+						except (Stock.DoesNotExist, ObsTracker.DoesNotExist):
+							pass
 
 						if obs_tracker_found == True:
 							try:
