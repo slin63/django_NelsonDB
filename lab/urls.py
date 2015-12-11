@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     url(r'^edit_profile/$', views.edit_profile, name ='edit_profile'),
 	url(r'^goto/$', views.track_url, name='track_url'),
     url(r'^site_map/$', views.site_map, name='site_map'),
+    url(r'^sidebar_search_results/$', views.sidebar_search_page, name='sidebar_search_page'),
     url(r'^sidebar_search/$', views.sidebar_search, name='sidebar_search'),
     url(r'^checkbox_clear/(?P<clear_selected>\w+)/$', views.checkbox_clear, name='checkbox_clear'),
 

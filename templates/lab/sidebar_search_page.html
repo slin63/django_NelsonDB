@@ -1,0 +1,350 @@
+{% extends 'lab/base.html' %}
+{% block title %}Search Results{% endblock %}
+{% block body_block %}
+
+<div class="hero-unit">
+  <h2>Search Results For: {{starts_with}}</h2>
+</div>
+
+{% if experiment_results %}
+<div class="well well-sm">
+<table id="search_experiment_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Experiment Name</th></tr>
+  </thead>
+  <tbody>
+    {% for result in experiment_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if row_results %}
+<div class="well well-sm">
+<table id="search_row_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Row ID</th></tr>
+  </thead>
+  <tbody>
+    {% for result in row_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if isolate_results %}
+<div class="well well-sm">
+<table id="search_isolate_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Isolate ID</th></tr>
+  </thead>
+  <tbody>
+    {% for result in isolate_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if glycerol_results %}
+<div class="well well-sm">
+<table id="search_glycerol_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Glycerol Stock ID</th></tr>
+  </thead>
+  <tbody>
+    {% for result in glycerol_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if plant_results %}
+<div class="well well-sm">
+<table id="search_plant_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Plant ID</th></tr>
+  </thead>
+  <tbody>
+    {% for result in plant_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if plate_results %}
+<div class="well well-sm">
+<table id="search_plate_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Plate ID</th></tr>
+  </thead>
+  <tbody>
+    {% for result in plate_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if culture_results %}
+<div class="well well-sm">
+<table id="search_culture_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Culture ID</th></tr>
+  </thead>
+  <tbody>
+    {% for result in culture_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if microbe_results %}
+<div class="well well-sm">
+<table id="search_microbe_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Microbe ID</th></tr>
+  </thead>
+  <tbody>
+    {% for result in microbe_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if extract_results %}
+<div class="well well-sm">
+<table id="search_extract_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Extract ID</th></tr>
+  </thead>
+  <tbody>
+    {% for result in extract_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if dna_results %}
+<div class="well well-sm">
+<table id="search_dna_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>DNA ID</th></tr>
+  </thead>
+  <tbody>
+    {% for result in dna_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if sample_results %}
+<div class="well well-sm">
+<table id="search_sample_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Sample ID</th></tr>
+  </thead>
+  <tbody>
+    {% for result in sample_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if tissue_results %}
+<div class="well well-sm">
+<table id="search_tissue_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Tissue ID</th></tr>
+  </thead>
+  <tbody>
+    {% for result in tissue_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if env_results %}
+<div class="well well-sm">
+<table id="search_env_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Environment ID</th></tr>
+  </thead>
+  <tbody>
+    {% for result in env_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if well_results %}
+<div class="well well-sm">
+<table id="search_well_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Well ID</th></tr>
+  </thead>
+  <tbody>
+    {% for result in well_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if maize_results %}
+<div class="well well-sm">
+<table id="search_maize_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Maize ID</th></tr>
+  </thead>
+  <tbody>
+    {% for result in maize_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if field_results %}
+<div class="well well-sm">
+<table id="search_field_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Field Name</th></tr>
+  </thead>
+  <tbody>
+    {% for result in field_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if user_results %}
+<div class="well well-sm">
+<table id="search_user_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>UserName</th></tr>
+  </thead>
+  <tbody>
+    {% for result in user_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if locality_results %}
+<div class="well well-sm">
+<table id="search_locality_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Locality</th></tr>
+  </thead>
+  <tbody>
+    {% for result in locality_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if people_results %}
+<div class="well well-sm">
+<table id="search_people_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>People</th></tr>
+  </thead>
+  <tbody>
+    {% for result in people_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+{% if stock_results %}
+<div class="well well-sm">
+<table id="search_stock_results" class="table table-striped table-bordered datatable" cellspacing="0" width="100%">
+  <thead>
+    <tr><th>Seed ID</th></tr>
+  </thead>
+  <tbody>
+    {% for result in stock_results %}
+    <tr>
+      <td><a href='{{result.url}}'>{{ result }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+
+{% endblock %}

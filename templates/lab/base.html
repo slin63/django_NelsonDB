@@ -58,7 +58,8 @@
 					<div class="well sidebar-nav">
 						<div style="margin-left:-5px; overflow:hidden">
 							<h5>Search</h5>
-							<form>
+							<form id="sidebar_search_form" action="/lab/sidebar_search_results/" method="post">
+								{% csrf_token %}
 								<input  class="input-medium search-query" type="text" name="sidebarsearch" id="sidebarsearch" placeholder="Type Anything"/>
 							</form>
 							<div id="sidebar_search_results">

@@ -1159,6 +1159,11 @@ $(document).ready(function() {
 			});
 } );
 
+$(document).ready(function() {
+	$('.datatable').dataTable({
+	});
+} );
+
 function toggle(source) {
 	checkboxes = document.getElementsByName('checkbox_stock');
 	for(var i=0, n=checkboxes.length;i<n;i++) {
