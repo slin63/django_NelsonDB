@@ -455,6 +455,10 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_measurement_parameter'] = request.session.get('checkbox_measurement_parameter')
 	if request.session.get('checkbox_seedinv_parameters', None):
 		context_dict['checkbox_seedinv_parameters'] = request.session.get('checkbox_seedinv_parameters')
+	if request.session.get('checkbox_isolate_disease_names', None):
+		context_dict['checkbox_isolate_disease_names'] = request.session.get('checkbox_isolate_disease_names')
+	if request.session.get('checkbox_isolate_taxonomy_names', None):
+		context_dict['checkbox_isolate_taxonomy_names'] = request.session.get('checkbox_isolate_taxonomy_names')
 	return context_dict
 
 @login_required
@@ -1299,7 +1303,7 @@ def glycerol_stock_inventory(request):
 
 def datatable_isolate_inventory(request):
 	selected_isolates = checkbox_isolate_sort(request)
-	count = selected_isolates.count()
+	#count = selected_isolates.count()
 	arr = []
 	for data in selected_isolates:
 		arr.append({
@@ -1316,7 +1320,7 @@ def datatable_isolate_inventory(request):
         	'subtaxa': data.passport.taxonomy.subtaxa,
         	'comments': data.comments,
     	})
-	return JsonResponse({'data':arr, 'recordsTotal':count}, safe=True)
+	return JsonResponse({'data':arr}, safe=True)
 
 @login_required
 def isolate_inventory(request):
@@ -1331,9 +1335,9 @@ def checkbox_isolate_sort(request):
 	checkbox_taxonomy_list = []
 	checkbox_disease_list = []
 	if request.session.get('checkbox_isolate_taxonomy', None):
-		checkbox_taxonomy_list = request.session.get('checkbox_isolate_taxonomy_id')
+		checkbox_taxonomy_list = request.session.get('checkbox_isolate_taxonomy')
 		if request.session.get('checkbox_isolate_disease', None):
-			checkbox_disease_list = request.session.get('checkbox_isolate_disease_id')
+			checkbox_disease_list = request.session.get('checkbox_isolate_disease')
 			for disease_id in checkbox_disease_list:
 				for taxonomy_id in checkbox_taxonomy_list:
 					isolates = Isolate.objects.filter(disease_info__id=disease_id, passport__taxonomy__id=taxonomy_id)
@@ -1344,47 +1348,53 @@ def checkbox_isolate_sort(request):
 				selected_isolates = list(chain(selected_isolates, isolates))
 	else:
 		if request.session.get('checkbox_isolate_disease', None):
-			checkbox_disease_list = request.session.get('checkbox_isolate_disease_id')
+			checkbox_disease_list = request.session.get('checkbox_isolate_disease')
 			for disease_id in checkbox_disease_list:
 				isolates = Isolate.objects.filter(disease_info__id=disease_id)
 				selected_isolates = list(chain(selected_isolates, isolates))
 		else:
-			selected_isolates = Isolate.objects.all().exclude(id=1)[:2000]
+			selected_isolates = list(Isolate.objects.all().exclude(id=1))[:2000]
 	return selected_isolates
 
 def show_all_isolate_taxonomy(request):
-	context = RequestContext(request)
-	context_dict = {}
 	isolate_taxonomy_list = []
 	if request.session.get('checkbox_isolate_disease', None):
-		checkbox_isolate_disease = request.session.get('checkbox_isolate_disease_id')
+		checkbox_isolate_disease = request.session.get('checkbox_isolate_disease')
 		for disease_id in checkbox_isolate_disease:
-			taxonomy = Isolate.objects.filter(disease_info__id=disease_id).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__genus', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa', 'passport__taxonomy__species').distinct()[:1000]
+			taxonomy = Isolate.objects.filter(disease_info__id=disease_id).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__genus', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa', 'passport__taxonomy__species').distinct()
 			isolate_taxonomy_list = list(chain(taxonomy, isolate_taxonomy_list))
+		for p in isolate_taxonomy_list:
+			p['input'] = '<input type="checkbox" name="checkbox_isolate_taxonomy_id" value="%s">' % (p['passport__taxonomy__id'])
 	else:
-		isolate_taxonomy_list = Taxonomy.objects.filter(common_name='Isolate')[:2000]
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['isolate_taxonomy_list'] = isolate_taxonomy_list
-	return render_to_response('lab/isolate_taxonomy_list.html', context_dict, context)
+		isolate_taxonomy_list = list(Taxonomy.objects.filter(common_name='Isolate').values('id', 'genus', 'alias', 'race', 'subtaxa', 'species').distinct())
+		for t in isolate_taxonomy_list:
+			t['input'] = '<input type="checkbox" name="checkbox_isolate_taxonomy_id" value="%s">' % (t['id'])
+			t['disease_info__common_name'] = ''
+			t['passport__taxonomy__genus'] = t['genus']
+			t['passport__taxonomy__alias'] = t['alias']
+			t['passport__taxonomy__race'] = t['race']
+			t['passport__taxonomy__subtaxa'] = t['subtaxa']
+			t['passport__taxonomy__species'] = t['species']
+	return JsonResponse({'data':isolate_taxonomy_list})
 
 def show_all_isolate_disease(request):
-	context = RequestContext(request)
-	context_dict = {}
 	isolate_disease_list = []
 	if request.session.get('checkbox_isolate_taxonomy', None):
-		checkbox_isolate_taxonomy = request.session.get('checkbox_isolate_taxonomy_id')
+		checkbox_isolate_taxonomy = request.session.get('checkbox_isolate_taxonomy')
 		for taxonomy_id in checkbox_isolate_taxonomy:
-			disease = Isolate.objects.filter(passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()[:2000]
+			disease = Isolate.objects.filter(passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()
 			isolate_disease_list = list(chain(disease, isolate_disease_list))
+		for p in isolate_disease_list:
+			p['input'] = '<input type="checkbox" name="checkbox_isolate_disease_id" value="%s">' % (p['disease_info__id'])
 	else:
-		isolate_disease_list = DiseaseInfo.objects.all()[:2000]
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['isolate_disease_list'] = isolate_disease_list
-	return render_to_response('lab/isolate_disease_list.html', context_dict, context)
+		isolate_disease_list = list(DiseaseInfo.objects.filter().values('id', 'common_name').distinct())
+		for t in isolate_disease_list:
+			t['input'] = '<input type="checkbox" name="checkbox_isolate_disease_id" value="%s">' % (t['id'])
+			t['disease_info__common_name'] = t['common_name']
+			t['passport__taxonomy__genus'] = ''
+	return JsonResponse({'data':isolate_disease_list})
 
 def suggest_isolate_taxonomy(request):
-	context = RequestContext(request)
-	context_dict = {}
 	isolate_taxonomy_list = []
 	starts_with = ''
 	if request.method == 'GET':
@@ -1393,21 +1403,25 @@ def suggest_isolate_taxonomy(request):
 		starts_with = request.POST['suggestion']
 	if starts_with:
 		if request.session.get('checkbox_isolate_disease', None):
-			checkbox_isolate_disease = request.session.get('checkbox_isolate_disease_id')
+			checkbox_isolate_disease = request.session.get('checkbox_isolate_disease')
 			for disease_id in checkbox_isolate_disease:
-				taxonomy = Isolate.objects.filter(disease_info__id=disease_id, passport__taxonomy__genus__contains=starts_with).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__genus', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa', 'passport__taxonomy__species').distinct()[:2000]
+				taxonomy = Isolate.objects.filter(disease_info__id=disease_id, passport__taxonomy__genus__contains=starts_with).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__genus', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa', 'passport__taxonomy__species').distinct()
 				isolate_taxonomy_list = list(chain(taxonomy, isolate_taxonomy_list))
+			for t in isolate_taxonomy_list:
+				t['input'] = '<input type="checkbox" name="checkbox_isolate_taxonomy_id" value="%s">' % (t['passport__taxonomy__id'])
 		else:
-			isolate_taxonomy_list = Taxonomy.objects.filter(genus__contains=starts_with, common_name='Isolate')[:2000]
-	else:
-		isolate_taxonomy_list = None
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['isolate_taxonomy_list'] = isolate_taxonomy_list
-	return render_to_response('lab/isolate_taxonomy_list.html', context_dict, context)
+			isolate_taxonomy_list = list(Taxonomy.objects.filter(genus__contains=starts_with, common_name='Isolate').values('id', 'genus', 'alias', 'race', 'subtaxa', 'species').distinct())
+			for t in isolate_taxonomy_list:
+				t['input'] = '<input type="checkbox" name="checkbox_isolate_taxonomy_id" value="%s">' % (t['id'])
+				t['disease_info__common_name'] = ''
+				t['passport__taxonomy__genus'] = t['genus']
+				t['passport__taxonomy__alias'] = t['alias']
+				t['passport__taxonomy__race'] = t['race']
+				t['passport__taxonomy__subtaxa'] = t['subtaxa']
+				t['passport__taxonomy__species'] = t['species']
+	return JsonResponse({'data':isolate_taxonomy_list})
 
 def suggest_isolate_disease(request):
-	context = RequestContext(request)
-	context_dict = {}
 	isolate_disease_list = []
 	starts_with = ''
 	if request.method == 'GET':
@@ -1416,61 +1430,41 @@ def suggest_isolate_disease(request):
 		starts_with = request.POST['suggestion']
 	if starts_with:
 		if request.session.get('checkbox_isolate_taxonomy', None):
-			checkbox_isolate_taxonomy = request.session.get('checkbox_isolate_taxonomy_id')
+			checkbox_isolate_taxonomy = request.session.get('checkbox_isolate_taxonomy')
 			for taxonomy_id in checkbox_isolate_taxonomy:
-				disease = Isolate.objects.filter(disease_info__common_name__contains=starts_with, passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()[:2000]
+				disease = Isolate.objects.filter(disease_info__common_name__contains=starts_with, passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()
 				isolate_disease_list = list(chain(disease, isolate_disease_list))
+			for t in isolate_disease_list:
+				t['input'] = '<input type="checkbox" name="checkbox_isolate_disease_id" value="%s">' % (t['disease_info__id'])
 		else:
-			isolate_disease_list = DiseaseInfo.objects.filter(common_name__contains=starts_with)[:2000]
-	else:
-		isolate_disease_list = None
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['isolate_disease_list'] = isolate_disease_list
-	return render_to_response('lab/isolate_disease_list.html', context_dict, context)
+			isolate_disease_list = list(DiseaseInfo.objects.filter(common_name__contains=starts_with).values('id', 'common_name').distinct())
+			for t in isolate_disease_list:
+				t['input'] = '<input type="checkbox" name="checkbox_isolate_disease_id" value="%s">' % (t['id'])
+				t['disease_info__common_name'] = t['common_name']
+				t['passport__taxonomy__genus'] = ''
+	return JsonResponse({'data':isolate_disease_list})
 
 def select_isolate_taxonomy(request):
-	context = RequestContext(request)
-	context_dict = {}
-	checkbox_isolate_taxonomy_id = []
-	checkbox_isolate_taxonomy = []
-	checkbox_isolate_taxonomy_id = request.POST.getlist('checkbox_isolate_taxonomy_id')
-	for taxonomy_id in checkbox_isolate_taxonomy_id:
+	taxonomies = request.POST['taxonomies']
+	checkbox_isolate_taxonomy_ids = json.loads(taxonomies)
+	checkbox_isolate_taxonomy_names = []
+	for taxonomy_id in checkbox_isolate_taxonomy_ids:
 		taxonomy_name = Taxonomy.objects.filter(id=taxonomy_id).values('genus')
-		checkbox_isolate_taxonomy = list(chain(taxonomy_name, checkbox_isolate_taxonomy))
-	request.session['checkbox_isolate_taxonomy_id'] = checkbox_isolate_taxonomy_id
-	request.session['checkbox_isolate_taxonomy'] = checkbox_isolate_taxonomy
-	selected_isolates = checkbox_isolate_sort(request)
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['selected_isolates'] = selected_isolates
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/isolate_inventory.html', context_dict, context)
+		checkbox_isolate_taxonomy_names = list(chain(taxonomy_name, checkbox_isolate_taxonomy_names))
+	request.session['checkbox_isolate_taxonomy'] = checkbox_isolate_taxonomy_ids
+	request.session['checkbox_isolate_taxonomy_names'] = checkbox_isolate_taxonomy_names
+	return JsonResponse({'success':True})
 
 def select_isolate_disease(request):
-	context = RequestContext(request)
-	context_dict = {}
-	checkbox_isolate_disease_id = []
-	checkbox_isolate_disease = []
-	checkbox_isolate_disease_id = request.POST.getlist('checkbox_isolate_disease_id')
-	for disease_id in checkbox_isolate_disease_id:
+	diseases = request.POST['diseases']
+	disease_list = json.loads(diseases)
+	checkbox_isolate_disease_names = []
+	for disease_id in disease_list:
 		disease_name = DiseaseInfo.objects.filter(id=disease_id).values('common_name')
-		checkbox_isolate_disease = list(chain(disease_name, checkbox_isolate_disease))
-	request.session['checkbox_isolate_disease_id'] = checkbox_isolate_disease_id
-	request.session['checkbox_isolate_disease'] = checkbox_isolate_disease
-	selected_isolates = checkbox_isolate_sort(request)
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['selected_isolates'] = selected_isolates
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/isolate_inventory.html', context_dict, context)
-
-def checkbox_isolate_inventory_clear(request, clear_selected):
-	context = RequestContext(request)
-	context_dict = {}
-	del request.session[clear_selected]
-	selected_isolates = checkbox_isolate_sort(request)
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['selected_isolates'] = selected_isolates
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/isolate_inventory.html', context_dict, context)
+		checkbox_isolate_disease_names = list(chain(disease_name, checkbox_isolate_disease_names))
+	request.session['checkbox_isolate_disease'] = disease_list
+	request.session['checkbox_isolate_disease_names'] = checkbox_isolate_disease_names
+	return JsonResponse({'success':True})
 
 def select_isolates(request):
 	context = RequestContext(request)
