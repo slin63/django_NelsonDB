@@ -22,7 +22,7 @@
         <tbody>
         {% for packet in selected_packets %}
         <tr>
-          <td>{{ packet.stock.seed_id }}</td>
+          <td><a href='/lab/stock/{{packet.stock_id}}/'>{{ packet.stock.seed_id }}</a></td>
           <td>{{ packet.stock.seed_name }}</td>
           <td>{{ packet.weight }}</td>
           <td>{{ packet.num_seeds }}</td>

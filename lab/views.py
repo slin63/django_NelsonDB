@@ -762,22 +762,46 @@ def update_seed_packet_info(request, stock_id):
 def stock_page_measurement_plot(request):
 	data = []
 	stock_id = request.POST.get('stock_id', False)
+	parameter_id = request.POST.get('parameter_of_interest', False)
 	#all stocks used in experiment
 	#stocks with measurements
 	#parameter, stock, value
 	experiments = ObsTracker.objects.filter(stock_id=stock_id)
 	measurements = []
 	for exp in experiments:
-		m = Measurement.objects.filter(obs_tracker__experiment_id=exp.experiment_id)
+		m = Measurement.objects.filter(obs_tracker__experiment_id=exp.experiment_id, measurement_parameter_id=parameter_id)
 		measurements = list(chain(measurements, m))
 	for ms in measurements:
 		ms.obs_tracker = make_obs_tracker_info(ms.obs_tracker)
 		try:
 			value = int(ms.value)
 		except ValueError:
-			value = ms.value
-		data.append({'parameter':ms.measurement_parameter.parameter, 'id':"%s: %s"% (ms.obs_tracker.obs_id, ms.id), 'value':value})
+			try:
+				value = float(ms.value)
+			except ValueError:
+				value = ms.value
+		data.append({'parameter':"%s: %s"% (ms.obs_tracker.experiment.name, ms.measurement_parameter.parameter), 'id':"%s: %s"% (ms.obs_tracker.obs_id, ms.id), 'value':value})
+
+	measurements = Measurement.objects.filter(obs_tracker__stock_id=stock_id, measurement_parameter_id=parameter_id)
+	for ms in measurements:
+		ms.obs_tracker = make_obs_tracker_info(ms.obs_tracker)
+		try:
+			value = int(ms.value)
+		except ValueError:
+			try:
+				value = float(ms.value)
+			except ValueError:
+				value = ms.value
+		data.append({'parameter':"%s: %s"% (ms.obs_tracker.stock.seed_id, ms.measurement_parameter.parameter), 'id':"%s: %s"% (ms.obs_tracker.obs_id, ms.id), 'value':value})
+
 	return JsonResponse({'data':data}, safe=True)
+
+@login_required
+def stock_delete(request):
+	stock_id = request.POST.get('stock_id', False)
+	Stock.objects.get(id=stock_id).delete()
+
+	return JsonResponse({'data':True}, safe=True)
 
 @login_required
 def update_isolate_info(request, isolate_id):
@@ -3265,10 +3289,31 @@ def measurement_data_from_experiment(request, experiment_name):
 	measurement_data = find_measurement_from_experiment(experiment_name)
 	for m in measurement_data:
 		m = make_obs_tracker_info(m.obs_tracker)
+
 	context_dict['measurement_data'] = measurement_data
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/measurement_experiment_data.html', context_dict, context)
+
+def separations_measurement_data_from_experiment(request, experiment_name):
+	context = RequestContext(request)
+	context_dict = {}
+	measurement_data = find_measurement_from_experiment(experiment_name)
+	measurement_data = measurement_data.filter(obs_tracker__obs_entity_type='sample', measurement_parameter__parameter='AF').exclude(obs_tracker__obs_sample__sample_type='Control')
+
+	data = []
+	unique_types = {}
+	inc = 1
+	for q in measurement_data:
+		if q.obs_tracker.obs_sample.sample_type not in unique_types:
+			unique_types[q.obs_tracker.obs_sample.sample_type] = inc
+			inc = inc + 1
+
+	for q in measurement_data:
+		print(q.obs_tracker.obs_sample.sample_type)
+		data.append({'sample_type_number':unique_types[q.obs_tracker.obs_sample.sample_type], 'sample_type':q.obs_tracker.obs_sample.sample_type, 'm_value':q.value, 'sample_id':q.obs_tracker.obs_sample.sample_id, 'parameter_type':q.measurement_parameter.parameter})
+
+	return JsonResponse({'data':data}, safe=True)
 
 @login_required
 def download_measurement_experiment(request, experiment_name):
@@ -3602,9 +3647,15 @@ def single_stock_info(request, stock_id):
 				obs_tracker_seed.append(t)
 		obs_source = get_obs_source('stock_id', stock_id)
 		obs_measurements = get_obs_measurements('stock_id', stock_id)
+		measured_parameters = {}
+		for mp in obs_measurements:
+			if mp.measurement_parameter_id not in measured_parameters:
+				measured_parameters[mp.measurement_parameter_id] = mp.measurement_parameter.parameter
 	else:
 		obs_tracker = None
 		obs_source = None
+		obs_measurements = None
+		measured_parameters = None
 	try:
 		stock_packets = StockPacket.objects.filter(stock_id=stock_id)
 	except StockPacket.DoesNotExist:
@@ -3614,6 +3665,7 @@ def single_stock_info(request, stock_id):
 	context_dict['obs_source'] = obs_source
 	context_dict['obs_measurements'] = obs_measurements
 	context_dict['stock_packets'] = stock_packets
+	context_dict['measured_parameters'] = measured_parameters
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/stock_info.html', context_dict, context)
 
@@ -5033,7 +5085,13 @@ def log_data_online(request, data_type):
 							obs_unit = GlycerolStock.objects.get(glycerol_stock_id=observation_id)
 							obs_tracker = ObsTracker.objects.get(obs_entity_type='glycerol_stock', glycerol_stock=obs_unit)
 							obs_tracker_found = True
-						except (ObsWell.DoesNotExist, ObsTracker.DoesNotExist):
+						except (GlycerolStock.DoesNotExist, ObsTracker.DoesNotExist):
+							pass
+						try:
+							obs_unit = Stock.objects.get(seed_id=observation_id)
+							obs_tracker = ObsTracker.objects.get(obs_entity_type='stock', stock=obs_unit)
+							obs_tracker_found = True
+						except (Stock.DoesNotExist, ObsTracker.DoesNotExist):
 							pass
 
 						if obs_tracker_found == True:
@@ -5138,6 +5196,175 @@ def seed_id_search(request):
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['seed_id_list'] = seed_id_list
 	return render_to_response('lab/seed_id_search_list.html', context_dict, context)
+
+def sidebar_search_page(request):
+	starts_with = request.POST.get("sidebarsearch", "")
+	context = RequestContext(request)
+	context_dict = {}
+	experiment_results = []
+	row_results = []
+	isolate_results = []
+	glycerol_results = []
+	plant_results = []
+	plate_results = []
+	culture_results = []
+	microbe_results = []
+	extract_results = []
+	dna_results = []
+	sample_results = []
+	tissue_results = []
+	env_results = []
+	well_results = []
+	maize_results = []
+	field_results = []
+	user_results = []
+	locality_results = []
+	people_results = []
+	stock_results = []
+	try:
+		experiment_results = Experiment.objects.filter(name__icontains=starts_with).exclude(name='No Experiment')
+	except Experiment.DoesNotExist:
+		experiment_results = None
+	for result in experiment_results:
+		result.url = "/lab/experiment/%s/" % (result.name)
+	try:
+		row_results = ObsRow.objects.filter(row_id__icontains=starts_with).exclude(row_id='No Row')
+	except ObsRow.DoesNotExist:
+		row_results = None
+	for result in row_results:
+		result.url = "/lab/row/%d/" % (result.id)
+	try:
+		isolate_results = Isolate.objects.filter(isolate_id__icontains=starts_with).exclude(isolate_id='No Isolate')
+	except Isolate.DoesNotExist:
+		isolate_results = None
+	for result in isolate_results:
+		result.url = "/lab/isolate/%d/" % (result.id)
+	try:
+		glycerol_results = GlycerolStock.objects.filter(glycerol_stock_id__icontains=starts_with)
+	except GlycerolStock.DoesNotExist:
+		glycerol_results = None
+	for result in glycerol_results:
+		result.url = "/lab/glycerol_stock/%d/" % (result.id)
+	try:
+		plant_results = ObsPlant.objects.filter(plant_id__icontains=starts_with).exclude(plant_id='No Plant')
+	except ObsPlant.DoesNotExist:
+		plant_results = None
+	for result in plant_results:
+		result.url = "/lab/plant/%d/" % (result.id)
+	try:
+		plate_results = ObsPlate.objects.filter(plate_id__icontains=starts_with).exclude(plate_id='No Plate')
+	except ObsPlate.DoesNotExist:
+		plate_results = None
+	for result in plate_results:
+		result.url = "/lab/plate/%d/" % (result.id)
+	try:
+		culture_results = ObsCulture.objects.filter(culture_id__icontains=starts_with).exclude(culture_id='No Culture')
+	except ObsCulture.DoesNotExist:
+		culture_results = None
+	for result in culture_results:
+		result.url = "/lab/culture/%d/" % (result.id)
+	try:
+		microbe_results = ObsMicrobe.objects.filter(microbe_id__icontains=starts_with).exclude(microbe_id='No Microbe')
+	except ObsMicrobe.DoesNotExist:
+		microbe_results = None
+	for result in microbe_results:
+		result.url = "/lab/microbe/%d/" % (result.id)
+	try:
+		extract_results = ObsExtract.objects.filter(extract_id__icontains=starts_with).exclude(extract_id='No Extract')
+	except ObsExtract.DoesNotExist:
+		extract_results = None
+	for result in extract_results:
+		result.url = "/lab/extract/%d/" % (result.id)
+	try:
+		dna_results = ObsDNA.objects.filter(dna_id__icontains=starts_with).exclude(dna_id='No DNA')
+	except ObsDNA.DoesNotExist:
+		dna_results = None
+	for result in dna_results:
+		result.url = "/lab/dna/%d/" % (result.id)
+	try:
+		sample_results = ObsSample.objects.filter(sample_id__icontains=starts_with).exclude(sample_id='No Sample')
+	except ObsSample.DoesNotExist:
+		sample_results = None
+	for result in sample_results:
+		result.url = "/lab/sample/%d/" % (result.id)
+	try:
+		tissue_results = ObsTissue.objects.filter(tissue_id__icontains=starts_with).exclude(tissue_id='No Tissue')
+	except ObsTissue.DoesNotExist:
+		tissue_results = None
+	for result in tissue_results:
+		result.url = "/lab/tissue/%d/" % (result.id)
+	try:
+		env_results = ObsEnv.objects.filter(environment_id__icontains=starts_with).exclude(environment_id='No Environment')
+	except ObsEnv.DoesNotExist:
+		env_results = None
+	for result in env_results:
+		result.url = "/lab/env/%d/" % (result.id)
+	try:
+		well_results = ObsWell.objects.filter(well_id__icontains=starts_with).exclude(well_id='No Well')
+	except ObsWell.DoesNotExist:
+		well_results = None
+	for result in well_results:
+		result.url = "/lab/well/%d/" % (result.id)
+	try:
+		maize_results = MaizeSample.objects.filter(maize_id__icontains=starts_with).exclude(maize_id='No Maize ID')
+	except MaizeSample.DoesNotExist:
+		maize_results = None
+	for result in maize_results:
+		result.url = "/lab/maize/%d/" % (result.id)
+	try:
+		field_results = Field.objects.filter(field_name__icontains=starts_with).exclude(field_name='No Field')
+	except Field.DoesNotExist:
+		field_results = None
+	for result in field_results:
+		result.url = "/lab/field/%d/" % (result.id)
+	try:
+		user_results = User.objects.filter(username__icontains=starts_with)
+	except User.DoesNotExist:
+		user_results = None
+	for result in user_results:
+		result.url = "/lab/profile/%s/" % (result.username)
+	try:
+		locality_results = Locality.objects.filter(city__icontains=starts_with)
+	except Locality.DoesNotExist:
+		locality_results = None
+	for result in locality_results:
+		result.url = "/lab/locality/%d/" % (result.id)
+	try:
+		people_results = People.objects.filter(first_name__icontains=starts_with)
+	except People.DoesNotExist:
+		people_results = None
+	for result in people_results:
+		result.url = "/lab/people/%d/" % (result.id)
+	try:
+		stock_results = Stock.objects.filter(seed_id__icontains=starts_with).exclude(seed_id='No Stock')
+	except Stock.DoesNotExist:
+		stock_results = None
+	for result in stock_results:
+		result.url = "/lab/stock/%d/" % (result.id)
+
+	context_dict['starts_with'] = starts_with
+	context_dict['experiment_results'] = experiment_results
+	context_dict['row_results'] = row_results
+	context_dict['isolate_results'] = isolate_results
+	context_dict['glycerol_results'] = glycerol_results
+	context_dict['plant_results'] = plant_results
+	context_dict['plate_results'] = plate_results
+	context_dict['culture_results'] = culture_results
+	context_dict['microbe_results'] = microbe_results
+	context_dict['extract_results'] = extract_results
+	context_dict['dna_results'] = dna_results
+	context_dict['sample_results'] = sample_results
+	context_dict['tissue_results'] = tissue_results
+	context_dict['env_results'] = env_results
+	context_dict['well_results'] = well_results
+	context_dict['maize_results'] = maize_results
+	context_dict['field_results'] = field_results
+	context_dict['user_results'] = user_results
+	context_dict['locality_results'] = locality_results
+	context_dict['people_results'] = people_results
+	context_dict['stock_results'] = stock_results
+	context_dict['logged_in_user'] = request.user.username
+	return render_to_response('lab/sidebar_search_page.html', context_dict, context)
 
 def sidebar_search(request):
 	context = RequestContext(request)
