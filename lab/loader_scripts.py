@@ -1237,6 +1237,25 @@ def tissue_loader_prep(upload_file, user):
             else:
                 obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], obs_tracker_hash_table[obs_tracker_tissue_hash], 'tissue_from_row')] = obs_tracker_source_id
 
+        if obs_plant_id != 1:
+            obs_tracker_source_plant_hash = str(obs_tracker_obs_plant_id_table[obs_plant_id][0]) + str(obs_tracker_hash_table[obs_tracker_tissue_hash]) + 'tissue_from_plant'
+            if obs_tracker_source_plant_hash not in obs_tracker_source_hash_table:
+                obs_tracker_source_hash_table[obs_tracker_source_plant_hash] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_plant_id_table[obs_plant_id][0], obs_tracker_hash_table[obs_tracker_tissue_hash], 'tissue_from_plant')] = obs_tracker_source_id
+                obs_tracker_source_id = obs_tracker_source_id + 1
+            else:
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_plant_id_table[obs_plant_id][0], obs_tracker_hash_table[obs_tracker_tissue_hash], 'tissue_from_plant')] = obs_tracker_source_id
+
+        if obs_culture_id != 1:
+            obs_tracker_source_culture_hash = str(obs_tracker_obs_culture_id_table[obs_culture_id][0]) + str(obs_tracker_hash_table[obs_tracker_tissue_hash]) + 'tissue_from_culture'
+            if obs_tracker_source_culture_hash not in obs_tracker_source_hash_table:
+                obs_tracker_source_hash_table[obs_tracker_source_culture_hash] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_culture_id_table[obs_culture_id][0], obs_tracker_hash_table[obs_tracker_tissue_hash], 'tissue_from_culture')] = obs_tracker_source_id
+                obs_tracker_source_id = obs_tracker_source_id + 1
+            else:
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_culture_id_table[obs_culture_id][0], obs_tracker_hash_table[obs_tracker_tissue_hash], 'tissue_from_culture')] = obs_tracker_source_id
+
+
     end = time.clock()
     stats = {}
     stats[("Time: %s" % (end-start), "Errors: %s" % (error_count))] = error_count
