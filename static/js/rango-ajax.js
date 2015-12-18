@@ -359,56 +359,197 @@ $('#seed_inventory_clear_parameters').click(function(){
 	});
 });
 
+$('#isolate_inventory_clear_disease').click(function(){
+	$.ajax({
+		"url": "/lab/checkbox_clear/checkbox_isolate_disease/",
+		success: function() {
+			$.ajax({
+				"url": "/lab/checkbox_clear/checkbox_isolate_disease_names/",
+				success: function() {
+					location.reload(true);
+				},
+				error: function() {
+					alert("Error clearing selected isolate diseases!");
+				}
+			});
+		},
+		error: function() {
+			alert("Error clearing selected isolate diseases!");
+		}
+	});
+
+});
+
+$('#isolate_inventory_clear_taxonomy').click(function(){
+	$.ajax({
+		"url": "/lab/checkbox_clear/checkbox_isolate_taxonomy/",
+		success: function() {
+			$.ajax({
+				"url": "/lab/checkbox_clear/checkbox_isolate_taxonomy_names/",
+				success: function() {
+					location.reload(true);
+				},
+				error: function() {
+					alert("Error clearing selected isolate taxonomies!");
+				}
+			});
+		},
+		error: function() {
+			alert("Error clearing selected isolate taxonomies!");
+		}
+	});
+});
+
 $('#show_all_isolate_taxonomy').click(function(){
-	$.get('/lab/isolate_inventory/show_all_taxonomy/', {}, function(data){
-		$('#isolate_taxonomies').html(data);
-		$('#selected_isolate_taxonomy').dataTable({
-			"searching": false,
-			"scrollY": "300px",
-			"scrollCollapse": true,
-			"paginate": false
-		});
+	$('#suggested_isolate_taxonomy').css('display', 'block');
+	$('#selected_isolate_taxonomy').dataTable({
+		"destroy": true,
+		"searching": false,
+		"scrollY": "300px",
+		"scrollCollapse": true,
+		"paginate": false,
+		"ajax": "/lab/isolate_inventory/show_all_taxonomy/",
+		"deferRender": true,
+		"aoColumns": [
+		{ "mData": "input"},
+		{ "mData": "disease_info__common_name"},
+		{ "mData": "passport__taxonomy__genus"},
+		{ "mData": "passport__taxonomy__alias"},
+		{ "mData": "passport__taxonomy__race"},
+		{ "mData": "passport__taxonomy__subtaxa"},
+		{ "mData": "passport__taxonomy__species"},
+		],
 	});
 });
 
 $('#show_all_isolate_disease').click(function(){
-	$.get('/lab/isolate_inventory/show_all_disease/', {}, function(data){
-		$('#isolate_disease').html(data);
-		$('#selected_isolate_disease').dataTable({
-			"searching": false,
-			"scrollY": "300px",
-			"scrollCollapse": true,
-			"paginate": false
-		});
+	$('#suggested_isolate_disease').css('display', 'block');
+	$('#selected_isolate_disease').dataTable({
+		"destroy": true,
+		"searching": false,
+		"scrollY": "300px",
+		"scrollCollapse": true,
+		"paginate": false,
+		"ajax": "/lab/isolate_inventory/show_all_disease/",
+		"deferRender": true,
+		"aoColumns": [
+		{ "mData": "input"},
+		{ "mData": "disease_info__common_name"},
+		{ "mData": "passport__taxonomy__genus"},
+		],
 	});
 });
 
 $('#isolate_taxonomysuggestion').keyup(function(){
-				var query;
-				query = $(this).val();
-				$.get('/lab/isolate_inventory/suggest_isolate_taxonomy/', {suggestion: query}, function(data){
-			$('#isolate_taxonomies').html(data);
+	var query = $(this).val();
+	if (query == '') { $('#suggested_isolate_taxonomy').css('display', 'none'); }
+		else { $('#suggested_isolate_taxonomy').css('display', 'block'); }
 			$('#selected_isolate_taxonomy').dataTable({
+				"destroy": true,
 				"searching": false,
 				"scrollY": "300px",
 				"scrollCollapse": true,
-				"paginate": false
-				});
+				"paginate": false,
+				"ajax": {
+					"url": "/lab/isolate_inventory/suggest_isolate_taxonomy/",
+					"type": 'POST',
+					"data": {'suggestion':query},
+					beforeSend: function(xhr, settings) {
+						var csrftoken = getCookie('csrftoken');
+						if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+							xhr.setRequestHeader("X-CSRFToken", csrftoken);
+						}
+					}
+				},
+				"deferRender": true,
+				"aoColumns": [
+				{ "mData": "input"},
+				{ "mData": "disease_info__common_name"},
+				{ "mData": "passport__taxonomy__genus"},
+				{ "mData": "passport__taxonomy__alias"},
+				{ "mData": "passport__taxonomy__race"},
+				{ "mData": "passport__taxonomy__subtaxa"},
+				{ "mData": "passport__taxonomy__species"},
+				],
+			});
 		});
-});
 
 $('#isolate_diseasesuggestion').keyup(function(){
-				var query;
-				query = $(this).val();
-				$.get('/lab/isolate_inventory/suggest_isolate_disease/', {suggestion: query}, function(data){
-			$('#isolate_disease').html(data);
+	var query = $(this).val();
+	if (query == '') { $('#suggested_isolate_disease').css('display', 'none'); }
+		else { $('#suggested_isolate_disease').css('display', 'block'); }
 			$('#selected_isolate_disease').dataTable({
+				"destroy": true,
 				"searching": false,
 				"scrollY": "300px",
 				"scrollCollapse": true,
-				"paginate": false
-				});
-		});
+				"paginate": false,
+				"ajax": {
+					"url": "/lab/isolate_inventory/suggest_isolate_disease/",
+					"type": 'POST',
+					"data": {'suggestion':query},
+					beforeSend: function(xhr, settings) {
+						var csrftoken = getCookie('csrftoken');
+						if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+							xhr.setRequestHeader("X-CSRFToken", csrftoken);
+						}
+					}
+				},
+				"deferRender": true,
+				"aoColumns": [
+				{ "mData": "input"},
+				{ "mData": "disease_info__common_name"},
+				{ "mData": "passport__taxonomy__genus"},
+				],
+			});
+});
+
+$('#select_isolate_disease_form_submit').click(function(){
+	var d = [];
+	$("input[name='checkbox_isolate_disease_id']:checked").each(function() {
+		d.push($(this).val());
+	});
+	$.ajax({
+		"url": "/lab/isolate_inventory/select_isolate_disease/",
+		"type": "POST",
+		"data": {'diseases': JSON.stringify(d)},
+		beforeSend: function(xhr, settings) {
+			var csrftoken = getCookie('csrftoken');
+			if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+				xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			}
+		},
+		success: function() {
+			location.reload(true);
+		},
+		error: function() {
+			alert("Error selecting isolate disease!");
+		}
+	});
+});
+
+$('#select_isolate_taxonomy_form_submit').click(function(){
+	var d = [];
+	$("input[name='checkbox_isolate_taxonomy_id']:checked").each(function() {
+		d.push($(this).val());
+	});
+	$.ajax({
+		"url": "/lab/isolate_inventory/select_isolate_taxonomy/",
+		"type": "POST",
+		"data": {'taxonomies': JSON.stringify(d)},
+		beforeSend: function(xhr, settings) {
+			var csrftoken = getCookie('csrftoken');
+			if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+				xhr.setRequestHeader("X-CSRFToken", csrftoken);
+			}
+		},
+		success: function() {
+			location.reload(true);
+		},
+		error: function() {
+			alert("Error selecting isolate taxonomy!");
+		}
+	});
 });
 
 $('#row_experimentsuggestion').keyup(function(){
