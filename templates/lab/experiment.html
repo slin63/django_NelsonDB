@@ -22,6 +22,7 @@
 				<h3>Originator: <a href='/lab/profile/{{ experiment.user }}/'>{{experiment.user}}</a></h3>
 				<h3>Purpose: {{experiment.purpose}}</h3>
 				<h3>Comments: {{experiment.comments}}</h3>
+				<a href='/lab/experiment_edit/{{experiment.id}}'><input class="btn btn-info" type="submit" name="submit" value="Edit Information"/></a>
 			</div><br/><br/>
 			<div style="-webkit-box-shadow:2px 2px 3px 3px #888888; padding:15px">
 			{% if treatment_data %}
