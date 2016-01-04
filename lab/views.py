@@ -303,6 +303,58 @@ def experiment(request, experiment_name_url):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/experiment.html', context_dict, context)
 
+@login_required
+def experiment_edit(request, experiment_id):
+	context = RequestContext(request)
+	context_dict = {}
+	experiment = Experiment.objects.get(id=experiment_id)
+	experiment_name = experiment.name
+	if request.method == 'POST':
+		new_experiment_form = NewExperimentForm(data=request.POST)
+		if new_experiment_form.is_valid():
+			experiment_name = new_experiment_form.cleaned_data['name']
+			if experiment.name != experiment_name:
+				try:
+					name_check = Experiment.objects.get(name=experiment_name)
+					name_check_fail = True
+					experiment_added = False
+				except (Experiment.DoesNotExist, IndexError):
+					name_check_fail = False
+					experiment.name = experiment_name
+					experiment.user = new_experiment_form.cleaned_data['user']
+					experiment.field = new_experiment_form.cleaned_data['field']
+					experiment.start_date = new_experiment_form.cleaned_data['start_date']
+					experiment.purpose = new_experiment_form.cleaned_data['purpose']
+					experiment.comments = new_experiment_form.cleaned_data['comments']
+					experiment.save()
+					experiment_added = True
+			else:
+				name_check_fail = False
+				experiment.name = experiment_name
+				experiment.user = new_experiment_form.cleaned_data['user']
+				experiment.field = new_experiment_form.cleaned_data['field']
+				experiment.start_date = new_experiment_form.cleaned_data['start_date']
+				experiment.purpose = new_experiment_form.cleaned_data['purpose']
+				experiment.comments = new_experiment_form.cleaned_data['comments']
+				experiment.save()
+				experiment_added = True
+		else:
+			print(new_experiment_form.errors)
+			name_check_fail = False
+			experiment_added = False
+	else:
+		experiment_info = Experiment.objects.filter(id=experiment_id).values('name', 'field', 'user', 'start_date', 'purpose', 'comments')
+		new_experiment_form = NewExperimentForm(initial=experiment_info[0])
+		name_check_fail = False
+		experiment_added = False
+	context_dict['new_experiment_form'] = new_experiment_form
+	context_dict['name_check_fail'] = name_check_fail
+	context_dict['experiment_added'] = experiment_added
+	context_dict['logged_in_user'] = request.user.username
+	context_dict['experiment_id'] = experiment_id
+	context_dict['experiment_name'] = experiment_name
+	return render_to_response('lab/experiment_edit.html', context_dict, context)
+
 def find_stock_collected_from_experiment(experiment_name):
 	try:
 		collected_stock_data = ObsTrackerSource.objects.filter(source_obs__experiment__name=experiment_name, target_obs__obs_entity_type='stock')

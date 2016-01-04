@@ -1,0 +1,34 @@
+{% extends "lab/base.html" %}
+
+{% block title %}Edit Experiment{% endblock %}
+
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Edit Experiment</h1>
+</div>
+
+<a href='/lab/experiment/{{experiment_name}}'><input class="btn btn-primary" type="submit" name="submit" value="Back to Experiment {{experiment_name}}"/></a>
+<hr>
+
+<form class="form-signin" id="new_experiment" method="post" action="/lab/experiment_edit/{{experiment_id}}/">
+  <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
+  {% csrf_token %}
+  <h3 class="form-signin-heading">Edit Experiment</h3>
+  {% for field in new_experiment_form.visible_fields %}
+    <div class="row">
+      <div class="span4 offset1"><font color="247eca">{{ field.help_text }}</font></div>
+      <div class="span3">{{ field }}</div>
+      <div class="span4"><font color="red">{{ field.errors }}</font></div>
+    </div>
+  {% endfor %}
+  <input class="btn btn-primary" type="submit" name="submit" value="Submit" />
+  </div>
+</form>
+{% if name_check_fail %}
+  <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Experiment Name Taken!<br/>&nbsp;</h4>
+{% endif %}
+{% if experiment_added %}
+  <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Experiment Was Saved!<br/>&nbsp;</h4><br/>
+{% endif %}
+
+{% endblock %}
