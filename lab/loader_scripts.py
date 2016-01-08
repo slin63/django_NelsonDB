@@ -2002,22 +2002,22 @@ def dna_loader_prep(upload_file, user):
                 obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_sample_id_table[obs_sample_id][0], obs_tracker_hash_table[obs_tracker_dna_hash], 'dna_from_sample')] = obs_tracker_source_id
 
         if obs_well_id != 1:
-            obs_tracker_source_well_hash = str(obs_tracker_obs_well_id_table[obs_well_id][0]) + str(obs_tracker_hash_table[obs_tracker_dna_hash]) + 'dna_from_well'
+            obs_tracker_source_well_hash = str(obs_tracker_obs_well_id_table[obs_well_id][0]) + str(obs_tracker_hash_table[obs_tracker_dna_hash]) + 'dna_in_well'
             if obs_tracker_source_well_hash not in obs_tracker_source_hash_table:
                 obs_tracker_source_hash_table[obs_tracker_source_well_hash] = obs_tracker_source_id
-                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_well_id_table[obs_well_id][0], obs_tracker_hash_table[obs_tracker_dna_hash], 'dna_from_well')] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_well_id_table[obs_well_id][0], obs_tracker_hash_table[obs_tracker_dna_hash], 'dna_in_well')] = obs_tracker_source_id
                 obs_tracker_source_id = obs_tracker_source_id + 1
             else:
-                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_well_id_table[obs_well_id][0], obs_tracker_hash_table[obs_tracker_dna_hash], 'dna_from_well')] = obs_tracker_source_id
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_well_id_table[obs_well_id][0], obs_tracker_hash_table[obs_tracker_dna_hash], 'dna_in_well')] = obs_tracker_source_id
 
         if obs_plate_id != 1:
-            obs_tracker_source_plate_hash = str(obs_tracker_obs_plate_id_table[obs_plate_id][0]) + str(obs_tracker_hash_table[obs_tracker_dna_hash]) + 'dna_from_plate'
+            obs_tracker_source_plate_hash = str(obs_tracker_obs_plate_id_table[obs_plate_id][0]) + str(obs_tracker_hash_table[obs_tracker_dna_hash]) + 'dna_in_plate'
             if obs_tracker_source_plate_hash not in obs_tracker_source_hash_table:
                 obs_tracker_source_hash_table[obs_tracker_source_plate_hash] = obs_tracker_source_id
-                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_plate_id_table[obs_plate_id][0], obs_tracker_hash_table[obs_tracker_dna_hash], 'dna_from_plate')] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_plate_id_table[obs_plate_id][0], obs_tracker_hash_table[obs_tracker_dna_hash], 'dna_in_plate')] = obs_tracker_source_id
                 obs_tracker_source_id = obs_tracker_source_id + 1
             else:
-                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_plate_id_table[obs_plate_id][0], obs_tracker_hash_table[obs_tracker_dna_hash], 'dna_from_plate')] = obs_tracker_source_id
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_plate_id_table[obs_plate_id][0], obs_tracker_hash_table[obs_tracker_dna_hash], 'dna_in_plate')] = obs_tracker_source_id
 
 
     end = time.clock()
@@ -2779,6 +2779,9 @@ def well_loader_prep(upload_file, user):
     obs_tracker_new = OrderedDict({})
     #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, glycerol_stock_id, isolate_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
+    obs_tracker_source_new = OrderedDict({})
+    #--- Key = (obs_tracker_source_id, source_obs_id, target_obs_id, relationship)
+    #--- Value = (obs_tracker_source_id)
 
     user_hash_table = loader_db_mirror.user_hash_mirror()
     obs_well_hash_table = loader_db_mirror.obs_well_hash_mirror()
@@ -2793,6 +2796,15 @@ def well_loader_prep(upload_file, user):
     well_id_table = loader_db_mirror.well_id_mirror()
     obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
     obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
+    obs_tracker_source_hash_table = loader_db_mirror.obs_tracker_source_hash_mirror()
+    obs_tracker_source_id = loader_db_mirror.obs_tracker_source_id_mirror()
+    obs_tracker_stock_id_table = loader_db_mirror.obs_tracker_stock_id_mirror()
+    obs_tracker_obs_row_id_table = loader_db_mirror.obs_tracker_obs_row_id_mirror()
+    obs_tracker_obs_plant_id_table = loader_db_mirror.obs_tracker_obs_plant_id_mirror()
+    obs_tracker_obs_tissue_id_table = loader_db_mirror.obs_tracker_obs_tissue_id_mirror()
+    obs_tracker_obs_culture_id_table = loader_db_mirror.obs_tracker_obs_culture_id_mirror()
+    obs_tracker_obs_plate_id_table = loader_db_mirror.obs_tracker_obs_plate_id_mirror()
+    obs_tracker_obs_microbe_id_table = loader_db_mirror.obs_tracker_obs_microbe_id_mirror()
     experiment_name_table = loader_db_mirror.experiment_name_mirror()
 
     error_count = 0
@@ -2802,8 +2814,10 @@ def well_loader_prep(upload_file, user):
     tissue_id_error = OrderedDict({})
     culture_id_error = OrderedDict({})
     plate_id_error = OrderedDict({})
+    microbe_id_error = OrderedDict({})
     well_hash_exists = OrderedDict({})
     obs_tracker_hash_exists = OrderedDict({})
+    obs_tracker_source_hash_exists = OrderedDict({})
 
     well_file = csv.DictReader(upload_file)
     for row in well_file:
@@ -2947,6 +2961,70 @@ def well_loader_prep(upload_file, user):
         else:
             obs_tracker_hash_exists[('well', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, temp_obswell_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
+        if stock_id != 1:
+            obs_tracker_source_stock_hash = str(obs_tracker_hash_table[obs_tracker_well_hash]) + str(obs_tracker_stock_id_table[stock_id][0]) + 'stock_in_well'
+            if obs_tracker_source_stock_hash not in obs_tracker_source_hash_table:
+                obs_tracker_source_hash_table[obs_tracker_source_stock_hash] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_well_hash], obs_tracker_stock_id_table[stock_id][0], 'stock_in_well')] = obs_tracker_source_id
+                obs_tracker_source_id = obs_tracker_source_id + 1
+            else:
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_well_hash], obs_tracker_stock_id_table[stock_id][0], 'stock_in_well')] = obs_tracker_source_id
+
+        if obs_row_id != 1:
+            obs_tracker_source_row_hash = str(obs_tracker_hash_table[obs_tracker_well_hash]) + str(obs_tracker_obs_row_id_table[obs_row_id][0]) + 'row_in_well'
+            if obs_tracker_source_row_hash not in obs_tracker_source_hash_table:
+                obs_tracker_source_hash_table[obs_tracker_source_row_hash] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_well_hash], obs_tracker_obs_row_id_table[obs_row_id][0], 'row_in_well')] = obs_tracker_source_id
+                obs_tracker_source_id = obs_tracker_source_id + 1
+            else:
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_well_hash], obs_tracker_obs_row_id_table[obs_row_id][0], 'row_in_well')] = obs_tracker_source_id
+
+        if obs_plant_id != 1:
+            obs_tracker_source_plant_hash = str(obs_tracker_hash_table[obs_tracker_well_hash]) + str(obs_tracker_obs_plant_id_table[obs_plant_id][0]) + 'plant_in_well'
+            if obs_tracker_source_plant_hash not in obs_tracker_source_hash_table:
+                obs_tracker_source_hash_table[obs_tracker_source_plant_hash] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_well_hash], obs_tracker_obs_plant_id_table[obs_plant_id][0], 'plant_in_well')] = obs_tracker_source_id
+                obs_tracker_source_id = obs_tracker_source_id + 1
+            else:
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_well_hash], obs_tracker_obs_plant_id_table[obs_plant_id][0], 'plant_in_well')] = obs_tracker_source_id
+
+        if obs_tissue_id != 1:
+            obs_tracker_source_tissue_hash = str(obs_tracker_hash_table[obs_tracker_well_hash]) + str(obs_tracker_obs_tissue_id_table[obs_tissue_id][0]) + 'tissue_in_well'
+            if obs_tracker_source_tissue_hash not in obs_tracker_source_hash_table:
+                obs_tracker_source_hash_table[obs_tracker_source_tissue_hash] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_well_hash], obs_tracker_obs_tissue_id_table[obs_tissue_id][0], 'tissue_in_well')] = obs_tracker_source_id
+                obs_tracker_source_id = obs_tracker_source_id + 1
+            else:
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_well_hash], obs_tracker_obs_tissue_id_table[obs_tissue_id][0], 'tissue_in_well')] = obs_tracker_source_id
+
+        if obs_culture_id != 1:
+            obs_tracker_source_culture_hash = str(obs_tracker_hash_table[obs_tracker_well_hash]) + str(obs_tracker_obs_culture_id_table[obs_culture_id][0]) + 'culture_in_well'
+            if obs_tracker_source_culture_hash not in obs_tracker_source_hash_table:
+                obs_tracker_source_hash_table[obs_tracker_source_culture_hash] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_well_hash], obs_tracker_obs_culture_id_table[obs_culture_id][0], 'culture_in_well')] = obs_tracker_source_id
+                obs_tracker_source_id = obs_tracker_source_id + 1
+            else:
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_well_hash], obs_tracker_obs_culture_id_table[obs_culture_id][0], 'culture_in_well')] = obs_tracker_source_id
+
+        if obs_microbe_id != 1:
+            obs_tracker_source_microbe_hash = str(obs_tracker_hash_table[obs_tracker_well_hash]) + str(obs_tracker_obs_microbe_id_table[obs_microbe_id][0]) + 'microbe_in_well'
+            if obs_tracker_source_microbe_hash not in obs_tracker_source_hash_table:
+                obs_tracker_source_hash_table[obs_tracker_source_microbe_hash] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_well_hash], obs_tracker_obs_microbe_id_table[obs_microbe_id][0], 'microbe_in_well')] = obs_tracker_source_id
+                obs_tracker_source_id = obs_tracker_source_id + 1
+            else:
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_well_hash], obs_tracker_obs_microbe_id_table[obs_microbe_id][0], 'microbe_in_well')] = obs_tracker_source_id
+
+        if obs_plate_id != 1:
+            obs_tracker_source_plate_hash = str(obs_tracker_obs_plate_id_table[obs_plate_id][0]) + str(obs_tracker_hash_table[obs_tracker_well_hash]) + 'well_in_plate'
+            if obs_tracker_source_plate_hash not in obs_tracker_source_hash_table:
+                obs_tracker_source_hash_table[obs_tracker_source_plate_hash] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_plate_id_table[obs_plate_id][0], obs_tracker_hash_table[obs_tracker_well_hash], 'well_in_plate')] = obs_tracker_source_id
+                obs_tracker_source_id = obs_tracker_source_id + 1
+            else:
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_plate_id_table[obs_plate_id][0], obs_tracker_hash_table[obs_tracker_well_hash], 'well_in_plate')] = obs_tracker_source_id
+
+
     end = time.clock()
     stats = {}
     stats[("Time: %s" % (end-start), "Errors: %s" % (error_count))] = error_count
@@ -2954,6 +3032,7 @@ def well_loader_prep(upload_file, user):
     results_dict = {}
     results_dict['obs_well_new'] = obs_well_new
     results_dict['obs_tracker_new'] = obs_tracker_new
+    results_dict['obs_tracker_source_new'] = obs_tracker_source_new
     results_dict['seed_id_error'] = seed_id_error
     results_dict['row_id_error'] = row_id_error
     results_dict['plant_id_error'] = plant_id_error
@@ -2963,6 +3042,7 @@ def well_loader_prep(upload_file, user):
     results_dict['microbe_id_error'] = microbe_id_error
     results_dict['well_hash_exists'] = well_hash_exists
     results_dict['obs_tracker_hash_exists'] = obs_tracker_hash_exists
+    results_dict['obs_tracker_source_hash_exists'] = obs_tracker_source_hash_exists
     results_dict['stats'] = stats
     return results_dict
 
@@ -2983,6 +3063,11 @@ def well_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['New ObsTracker Table'])
     writer.writerow(['obs_tracker_id', 'obs_entity_type', 'experiment_id', 'field_id', 'glycerol_stock_id', 'isolate_id', 'location_id', 'maize_sample_id', 'obs_culture_id', 'obs_dna_id', 'obs_env_id', 'obs_extract_id', 'obs_microbe_id', 'obs_plant_id', 'obs_plate_id', 'obs_row_id', 'obs_sample_id', 'obs_tissue_id', 'obs_well_id', 'stock_id', 'user_id'])
     for key in results_dict['obs_tracker_new'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['New ObsTrackerSource Table'])
+    writer.writerow(['obs_tracker_source_id', 'source_obs_id', 'targe_obs_id', 'relationship'])
+    for key in results_dict['obs_tracker_source_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['---------------------------------------------------------------------------------------------------'])
@@ -3029,6 +3114,10 @@ def well_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['ObsTracker Entry Already Exists'])
     for key in results_dict['obs_tracker_hash_exists'].iterkeys():
         writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['ObsTrackerSource Entries Already Exist'])
+    for key in results_dict['obs_tracker_source_hash_exists'].iterkeys():
+        writer.writerow(key)
     return response
 
 def well_loader(results_dict):
@@ -3046,6 +3135,13 @@ def well_loader(results_dict):
                     new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], glycerol_stock_id=key[4], isolate_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
+                return False
+        for key in results_dict['obs_tracker_source_new'].iterkeys():
+            try:
+                with transaction.atomic():
+                    new_stock = ObsTrackerSource.objects.create(id=key[0], source_obs_id=key[1], target_obs_id=key[2], relationship=key[3])
+            except Exception as e:
+                print("ObsTrackerSource Error: %s %s" % (e.message, e.args))
                 return False
     except Exception as e:
         print("Error: %s %s" % (e.message, e.args))
