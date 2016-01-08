@@ -3,6 +3,7 @@ from django import forms
 from lab.models import UserProfile, Experiment, Field, ObsRow, ObsPlant, Locality, Stock, ObsRow, ObsPlant, ObsSample, ObsEnv, MeasurementParameter, Citation, Medium, Location, DiseaseInfo, FileDump
 from django.contrib.auth.models import User
 from django.core.validators import EmailValidator
+import re
 
 class UserForm(forms.ModelForm):
 	username = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Username'}), help_text="Choose a username:")
@@ -76,6 +77,14 @@ class NewExperimentForm(forms.Form):
 	start_date = forms.DateField(widget=forms.DateInput(attrs={'placeholder':'Start Date'}), help_text="Give a start date in format MM/DD/YYYY:", required=True)
 	purpose = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Purpose'}), help_text="Description of purpose:", required=True)
 	comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Comments', 'rows': '5', 'cols': '20'}), help_text="Any additional comments:", required=False)
+
+	def clean_name(self):
+		data = self.cleaned_data['name']
+		if re.match("^[a-zA-Z0-9]*$", data):
+			return data
+		else:
+			raise forms.ValidationError("Name should contain no special characters, spaces, or underlines!")
+		return data
 
 class NewTreatmentForm(forms.Form):
 	experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---", help_text="Select the experiment:", required=True)
