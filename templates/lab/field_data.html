@@ -6,6 +6,30 @@
   <h1>Field Data</h1>
 </div>
 
+{% if field_map_file %}
+<div class="well">
+  {% for f in field_map_file %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="span6">
+        <center>
+          <img style="max-height:600px" src="{{ f.file.url }}"/>
+        </center>
+      </div>
+      <div class="span6">
+        <h4>{{f.file_name}}</h4>
+        <p>Download: <a href="/lab/download/file_storage/{{f.id}}/">{{f.file}}</a></p>
+        <p>{{f.file.size|filesizeformat}}</p>
+        <p><a href="/lab/profile/{{f.user}}/">{{f.user}}</a>, {{f.date}}</p>
+      </div>
+    </div>
+    <hr>
+  </div>
+
+  {% endfor %}
+</div>
+{% endif %}
+
     <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
       <a href='/lab/log_data/field/'><input class="btn btn-info" type="submit" name="submit" value="Add New Field"/></a>
       <br/><br/>
