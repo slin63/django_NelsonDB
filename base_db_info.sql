@@ -110,8 +110,8 @@ TRUNCATE TABLE `lab_glycerolstock`;
 -- Dumping data for table `lab_glycerolstock`
 --
 
-INSERT INTO `lab_glycerolstock` (`id`, `glycerol_stock_id`, `stock_date`, `extract_color`, `organism`, `comments`) VALUES
-(1, 'No Glycerol Stock', 'No Glycerol Stock', '', '', '');
+INSERT INTO `lab_glycerolstock` (`id`, `associated_isolate_id`, `location_id`, `stock_date`, `extract_color`, `organism`, `comments`) VALUES
+(1, 1, 1, 'No Glycerol Stock', '', '', '');
 
 --
 -- Truncate table before insert `lab_gwasexperimentset`

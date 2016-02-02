@@ -330,16 +330,6 @@ class MaizeSample(models.Model):
   def __unicode__(self):
       return self.maize_id
 
-class GlycerolStock(models.Model):
-  glycerol_stock_id = models.CharField(max_length=200, unique=True)
-  stock_date = models.CharField(max_length=200, blank=True)
-  extract_color = models.CharField(max_length=200, blank=True)
-  organism = models.CharField(max_length=200, blank=True)
-  comments = models.CharField(max_length=1000, blank=True)
-
-  def __unicode__(self):
-      return self.glycerol_stock_id
-
 class DiseaseInfo(models.Model):
   common_name = models.CharField(max_length=200, unique=True)
   abbrev = models.CharField(max_length=200, blank=True)
@@ -359,6 +349,18 @@ class Isolate(models.Model):
 
   def __unicode__(self):
       return self.isolate_id
+
+class GlycerolStock(models.Model):
+  # glycerol_stock_id = models.CharField(max_length=200, unique=True)
+  associated_isolate = models.ForeignKey(Isolate)
+  location = models.ForeignKey(Passport)
+  stock_date = models.CharField(max_length=200, blank=True)
+  extract_color = models.CharField(max_length=200, blank=True)
+  organism = models.CharField(max_length=200, blank=True)
+  comments = models.CharField(max_length=1000, blank=True)
+
+  def __unicode__(self):
+      return self.glycerol_stock_id
 
 class StockPacket(models.Model):
   stock = models.ForeignKey(Stock)
