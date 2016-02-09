@@ -29,11 +29,11 @@ SET time_zone = "+00:00";
 
 TRUNCATE TABLE `auth_user`;
 --
--- Dumping data for table `auth_user`
---
+-- Dumping data for table `auth_user` 
+-- !! Do not use null '0000-00-00 00:00:00' in datetime fields! Throws error if accessed !!
 
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
-(1, '', '0000-00-00 00:00:00', 0, 'unknown_person', 'Unknown', 'Person', '', 0, 0, '0000-00-00 00:00:00'),
+(1, '', '1990-12-25 00:00:00', 0, 'unknown_person', 'Unknown', 'Person', '', 0, 0, '1990-12-25 00:00:00'),
 (2, 'pbkdf2_sha256$12000$Rjx9Y2539UK6$LPk6T47VPLFgNeaMYnwPljlB96Jqvd3QsCelWOkVHrA=', '2015-10-09 15:29:42', 1, 'nick_morales', 'Nicolas', 'Morales', 'nm529@cornell.edu', 1, 1, '2015-10-09 15:27:50');
 
 --
@@ -110,8 +110,8 @@ TRUNCATE TABLE `lab_glycerolstock`;
 -- Dumping data for table `lab_glycerolstock`
 --
 
-INSERT INTO `lab_glycerolstock` (`id`, `associated_isolate_id`, `location_id`, `stock_date`, `extract_color`, `organism`, `comments`) VALUES
-(1, 1, 1, 'No Glycerol Stock', '', '', '');
+INSERT INTO `lab_glycerolstock` (`id`, `glycerol_stock_id`, `associated_isolate_id`, `location_id`, `stock_date`, `extract_color`, `organism`, `comments`) VALUES
+(1, 'No Glycerol Stock', 1, 1, 'No Glycerol Stock', '', '', '');
 
 --
 -- Truncate table before insert `lab_gwasexperimentset`
