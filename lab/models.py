@@ -351,7 +351,7 @@ class Isolate(models.Model):
       return self.isolate_id
 
 class GlycerolStock(models.Model):
-  # glycerol_stock_id = models.CharField(max_length=200, unique=True)
+  glycerol_stock_id = models.CharField(max_length=200, unique=True)
   associated_isolate = models.ForeignKey(Isolate)
   location = models.ForeignKey(Passport)
   stock_date = models.CharField(max_length=200, blank=True)
