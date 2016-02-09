@@ -81,6 +81,7 @@ def about_goals(request):
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('lab/goals.html', context_dict, context)
 
+@login_required
 def about_help(request):
   context = RequestContext(request)
   context_dict = {}
