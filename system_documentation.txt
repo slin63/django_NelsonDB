@@ -25,34 +25,38 @@
 On Ubuntu VM with Apache2
 
 	1. apache conf file, which is found at /etc/apache2/site-available/nelsonlab.conf looks like this:
-	
+
 		<VirtualHost *:80>
-		ServerAdmin root@euca-128-84-9-141.instances.redcloud.cac.cornell.edu
-		ServerName euca-128-84-9-141.instances.redcloud.cac.cornell.edu
+		ServerAdmin slin63@illinois.edu
+		# Tentative
+		ServerName fcpathology.cropsci.illinois.edu
 
-		Alias /media/ /srv/nelsondb/app/webapp/media/
-		Alias /static/ /srv/nelsondb/app/webapp/static/
-		Alias /robots.txt /srv/nelsondb/app/webapp/media/robots.txt
-		Alias /favicon.ico /srv/nelsondb/app/webapp/media/favicon.ico
+		# Original
+		#ServerName euca-128-84-9-141.instances.redcloud.cac.cornell.edu
 
-		CustomLog "|/usr/bin/rotatelogs /srv/nelsondb/logs/access.log.%Y%m%d-%H%M%S 5M" combined
-		ErrorLog "|/usr/bin/rotatelogs /srv/nelsondb/logs/error.log.%Y%m%d-%H%M%S 5M"
-		LogLevel info
+		Alias /media/ /var/www/FCPprodtest/media/
+		Alias /static/ /var/www/FCPprodtest/static/
+		Alias /robots.txt /var/www/FCPprodtest/media/robots.txt
+		Alias /favicon.ico /var/www/FCPprodtest/media/favicon.ico
 
-		WSGIDaemonProcess euca-128-84-9-141.instances.redcloud.cac.cornell.edu user=web_user group=web_user processes=1 threads=15 maximum-requests=10000 python-path=/srv/nelsondb/venv/lib/python2.7/site-packages python-eggs=/srv/nelsondb/run/eggs
-		WSGIProcessGroup euca-128-84-9-141.instances.redcloud.cac.cornell.edu
-		WSGIScriptAlias / /srv/nelsondb/app/conf/apache/django.wsgi
+		WSGIScriptAlias / /var/www/FCPprodtest/webapp/wsgi.py
 
+		#Doesn't work in Daemon mode, specify in WSGIDaemonProcess instead
+		#WSGIPythonPath /var/www/FCPprodtest/:/var/www/FCPprodtest/env/lib/pyt$
 
-		<directory /srv/nelsondb/app/webapp/static>
-		Require all granted
-		</directory>
+		WSGIDaemonProcess fcpathology.cropsci.illinois.edu python-path=var/www/FCPprodtest:/var/www/FCPprodtest/env/lib/python2.7/site-packages
+		WSGIProcessGroup fcpathology.cropsci.illinois.edu
 
-		<Directory /srv/nelsondb/app/conf/apache>
+		# ALL TAGS ARE CAPS-SENSITIVE!
+		<Directory /var/www/FCPprodtest/static>
 		Require all granted
 		</Directory>
 
-		<Directory /srv/nelsondb/app/webapp/media>
+		<Directory /var/www/FCPprodtest/webapp>
+		Require all granted
+		</Directory>
+
+		<Directory /var/www/FCPprodtest/media>
 		Require all granted
 		</Directory>
 
@@ -64,15 +68,16 @@ On Ubuntu VM with Apache2
 		import os
 		import sys
 
-		root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
-		sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'venv/lib/python2.7/site-packages/')))
-		sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'app')))
-		sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'app', 'webapp')))
+		# root_path should return /path/to/site_directory
+		root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+		# Should lead to site-packages
+		sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'env/lib/python2.7/site-packages/')))
+
+		sys.path.insert(0, os.path.abspath(os.path.join(root_path)))
+		sys.path.insert(0, os.path.abspath(os.path.join(root_path, 'webapp')))
 
 		os.environ['DJANGO_SETTINGS_MODULE'] = 'webapp.settings'
-
-		#  import django.core.handlers.wsgi
-		#  application = django.core.handlers.wsgi.WSGIHandler()
 
 		from django.core.wsgi import get_wsgi_application
 		application = get_wsgi_application()
