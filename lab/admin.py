@@ -19,3 +19,9 @@ admin.site.register(User, UserAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(UploadQueue, UploadQueueAdmin)
 admin.site.register(Experiment, ExperimentAdmin)
+
+
+# Test registrations
+from lab.models import GlycerolStock
+
+admin.site.register(GlycerolStock)
