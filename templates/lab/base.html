@@ -40,10 +40,10 @@
 						   {% endif %}
 					   </ul>
 					   <ul class="nav">
-								<!--
+                                {% if logged_in_user %}
 								<li><a href="/lab/new_experiment/">New Experiment</a></li>
 								<li><a href="/lab/new_treatment/">Add Treatment</a></li>
-								-->
+                                {% endif %}
 								<li><a href="/lab/log_data/select_obs/">Load Data</a></li>
 								<li><a href="/lab/file_storage/">File Storage</a></li>
 					   </ul>
@@ -56,7 +56,7 @@
 			<div class="row-fluid">
 				<div class="span2">
 					<div class="well sidebar-nav">
-						<div style="margin-left:-5px; overflow:hidden">
+						<div style="margin-left:-10px;">
 							<h5>Search</h5>
 							<form id="sidebar_search_form" action="/lab/sidebar_search_results/" method="post">
 								{% csrf_token %}
@@ -73,9 +73,9 @@
 								<li class="nav-list"><a href='http://www.plantpath.cornell.edu/labs/nelson_r/index.html'>Lab Page</a></li>
 								<li class="nav-list"><a href='/lab/about/people/all/'>People</a></li>
 								<li class="nav-list"><a href='/lab/about/odk/'>Open Data Kit</a></li>
-								<!--
-								<li class="nav-list"><a href='/lab/about/goals/'>Goals</a></li>
-							-->
+								
+<!--								<li class="nav-list"><a href='/lab/about/goals/'>Goals</a></li>-->
+							
 							</ul>
 							<br/>
 							<ul class="nav nav-list">
@@ -89,10 +89,10 @@
 							</ul>
 							<br/>
 							<ul class="nav nav-list">
-								<li class="nav-header"><h4>Browse Data</h4></li>
+								<li class="nav-header"><h4>Utilities</h4></li>
 								<li class="nav-list"><a href='/lab/experiment/search/'>Find an Experiment</a></li>
 								<li class="nav-list"><a href='/lab/query/'>Query Builder</a></li>
-								<li>&nbsp;</li>
+                                <li class="nav-header"><h4>Browse Data</h4></li>
 								<li class="nav-list"><a href='/lab/data/maize/'>Maize Survey Data</a></li>
 								<li class="nav-list"><a href='/lab/data/separation/'>Separations Data</a></li>
 								<li class="nav-list"><a href='/lab/data/row/'>Row Data</a></li>
@@ -105,10 +105,8 @@
 								<li class="nav-list"><a href='/lab/data/microbe/'>Microbe Data</a></li>
 								<li class="nav-list"><a href='/lab/data/sample/'>Samples Data</a></li>
 								<li class="nav-list"><a href='/lab/data/environment/'>Environment Data</a></li>
-								<li>&nbsp;</li>
 								<li class="nav-list"><a href='/lab/data/measurement/'>Measurement Data</a></li>
 								<li class="nav-list"><a href='/lab/data/genotype/'>Genotypic Data</a></li>
-								<li>&nbsp;</li>
 								<li class="nav-list"><a href='/lab/data/medium/'>Medium Data</a></li>
 								<li class="nav-list"><a href='/lab/data/measurement_parameter/'>Parameter Data</a></li>
 								<li class="nav-list"><a href='/lab/data/location/'>Storage Location Data</a></li>
@@ -131,29 +129,9 @@
 						-->
 							<br/>
 							<ul class="nav nav-list">
-								<li class="nav-header"><h4>MetaMaize</h4></li>
-								<li class="nav-list"><a href='/metamaize/pedigree/'>Pedigree</a></li>
-								<li class="nav-list"><a href='/metamaize/row/'>Row</a></li>
-								<li class="nav-list"><a href='/metamaize/culture/'>Culture</a></li>
-								<li class="nav-list"><a href='/metamaize/tissue/'>Tissue</a></li>
-								<li class="nav-list"><a href='/metamaize/medium/'>Medium</a></li>
-								<li class="nav-list"><a href='/metamaize/fixed_queries/'>Queries</a></li>
-							</ul>
-							<br/>
-							<ul class="nav nav-list">
-								<li class="nav-header"><h4>Legacy Data</h4></li>
-								<li class="nav-list"><a href='/legacy/experiment/'>Experiment</a></li>
-								<li class="nav-list"><a href='/legacy/markers/'>Markers</a></li>
-								<li class="nav-list"><a href='/legacy/seed/'>Seed</a></li>
-								<li class="nav-list"><a href='/legacy/row/'>Row</a></li>
-								<li class="nav-list"><a href='/legacy/genotype/'>Genotype</a></li>
-								<li class="nav-list"><a href='/legacy/tissue/'>Tissue</a></li>
-							</ul>
-							<br/>
-							<ul class="nav nav-list">
 								<li class="nav-header"><h4>Resources</h4></li>
 								<li class="nav-list"><a href='/lab/data/publication/'>Publications</a></li>
-								<li class="nav-list"><a href='http://newa.cornell.edu/'>Weather Station</a></li>
+								<li class="nav-list"><a href='https://www.atmos.illinois.edu/weather/'>Weather Station</a></li>
 								<li class="nav-list"><a href='http://www.aphis.usda.gov/wps/portal/aphis/home'>APHIS</a></li>
 								<li class="nav-list"><a href='/lab/data/downloads/'>Downloads</a></li>
 								<li class="nav-list"><a href='/lab/site_map/'>Site Map</a></li>

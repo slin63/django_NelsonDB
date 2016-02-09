@@ -10,19 +10,19 @@
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
   <h3>How To Login</h3>
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <p><a href='http://nelsonlab.cac.cornell.edu/lab/login/'>nelsonlab.cac.cornell.edu/lab/login/</a></p>
+  <p><a href="{% url 'login' %}">Field Crop Pathology Login</a></p>
   <br/>
   <p>If you were a member of the lab before the transition to the new online database:</p>
   <br/>
-  <p>1. Your username should be firstname_lastname, but to verify your username go to <a href='http://nelsonlab.cac.cornell.edu/lab/about/people/all/'>nelsonlab.cac.cornell.edu/lab/about/people/all/</a> and find your profile.</p>
+  <p>1. Your username should be firstname_lastname, but to verify your username go to <a href="{% url 'about_people' 'all' %}">our staff about page</a> and find your profile.</p>
   <p>2. Click Login in the top right corner of the website.</p>
-  <p>3. Email nm529@cornell.edu for your default password. Use your username and password to login.</p>
-  <p>4. Change your default password ASAP by going to <a href='http://nelsonlab.cac.cornell.edu/lab/change_password/'>nelsonlab.cac.cornell.edu/lab/change_password/</a></p>
-  <br/>
-  <p>*****Important*****</p>
-  <p>Please change your password ASAP by going to <a href='http://nelsonlab.cac.cornell.edu/lab/change_password/'>nelsonlab.cac.cornell.edu/lab/change_password/</a></p>
+  <p>3. Email slin63@illinois.edu or smideros@illinois.edu for your default password. Use your username and password to login.</p>
+  <p>4. Change your default password ASAP by going to <a href="{% url 'profile_change_password' %}">the password change</a> portion of your profile page.</p>
+  <br/> 
+  <h4>Important!</h4>
+  <p>Please change your password ASAP by going to <a href="{% url 'profile_change_password' %}">your profile page.</a></p>
   <p>More info found in sections below.</p>
-  <p>*******************</p>
+  
   <br/>
   <p>If you are a new member of the lab:</p>
   <br/>
@@ -33,7 +33,7 @@
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
   <h3>How To Edit Your Profile</h3>
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <p><a href='http://nelsonlab.cac.cornell.edu/lab/profile/'>nelsonlab.cac.cornell.edu/lab/profile/</a></p>
+  <p><a href="{% url 'profile' user.username %}">Click to access the profile page</a></p>
   <br/>
   <p>1. You must first login to edit your profile.</p>
   <p>2. Click "Profile" in the top right corner of the website.</p>
@@ -43,7 +43,7 @@
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
   <h3>How To Change Your Password</h3>
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <p><a href='http://nelsonlab.cac.cornell.edu/lab/change_password/'>nelsonlab.cac.cornell.edu/lab/change_password/</a></p>
+  <p><a href="{% url 'profile_change_password' %}">Click to change your password</a></p>
   <br/>
   <p>1. You must first login to change your password.</p>
   <p>2. Click "Profile" in the top right corner of the website.</p>
@@ -67,7 +67,7 @@
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
   <h3>How To Use "Seed Inventory"</h3>
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <p><a href='http://nelsonlab.cac.cornell.edu/lab/seed_inventory/'>nelsonlab.cac.cornell.edu/lab/seed_inventory/</a></p>
+  <p><a href="{% url 'seed_inventory' %}">Click to access the seed inventory</a></p>
   <br/>
   <p>Searching for a specific Seed ID</p>
 
@@ -92,7 +92,7 @@
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
   <h3>How To Use "Isolate Inventory"</h3>
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <p><a href='http://nelsonlab.cac.cornell.edu/lab/isolate_inventory/'>nelsonlab.cac.cornell.edu/lab/isolate_inventory/</a></p>
+  <p><a href="{% url 'isolate_inventory' %}">Click to access the isolate inventory</a></p>
   <br/>
   <p>Filtering through Isolate Info to find Inventoried Isolates</p>
 
@@ -107,7 +107,7 @@
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
   <h3>How To Use "Find an Experiment"</h3>
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <p><a href='http://nelsonlab.cac.cornell.edu/lab/experiment/search/'>nelsonlab.cac.cornell.edu/lab/experiment/search/</a></p>
+  <p><a href="{% url 'experiment' 'search' %}">Click to search available experiments</a></p>
   <br/>
   <p>1. A table listing all experiments is shown.</p>
   <p>2. You can search using the "Search" box.</p>
@@ -137,10 +137,11 @@
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
   <h3>How To Use "Browse Row Data", "Browse Plant Data", "Browse Samples Data", "Browse Measurement Data"</h3>
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <p><a href='http://nelsonlab.cac.cornell.edu/lab/data/row/'>nelsonlab.cac.cornell.edu/lab/data/row/</a></p>
-  <p><a href='http://nelsonlab.cac.cornell.edu/lab/data/plant/'>nelsonlab.cac.cornell.edu/lab/data/plant/</a></p>
-  <p><a href='http://nelsonlab.cac.cornell.edu/lab/data/samples/'>nelsonlab.cac.cornell.edu/lab/data/samples/</a></p>
-  <p><a href='http://nelsonlab.cac.cornell.edu/lab/data/measurement/'>nelsonlab.cac.cornell.edu/lab/data/measurement/</a></p>
+  
+  <p><a href="{% url 'row_data_browse' %}">Row Data</a></p>
+  <p><a href="{% url 'plant_data_browse' %}">Plant Data</a></p>
+  <p><a href="{% url 'sample_data_browse' %}">Sample Data</a></p>
+  <p><a href="{% url 'measurement_data_browse' %}">Measurement Data</a></p>
   <br/>
   <p>1. These pages allow you to easily view data sets across different experiments.</p>
   <p>2. Enter an experiment name in the "Select Experiments" box, or click "Show all Experiments"</p>
@@ -155,7 +156,7 @@
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
   <h3>How To Use "Query Builder"</h3>
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <p><a href='http://nelsonlab.cac.cornell.edu/lab/query/'>nelsonlab.cac.cornell.edu/lab/query/</a></p>
+  <p><a href="{% url 'query_builder' %}">Click to access the query builder</a></p>
   <br/>
   <p>The Query Builder allows greater flexibility in querying the database.</p>
   <br/>
@@ -179,21 +180,9 @@
   <p>*******************</p>
 
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <h3>What is the "MetaMaize" Section on the left bar?</h3>
-  <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-
-  <p>MetaMaize is a project that currently has its own separate database.</p>
-  <p>Its database is not directly connected with the NelsonLab database tables.</p>
-  <p>Future plans are to merge the data from the MetaMaize database into the NelsonLab database tables.</p>
-  <br/>
-  <p>For example:</p>
-  <p>&nbsp;&nbsp;&nbsp;- The MetaMaize Row Data will be merged with the overall Row Data</p>
-  <p>&nbsp;&nbsp;&nbsp;- The MetaMaize Tissue Data, Culture Data, and Medium Data will be merged with the overall Tissue Data, Culture Data, and Medium Data</p>
-
-  <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
   <h3>How To Add A New Experiment</h3>
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <p><a href='http://nelsonlab.cac.cornell.edu/lab/new_experiment/'>nelsonlab.cac.cornell.edu/lab/new_experiment/</a></p>
+  <p><a href="{% url 'new_experiment' %}">Click to add a new experiment</a></p>
   <br/>
   <p>1. You must first login to submit a new experiment.</p>
   <p>2. Click "New Experiment" in the top header bar.</p>
@@ -203,7 +192,7 @@
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
   <h3>How To Add A New Treatment to an Experiment</h3>
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <p><a href='http://nelsonlab.cac.cornell.edu/lab/new_treatment/'>nelsonlab.cac.cornell.edu/lab/new_treatment/</a></p>
+  <p><a href="{% url 'new_treatment' %}">Click to add a new treatment</a></p>
   <br/>
   <p>1. You must first login to submit a new treatment.</p>
   <p>2. Click "Add Treatment" in the top header bar.</p>
@@ -213,7 +202,7 @@
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
   <h3>How To Add New Data to an Experiment</h3>
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <p><a href='http://nelsonlab.cac.cornell.edu/lab/log_data/select_obs/'>nelsonlab.cac.cornell.edu/lab/log_data/select_obs/</a></p>
+  <p><a href="{% url 'log_data_select_obs' %}">Click to log data</a></p>
   <br/>
   <p>1. You must first login to add data.</p>
   <p>2. Click "Log Data" in the top header bar.</p>
@@ -235,7 +224,7 @@
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
   <h3>How will the Curator Add Data to the Database?</h3>
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <p><a href='http://nelsonlab.cac.cornell.edu/admin/'>nelsonlab.cac.cornell.edu/admin/</a></p>
+  <p><a href="/admin/">Click to access the admin page</a></p>
   <br/>
   <p>1. Click on "Django" in the Admin section on the bottom of the left bar.</p>
   <p>2. Login to the Admin page. To get admin credentials, contact an administrator.</p>
@@ -247,19 +236,5 @@
   <p>Validation and data loading scripts still need to be developed.</p>
   <p>*******************</p>
 
-  <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <h3>How can advanced users access the database directly?</h3>
-  <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <p><a href='http://nelsonlab.cac.cornell.edu/phpmyadmin/'>nelsonlab.cac.cornell.edu/phpmyadmin/</a></p>
-  <br/>
-  <p>1. Click on "PHPMyAdmin" in the Admin section on the bottom of the left bar.</p>
-  <p>2. Login to the Database. To get admin credentials, contact an administrator.</p>
-  <br/>
-  <p>*****IMPORTANT*****</p>
-  <p>This page gives direct access to the database.</p>
-  <p>Users can add, edit, and delete data easily.</p>
-  <p>Users can add, edit, and delete tables easily.</p>
-  <p>*******************</p>
-</div>
 
 {% endblock %}
