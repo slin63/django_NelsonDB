@@ -20,6 +20,8 @@ TEMPLATE_PATH = os.path.join(PROJECT_PATH, 'templates')
 
 MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
 
+ADMIN_CONTACT = "slin63@illinois.edu"
+
 #-------------------PROD SETTINGS ------------------
 STATIC_ROOT = os.path.join(PROJECT_PATH,'static')
 #--------------------------------------------------
