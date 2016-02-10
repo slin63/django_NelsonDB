@@ -33,7 +33,11 @@
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
   <h3>How To Edit Your Profile</h3>
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <p><a href="{% url 'profile' user.username %}">Click to access the profile page</a></p>
+  {% if user.username %}
+    <p><a href="{% url 'profile' user.username %}">Click to access the profile page</a></p>
+  {% else %}
+    <p>You need to <a href="{% url 'login' %}">login</a> to access your profile</p>
+  {% endif %}
   <br/>
   <p>1. You must first login to edit your profile.</p>
   <p>2. Click "Profile" in the top right corner of the website.</p>
