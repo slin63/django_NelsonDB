@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
+from django.db.models import ObjectDoesNotExist
 
 def about_people(request, people_selection):
   context = RequestContext(request)
@@ -18,9 +19,13 @@ def about_people(request, people_selection):
     people_collaborator_button = None
     users = User.objects.all().exclude(username='NULL').exclude(username='unknown_person').exclude(username='unknown')
     for user in users:
-      user_profile = UserProfile.objects.get(user=user)
-      user.job_title = user_profile.job_title
-      user.picture = user_profile.picture
+      try: 
+        user_profile = UserProfile.objects.get(user=user)
+        user.job_title = user_profile.job_title
+        user.picture = user_profile.picture
+      except ObjectDoesNotExist:
+        pass
+
   elif people_selection == 'staff':
     people_all_button = None
     people_staff_button = True
@@ -81,7 +86,6 @@ def about_goals(request):
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('lab/goals.html', context_dict, context)
 
-@login_required
 def about_help(request):
   context = RequestContext(request)
   context_dict = {}
