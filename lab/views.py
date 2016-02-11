@@ -5157,6 +5157,16 @@ def log_data_online(request, data_type):
 			sent = False
 			log_data_online_form_set = LogDataOnlineFormSet
 
+	# If url does not fall under lab/data directory: goes here
+	data_type_to_url = { 
+	'seed_packet': 'seed_inventory', 'seed_inventory':'seed_inventory', 
+	'disease': 'data/disease_info/', 'isolate': 'isolate_inventory', 
+	'glycerol_stock': 'glycerol_stock'
+	}
+
+	# 'data_url' handles the redirect link after a form has been successfully completed.
+	if data_type in ['seed_packet', 'disease', 'isolate', 'glycerol_stock', 'seed_inventory']:
+		context_dict['data_url'] = data_type_to_url[data_type]
 	context_dict['log_data_online_form_set'] = log_data_online_form_set
 	context_dict['data_type'] = data_type
 	context_dict['failed'] = failed

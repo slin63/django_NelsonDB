@@ -17,10 +17,19 @@
     {% endif %}
 
     {% if sent %}
-    {% if failed %}
+    
+      {% if failed %}
     <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Data Was Not Saved to the Database!<br/>&nbsp;</h4>
-    {% else %}
-    <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Data Was Saved to the Database!<br/>&nbsp;</h4>
+    
+      {% else %}
+    
+      {% if data_url %}
+    <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Successful upload! <a href="/lab/{{data_url}}">Click to return to the {{data_type|capfirst}} table.</a><br/>&nbsp;</h4>
+    
+      {% else %}
+    <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Successful upload! <a href="/lab/data/{{data_type}}">Click to return to the {{data_type}} table.</a><br/>&nbsp;</h4>
+      {% endif %}
+      
     {% endif %}
     {% endif %}
 
