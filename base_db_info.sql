@@ -110,7 +110,7 @@ TRUNCATE TABLE `lab_glycerolstock`;
 -- Dumping data for table `lab_glycerolstock`
 --
 
-INSERT INTO `lab_glycerolstock` (`id`, `glycerol_stock_id`, `associated_isolate_id`, `location_id`, `stock_date`, `extract_color`, `organism`, `comments`) VALUES
+INSERT INTO `lab_glycerolstock` (`id`, `glycerol_stock_id`, `glycerol_location_id`, `associated_isolate_id`,  `stock_date`, `extract_color`, `organism`, `comments`) VALUES
 (1, 'No Glycerol Stock', 1, 1, 'No Glycerol Stock', '', '', '');
 
 --

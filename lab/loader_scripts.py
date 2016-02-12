@@ -1,4 +1,6 @@
-
+"""
+Handles data input through uploaded .csv forms
+"""
 import csv
 from collections import OrderedDict
 import time
