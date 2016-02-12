@@ -4957,7 +4957,7 @@ def log_data_online(request, data_type):
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	if data_type == 'glycerol_stock':
-		data_type_title = 'Load Isolate Stock Info'
+		data_type_title = 'Load Glycerol Stock Info'  # This used to stay Load Isolate Stock Info? Confused -slin63
 		LogDataOnlineFormSet = formset_factory(LogGlycerolStocksOnlineForm, extra=10)
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
