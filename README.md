@@ -1,8 +1,5 @@
 django_NelsonDB
 ===============
 
-Django front-end for Nelson lab DB http://nelsonlab.cac.cornell.edu/
-
-Please read Documentation.txt file for setup information.
-
-Documentation for the code is in progress. 
+An online database originally developed by Nelson Lab at Cornell and adopted for use by Field Crop Pathology at UIUC.
+Documentation available at https://drive.google.com/folderview?id=0B5gz9ZDwT2_IbnM5M2FiZ3hBdU0&usp=sharing
