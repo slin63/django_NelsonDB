@@ -363,6 +363,12 @@ def find_stock_collected_from_experiment(experiment_name):
 	return collected_stock_data
 
 def datatable_seed_inventory(request):
+	"""
+	::url:: = lab/datatable/seed_inventory/
+	::func:: = Parses information passed from checkbox_seed_inventory_sort
+	and displays database info in JSON format
+	::html:: = self-generated / JsonResponse
+	"""
 	selected_stocks = []
 	(selected_stocks, return_type) = checkbox_seed_inventory_sort(request)
 	count = 0
@@ -395,6 +401,12 @@ def datatable_seed_inventory(request):
 	return JsonResponse({'data':arr, 'count':count}, safe=True)
 
 def unique_selected_stocks(selected_stocks):
+	"""
+	::url:: = None
+	::func:: = Contacts OBS tracker and makes sure stocks in a passed list are only
+	parsed by datatable_seed_inventory once
+	::html:: = None
+	"""
 	unique_seed_id = []
 	unique_stock_list = []
 	for s in selected_stocks:
@@ -404,6 +416,11 @@ def unique_selected_stocks(selected_stocks):
 	return unique_stock_list
 
 def checkbox_seed_inventory_sort(request):
+	"""
+	::url:: = None
+	::func:: = Returns sorted JSON information to be iterated through by datatable_seed_inventory
+	::html:: = None
+	"""
 	selected_stocks = {}
 	checkbox_taxonomy_list = []
 	checkbox_pedigree_list = []
@@ -515,6 +532,11 @@ def checkbox_session_variable_check(request):
 
 @login_required
 def seed_inventory(request):
+	"""
+	::url:: = /iso_inventory/ - To change
+	::func:: = Renders view for the seed inventory page
+	::html:: = seed_inventory.html
+	"""
 	context = RequestContext(request)
 	context_dict = {}
 	context_dict = checkbox_session_variable_check(request)
@@ -679,18 +701,37 @@ def suggest_taxonomy(request):
 	return JsonResponse({'data':taxonomy_list})
 
 def select_pedigree(request):
+	"""
+	::url:: = /seed_inventory/select_pedigree/ - To change
+	::func:: = Supporting function for the pedigree search table in seed_inventory
+	::ajax:: = $('#select_pedigree_form_submit')
+	::html:: = Used in seed_inventory.html
+	"""
 	pedigrees = request.POST['pedigrees']
 	pedigree_list = json.loads(pedigrees)
 	request.session['checkbox_pedigree'] = pedigree_list
 	return JsonResponse({'success':True})
 
 def select_taxonomy(request):
+	"""
+	::url:: = /seed_inventory/select_taxonomy/ - To change
+	::func:: = Supporting function for the Population (taxonomy) search table in seed_inventory
+	::ajax:: = $('#select_taxonomy_form_submit').
+	::html:: = isolate_source_list.html, seed_inventory.html
+	::NOTES:: = Native cross functionality with Isolate Stock pages
+	"""
 	taxonomy = request.POST['taxonomy']
 	taxonomy_list = json.loads(taxonomy)
 	request.session['checkbox_taxonomy'] = taxonomy_list
 	return JsonResponse({'success':True})
 
 def select_seedinv_parameters(request):
+	"""
+    ::url:: = seed_inventory/select_parameters/$
+    ::func:: = Supporting function for the parameter search table in seed_inventory
+    ::ajax:: = $('#select_seedinv_parameters_form_submit')
+    ::html:: = seed_inventory.html
+    """
 	parameters = request.POST['parameters']
 	parameters_list = json.loads(parameters)
 	request.session['checkbox_seedinv_parameters'] = parameters_list
@@ -1203,6 +1244,11 @@ def edit_info(request, obj_type, obj_id):
 		return render_to_response('lab/edit_taxonomy.html', context_dict, context)
 
 def select_stockpacket_from_stock(request):
+	"""
+    ::url:: seed_inventory/select_stocks/
+    ::func:: Deprecated, replaced by upload_online, log_data_online,
+    ::html:: stock.html
+    """
 	context = RequestContext(request)
 	context_dict = {}
 	selected_packets = []
@@ -3679,6 +3725,11 @@ def get_seed_collected_from_row(obs_type, obs_id):
 
 @login_required
 def single_stock_info(request, stock_id):
+	"""
+    ::url:: = stock/(?P<stock_id>\d+)
+    ::func:: = Renders tables for stock information and for related stock packets
+    ::html:: = stock_info.html
+    """
 	context = RequestContext(request)
 	context_dict = {}
 	obs_tracker_seed = []
@@ -5158,9 +5209,9 @@ def log_data_online(request, data_type):
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	# If url does not fall under lab/data directory: goes here
-	data_type_to_url = { 
-	'seed_packet': 'seed_inventory', 'seed_inventory':'seed_inventory', 
-	'disease': 'data/disease_info/', 'isolate': 'isolate_inventory', 
+	data_type_to_url = {
+	'seed_packet': 'seed_inventory', 'seed_inventory':'seed_inventory',
+	'disease': 'data/disease_info/', 'isolate': 'isolate_inventory',
 	'glycerol_stock': 'glycerol_stock'
 	}
 
@@ -5237,6 +5288,11 @@ def queue_upload_file(request, data_type):
 
 @login_required
 def seed_id_search(request):
+	"""
+    ::url:: = seed_inventory/seed_id_search/
+    ::func:: = Handles search box named `Search Seed Info`
+    ::html:: = seed_id_search_list.html
+    """
 	context = RequestContext(request)
 	context_dict = {}
 	seed_id_list = []

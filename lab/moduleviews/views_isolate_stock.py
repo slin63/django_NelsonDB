@@ -13,13 +13,19 @@ from django.http import JsonResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-from lab.views import checkbox_session_variable_check
+from lab.views import checkbox_session_variable_check, get_obs_tracker, get_obs_source, get_obs_measurements
 from lab.forms import LogStockPacketOnlineForm, UpdateSeedDataOnlineForm
 from lab.models import Passport, Stock, StockPacket, Taxonomy, People, Collecting, Location, ObsRow, ObsPlant, \
-    ObsTracker, Measurement
+    ObsTracker, Measurement, Isolate
 
 
 def datatable_seed_inventory(request):
+    """
+    ::url:: = lab/datatable/seed_inventory/
+    ::func:: = Parses information passed from checkbox_seed_inventory_sort
+    and displays database info in JSON format
+    ::html:: = self-generated / JsonResponse
+    """
     selected_stocks = []
     (selected_stocks, return_type) = checkbox_seed_inventory_sort(request)
     count = 0
@@ -53,6 +59,11 @@ def datatable_seed_inventory(request):
 
 
 def checkbox_seed_inventory_sort(request):
+    """
+    ::url:: = None
+    ::func:: = Returns sorted JSON information to be iterated through by datatable_seed_inventory
+    ::html:: = None
+    """
     selected_stocks = {}
     checkbox_taxonomy_list = []
     checkbox_pedigree_list = []
@@ -124,6 +135,12 @@ def checkbox_seed_inventory_sort(request):
 
 
 def unique_selected_stocks(selected_stocks):
+    """
+    ::url:: = None
+    ::func:: = Contacts OBS tracker and makes sure stocks in a passed list are only
+    parsed by datatable_seed_inventory once
+    ::html:: = None
+    """
     unique_seed_id = []
     unique_stock_list = []
     for s in selected_stocks:
@@ -139,8 +156,13 @@ def unique_selected_stocks(selected_stocks):
     return unique_stock_list
 
 
+@login_required
 def seed_inventory(request):
-    """::template:: seed_inventory.html"""
+    """
+    ::url:: = /iso_inventory/ - To change
+    ::func:: = Renders view for the seed inventory page
+    ::html:: = seed_inventory.html
+    """
     context = RequestContext(request)
     context_dict = {}
     context_dict = checkbox_session_variable_check(request)
@@ -149,6 +171,12 @@ def seed_inventory(request):
 
 
 def select_pedigree(request):
+    """
+    ::url:: = /seed_inventory/select_pedigree/ - To change
+    ::func:: = Supporting function for the pedigree search table in seed_inventory
+    ::ajax:: = $('#select_pedigree_form_submit')
+    ::html:: = Used in seed_inventory.html
+    """
     pedigrees = request.POST['pedigrees']
     pedigree_list = json.loads(pedigrees)
     request.session['checkbox_pedigree'] = pedigree_list
@@ -156,6 +184,13 @@ def select_pedigree(request):
 
 
 def select_taxonomy(request):
+    """
+    ::url:: = /seed_inventory/select_taxonomy/ - To change
+    ::func:: = Supporting function for the Population (taxonomy) search table in seed_inventory
+    ::ajax:: = $('#select_taxonomy_form_submit').
+    ::html:: = isolate_source_list.html, seed_inventory.html
+    ::NOTES:: = Native cross functionality with Isolate Stock pages
+    """
     taxonomy = request.POST['taxonomy']
     taxonomy_list = json.loads(taxonomy)
     request.session['checkbox_taxonomy'] = taxonomy_list
@@ -163,6 +198,12 @@ def select_taxonomy(request):
 
 
 def select_seedinv_parameters(request):
+    """
+    ::url:: = seed_inventory/select_parameters/$
+    ::func:: = Supporting function for the parameter search table in seed_inventory
+    ::ajax:: = $('#select_seedinv_parameters_form_submit')
+    ::html:: = seed_inventory.html
+    """
     parameters = request.POST['parameters']
     parameters_list = json.loads(parameters)
     request.session['checkbox_seedinv_parameters'] = parameters_list
@@ -170,7 +211,11 @@ def select_seedinv_parameters(request):
 
 
 def select_stockpacket_from_stock(request):
-    """::template:: stock.html"""
+    """
+    ::url:: seed_inventory/select_stocks/
+    ::func:: Deprecated, replaced by upload_online, log_data_online,
+    ::html:: stock.html
+    """
     context = RequestContext(request)
     context_dict = {}
     selected_packets = []
@@ -182,10 +227,13 @@ def select_stockpacket_from_stock(request):
     context_dict = checkbox_session_variable_check(request)
     context_dict['selected_packets'] = selected_packets
     context_dict['logged_in_user'] = request.user.username
-    return render_to_response('lab/isolatestock/isolatestock/stock.html', context_dict, context)
+    return render_to_response('lab/isolatestock/stock.html', context_dict, context)
 
 
 def suggest_pedigree(request):
+    """
+    ::func:: deprecated
+    """
     pedigree_list = []
     starts_with = ''
     if request.method == 'GET':
@@ -196,21 +244,24 @@ def suggest_pedigree(request):
         if request.session.get('checkbox_taxonomy', None):
             checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
             for taxonomy in checkbox_taxonomy_list:
-                pedigree = Stock.objects.filter(pedigree__contains=starts_with,
-                                                passport__taxonomy__population=taxonomy).values('pedigree',
-                                                                                                'passport__taxonomy__population').distinct()
+                pedigree = Stock.objects.filter(
+                    pedigree__contains=starts_with,
+                    passport__taxonomy__population=taxonomy).values('pedigree','passport__taxonomy__population').distinct()
                 pedigree_list = list(chain(pedigree, pedigree_list))
             for p in pedigree_list:
                 p['input'] = '<input type="checkbox" name="checkbox_pedigree" value="%s">' % (p['pedigree'])
         else:
-            pedigree_list = list(Stock.objects.filter(pedigree__contains=starts_with).values('pedigree',
-                                                                                             'passport__taxonomy__population').distinct())
+            pedigree_list = list(Stock.objects.filter(pedigree__contains=starts_with).values(
+                'pedigree', 'passport__taxonomy__population').distinct())
             for p in pedigree_list:
                 p['input'] = '<input type="checkbox" name="checkbox_pedigree" value="%s">' % (p['pedigree'])
     return JsonResponse({'data': pedigree_list})
 
 
 def suggest_taxonomy(request):
+    """
+    ::Deprecated::
+    """
     taxonomy_list = []
     starts_with = ''
     if request.method == 'GET':
@@ -221,10 +272,10 @@ def suggest_taxonomy(request):
         if request.session.get('checkbox_pedigree', None):
             checkbox_pedigree_list = request.session.get('checkbox_pedigree')
             for pedigree in checkbox_pedigree_list:
-                taxonomy = Stock.objects.filter(pedigree=pedigree,
-                                                passport__taxonomy__population__contains=starts_with).values('pedigree',
-                                                                                                             'passport__taxonomy__population',
-                                                                                                             'passport__taxonomy__species').distinct()
+                taxonomy = Stock.objects.filter(
+                    pedigree=pedigree,
+                    passport__taxonomy__population__contains=starts_with).values(
+                    'pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()
                 taxonomy_list = list(chain(taxonomy, taxonomy_list))
             for t in taxonomy_list:
                 t['input'] = '<input type="checkbox" name="checkbox_taxonomy" value="%s">' % (
@@ -242,6 +293,9 @@ def suggest_taxonomy(request):
 
 
 def seedinv_suggest_parameters(request):
+    """
+    ::func:: Not needed
+    """
     parameter_list = []
     starts_with = ''
     if request.method == 'GET':
@@ -306,6 +360,9 @@ def seedinv_suggest_parameters(request):
 
 
 def show_all_seedinv_taxonomy(request):
+    """
+    ::func:: Replace with show_all_isolate_taxonomy
+    """
     taxonomy_list = []
     if request.session.get('checkbox_pedigree', None):
         checkbox_pedigree_list = request.session.get('checkbox_pedigree')
@@ -327,6 +384,9 @@ def show_all_seedinv_taxonomy(request):
 
 
 def show_all_seedinv_pedigree(request):
+    """
+    ::func:: Not needed
+    """
     pedigree_list = []
     if request.session.get('checkbox_taxonomy', None):
         checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
@@ -344,6 +404,9 @@ def show_all_seedinv_pedigree(request):
 
 
 def show_all_seedinv_parameters(request):
+    """
+    ::func:: Not needed
+    """
     parameter_list = []
     if request.session.get('checkbox_taxonomy', None):
         checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
@@ -400,22 +463,26 @@ def show_all_seedinv_parameters(request):
 
 
 def seed_id_search(request):
-	"""::template:: seed_id_search_list.html"""
-	context = RequestContext(request)
-	context_dict = {}
-	seed_id_list = []
-	starts_with = ''
-	if request.method == 'GET':
-		starts_with = request.GET['suggestion']
-	else:
-		starts_with = request.POST['suggestion']
-        if starts_with:
-        	seed_id_list = Stock.objects.filter(seed_id__contains=starts_with)[:2000]
-        else:
-        	seed_id_list = None
-        	context_dict = checkbox_session_variable_check(request)
-        context_dict['seed_id_list'] = seed_id_list
-        return render_to_response('lab/isolatestock/seed_id_search_list.html', context_dict, context)
+    """
+    ::url:: = seed_inventory/seed_id_search/
+    ::func:: = Handles search box named `Search Seed Info`
+    ::html:: = seed_id_search_list.html
+    """
+    context = RequestContext(request)
+    context_dict = {}
+    seed_id_list = []
+    starts_with = ''
+    if request.method == 'GET':
+    	starts_with = request.GET['suggestion']
+    else:
+    	starts_with = request.POST['suggestion']
+    if starts_with:
+        seed_id_list = Stock.objects.filter(seed_id__contains=starts_with)[:2000]
+    else:
+        seed_id_list = None
+        context_dict = checkbox_session_variable_check(request)
+    context_dict['seed_id_list'] = seed_id_list
+    return render_to_response('lab/isolatestock/seed_id_search_list.html', context_dict, context)
 
 
 def sort_seed_set(set_type):
@@ -483,7 +550,9 @@ def seed_set_download(request, set_type):
 
 @login_required
 def update_seed_info(request, stock_id):
-    """::template:: stock_info_update.html"""
+    """
+    ::func:: Replace with update_isolate_info
+    """
     context = RequestContext(request)
     context_dict = {}
     if request.method == 'POST':
@@ -582,7 +651,11 @@ def update_seed_info(request, stock_id):
 
 @login_required
 def update_seed_packet_info(request, stock_id):
-    """::template:: stockpacket_info_update.html"""
+    """
+    ::url:: = /packet_update/(?P<stock_id>\d+)/
+    ::func:: = Handles view for updating seed packet info
+    ::html:: = stockpacket_info_update.html
+    """
     context = RequestContext(request)
     context_dict = {}
     num_packets = StockPacket.objects.filter(stock_id=stock_id).count()
@@ -631,3 +704,75 @@ def update_seed_packet_info(request, stock_id):
     context_dict['stock_id'] = stock_id
     context_dict['logged_in_user'] = request.user.username
     return render_to_response('lab/isolatestock/stockpacket_info_update.html', context_dict, context)
+
+
+@login_required
+def single_stock_info(request, stock_id):
+    """
+    ::url:: = stock/(?P<stock_id>\d+)
+    ::func:: = Renders tables for stock information and for related stock packets
+    ::html:: = stock_info.html
+    """
+    context = RequestContext(request)
+    context_dict = {}
+    obs_tracker_seed = []
+    try:
+        stock_info = Stock.objects.get(id=stock_id)
+    except Stock.DoesNotExist:
+        stock_info = None
+    if stock_info is not None:
+        obs_tracker = get_obs_tracker('stock_id', stock_id)
+        for t in obs_tracker:
+            if t.obs_id != stock_info.seed_id:
+                obs_tracker_seed.append(t)
+        obs_source = get_obs_source('stock_id', stock_id)
+        obs_measurements = get_obs_measurements('stock_id', stock_id)
+        measured_parameters = {}
+        for mp in obs_measurements:
+            if mp.measurement_parameter_id not in measured_parameters:
+                measured_parameters[mp.measurement_parameter_id] = mp.measurement_parameter.parameter
+    else:
+        obs_tracker = None
+        obs_source = None
+        obs_measurements = None
+        measured_parameters = None
+    try:
+        # Section where stockpackets are added
+        stock_packets = StockPacket.objects.filter(stock_id=stock_id)
+    except StockPacket.DoesNotExist:
+        stock_packets = None
+    context_dict['stock_info'] = stock_info
+    context_dict['obs_tracker'] = obs_tracker_seed
+    context_dict['obs_source'] = obs_source
+    context_dict['obs_measurements'] = obs_measurements
+    context_dict['stock_packets'] = stock_packets
+    context_dict['measured_parameters'] = measured_parameters
+    context_dict['logged_in_user'] = request.user.username
+    return render_to_response('lab/stock_info.html', context_dict, context)
+
+@login_required
+def single_isolate_info(request, isolate_table_id):
+    context = RequestContext(request)
+    context_dict = {}
+    try:
+        isolate_info = Isolate.objects.get(id=isolate_table_id)
+    except Isolate.DoesNotExist:
+        isolate_info = None
+    if isolate_info is not None:
+        obs_tracker = get_obs_tracker('isolate_id', isolate_table_id)
+    context_dict['isolate_info'] = isolate_info
+    context_dict['obs_tracker'] = obs_tracker
+    context_dict['logged_in_user'] = request.user.username
+    return render_to_response('lab/isolate_info.html', context_dict, context)
+
+
+
+
+
+
+
+
+
+
+
+
