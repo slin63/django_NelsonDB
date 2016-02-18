@@ -383,7 +383,7 @@ class Isolate(models.Model):
 class GlycerolStock(models.Model):
     glycerol_stock_id = models.CharField(max_length=200, unique=True)
     associated_isolate = models.ForeignKey(Isolate)
-    location = models.ForeignKey(Passport)
+    location = models.ForeignKey(Location)
     stock_date = models.CharField(max_length=200, blank=True)
     extract_color = models.CharField(max_length=200, blank=True)
     organism = models.CharField(max_length=200, blank=True)

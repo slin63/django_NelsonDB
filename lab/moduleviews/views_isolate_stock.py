@@ -2,21 +2,28 @@
 Details at: https://docs.google.com/document/d/1IVkC0RxJe-P1xGAM4WMGCjp5JYcFlRtQj5PGvZNpAJA/edit"""
 
 import csv
+import csv
 import json
-from itertools import chain
-
+import json
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.forms.formsets import formset_factory
+from django.db import transaction
+from django.http import HttpResponse
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.http import JsonResponse
+from django.shortcuts import render_to_response
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.template import RequestContext
+from itertools import chain
+from itertools import chain
 
+from lab.forms import LogIsolatesOnlineForm
+from lab.models import Passport, Stock, StockPacket, Taxonomy, ObsRow, ObsPlant, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, \
+    ObsTracker, Isolate, Measurement, GlycerolStock
 from lab.views import checkbox_session_variable_check, get_obs_tracker, get_obs_source, get_obs_measurements
-from lab.forms import LogStockPacketOnlineForm, UpdateSeedDataOnlineForm
-from lab.models import Passport, Stock, StockPacket, Taxonomy, People, Collecting, Location, ObsRow, ObsPlant, \
-    ObsTracker, Measurement, Isolate
 
 
 def datatable_seed_inventory(request):
@@ -157,7 +164,7 @@ def unique_selected_stocks(selected_stocks):
 
 
 @login_required
-def seed_inventory(request):
+def isolate_inventory(request):
     """
     ::url:: = /iso_inventory/ - To change
     ::func:: = Renders view for the seed inventory page
@@ -167,7 +174,7 @@ def seed_inventory(request):
     context_dict = {}
     context_dict = checkbox_session_variable_check(request)
     context_dict['logged_in_user'] = request.user.username
-    return render_to_response('lab/isolatestock/seed_inventory.html', context_dict, context)
+    return render_to_response('lab/isolatestock/isolate_inventory.html', context_dict, context)
 
 
 def select_pedigree(request):
@@ -549,161 +556,80 @@ def seed_set_download(request, set_type):
 
 
 @login_required
-def update_seed_info(request, stock_id):
-    """
-    ::func:: Replace with update_isolate_info
-    """
+def update_isolate_info(request, isolate_id):
     context = RequestContext(request)
     context_dict = {}
     if request.method == 'POST':
-        obs_tracker_stock_form = UpdateSeedDataOnlineForm(data=request.POST)
-        if obs_tracker_stock_form.is_valid():
+        obs_tracker_isolate_form = LogIsolatesOnlineForm(data=request.POST)
+        if obs_tracker_isolate_form.is_valid():
             with transaction.atomic():
                 try:
-                    obs_tracker = ObsTracker.objects.get(obs_entity_type='stock', stock_id=stock_id,
-                                                         experiment=obs_tracker_stock_form.cleaned_data['experiment'])
+                    obs_tracker = ObsTracker.objects.get(obs_entity_type='isolate', isolate_id=isolate_id, experiment=obs_tracker_isolate_form.cleaned_data['experiment'])
                     obs_tracker.glycerol_stock_id = 1
                     obs_tracker.maize_sample_id = 1
                     obs_tracker.obs_extract_id = 1
-                    if obs_tracker_stock_form.cleaned_data['obs_row__row_id'] != '':
-                        obs_tracker.obs_row = ObsRow.objects.get(
-                            row_id=obs_tracker_stock_form.cleaned_data['obs_row__row_id'])
+                    obs_tracker.location = obs_tracker_isolate_form.cleaned_data['location']
+                    obs_tracker.field = obs_tracker_isolate_form.cleaned_data['field']
+                    if obs_tracker_isolate_form.cleaned_data['obs_dna__dna_id'] != '':
+                        obs_tracker.obs_dna = ObsDNA.objects.get(dna_id=obs_tracker_isolate_form.cleaned_data['obs_dna__dna_id'])
                     else:
-                        obs_tracker.obs_row = ObsRow.objects.get(id=1)
-                    if obs_tracker_stock_form.cleaned_data['obs_plant__plant_id']:
-                        obs_tracker.obs_plant = ObsPlant.objects.get(
-                            plant_id=obs_tracker_stock_form.cleaned_data['obs_plant__plant_id'])
+                        obs_tracker.obs_dna = ObsDNA.objects.get(dna_id='No DNA')
+                    if obs_tracker_isolate_form.cleaned_data['obs_microbe__microbe_id'] != '':
+                        obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id=obs_tracker_isolate_form.cleaned_data['obs_microbe__microbe_id'])
                     else:
-                        obs_tracker.obs_plant = ObsPlant.objects.get(id=1)
-                    obs_tracker.field = obs_tracker_stock_form.cleaned_data['field']
+                        obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id='No Microbe')
+                    if obs_tracker_isolate_form.cleaned_data['obs_row__row_id'] != '':
+                        obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_isolate_form.cleaned_data['obs_row__row_id'])
+                    else:
+                        obs_tracker.obs_row = ObsRow.objects.get(row_id='No Row')
+                    if obs_tracker_isolate_form.cleaned_data['stock__seed_id'] != '':
+                        obs_tracker.stock = Stock.objects.get(seed_id=obs_tracker_isolate_form.cleaned_data['stock__seed_id'])
+                    else:
+                        obs_tracker.stock = Stock.objects.get(seed_id='No Stock')
+                    if obs_tracker_isolate_form.cleaned_data['obs_plant__plant_id'] != '':
+                        obs_tracker.obs_plant = ObsPlant.objects.get(plant_id=obs_tracker_isolate_form.cleaned_data['obs_plant__plant_id'])
+                    else:
+                        obs_tracker.obs_plant = ObsPlant.objects.get(plant_id='No Plant')
+                    if obs_tracker_isolate_form.cleaned_data['obs_tissue__tissue_id'] != '':
+                        obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id=obs_tracker_isolate_form.cleaned_data['obs_tissue__tissue_id'])
+                    else:
+                        obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id='No Tissue')
+                    if obs_tracker_isolate_form.cleaned_data['obs_culture__culture_id'] != '':
+                        obs_tracker.obs_culture = ObsCulture.objects.get(culture_id=obs_tracker_isolate_form.cleaned_data['obs_culture__culture_id'])
+                    else:
+                        obs_tracker.obs_culture = ObsCulture.objects.get(culture_id='No Culture')
+                    if obs_tracker_isolate_form.cleaned_data['obs_plate__plate_id'] != '':
+                        obs_tracker.obs_plate = ObsPlate.objects.get(plate_id=obs_tracker_isolate_form.cleaned_data['obs_plate__plate_id'])
+                    else:
+                        obs_tracker.obs_plate = ObsPlate.objects.get(plate_id='No Plate')
+                    if obs_tracker_isolate_form.cleaned_data['obs_well__well_id'] != '':
+                        obs_tracker.obs_well = ObsWell.objects.get(well_id=obs_tracker_isolate_form.cleaned_data['obs_well__well_id'])
+                    else:
+                        obs_tracker.obs_well = ObsWell.objects.get(well_id='No Well')
 
-                    stock = Stock.objects.get(id=stock_id)
-                    stock.seed_id = obs_tracker_stock_form.cleaned_data['stock__seed_id']
-                    stock.seed_name = obs_tracker_stock_form.cleaned_data['stock__seed_name']
-                    stock.cross_type = obs_tracker_stock_form.cleaned_data['stock__cross_type']
-                    stock.pedigree = obs_tracker_stock_form.cleaned_data['stock__pedigree']
-                    stock.stock_status = obs_tracker_stock_form.cleaned_data['stock__stock_status']
-                    stock.stock_date = obs_tracker_stock_form.cleaned_data['stock__stock_date']
-                    stock.inoculated = obs_tracker_stock_form.cleaned_data['stock__inoculated']
-                    stock.comments = obs_tracker_stock_form.cleaned_data['stock__comments']
-                    updated_collecting, created = Collecting.objects.get_or_create(
-                        collection_date=obs_tracker_stock_form.cleaned_data[
-                            'stock__passport__collecting__collection_date'],
-                        collection_method=obs_tracker_stock_form.cleaned_data[
-                            'stock__passport__collecting__collection_method'],
-                        comments=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__comments'],
-                        user=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__user'])
-                    updated_people, created = People.objects.get_or_create(
-                        first_name=obs_tracker_stock_form.cleaned_data['stock__passport__people__first_name'],
-                        last_name=obs_tracker_stock_form.cleaned_data['stock__passport__people__last_name'],
-                        organization=obs_tracker_stock_form.cleaned_data['stock__passport__people__organization'],
-                        phone=obs_tracker_stock_form.cleaned_data['stock__passport__people__phone'],
-                        email=obs_tracker_stock_form.cleaned_data['stock__passport__people__email'],
-                        comments=obs_tracker_stock_form.cleaned_data['stock__passport__people__comments'])
-                    updated_taxonomy, created = Taxonomy.objects.get_or_create(
-                        genus=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__genus'],
-                        species=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__species'],
-                        population=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__population'],
-                        common_name='Maize', alias='', race='', subtaxa='')
-                    updated_passport, created = Passport.objects.get_or_create(collecting=updated_collecting,
-                                                                               people=updated_people,
-                                                                               taxonomy=updated_taxonomy)
-                    stock.passport = updated_passport
-                    stock.save()
+                    isolate = Isolate.objects.get(id=isolate_id)
+                    isolate.isolate_id = obs_tracker_isolate_form.cleaned_data['isolate__isolate_id']
+                    isolate.isolate_name = obs_tracker_isolate_form.cleaned_data['isolate__isolate_name']
+                    isolate.disease_info = obs_tracker_isolate_form.cleaned_data['isolate__disease_info']
+                    isolate.plant_organ = obs_tracker_isolate_form.cleaned_data['isolate__plant_organ']
+                    isolate.comments = obs_tracker_isolate_form.cleaned_data['isolate__comments']
+                    updated_taxonomy, created = Taxonomy.objects.get_or_create(genus=obs_tracker_isolate_form.cleaned_data['isolate__passport__taxonomy__genus'], species='', population='', common_name='Isolate', alias=obs_tracker_isolate_form.cleaned_data['isolate__passport__taxonomy__alias'], race=obs_tracker_isolate_form.cleaned_data['isolate__passport__taxonomy__race'], subtaxa=obs_tracker_isolate_form.cleaned_data['isolate__passport__taxonomy__subtaxa'])
+                    updated_passport, created = Passport.objects.get_or_create(collecting=isolate.passport.collecting, people=isolate.passport.people, taxonomy=updated_taxonomy)
+                    isolate.passport = updated_passport
+                    isolate.save()
                     obs_tracker.save()
                     context_dict['updated'] = True
                 except Exception:
                     context_dict['failed'] = True
         else:
-            print(obs_tracker_stock_form.errors)
+            print(obs_tracker_isolate_form.errors)
     else:
-        stock_data = ObsTracker.objects.filter(obs_entity_type='stock', stock_id=stock_id).values('experiment',
-                                                                                                  'stock__seed_id',
-                                                                                                  'stock__seed_name',
-                                                                                                  'stock__cross_type',
-                                                                                                  'stock__pedigree',
-                                                                                                  'stock__stock_status',
-                                                                                                  'stock__stock_date',
-                                                                                                  'stock__inoculated',
-                                                                                                  'stock__comments',
-                                                                                                  'stock__passport__collecting__user',
-                                                                                                  'stock__passport__collecting__collection_date',
-                                                                                                  'stock__passport__collecting__collection_method',
-                                                                                                  'stock__passport__collecting__comments',
-                                                                                                  'stock__passport__people__first_name',
-                                                                                                  'stock__passport__people__last_name',
-                                                                                                  'stock__passport__people__organization',
-                                                                                                  'stock__passport__people__phone',
-                                                                                                  'stock__passport__people__email',
-                                                                                                  'stock__passport__people__comments',
-                                                                                                  'stock__passport__taxonomy__genus',
-                                                                                                  'stock__passport__taxonomy__species',
-                                                                                                  'stock__passport__taxonomy__population',
-                                                                                                  'obs_row__row_id',
-                                                                                                  'obs_plant__plant_id',
-                                                                                                  'field')
-        obs_tracker_stock_form = UpdateSeedDataOnlineForm(initial=stock_data[0])
-    context_dict['stock_id'] = stock_id
-    context_dict['obs_tracker_stock_form'] = obs_tracker_stock_form
+        isolate_data = ObsTracker.objects.filter(obs_entity_type='isolate', isolate_id=isolate_id).values('experiment', 'isolate__isolate_id', 'location', 'field', 'obs_dna__dna_id', 'obs_microbe__microbe_id', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'obs_culture__culture_id', 'obs_plate__plate_id', 'obs_well__well_id', 'isolate__isolate_name', 'isolate__disease_info', 'isolate__plant_organ', 'isolate__passport__taxonomy__genus', 'isolate__passport__taxonomy__alias', 'isolate__passport__taxonomy__race', 'isolate__passport__taxonomy__subtaxa', 'isolate__comments')
+        obs_tracker_isolate_form = LogIsolatesOnlineForm(initial=isolate_data[0])
+    context_dict['isolate_id'] = isolate_id
+    context_dict['obs_tracker_isolate_form'] = obs_tracker_isolate_form
     context_dict['logged_in_user'] = request.user.username
-    return render_to_response('lab/isolatestock/stock_info_update.html', context_dict, context)
-
-
-@login_required
-def update_seed_packet_info(request, stock_id):
-    """
-    ::url:: = /packet_update/(?P<stock_id>\d+)/
-    ::func:: = Handles view for updating seed packet info
-    ::html:: = stockpacket_info_update.html
-    """
-    context = RequestContext(request)
-    context_dict = {}
-    num_packets = StockPacket.objects.filter(stock_id=stock_id).count()
-    EditStockPacketFormSet = formset_factory(LogStockPacketOnlineForm, extra=0)
-    if request.method == 'POST':
-        edit_packet_form_set = EditStockPacketFormSet(request.POST)
-        if edit_packet_form_set.is_valid():
-            failed = None
-            with transaction.atomic():
-                for form in edit_packet_form_set:
-                    step = 0
-                    while step < num_packets:
-                        try:
-                            update_packet = StockPacket.objects.filter(stock_id=stock_id)[step]
-                            update_packet.weight = form.cleaned_data['weight']
-                            update_packet.num_seeds = form.cleaned_data['num_seeds']
-                            update_packet.comments = form.cleaned_data['comments']
-                            update_packet.location, created = Location.objects.get_or_create(
-                                locality=form.cleaned_data['location__locality'],
-                                building_name=form.cleaned_data['location__building_name'],
-                                location_name=form.cleaned_data['location__location_name'],
-                                room=form.cleaned_data['location__room'], shelf=form.cleaned_data['location__shelf'],
-                                column=form.cleaned_data['location__column'],
-                                box_name=form.cleaned_data['location__box_name'],
-                                comments=form.cleaned_data['location__comments'])
-                            update_packet.save()
-                        except Exception as e:
-                            print("Error: %s %s" % (e.message, e.args))
-                            failed = True
-                        step = step + 1
-            if failed is not None:
-                context_dict['failed'] = True
-            else:
-                context_dict['saved'] = True
-        else:
-            print(edit_packet_form_set.errors)
-    else:
-        packets = StockPacket.objects.filter(stock_id=stock_id).values('stock__seed_id', 'weight', 'num_seeds',
-                                                                       'comments', 'location__building_name',
-                                                                       'location__location_name', 'location__room',
-                                                                       'location__shelf', 'location__column',
-                                                                       'location__box_name', 'location__comments',
-                                                                       'location__locality')
-        edit_packet_form_set = EditStockPacketFormSet(initial=packets)
-    context_dict['edit_packet_form_set'] = edit_packet_form_set
-    context_dict['stock_id'] = stock_id
-    context_dict['logged_in_user'] = request.user.username
-    return render_to_response('lab/isolatestock/stockpacket_info_update.html', context_dict, context)
+    return render_to_response('lab/isolate_info_update.html', context_dict, context)
 
 
 @login_required
@@ -760,10 +686,16 @@ def single_isolate_info(request, isolate_table_id):
         isolate_info = None
     if isolate_info is not None:
         obs_tracker = get_obs_tracker('isolate_id', isolate_table_id)
+    try:
+        # Section where stockpackets are added
+        isolates = GlycerolStock.objects.filter(associated_isolate_id=isolate_table_id)
+    except GlycerolStock.DoesNotExist:
+        isolates = None
     context_dict['isolate_info'] = isolate_info
     context_dict['obs_tracker'] = obs_tracker
+    context_dict['assocated_isolates'] = isolates
     context_dict['logged_in_user'] = request.user.username
-    return render_to_response('lab/isolate_info.html', context_dict, context)
+    return render_to_response('lab/isolatestock/isolate_info.html', context_dict, context)
 
 
 

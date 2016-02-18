@@ -1345,16 +1345,16 @@ def passport(request, passport_id):
 			collecting_obs_type = None
 		context_dict[obs_data] = collecting_obs_type
 
-	if passport.collecting.field.field_name != 'No Field':
-		collecting_field = True
-	else:
-		collecting_field = None
+	# if passport.collecting.field.field_name != 'No Field':
+	# 	collecting_field = True
+	# else:
+	# 	collecting_field = None
 	if passport.people.organization != 'No Source' and passport.people.organization != '' and passport.people.organization != 'NULL':
 		collecting_source = True
 	else:
 		collecting_source = None
 	context_dict['passport'] = passport
-	context_dict['collecting_field'] = collecting_field
+	# context_dict['collecting_field'] = collecting_field
 	context_dict['collecting_source'] = collecting_source
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/passport.html', context_dict, context)
