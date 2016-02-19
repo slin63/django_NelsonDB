@@ -382,7 +382,7 @@ class Isolate(models.Model):
 
 class GlycerolStock(models.Model):
     glycerol_stock_id = models.CharField(max_length=200, unique=True)
-    glycerol_location = models.ForeignKey(Location)
+    glycerol_location = models.ForeignKey(Location, default=1)
     associated_isolate = models.ForeignKey(Isolate)
     stock_date = models.CharField(max_length=200, blank=True)
     extract_color = models.CharField(max_length=200, blank=True)
