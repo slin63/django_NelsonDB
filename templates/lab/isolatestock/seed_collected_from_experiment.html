@@ -1,0 +1,53 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}Seed Inventory{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Experiment: <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h1>
+</div>
+
+{% if collected_stock_data %}
+  <hr>
+  <h2>Seed Stocks Collected</h2><br/>
+
+  <form id="select_stocks_form" method="post" action="/lab/seed_inventory/select_stocks/">
+    {% csrf_token %}
+    <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <thead>
+      <tr>
+        <th>Select<br/>All <input type="checkbox" onClick="toggle(this)" /></th>
+        <th>Seed ID</th>
+        <th>Seed Name</th>
+        <th>Cross Type</th>
+        <th>Pedigree</th>
+        <th>Population</th>
+        <th>Status</th>
+        <th>Inoculated</th>
+        <th>Collector</th>
+        <th>Comments</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for t in collected_stock_data %}
+      <tr>
+        <td><input type="checkbox" name="checkbox_stock" value="{{ t.target_obs.stock.id }}"></td>
+        <td><a href='/lab/stock/{{t.target_obs.stock.id}}/'>{{ t.target_obs.stock.seed_id }}</a></td>
+        <td>{{ t.target_obs.stock.seed_name }}</td>
+        <td>{{ t.target_obs.stock.cross_type }}</td>
+        <td>{{ t.target_obs.stock.pedigree }}</td>
+        <td>{{ t.target_obs.stock.passport.taxonomy.population }}</td>
+        <td>{{ t.target_obs.stock.stock_status }}</td>
+        <td>{{ t.target_obs.stock.inoculated }}</td>
+        <td><a href='/lab/profile/{{ t.target_obs.stock.passport.collecting.user.username }}/'>{{ t.target_obs.stock.passport.collecting.user.username }}</a></td>
+        <td>{{ t.target_obs.stock.comments }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <br/>
+    <input class="btn btn-primary" type="submit" name="submit" value="Search Inventory for Selected Stocks"/>
+  </form>
+
+{% endif %}
+
+{% endblock %}

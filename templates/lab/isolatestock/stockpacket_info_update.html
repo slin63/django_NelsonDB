@@ -1,0 +1,51 @@
+{% extends 'lab/base.html' %}
+{% block title %}Update Seed Packet Info{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Update Seed Packet Info</h1>
+  <hr>
+  <a href='/lab/stock/{{stock_id}}/'><input class="btn btn-info" type="submit" name="submit" value="Back to Seed Info Page"/></a>
+  <a href='/lab/log_data/seed_packet/'><input class="btn btn-warning" type="submit" name="submit" value="Add New Seed Packets"/></a>
+  <hr>
+  {% if failed == True %}
+    <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Edit Was Not Saved! Fix Errors.<br/>&nbsp;</h4>
+  {% elif saved == True %}
+    <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Edit Was Saved!<br/>&nbsp;</h4>
+  {% endif %}
+  <div class="container-fluid">
+    <form class="form-signin" id="update_seed" method="post" action="/lab/seed_inventory/packet_update/{{stock_id}}/">
+      {% csrf_token %}
+      <table id="log_data_online_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th>Seed ID</th>
+            <th>Weight (g)</th>
+            <th>Num Seeds</th>
+            <th>Packet Comments</th>
+            <th>Locality</th>
+            <th>Building Name</th>
+            <th>Location Name</th>
+            <th>Room</th>
+            <th>Shelf</th>
+            <th>Column</th>
+            <th>Box Name</th>
+            <th>Location Comments</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{ edit_packet_form_set.management_form }}
+          {% for form in edit_packet_form_set %}
+          <tr>
+            {% for field in form.visible_fields %}
+            <td>{{ field }}<font color="red">{{ field.errors }}</font></td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <br />
+      <input class="btn btn-primary" type="submit" name="submit" value="Update"/>
+    </form>
+  </div>
+</div>
+{% endblock %}

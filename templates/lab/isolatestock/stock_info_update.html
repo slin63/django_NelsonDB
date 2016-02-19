@@ -1,0 +1,30 @@
+{% extends 'lab/base.html' %}
+{% block title %}Update Seed Info{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Update Seed Info</h1>
+  <hr>
+  <a href='/lab/stock/{{stock_id}}/'><input class="btn btn-info" type="submit" name="submit" value="Back to Seed Info Page"/></a>
+  <a href='/lab/log_data/seed_packet/'><input class="btn btn-warning" type="submit" name="submit" value="Add New Seed Packets"/></a>
+  <hr>
+  {% if updated %}
+    <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Edit Was Saved!<br/>&nbsp;</h4>
+  {% elif failed %}
+  <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Edit Was Not Saved! Fix Errors.<br/>&nbsp;</h4>
+  {% endif %}
+  <div class="container-fluid">
+    <form class="form-signin" id="update_seed" method="post" action="/lab/seed_inventory/update/{{stock_id}}/">
+      {% csrf_token %}
+      {% for field in obs_tracker_stock_form.visible_fields %}
+        <div class="row">
+          <div class="span4 offset1"><font color="247eca">{{ field.help_text }}</font></div>
+          <div class="span3">{{ field }}</div>
+          <div class="span4"><font color="red">{{ field.errors }}</font></div>
+        </div>
+      {% endfor %}
+      <br />
+      <input class="btn btn-primary" type="submit" name="submit" value="Update"/>
+    </form>
+  </div>
+</div>
+{% endblock %}
