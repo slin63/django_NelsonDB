@@ -376,6 +376,9 @@ class Isolate(models.Model):
     plant_organ = models.CharField(max_length=200, blank=True)
     comments = models.CharField(max_length=1000, blank=True)
 
+    ##TODO
+    # locality = models.ForeignKey(Locality)
+
     def __unicode__(self):
         return self.isolate_id
 
