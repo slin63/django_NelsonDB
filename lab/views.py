@@ -3806,6 +3806,9 @@ def single_row_info(request, obs_row_id):
 
 @login_required
 def single_isolate_info(request, isolate_table_id):
+	"""
+	Deprecated
+	"""
 	context = RequestContext(request)
 	context_dict = {}
 	try:

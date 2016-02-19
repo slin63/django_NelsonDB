@@ -52,10 +52,10 @@ urlpatterns = patterns('',
                        url(r'^seed_inventory/packet_update/(?P<stock_id>\d+)/$', views.update_seed_packet_info, name='update_seed_packet_info'),
 
                        # Added 2/15/2016 - slin63
-                       url(r'^datatable/iso_inventory/$', views_is.datatable_seed_inventory, name='datatable_iso_inventory'),
+                       url(r'^datatable/iso_inventory/$', views_is.datatable_isolate_inventory, name='datatable_iso_inventory'),
                        url(r'^iso_inventory/$', views_is.isolate_inventory, name='iso_inventory'),
                        url(r'^iso_inventory/select_taxonomy/$', views_is.select_taxonomy, name='select_taxonomy'),
-                       url(r'^iso_inventory/show_all_taxonomy/$', views_is.show_all_seedinv_taxonomy, name='show_all_iso_taxonomy'),
+                       url(r'^iso_inventory/show_all_taxonomy/$', views_is.show_all_isolate_taxonomy, name='show_all_iso_taxonomy'),
                        # url(r'^iso_inventory/seed_id_search/$', views_is.seed_id_search, name='seed_id_search'),
                        url(r'^iso_inventory/update/(?P<isolate_id>\d+)/$', views_is.update_isolate_info, name='update_iso_info'),
 
