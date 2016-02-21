@@ -401,27 +401,7 @@ def show_all_isolate_taxonomy(request):
 #     return JsonResponse({'data': parameter_list})
 
 
-# def seed_id_search(request):
-#     """
-#     ::url:: = seed_inventory/seed_id_search/
-#     ::func:: = Handles search box named `Search Seed Info`
-#     ::html:: = seed_id_search_list.html
-#     """
-#     context = RequestContext(request)
-#     context_dict = {}
-#     seed_id_list = []
-#     starts_with = ''
-#     if request.method == 'GET':
-#     	starts_with = request.GET['suggestion']
-#     else:
-#     	starts_with = request.POST['suggestion']
-#     if starts_with:
-#         seed_id_list = Stock.objects.filter(seed_id__contains=starts_with)[:2000]
-#     else:
-#         seed_id_list = None
-#         context_dict = checkbox_session_variable_check(request)
-#     context_dict['seed_id_list'] = seed_id_list
-#     return render_to_response('lab/isolatestock/seed_id_search_list.html', context_dict, context)
+
 
 
 # def sort_seed_set(set_type):
@@ -620,8 +600,8 @@ def single_isolate_info(request, isolate_table_id):
     if isolate_info is not None:
         obs_tracker = get_obs_tracker('isolate_id', isolate_table_id)
     try:
-        # Section where stockpackets are added
-        isolates = GlycerolStock.objects.filter(associated_isolate_id=isolate_table_id)
+        # Section where glycerol stocks are added
+        isolates = ObsTracker.objects.filter(isolate=isolate_info.id, obs_entity_type='glycerol_stock')
     except GlycerolStock.DoesNotExist:
         isolates = None
     context_dict['isolate_info'] = isolate_info
@@ -631,7 +611,27 @@ def single_isolate_info(request, isolate_table_id):
     return render_to_response('lab/isolatestock/isolate_info.html', context_dict, context)
 
 
-
+def isolate_id_search(request):
+    """
+    ::url:: = seed_inventory/seed_id_search/
+    ::func:: = Handles search box named `Search Seed Info`
+    ::html:: = seed_id_search_list.html
+    """
+    context = RequestContext(request)
+    context_dict = {}
+    isolate_id_list = []
+    starts_with = ''
+    if request.method == 'GET':
+        starts_with = request.GET['suggestion']
+    else:
+        starts_with = request.POST['suggestion']
+    if starts_with:
+        isolate_id_list = Isolate.objects.filter(isolate_id__contains=starts_with)[:2000]
+    else:
+        isolate_id_list = None
+        context_dict = checkbox_session_variable_check(request)
+    context_dict['isolate_id_list'] = isolate_id_list
+    return render_to_response('lab/isolatestock/isolate_id_search_list.html', context_dict, context)
 
 
 

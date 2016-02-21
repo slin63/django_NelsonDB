@@ -5022,7 +5022,7 @@ def log_data_online(request, data_type):
 						experiment = form.cleaned_data['experiment']
 						glycerol_stock_id = form.cleaned_data['glycerol_stock__glycerol_stock_id']
 						location = form.cleaned_data['location']
-						stock_date = form.cleaned_data['glycerol_stock__date']
+						stock_date = form.cleaned_data['glycerol_stock__stock_date']
 						extract_color = form.cleaned_data['glycerol_stock__extract_color']
 						organism = form.cleaned_data['glycerol_stock__organism']
 						glycerol_stock_comments = form.cleaned_data['glycerol_stock__comments']
@@ -5088,6 +5088,14 @@ def log_data_online(request, data_type):
 								new_source_sample, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='sample', obs_sample__sample_id=sample_id), target_obs=new_obs_tracker, relationship="isolate_stock_from_sample")
 							if isolate_id !='' and isolate_id !='No Isolate':
 								new_source_isolate, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='isolate', isolate__isolate_id=isolate_id), target_obs=new_obs_tracker, relationship="isolate_stock_from_isolate")
+
+							# context_dict['glycerol'] = new_glycerol_stock
+							# context_dict['obs'] = new_obs_tracker
+							# return render_to_response('lab/test.html', context_dict, context)
+
+							new_glycerol_stock.save()
+							new_obs_tracker.save()
+
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True

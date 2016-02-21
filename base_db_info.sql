@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 TRUNCATE TABLE `auth_user`;
 --
--- Dumping data for table `auth_user` 
+-- Dumping data for table `auth_user`
 -- !! Do not use null '0000-00-00 00:00:00' in datetime fields! Throws error if accessed !!
 
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
@@ -110,8 +110,8 @@ TRUNCATE TABLE `lab_glycerolstock`;
 -- Dumping data for table `lab_glycerolstock`
 --
 
-INSERT INTO `lab_glycerolstock` (`id`, `glycerol_stock_id`, `glycerol_location_id`, `associated_isolate_id`,  `stock_date`, `extract_color`, `organism`, `comments`) VALUES
-(1, 'No Glycerol Stock', 1, 1, 'No Glycerol Stock', '', '', '');
+INSERT INTO `lab_glycerolstock` (`id`, `glycerol_stock_id`,  `stock_date`, `extract_color`, `organism`, `comments`) VALUES
+(1, 'No Glycerol Stock', 'No Glycerol Stock', '', '', '');
 
 --
 -- Truncate table before insert `lab_gwasexperimentset`

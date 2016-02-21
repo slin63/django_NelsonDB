@@ -1333,6 +1333,20 @@ $('#seedidsearch').keyup(function(){
 	});
 });
 
+$('#isolateidsearch').keyup(function(){
+	var query;
+	query = $(this).val();
+	$.get('/lab/iso_inventory/isolate_id_search/', {suggestion: query}, function(data){
+		$('#isolate_id_search_results').html(data);
+		$('#isolate_id_search_table').dataTable({
+			"searching": false,
+			"scrollY": "200px",
+			"scrollCollapse": true,
+			"paginate": false
+		});
+	});
+});
+
 $('#sidebarsearch').keyup(function(){
 	var query;
 	query = $(this).val();

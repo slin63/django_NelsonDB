@@ -637,8 +637,10 @@ class LogGlycerolStocksOnlineForm(forms.Form):
     glycerol_stock__glycerol_stock_id = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Glycerol Stock ID'}), help_text="Glycerol Stock ID:",
         required=True)
-    location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Location Name ---",
-                                      help_text="Location:", required=True)
+    isolate__isolate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Isolate Stock ID'}),
+                                          help_text="Source Isolate ID:", required=True)
+    location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Storage Location ---",
+                                      help_text="Storage Location:", required=True)
     glycerol_stock__stock_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Stock Date'}),
                                                  help_text="Stock Date:", required=False)
     glycerol_stock__extract_color = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Extract Color'}),
@@ -669,8 +671,7 @@ class LogGlycerolStocksOnlineForm(forms.Form):
                                         help_text="Source Well ID:", required=False)
     obs_microbe__microbe_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Microbe ID'}),
                                               help_text="Source Microbe ID:", required=False)
-    isolate__isolate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Isolate ID'}),
-                                          help_text="Source Isolate ID:", required=False)
+
 
 
 class LogMeasurementsOnlineForm(forms.Form):

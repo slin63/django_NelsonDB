@@ -100,12 +100,12 @@
         <tbody>
           {% for iso in assocated_isolates %}
           <tr>
-            <td><a href="{% url 'single_glycerol_stock_info' iso.id %}">{{ iso.glycerol_stock_id }}</a></td>
+            <td><a href="{% url 'single_glycerol_stock_info' iso.glycerol_stock.id %}">{{ iso.glycerol_stock.glycerol_stock_id }}</a></td>
             <td>{{ iso.location.location_name }}</td>
-            <td>{{ iso.stock_date }}</td>
-            <td>{{ iso.extract_color }}</td>
-            <td>{{ iso.organism }}</td>
-            <td>{{ iso.comments }}</td>
+            <td>{{ iso.glycerol_stock.stock_date }}</td>
+            <td>{{ iso.glycerol_stock.extract_color }}</td>
+            <td>{{ iso.glycerol_stock.organism }}</td>
+            <td>{{ iso.glycerol_stock.comments }}</td>
           </tr>
           {% endfor %}
         </tbody>
