@@ -14,7 +14,6 @@
           <th>Isolate Name</th>
           <th>Genus</th>
           <th>Disease</th>
-          <th>Storage Name</th>
           <th>Locality</th>
           <th>Comments</th>
         </tr>
@@ -26,8 +25,7 @@
           <td>{{ isolate.isolate_name }}</td>
           <td>{{ isolate.passport.taxonomy.genus }}</td>
           <td><a href='/lab/disease_info/{{isolate.disease_info.id}}/'>{{ isolate.disease_info.common_name }}</a></td>
-          <td>{{ isolate.location.location_name }}</td>
-          <td>{{ isolate.location.locality.city }}</td>
+          <td><a href="{% url 'single_locality_info' isolate.locality_id %}">{{ isolate.locality }}</a></td>
           <td>{{ isolate.comments }}</td>
         </tr>
         {% endfor %}

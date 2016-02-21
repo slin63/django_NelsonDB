@@ -591,7 +591,7 @@ class LogIsolatesOnlineForm(forms.Form):
                                         help_text="Experiment:", required=True)
     isolate__isolate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Isolate ID'}),
                                           help_text="Isolate ID:", required=True)
-    location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Location Name ---",
+    locality = forms.ModelChoiceField(queryset=Locality.objects.all(), empty_label="--- Locality Name ---",
                                       help_text="Location:", required=True)
     field = forms.ModelChoiceField(queryset=Field.objects.all(), empty_label="--- Source Field Name ---",
                                    help_text="Source Field Name:", required=True)

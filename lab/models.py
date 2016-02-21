@@ -369,7 +369,7 @@ class DiseaseInfo(models.Model):
 
 class Isolate(models.Model):
     passport = models.ForeignKey(Passport)
-    location = models.ForeignKey(Location)
+    locality = models.ForeignKey(Locality)
     disease_info = models.ForeignKey(DiseaseInfo)
     isolate_id = models.CharField(max_length=200, unique=True)
     isolate_name = models.CharField(max_length=200, blank=True)

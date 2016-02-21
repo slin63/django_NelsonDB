@@ -146,7 +146,7 @@ TRUNCATE TABLE `lab_isolate`;
 -- Dumping data for table `lab_isolate`
 --
 
-INSERT INTO `lab_isolate` (`id`, `isolate_id`, `isolate_name`, `plant_organ`, `comments`, `disease_info_id`, `location_id`, `passport_id`) VALUES
+INSERT INTO `lab_isolate` (`id`, `isolate_id`, `isolate_name`, `plant_organ`, `comments`, `disease_info_id`, `locality_id`, `passport_id`) VALUES
 (1, 'No Isolate', 'No Isolate', 'No Isolate', '', 1, 1, 1);
 
 --

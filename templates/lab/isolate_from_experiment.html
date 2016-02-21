@@ -23,8 +23,7 @@
         <th>Race</th>
         <th>Subtaxa</th>
         <th>Disease Name</th>
-        <th>Location Name</th>
-        <th>Box Name</th>
+        <th>Locality</th>
       </tr>
       </thead>
       <tbody>
@@ -40,8 +39,7 @@
         <td>{{ i.isolate.passport.taxonomy.race }}</td>
         <td>{{ i.isolate.passport.taxonomy.subtaxa }}</td>
         <td>{{ i.isolate.disease_info }}</td>
-        <td><a href='/lab/location/{{i.location_id}}/'>{{ i.isolate.location.location_name }}</a></td>
-        <td>{{ i.isolate.location.box_name }}</td>
+        <td><a href="{% url 'single_locality_info' isolate_info.locality_id %}">{{ isolate_info.locality }}</a></td>
       </tr>
       {% endfor %}
       </tbody>
