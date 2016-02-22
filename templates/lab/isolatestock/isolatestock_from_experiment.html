@@ -39,7 +39,7 @@
         <td>{{ i.isolatestock.passport.taxonomy.race }}</td>
         <td>{{ i.isolatestock.passport.taxonomy.subtaxa }}</td>
         <td>{{ i.isolatestock.disease_info }}</td>
-        <td><a href="{% url 'single_locality_info' isolatestock_info.locality_id %}">{{ isolatestock_info.locality }}</a></td>
+        <td><a href="{% url 'single_locality_info' i.isolatestock.locality_id %}">{{ i.isolatestock.locality }}</a></td>
       </tr>
       {% endfor %}
       </tbody>

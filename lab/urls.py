@@ -176,7 +176,7 @@ urlpatterns = patterns('',
                        url(r'^data/environment/checkbox_clear/$', views.checkbox_env_data_clear, name='checkbox_env_data_clear'),
                        url(r'^data/environment/(?P<experiment_name>\w+)/$', views.env_data_from_experiment, name='env_data_from_experiment'),
 
-                       url(r'^data/isolatestocks/(?P<experiment_name>\w+)/$', views.isolatestock_data_from_experiment, name='isolatestock_data_from_experiment'),
+                       url(r'^data/isolatestocks/(?P<experiment_name>\w+)/$', views_is.isolatestock_data_from_experiment, name='isolatestock_data_from_experiment'),
                        url(r'^data/glycerol_stock/(?P<experiment_name>\w+)/$', views.glycerol_stock_data_from_experiment, name='glycerol_stock_data_from_experiment'),
 
                        url(r'^data/sample/$', views.sample_data_browse, name='sample_data_browse'),

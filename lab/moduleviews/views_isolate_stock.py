@@ -347,6 +347,14 @@ def isolatestock_data_from_experiment(request, experiment_name):
     return render_to_response('lab/isolatestock/isolatestock_from_experiment.html', context_dict, context)
 
 
+def find_isolatestock_for_experiment(experiment_name):
+    try:
+        isolatestock_data = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='isolatestock')
+    except ObsTracker.DoesNotExist:
+        isolatestock_data = None
+    return isolatestock_data
+
+
 @login_required
 def update_isolatestock_info(request, isolatestock_id):
     context = RequestContext(request)
