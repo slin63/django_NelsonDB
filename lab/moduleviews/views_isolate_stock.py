@@ -484,12 +484,12 @@ def single_isolatestock_info(request, isolatestock_table_id):
         obs_tracker = get_obs_tracker('isolatestock_id', isolatestock_table_id)
     try:
         # Section where glycerol stocks are added
-        isolatestocks = ObsTracker.objects.filter(isolatestock=isolatestock_info.id, obs_entity_type='glycerol_stock')
+        associated_isolates = ObsTracker.objects.filter(isolatestock=isolatestock_info.id, obs_entity_type='glycerol_stock')
     except GlycerolStock.DoesNotExist:
-        isolatestocks = None
+        associated_isolates = None
     context_dict['isolatestock_info'] = isolatestock_info
     context_dict['obs_tracker'] = obs_tracker
-    context_dict['assocated_isolatestocks'] = isolatestocks
+    context_dict['associated_isolates'] = associated_isolates
     context_dict['logged_in_user'] = request.user.username
     return render_to_response('lab/isolatestock/isolatestock_info.html', context_dict, context)
 
