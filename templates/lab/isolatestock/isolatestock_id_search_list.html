@@ -1,14 +1,14 @@
-{% if isolate_id_list %}
+{% if isolatestock_id_list %}
   <table id="seed_id_search_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
     <thead>
       <tr>
-        <th>Isolate ID</th>
+        <th>IsolateStock ID</th>
       </tr>
     </thead>
     <tbody>
-    {% for isolate in isolate_id_list %}
+    {% for isolatestock in isolatestock_id_list %}
       <tr>
-        <td><a href='/lab/stock/{{isolate.id}}/'>{{ isolate.isolate_id }}</a></td>
+        <td><a href='/lab/stock/{{isolatestock.id}}/'>{{ isolatestock.isolatestock_id }}</a></td>
       </tr>
     {% endfor %}
     </tbody>

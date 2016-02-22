@@ -1,25 +1,25 @@
 {% extends 'lab/base.html' %}
-{% block title %}Isolate Info{% endblock %}
+{% block title %}IsolateStock Info{% endblock %}
 {% block body_block %}
 
-{% if isolate_info %}
+{% if isolatestock_info %}
   <div class="hero-unit">
-    <h1>Isolate Stock Info: <a href="{% url 'single_isolate_info' isolate_info.id %}">{{isolate_info.isolate_id}}</a></h1>
+    <h1>IsolateStock Info: <a href="{% url 'single_isolatestock_info' isolatestock_info.id %}">{{isolatestock_info.isolatestock_id}}</a></h1>
   </div>
 
   <hr>
-  <a href="{% url 'update_iso_info' isolate_info.id %}"><input class="btn btn-info" type="submit" name="submit" value="Update Isolate Information"/></a>
+  <a href="{% url 'update_iso_info' isolatestock_info.id %}"><input class="btn btn-info" type="submit" name="submit" value="Update IsolateStock Information"/></a>
   <a href="{% url 'log_data_online' 'glycerol_stock' %}"><input class="btn btn-warning" type="submit" name="submit" value="Add new Glycerol Stock"/></a>
   <a href="{% url 'iso_inventory' %}"><input class="btn btn-danger" type="submit" name="submit" value="Return to IsolateStock table"/></a>
   <hr>
 
 
-  <h2>Isolate Stock</h2>
-  <table id="isolate_info" class="table table-striped table-bordered" cellspacing="0" widtd="100%">
+  <h2>IsolateStock</h2>
+  <table id="isolatestock_info" class="table table-striped table-bordered" cellspacing="0" widtd="100%">
     <thead>
       <tr>
-        <td>Isolate Stock ID</td>
-        <td>Isolate Name</td>
+        <td>IsolateStock ID</td>
+        <td>IsolateStock Name</td>
 
         <td>Locality</td>
 
@@ -35,35 +35,35 @@
     </thead>
     <tbody>
       <tr>
-        <td><a href="{% url 'single_isolate_info' isolate_info.id %}">{{ isolate_info.isolate_id }}</a></td>
-        <td>{{ isolate_info.isolate_name }}</td>
-        <td><a href="{% url 'single_locality_info' isolate_info.locality_id %}">{{ isolate_info.locality }}</a></td>
-        <td><a href="{% url 'single_disease_info' isolate_info.disease_info.id %}">{{ isolate_info.disease_info.common_name }}</a></td>
-        <td>{{ isolate_info.plant_organ }}</td>
-        <td>{{ isolate_info.passport.taxonomy.genus }}</td>
-        <td>{{ isolate_info.passport.taxonomy.alias }}</td>
-        <td>{{ isolate_info.passport.taxonomy.race }}</td>
-        <td>{{ isolate_info.passport.taxonomy.subtaxa }}</td>
-        <td><a href="{% url 'passport' isolate_info.passport.id %}">{{ isolate_info.passport.id }}</a></td>
-        <td>{{ isolate_info.comments }}</td>
+        <td><a href="{% url 'single_isolatestock_info' isolatestock_info.id %}">{{ isolatestock_info.isolatestock_id }}</a></td>
+        <td>{{ isolatestock_info.isolatestock_name }}</td>
+        <td><a href="{% url 'single_locality_info' isolatestock_info.locality_id %}">{{ isolatestock_info.locality }}</a></td>
+        <td><a href="{% url 'single_disease_info' isolatestock_info.disease_info.id %}">{{ isolatestock_info.disease_info.common_name }}</a></td>
+        <td>{{ isolatestock_info.plant_organ }}</td>
+        <td>{{ isolatestock_info.passport.taxonomy.genus }}</td>
+        <td>{{ isolatestock_info.passport.taxonomy.alias }}</td>
+        <td>{{ isolatestock_info.passport.taxonomy.race }}</td>
+        <td>{{ isolatestock_info.passport.taxonomy.subtaxa }}</td>
+        <td><a href="{% url 'passport' isolatestock_info.passport.id %}">{{ isolatestock_info.passport.id }}</a></td>
+        <td>{{ isolatestock_info.comments }}</td>
       </tr>
     </tbody>
   </table>
 
   {% for t in obs_tracker %}
-    {% if t.obs_entity_type == 'isolate' %}
+    {% if t.obs_entity_type == 'isolatestock' %}
       {% include 'lab/tracker_info_table.html' with obs_tracker=obs_tracker %}
     {% endif %}
   {% endfor %}
   <br/>
 
 <div class="well well-sm">
-  {% if assocated_isolates %}
-    <h3>Associated Isolates</h3>
-      <table id="single_stock_isolate_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+  {% if assocated_isolatestocks %}
+    <h3>Associated IsolateStocks</h3>
+      <table id="single_stock_isolatestock_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
           <tr>
-            <th>Isolate ID</th>
+            <th>IsolateStock ID</th>
             <th>Storage Location</th>
             <th>Collection Date</th>
             <th>Extract Color</th>
@@ -72,7 +72,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for iso in assocated_isolates %}
+          {% for iso in assocated_isolatestocks %}
           <tr>
             <td><a href="{% url 'single_glycerol_stock_info' iso.glycerol_stock.id %}">{{ iso.glycerol_stock.glycerol_stock_id }}</a></td>
             <td>{{ iso.location.location_name }}</td>
@@ -85,7 +85,7 @@
         </tbody>
       </table>
   {% else %}
-    <h3><small>No Associated Isolates</small></h3>
+    <h3><small>No Associated IsolateStocks</small></h3>
   {% endif %}
 </div>
 
@@ -118,9 +118,9 @@
 
 {% else %}
   <div class="hero-unit">
-    <h1>Isolate Info: <a href='/lab/'>Not Found!</a></h1>
+    <h1>IsolateStock Info: <a href='/lab/'>Not Found!</a></h1>
   </div>
-  <h2>No Isolate Info Found!</h2>
+  <h2>No IsolateStock Info Found!</h2>
 {% endif %}
 
 {% endblock %}

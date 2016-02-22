@@ -4,7 +4,7 @@
 Documentation For NelsonLab Online Database
 Last Updated: 02/25/2015
 Authored By: Nicolas Morales
-	
+
 ----------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ email: slin63@illinois.edu
 Santiago Mideros
 email: smideros@illinois.edu
 
-Nicolas Morales	
+Nicolas Morales
 email: nmorales3142@gmail.com
 phone: 321-695-9465
 
@@ -57,7 +57,7 @@ If you were a member of the lab before the transition to the new online database
 4. By default, your password is 123123. Use your username and password to login.
 
 *****Important*****
-Please change your password ASAP by going to nelsonlab.cac.cornell.edu/lab/change_password/ 
+Please change your password ASAP by going to nelsonlab.cac.cornell.edu/lab/change_password/
 More info found in sections below.
 *******************
 
@@ -95,7 +95,7 @@ How To View Data
 The left bar on the screen holds links that are useful for browsing data.
 
 -Seed Inventory
--Isolate Inventory
+-IsolateStock Inventory
 -Find an Experiment
 -Row Data
 -Plant Data
@@ -129,32 +129,32 @@ Not all seed stocks have seed packets, and not all seed packets have been invent
 *******************
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
-How To Use "Isolate Inventory"
+How To Use "IsolateStock Inventory"
 ----------------------------------------------------------------------------------------------------------------------------------------------
-nelsonlab.cac.cornell.edu/lab/isolate_inventory/
+nelsonlab.cac.cornell.edu/lab/isolatestock_inventory/
 
-Filtering through Isolate Info to find Inventoried Isolates
+Filtering through IsolateStock Info to find Inventoried IsolateStocks
 
-1. On the Isolate Inventory page there are two Filters currently built in: Disease Name and Genus
+1. On the IsolateStock Inventory page there are two Filters currently built in: Disease Name and Genus
 2. Entering a disease name in the "Select Disease" box causes a list of matching results to appear. You can also click "Show all Diseases".
 3. Select the checkboxes that meet your needs and click "Select Disease"
 4. Entering a genus in the "Select Taxonomy" box causes a list of matching results to appear. You can also click "Show all Taxonomies".
 5. Select the checkboxes that meet your needs and click "Select Taxonomies"
-6. These two filters are applied to the "Isolates" table that appears on the bottom of the Isolate Inventory page.
-7. You can then select the isolates of interest by selecting the checkboxes, and clicking "Search Inventory for Selected Isolates".
+6. These two filters are applied to the "IsolateStocks" table that appears on the bottom of the IsolateStock Inventory page.
+7. You can then select the isolatestocks of interest by selecting the checkboxes, and clicking "Search Inventory for Selected IsolateStocks".
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
 How To Use "Find an Experiment"
 ----------------------------------------------------------------------------------------------------------------------------------------------
 nelsonlab.cac.cornell.edu/lab/experiment/search/
 
-1. A table listing all experiments is shown. 
+1. A table listing all experiments is shown.
 2. You can search using the "Search" box.
 3. Click on the Name to access the Experiment page.
 4. The Experiment page holds all datasets that have been recorded for an experiment.
 
 	Treatments that were applied to the experiment are listed in a table, or "No Treatment Data" is shown.
-	
+
 	Datasets include:
 	- Seed Planted
 	- Seed Collected
@@ -165,7 +165,7 @@ nelsonlab.cac.cornell.edu/lab/experiment/search/
 	- Environment Data
 	- Samples Data
 	- Measurements Data
-	
+
 5a. By clicking "View" on a dataset, it will take you to a page with the data displayed on a table.
 5b. Alternatively, by clicking "Download" on a dataset, a csv file with the data will be downloaded by your browser.
 
@@ -184,7 +184,7 @@ nelsonlab.cac.cornell.edu/lab/data/measurement/
 1. These pages allow you to easily view data sets across different experiments.
 2. Enter an experiment name in the "Select Experiments" box, or click "Show all Experiments"
 3. Select the experiments you want by clicking the checkboxes, and then click "Select Experiments"
-4. You can download the data that is displayed in the table by clicking "Export Data". A csv file will be downloaded by your browser. 
+4. You can download the data that is displayed in the table by clicking "Export Data". A csv file will be downloaded by your browser.
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
 How To Use "Query Builder"
@@ -193,36 +193,36 @@ nelsonlab.cac.cornell.edu/lab/query/
 
 The Query Builder allows greater flexibility in querying the database.
 
-1. Select the Data Types you are interested in by clicking the checkboxes. 
+1. Select the Data Types you are interested in by clicking the checkboxes.
 
 	For Example:
 	- If you want measurements of row data for an experiment, you would click Measurements, Experiments, and Rows
 	- If you want measurements that came from seed stocks, you would click Measurements and Seed Stocks
 	- If you want to know what seed stocks were used in what rows in an experiment, you would click Seed Stocks, Rows, and Experiment
 	- If you want measurements of row data (and you want to know what seed stocks were planted in those rows), you would click Seed Stocks, Rows, and Measurements
-	
-2. Select the field names that you are interested in viewing by clicking their checkboxes. 
+
+2. Select the field names that you are interested in viewing by clicking their checkboxes.
 3. Add any filter sorting options for the fields you selected by selecting a filter from the dropdowns.
 4. Add any restrictions to the query for the fields you selected by entering text in the "contains" box.
 5a. Click "View Results" to see the results in a table on the website.
 5b. Alternatively (and much faster), click "Download Results" to have a csv file with the results downloaded by your browser.
 
 *****IMPORTANT*****
-Queries can be quite intensive and slow if the query is very broad. 
+Queries can be quite intensive and slow if the query is very broad.
 *******************
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
 What is the "MetaMaize" Section on the left bar?
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
-MetaMaize is a project that currently has its own separate database. 
+MetaMaize is a project that currently has its own separate database.
 Its database is not directly connected with the NelsonLab database tables.
 Future plans are to merge the data from the MetaMaize database into the NelsonLab database tables.
 
 For example:
 	- The MetaMaize Row Data will be merged with the overall Row Data
 	- The MetaMaize Tissue Data, Culture Data, and Medium Data will be merged with the overall Tissue Data, Culture Data, and Medium Data
-	
+
 ----------------------------------------------------------------------------------------------------------------------------------------------
 How To Add A New Experiment
 ----------------------------------------------------------------------------------------------------------------------------------------------
@@ -250,15 +250,15 @@ nelsonlab.cac.cornell.edu/lab/log_data/select_obs/
 
 1. You must first login to add data.
 2. Click "Log Data" in the top header bar.
-3. You will see the different data types that are available. 
+3. You will see the different data types that are available.
 	- Download the template that matches the data you want to add.
 	- Fill in the template with your data.
 4. Click "Upload to Queue".
 5. Fill out the form and click "Submit".
 	- Attach the completed template as the file attachment.
-	
+
 *****IMPORTANT*****
-When you submit a file using the "Upload to Queue" option, 
+When you submit a file using the "Upload to Queue" option,
 a curator will need to take a look at the file that was submitted, validate it, and then insert the data into the database!
 *******************
 
@@ -273,7 +273,7 @@ How will the Curator Add Data to the Database?
 nelsonlab.cac.cornell.edu/admin/
 
 1. Click on "Django" in the Admin section on the bottom of the left bar.
-2. Login to the Admin page. To get admin credentials, contact an administrator. 
+2. Login to the Admin page. To get admin credentials, contact an administrator.
 3. Click "Upload Queues"
 4. A list of files and whether the job has been Completed or Not Completed is shown.
 5. The curator will then find the files in /data/srv/nelsondb/app/webapp/media/upload_queue/, run validation scripts on the file, and then insert the data into the database.
@@ -288,10 +288,10 @@ How can advanced users access the database directly?
 nelsonlab.cac.cornell.edu/phpmyadmin/
 
 1. Click on "PHPMyAdmin" in the Admin section on the bottom of the left bar.
-2. Login to the Database. To get admin credentials, contact an administrator. 
+2. Login to the Database. To get admin credentials, contact an administrator.
 
 *****IMPORTANT*****
-This page gives direct access to the database. 
+This page gives direct access to the database.
 Users can add, edit, and delete data easily.
 Users can add, edit, and delete tables easily.
 *******************

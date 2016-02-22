@@ -359,56 +359,56 @@ $('#seed_inventory_clear_parameters').click(function(){
 	});
 });
 
-$('#isolate_inventory_clear_disease').click(function(){
+$('#isolatestock_inventory_clear_disease').click(function(){
 	$.ajax({
-		"url": "/lab/checkbox_clear/checkbox_isolate_disease/",
+		"url": "/lab/checkbox_clear/checkbox_isolatestock_disease/",
 		success: function() {
 			$.ajax({
-				"url": "/lab/checkbox_clear/checkbox_isolate_disease_names/",
+				"url": "/lab/checkbox_clear/checkbox_isolatestock_disease_names/",
 				success: function() {
 					location.reload(true);
 				},
 				error: function() {
-					alert("Error clearing selected isolate diseases!");
+					alert("Error clearing selected isolatestock diseases!");
 				}
 			});
 		},
 		error: function() {
-			alert("Error clearing selected isolate diseases!");
+			alert("Error clearing selected isolatestock diseases!");
 		}
 	});
 
 });
 
-$('#isolate_inventory_clear_taxonomy').click(function(){
+$('#isolatestock_inventory_clear_taxonomy').click(function(){
 	$.ajax({
-		"url": "/lab/checkbox_clear/checkbox_isolate_taxonomy/",
+		"url": "/lab/checkbox_clear/checkbox_isolatestock_taxonomy/",
 		success: function() {
 			$.ajax({
-				"url": "/lab/checkbox_clear/checkbox_isolate_taxonomy_names/",
+				"url": "/lab/checkbox_clear/checkbox_isolatestock_taxonomy_names/",
 				success: function() {
 					location.reload(true);
 				},
 				error: function() {
-					alert("Error clearing selected isolate taxonomies!");
+					alert("Error clearing selected isolatestock taxonomies!");
 				}
 			});
 		},
 		error: function() {
-			alert("Error clearing selected isolate taxonomies!");
+			alert("Error clearing selected isolatestock taxonomies!");
 		}
 	});
 });
 
-$('#show_all_isolate_taxonomy').click(function(){
-	$('#suggested_isolate_taxonomy').css('display', 'block');
-	$('#selected_isolate_taxonomy').dataTable({
+$('#show_all_isolatestock_taxonomy').click(function(){
+	$('#suggested_isolatestock_taxonomy').css('display', 'block');
+	$('#selected_isolatestock_taxonomy').dataTable({
 		"destroy": true,
 		"searching": false,
 		"scrollY": "300px",
 		"scrollCollapse": true,
 		"paginate": false,
-		"ajax": "/lab/isolate_inventory/show_all_taxonomy/",
+		"ajax": "/lab/isolatestock_inventory/show_all_taxonomy/",
 		"deferRender": true,
 		"aoColumns": [
 		{ "mData": "input"},
@@ -422,15 +422,15 @@ $('#show_all_isolate_taxonomy').click(function(){
 	});
 });
 
-$('#show_all_isolate_disease').click(function(){
-	$('#suggested_isolate_disease').css('display', 'block');
-	$('#selected_isolate_disease').dataTable({
+$('#show_all_isolatestock_disease').click(function(){
+	$('#suggested_isolatestock_disease').css('display', 'block');
+	$('#selected_isolatestock_disease').dataTable({
 		"destroy": true,
 		"searching": false,
 		"scrollY": "300px",
 		"scrollCollapse": true,
 		"paginate": false,
-		"ajax": "/lab/isolate_inventory/show_all_disease/",
+		"ajax": "/lab/isolatestock_inventory/show_all_disease/",
 		"deferRender": true,
 		"aoColumns": [
 		{ "mData": "input"},
@@ -440,18 +440,18 @@ $('#show_all_isolate_disease').click(function(){
 	});
 });
 
-$('#isolate_taxonomysuggestion').keyup(function(){
+$('#isolatestock_taxonomysuggestion').keyup(function(){
 	var query = $(this).val();
-	if (query == '') { $('#suggested_isolate_taxonomy').css('display', 'none'); }
-		else { $('#suggested_isolate_taxonomy').css('display', 'block'); }
-			$('#selected_isolate_taxonomy').dataTable({
+	if (query == '') { $('#suggested_isolatestock_taxonomy').css('display', 'none'); }
+		else { $('#suggested_isolatestock_taxonomy').css('display', 'block'); }
+			$('#selected_isolatestock_taxonomy').dataTable({
 				"destroy": true,
 				"searching": false,
 				"scrollY": "300px",
 				"scrollCollapse": true,
 				"paginate": false,
 				"ajax": {
-					"url": "/lab/isolate_inventory/suggest_isolate_taxonomy/",
+					"url": "/lab/isolatestock_inventory/suggest_isolatestock_taxonomy/",
 					"type": 'POST',
 					"data": {'suggestion':query},
 					beforeSend: function(xhr, settings) {
@@ -474,18 +474,18 @@ $('#isolate_taxonomysuggestion').keyup(function(){
 			});
 		});
 
-$('#isolate_diseasesuggestion').keyup(function(){
+$('#isolatestock_diseasesuggestion').keyup(function(){
 	var query = $(this).val();
-	if (query == '') { $('#suggested_isolate_disease').css('display', 'none'); }
-		else { $('#suggested_isolate_disease').css('display', 'block'); }
-			$('#selected_isolate_disease').dataTable({
+	if (query == '') { $('#suggested_isolatestock_disease').css('display', 'none'); }
+		else { $('#suggested_isolatestock_disease').css('display', 'block'); }
+			$('#selected_isolatestock_disease').dataTable({
 				"destroy": true,
 				"searching": false,
 				"scrollY": "300px",
 				"scrollCollapse": true,
 				"paginate": false,
 				"ajax": {
-					"url": "/lab/isolate_inventory/suggest_isolate_disease/",
+					"url": "/lab/isolatestock_inventory/suggest_isolatestock_disease/",
 					"type": 'POST',
 					"data": {'suggestion':query},
 					beforeSend: function(xhr, settings) {
@@ -504,13 +504,13 @@ $('#isolate_diseasesuggestion').keyup(function(){
 			});
 });
 
-$('#select_isolate_disease_form_submit').click(function(){
+$('#select_isolatestock_disease_form_submit').click(function(){
 	var d = [];
-	$("input[name='checkbox_isolate_disease_id']:checked").each(function() {
+	$("input[name='checkbox_isolatestock_disease_id']:checked").each(function() {
 		d.push($(this).val());
 	});
 	$.ajax({
-		"url": "/lab/isolate_inventory/select_isolate_disease/",
+		"url": "/lab/isolatestock_inventory/select_isolatestock_disease/",
 		"type": "POST",
 		"data": {'diseases': JSON.stringify(d)},
 		beforeSend: function(xhr, settings) {
@@ -523,18 +523,18 @@ $('#select_isolate_disease_form_submit').click(function(){
 			location.reload(true);
 		},
 		error: function() {
-			alert("Error selecting isolate disease!");
+			alert("Error selecting isolatestock disease!");
 		}
 	});
 });
 
-$('#select_isolate_taxonomy_form_submit').click(function(){
+$('#select_isolatestock_taxonomy_form_submit').click(function(){
 	var d = [];
-	$("input[name='checkbox_isolate_taxonomy_id']:checked").each(function() {
+	$("input[name='checkbox_isolatestock_taxonomy_id']:checked").each(function() {
 		d.push($(this).val());
 	});
 	$.ajax({
-		"url": "/lab/isolate_inventory/select_isolate_taxonomy/",
+		"url": "/lab/isolatestock_inventory/select_isolatestock_taxonomy/",
 		"type": "POST",
 		"data": {'taxonomies': JSON.stringify(d)},
 		beforeSend: function(xhr, settings) {
@@ -547,7 +547,7 @@ $('#select_isolate_taxonomy_form_submit').click(function(){
 			location.reload(true);
 		},
 		error: function() {
-			alert("Error selecting isolate taxonomy!");
+			alert("Error selecting isolatestock taxonomy!");
 		}
 	});
 });
@@ -1176,18 +1176,18 @@ $(document).ready(function() {
 		  ],
 		});
 
-		$('#isolate_inventory_datatable').dataTable({
+		$('#isolatestock_inventory_datatable').dataTable({
 			"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-			"ajax": "/lab/datatable/isolate_inventory/",
+			"ajax": "/lab/datatable/isolatestock_inventory/",
 			"deferRender": true,
 			"aoColumns": [
 			  { "mData": "input"},
-			  { "mData": "isolate_id",
+			  { "mData": "isolatestock_id",
 			    "mRender": function (data, type, full) {
-				    return '<a href=/lab/isolate/' + full.id + '/>' + full.isolate_id + '</a>';
+				    return '<a href=/lab/isolatestock/' + full.id + '/>' + full.isolatestock_id + '</a>';
 			    }
 		    },
-		    { "mData": "isolate_name"},
+		    { "mData": "isolatestock_name"},
 		    { "mData": "disease_name",
 				  "mRender": function (data, type, full) {
 					  return '<a href=/lab/disease_info/' + full.disease_id + '/>' + full.disease_name + '</a>';
@@ -1222,9 +1222,9 @@ $(document).ready(function() {
 				    return '<a href=/lab/field/' + full.field_id + '/>' + full.field_name + '</a>';
 			    }
 		    },
-			  { "mData": "isolate_id",
+			  { "mData": "isolatestock_id",
 			    "mRender": function (data, type, full) {
-				    return '<a href=/lab/isolate/' + full.isolate_table_id + '/>' + full.isolate_id + '</a>';
+				    return '<a href=/lab/isolatestock/' + full.isolatestock_table_id + '/>' + full.isolatestock_id + '</a>';
 			    }
 		    },
 			  { "mData": "dna_id",
@@ -1312,8 +1312,8 @@ function toggle(source) {
 	}
 }
 
-function toggle_isolates(source) {
-	checkboxes = document.getElementsByName('checkbox_isolates');
+function toggle_isolatestocks(source) {
+	checkboxes = document.getElementsByName('checkbox_isolatestocks');
 	for(var i=0, n=checkboxes.length;i<n;i++) {
 		checkboxes[i].checked = source.checked;
 	}
@@ -1333,12 +1333,12 @@ $('#seedidsearch').keyup(function(){
 	});
 });
 
-$('#isolateidsearch').keyup(function(){
+$('#isolatestockidsearch').keyup(function(){
 	var query;
 	query = $(this).val();
-	$.get('/lab/iso_inventory/isolate_id_search/', {suggestion: query}, function(data){
-		$('#isolate_id_search_results').html(data);
-		$('#isolate_id_search_table').dataTable({
+	$.get('/lab/iso_inventory/isolatestock_id_search/', {suggestion: query}, function(data){
+		$('#isolatestock_id_search_results').html(data);
+		$('#isolatestock_id_search_table').dataTable({
 			"searching": false,
 			"scrollY": "200px",
 			"scrollCollapse": true,

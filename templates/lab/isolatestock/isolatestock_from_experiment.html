@@ -1,0 +1,54 @@
+{% extends 'lab/base.html' %}
+{% load static %}
+{% block title %}IsolateStocks{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Experiment: <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h1>
+</div>
+
+{% if isolatestock_data %}
+  <hr>
+  <h2>IsolateStocks From <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h2><br/>
+
+    <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+      <thead>
+      <tr>
+        <th>IsolateStock ID</th>
+        <th>IsolateStock Name</th>
+        <th>Plant Organ</th>
+        <th>IsolateStock Comments</th>
+        <th>Genus</th>
+        <th>Species</th>
+        <th>Alias</th>
+        <th>Race</th>
+        <th>Subtaxa</th>
+        <th>Disease Name</th>
+        <th>Locality</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for i in isolatestock_data %}
+      <tr>
+        <td><a href='/lab/isolatestock/{{i.isolatestock_id}}/'>{{ i.isolatestock.isolatestock_id }}</a></td>
+        <td>{{ i.isolatestock.isolatestock_name }}</td>
+        <td>{{ i.isolatestock.plant_organ }}</td>
+        <td>{{ i.isolatestock.comments }}</td>
+        <td>{{ i.isolatestock.passport.taxonomy.genus }}</td>
+        <td>{{ i.isolatestock.passport.taxonomy.species }}</td>
+        <td>{{ i.isolatestock.passport.taxonomy.alias }}</td>
+        <td>{{ i.isolatestock.passport.taxonomy.race }}</td>
+        <td>{{ i.isolatestock.passport.taxonomy.subtaxa }}</td>
+        <td>{{ i.isolatestock.disease_info }}</td>
+        <td><a href="{% url 'single_locality_info' isolatestock_info.locality_id %}">{{ isolatestock_info.locality }}</a></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+
+  </form>
+{% else %}
+  <hr>
+  <h2>No IsolateStocks Inventoried For <a href='/lab/experiment/{{experiment_name}}/'>{{experiment_name}}</a></h2><br/>
+{% endif %}
+
+{% endblock %}

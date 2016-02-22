@@ -1,0 +1,38 @@
+{% extends 'lab/base.html' %}
+{% block title %}Find an IsolateStock{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Find an IsolateStock</h1>
+</div>
+{% if selected_isolatestocks %}
+  <hr>
+  <h2>IsolateStocks in Inventory</h2><br/>
+      <table id="selected_isolatestocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+          <th>IsolateStock ID</th>
+          <th>IsolateStock Name</th>
+          <th>Genus</th>
+          <th>Disease</th>
+          <th>Locality</th>
+          <th>Comments</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for isolatestock in selected_isolatestocks %}
+        <tr>
+          <td>{{ isolatestock.isolatestock_id }}</td>
+          <td>{{ isolatestock.isolatestock_name }}</td>
+          <td>{{ isolatestock.passport.taxonomy.genus }}</td>
+          <td><a href='/lab/disease_info/{{isolatestock.disease_info.id}}/'>{{ isolatestock.disease_info.common_name }}</a></td>
+          <td><a href="{% url 'single_locality_info' isolatestock.locality_id %}">{{ isolatestock.locality }}</a></td>
+          <td>{{ isolatestock.comments }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+  {% else %}
+    <hr>
+    <h2>The IsolateStocks You Selected Are Not Inventoried</h2><br/>
+{% endif %}
+{% endblock %}

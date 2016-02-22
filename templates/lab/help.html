@@ -18,11 +18,11 @@
   <p>2. Click Login in the top right corner of the website.</p>
   <p>3. Email slin63@illinois.edu or smideros@illinois.edu for your default password. Use your username and password to login.</p>
   <p>4. Change your default password ASAP by going to <a href="{% url 'profile_change_password' %}">the password change</a> portion of your profile page.</p>
-  <br/> 
+  <br/>
   <h4>Important!</h4>
   <p>Please change your password ASAP by going to <a href="{% url 'profile_change_password' %}">your profile page.</a></p>
   <p>More info found in sections below.</p>
-  
+
   <br/>
   <p>If you are a new member of the lab:</p>
   <br/>
@@ -60,7 +60,7 @@
   <p>The left bar on the screen holds links that are useful for browsing data.</p>
   <br/>
   <p>&nbsp;&nbsp;&nbsp;-Seed Inventory</p>
-  <p>&nbsp;&nbsp;&nbsp;-Isolate Inventory</p>
+  <p>&nbsp;&nbsp;&nbsp;-IsolateStock Inventory</p>
   <p>&nbsp;&nbsp;&nbsp;-Find an Experiment</p>
   <p>&nbsp;&nbsp;&nbsp;-Row Data</p>
   <p>&nbsp;&nbsp;&nbsp;-Plant Data</p>
@@ -94,19 +94,19 @@
   <p>*******************</p>
 
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <h3>How To Use "Isolate Inventory"</h3>
+  <h3>How To Use "IsolateStock Inventory"</h3>
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  <p><a href="{% url 'isolate_inventory' %}">Click to access the isolate inventory</a></p>
+  <p><a href="{% url 'isolatestock_inventory' %}">Click to access the isolatestock inventory</a></p>
   <br/>
-  <p>Filtering through Isolate Info to find Inventoried Isolates</p>
+  <p>Filtering through IsolateStock Info to find Inventoried IsolateStocks</p>
 
-  <p>1. On the Isolate Inventory page there are two Filters currently built in: Disease Name and Genus</p>
+  <p>1. On the IsolateStock Inventory page there are two Filters currently built in: Disease Name and Genus</p>
   <p>2. Entering a disease name in the "Select Disease" box causes a list of matching results to appear. You can also click "Show all Diseases".</p>
   <p>3. Select the checkboxes that meet your needs and click "Select Disease"</p>
   <p>4. Entering a genus in the "Select Taxonomy" box causes a list of matching results to appear. You can also click "Show all Taxonomies".</p>
   <p>5. Select the checkboxes that meet your needs and click "Select Taxonomies"</p>
-  <p>6. These two filters are applied to the "Isolates" table that appears on the bottom of the Isolate Inventory page.</p>
-  <p>7. You can then select the isolates of interest by selecting the checkboxes, and clicking "Search Inventory for Selected Isolates".</p>
+  <p>6. These two filters are applied to the "IsolateStocks" table that appears on the bottom of the IsolateStock Inventory page.</p>
+  <p>7. You can then select the isolatestocks of interest by selecting the checkboxes, and clicking "Search Inventory for Selected IsolateStocks".</p>
 
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
   <h3>How To Use "Find an Experiment"</h3>
@@ -141,7 +141,7 @@
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
   <h3>How To Use "Browse Row Data", "Browse Plant Data", "Browse Samples Data", "Browse Measurement Data"</h3>
   <p>----------------------------------------------------------------------------------------------------------------------------------------------</p>
-  
+
   <p><a href="{% url 'row_data_browse' %}">Row Data</a></p>
   <p><a href="{% url 'plant_data_browse' %}">Plant Data</a></p>
   <p><a href="{% url 'sample_data_browse' %}">Sample Data</a></p>

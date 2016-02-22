@@ -139,12 +139,12 @@
       <hr>
       <h3>Or Upload Using Online Form: </h3>
     {% endif %}
-    {% if data_type == 'isolate' %}
+    {% if data_type == 'isolatestock' %}
       <hr>
       <h3>Upload From File: </h3>
-      <h5><a href='/lab/download/template/isolate_data/'>Download Template</a></h5>
-      <h5><a href='/lab/download/template/isolate_data_help/'>Download Template Help</a></h5>
-      <h5><a href='/lab/upload_online/isolate_data/'>Upload Online</a></h5>
+      <h5><a href='/lab/download/template/isolatestock_data/'>Download Template</a></h5>
+      <h5><a href='/lab/download/template/isolatestock_data_help/'>Download Template Help</a></h5>
+      <h5><a href='/lab/upload_online/isolatestock_data/'>Upload Online</a></h5>
       <hr>
       <h3>Or Upload Using Online Form: </h3>
     {% endif %}
@@ -158,16 +158,16 @@
               <li class="nav-header">Search IsolateStock ID to Determine if IsolateStock Info in Database</li>
               <form>
                 <label></label>
-                <li><input  class="search-query" type="text" name="isolateidsearch" id="isolateidsearch" placeholder="IsolateStock ID (e.g. 090B01_1s)"/></li>
+                <li><input  class="search-query" type="text" name="isolatestockidsearch" id="isolatestockidsearch" placeholder="IsolateStock ID (e.g. 090B01_1s)"/></li>
               </form>
             </ul>
           </div>
           <div class="span3 offset4">
-            &nbsp;&nbsp;&nbsp;<a href='/lab/log_data/isolate/'><input class="btn btn-info" type="submit" name="submit" value="Add New IsolateStock Information"/></a>
+            &nbsp;&nbsp;&nbsp;<a href='/lab/log_data/isolatestock/'><input class="btn btn-info" type="submit" name="submit" value="Add New IsolateStock Information"/></a>
           </div>
         </div>
-        <div id="isolate_id_search_results">
-          {% include 'lab/isolatestock/isolate_id_search_list.html' with isolate_id_list=isolate_id_list %}
+        <div id="isolatestock_id_search_results">
+          {% include 'lab/isolatestock/isolatestock_id_search_list.html' with isolatestock_id_list=isolatestock_id_list %}
         </div>
       </div>
     {% endif %}

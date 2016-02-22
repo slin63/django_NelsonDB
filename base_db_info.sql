@@ -141,12 +141,12 @@ INSERT INTO `lab_gwasresults` (`id`, `p_value`, `strand`, `relationship_to_hit`,
 -- Truncate table before insert `lab_isolate`
 --
 
-TRUNCATE TABLE `lab_isolate`;
+TRUNCATE TABLE `lab_isolatestock`;
 --
 -- Dumping data for table `lab_isolate`
 --
 
-INSERT INTO `lab_isolate` (`id`, `isolate_id`, `isolate_name`, `plant_organ`, `comments`, `disease_info_id`, `locality_id`, `passport_id`) VALUES
+INSERT INTO `lab_isolatestock` (`id`, `isolatestock_id`, `isolatestock_name`, `plant_organ`, `comments`, `disease_info_id`, `locality_id`, `passport_id`) VALUES
 (1, 'No Isolate', 'No Isolate', 'No Isolate', '', 1, 1, 1);
 
 --
@@ -410,7 +410,7 @@ TRUNCATE TABLE `lab_obstracker`;
 -- Dumping data for table `lab_obstracker`
 --
 
-INSERT INTO `lab_obstracker` (`id`, `obs_entity_type`, `experiment_id`, `field_id`, `glycerol_stock_id`, `isolate_id`, `location_id`, `maize_sample_id`, `obs_culture_id`, `obs_dna_id`, `obs_env_id`, `obs_extract_id`, `obs_microbe_id`, `obs_plant_id`, `obs_plate_id`, `obs_row_id`, `obs_sample_id`, `obs_tissue_id`, `obs_well_id`, `stock_id`, `user_id`) VALUES
+INSERT INTO `lab_obstracker` (`id`, `obs_entity_type`, `experiment_id`, `field_id`, `glycerol_stock_id`, `isolatestock_id`, `location_id`, `maize_sample_id`, `obs_culture_id`, `obs_dna_id`, `obs_env_id`, `obs_extract_id`, `obs_microbe_id`, `obs_plant_id`, `obs_plate_id`, `obs_row_id`, `obs_sample_id`, `obs_tissue_id`, `obs_well_id`, `stock_id`, `user_id`) VALUES
 (1, 'No Type', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 
 --
