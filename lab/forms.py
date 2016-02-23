@@ -595,6 +595,7 @@ class LogIsolateStocksOnlineForm(forms.Form):
                                       help_text="Locality:", required=True)
     field = forms.ModelChoiceField(queryset=Field.objects.all(), empty_label="--- Source Field Name ---",
                                    help_text="Source Field Name:", required=True)
+    isolatestock__disease_info = forms.ModelChoiceField(queryset=DiseaseInfo.objects.all(), empty_label="--- Disease ---", help_text="Disease Name:", required=True)
     obs_dna__dna_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source DNA ID'}),
                                       help_text="Source DNA ID:", required=False)
     obs_microbe__microbe_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Microbe ID'}),
@@ -615,8 +616,6 @@ class LogIsolateStocksOnlineForm(forms.Form):
                                         help_text="Source Well ID:", required=False)
     isolatestock__isolatestock_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'IsolateStock Name'}),
                                             help_text="IsolateStock Name:", required=False)
-    isolatestock__disease_info = forms.ModelChoiceField(queryset=DiseaseInfo.objects.all(), empty_label="--- Disease ---",
-                                                   help_text="Disease Name:", required=True)
     isolatestock__plant_organ = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plant Organ'}),
                                            help_text="Plant Organ:", required=False)
     isolatestock__passport__taxonomy__genus = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Genus'}),

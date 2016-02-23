@@ -1,29 +1,18 @@
 """Handles views for the IsolateStock pages. Templates stored in /templates/lab/isolatestock
 Details at: https://docs.google.com/document/d/1IVkC0RxJe-P1xGAM4WMGCjp5JYcFlRtQj5PGvZNpAJA/edit"""
 
-import csv
-import csv
-import json
 import json
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.db import transaction
-from django.http import HttpResponse
-from django.http import HttpResponse
-from django.http import JsonResponse
 from django.http import JsonResponse
 from django.shortcuts import render_to_response
-from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.template import RequestContext
-from itertools import chain
 from itertools import chain
 
 from lab.forms import LogIsolateStocksOnlineForm
-from lab.models import Passport, Stock, StockPacket, Taxonomy, ObsRow, ObsPlant, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, \
-    ObsTracker, IsolateStock, Measurement, GlycerolStock
-from lab.views import checkbox_session_variable_check, get_obs_tracker, get_obs_source, get_obs_measurements
+from lab.models import Passport, Stock, Taxonomy, ObsRow, ObsPlant, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, \
+    ObsTracker, IsolateStock, GlycerolStock
+from lab.views import checkbox_session_variable_check, get_obs_tracker
 
 
 def select_isolatestocks(request):
@@ -90,28 +79,6 @@ def checkbox_isolatestock_sort(request):
     return selected_isolatestocks
 
 
-# def unique_selected_stocks(selected_stocks):
-#     """
-#     ::url:: = None
-#     ::func:: = Contacts OBS tracker and makes sure stocks in a passed list are only
-#     parsed by datatable_seed_inventory once
-#     ::html:: = None
-#     """
-#     unique_seed_id = []
-#     unique_stock_list = []
-#     for s in selected_stocks:
-#         if s.obs_tracker.stock.seed_id not in unique_seed_id:
-#             unique_seed_id.append(s.obs_tracker.stock.seed_id)
-#             unique_stock_list.append({'id': s.obs_tracker.stock_id, 'seed_id': s.obs_tracker.stock.seed_id,
-#                                       'cross_type': s.obs_tracker.stock.cross_type,
-#                                       'pedigree': s.obs_tracker.stock.pedigree,
-#                                       'population': s.obs_tracker.stock.passport.taxonomy.population,
-#                                       'stock_status': s.obs_tracker.stock.stock_status,
-#                                       'collector': s.obs_tracker.stock.passport.collecting.user.username,
-#                                       'comments': s.obs_tracker.stock.comments})
-#     return unique_stock_list
-
-
 @login_required
 def isolatestock_inventory(request):
     """
@@ -124,19 +91,6 @@ def isolatestock_inventory(request):
     context_dict = checkbox_session_variable_check(request)
     context_dict['logged_in_user'] = request.user.username
     return render_to_response('lab/isolatestock/isolatestock_inventory.html', context_dict, context)
-
-
-# def select_pedigree(request):
-#     """
-#     ::url:: = /seed_inventory/select_pedigree/ - To change
-#     ::func:: = Supporting function for the pedigree search table in seed_inventory
-#     ::ajax:: = $('#select_pedigree_form_submit')
-#     ::html:: = Used in seed_inventory.html
-#     """
-#     pedigrees = request.POST['pedigrees']
-#     pedigree_list = json.loads(pedigrees)
-#     request.session['checkbox_pedigree'] = pedigree_list
-#     return JsonResponse({'success': True})
 
 
 def select_taxonomy(request):
@@ -153,70 +107,9 @@ def select_taxonomy(request):
     return JsonResponse({'success': True})
 
 
-# def select_seedinv_parameters(request):
-#     """
-#     ::url:: = seed_inventory/select_parameters/$
-#     ::func:: = Supporting function for the parameter search table in seed_inventory
-#     ::ajax:: = $('#select_seedinv_parameters_form_submit')
-#     ::html:: = seed_inventory.html
-#     """
-#     parameters = request.POST['parameters']
-#     parameters_list = json.loads(parameters)
-#     request.session['checkbox_seedinv_parameters'] = parameters_list
-#     return JsonResponse({'success': True})
-
-
-# def select_stockpacket_from_stock(request):
-#     """
-#     ::url:: seed_inventory/select_stocks/
-#     ::func:: Deprecated, replaced by upload_online, log_data_online,
-#     ::html:: stock.html
-#     """
-#     context = RequestContext(request)
-#     context_dict = {}
-#     selected_packets = []
-#     checkbox_stock_list = request.POST.getlist('checkbox_stock')
-#     request.session['checkbox_stock'] = checkbox_stock_list
-#     for stock in checkbox_stock_list:
-#         packet = StockPacket.objects.filter(stock__id=stock)
-#         selected_packets = list(chain(packet, selected_packets))
-#     context_dict = checkbox_session_variable_check(request)
-#     context_dict['selected_packets'] = selected_packets
-#     context_dict['logged_in_user'] = request.user.username
-#     return render_to_response('lab/isolatestock/stock.html', context_dict, context)
-
-
-# def suggest_pedigree(request):
-#     """
-#     ::func:: deprecated
-#     """
-#     pedigree_list = []
-#     starts_with = ''
-#     if request.method == 'GET':
-#         starts_with = request.GET.get('suggestion', False)
-#     else:
-#         starts_with = request.POST.get('suggestion', False)
-#     if starts_with:
-#         if request.session.get('checkbox_taxonomy', None):
-#             checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
-#             for taxonomy in checkbox_taxonomy_list:
-#                 pedigree = Stock.objects.filter(
-#                     pedigree__contains=starts_with,
-#                     passport__taxonomy__population=taxonomy).values('pedigree','passport__taxonomy__population').distinct()
-#                 pedigree_list = list(chain(pedigree, pedigree_list))
-#             for p in pedigree_list:
-#                 p['input'] = '<input type="checkbox" name="checkbox_pedigree" value="%s">' % (p['pedigree'])
-#         else:
-#             pedigree_list = list(Stock.objects.filter(pedigree__contains=starts_with).values(
-#                 'pedigree', 'passport__taxonomy__population').distinct())
-#             for p in pedigree_list:
-#                 p['input'] = '<input type="checkbox" name="checkbox_pedigree" value="%s">' % (p['pedigree'])
-#     return JsonResponse({'data': pedigree_list})
-
-
 def suggest_taxonomy(request):
     """
-    ::Deprecated::
+    ::Func:: Handles taxonomy search box
     """
     taxonomy_list = []
     starts_with = ''
@@ -246,73 +139,6 @@ def suggest_taxonomy(request):
                 t['passport__taxonomy__species'] = t['species']
                 t['pedigree'] = ''
     return JsonResponse({'data': taxonomy_list})
-
-
-# def seedinv_suggest_parameters(request):
-#     """
-#     ::func:: Not needed
-#     """
-#     parameter_list = []
-#     starts_with = ''
-#     if request.method == 'GET':
-#         starts_with = request.GET.get('suggestion', False)
-#     else:
-#         starts_with = request.POST.get('suggestion', False)
-#     if starts_with:
-#         if request.session.get('checkbox_taxonomy', None):
-#             checkbox_taxonomy_list = request.session.get('checkbox_taxonomy')
-#             if request.session.get('checkbox_pedigree', None):
-#                 checkbox_pedigree_list = request.session.get('checkbox_pedigree')
-#                 parameter_list_unique = []
-#                 parameter_names_unique = []
-#                 for taxonomy in checkbox_taxonomy_list:
-#                     for pedigree in checkbox_pedigree_list:
-#                         parameters = Measurement.objects.filter(measurement_parameter__parameter__contains=starts_with,
-#                                                                 obs_tracker__stock__passport__taxonomy__population=taxonomy,
-#                                                                 obs_tracker__stock__pedigree=pedigree).values(
-#                             'measurement_parameter__parameter', 'measurement_parameter__protocol',
-#                             'measurement_parameter__unit_of_measure').distinct()
-#                         parameter_list = list(chain(parameters, parameter_list))
-#                 for p in parameter_list:
-#                     if p['measurement_parameter__parameter'] not in parameter_names_unique:
-#                         parameter_names_unique.append(p['measurement_parameter__parameter'])
-#                         parameter_list_unique.append(
-#                             {'measurement_parameter__parameter': p['measurement_parameter__parameter'],
-#                              'measurement_parameter__protocol': p['measurement_parameter__protocol'],
-#                              'measurement_parameter__unit_of_measure': p['measurement_parameter__unit_of_measure'],
-#                              'input': '<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (
-#                                  p['measurement_parameter__parameter'])})
-#                 parameter_list = parameter_list_unique
-#             else:
-#                 for taxonomy in checkbox_taxonomy_list:
-#                     parameters = Measurement.objects.filter(measurement_parameter__parameter__contains=starts_with,
-#                                                             obs_tracker__stock__passport__taxonomy__population=taxonomy).values(
-#                         'measurement_parameter__parameter', 'measurement_parameter__protocol',
-#                         'measurement_parameter__unit_of_measure').distinct()
-#                     parameter_list = list(chain(parameters, parameter_list))
-#                 for p in parameter_list:
-#                     p['input'] = '<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (
-#                         p['measurement_parameter__parameter'])
-#         elif request.session.get('checkbox_pedigree', None):
-#             checkbox_pedigree_list = request.session.get('checkbox_pedigree')
-#             for pedigree in checkbox_pedigree_list:
-#                 parameters = Measurement.objects.filter(measurement_parameter__parameter__contains=starts_with,
-#                                                         obs_tracker__stock__pedigree=pedigree).values(
-#                     'measurement_parameter__parameter', 'measurement_parameter__protocol',
-#                     'measurement_parameter__unit_of_measure').distinct()
-#                 parameter_list = list(chain(parameters, parameter_list))
-#             for p in parameter_list:
-#                 p['input'] = '<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (
-#                     p['measurement_parameter__parameter'])
-#         else:
-#             parameter_list = list(
-#                 Measurement.objects.filter(measurement_parameter__parameter__contains=starts_with).values(
-#                     'measurement_parameter__parameter', 'measurement_parameter__protocol',
-#                     'measurement_parameter__unit_of_measure').distinct())
-#             for p in parameter_list:
-#                 p['input'] = '<input type="checkbox" name="checkbox_seedinv_parameters" value="%s">' % (
-#                     p['measurement_parameter__parameter'])
-#     return JsonResponse({'data': parameter_list})
 
 
 def show_all_isolatestock_taxonomy(request):
@@ -435,51 +261,6 @@ def update_isolatestock_info(request, isolatestock_id):
     return render_to_response('lab/isolatestock/isolatestock_info_update.html', context_dict, context)
 
 
-# @login_required
-# def single_stock_info(request, stock_id):
-#     """
-#     ::url:: = stock/(?P<stock_id>\d+)
-#     ::func:: = Renders tables for stock information and for related stock packets
-#     ::html:: = stock_info.html
-#     """
-#     context = RequestContext(request)
-#     context_dict = {}
-#     obs_tracker_seed = []
-#     try:
-#         stock_info = Stock.objects.get(id=stock_id)
-#     except Stock.DoesNotExist:
-#         stock_info = None
-#     if stock_info is not None:
-#         obs_tracker = get_obs_tracker('stock_id', stock_id)
-#         for t in obs_tracker:
-#             if t.obs_id != stock_info.seed_id:
-#                 obs_tracker_seed.append(t)
-#         obs_source = get_obs_source('stock_id', stock_id)
-#         obs_measurements = get_obs_measurements('stock_id', stock_id)
-#         measured_parameters = {}
-#         for mp in obs_measurements:
-#             if mp.measurement_parameter_id not in measured_parameters:
-#                 measured_parameters[mp.measurement_parameter_id] = mp.measurement_parameter.parameter
-#     else:
-#         obs_tracker = None
-#         obs_source = None
-#         obs_measurements = None
-#         measured_parameters = None
-#     try:
-#         # Section where stockpackets are added
-#         stock_packets = StockPacket.objects.filter(stock_id=stock_id)
-#     except StockPacket.DoesNotExist:
-#         stock_packets = None
-#     context_dict['stock_info'] = stock_info
-#     context_dict['obs_tracker'] = obs_tracker_seed
-#     context_dict['obs_source'] = obs_source
-#     context_dict['obs_measurements'] = obs_measurements
-#     context_dict['stock_packets'] = stock_packets
-#     context_dict['measured_parameters'] = measured_parameters
-#     context_dict['logged_in_user'] = request.user.username
-#     return render_to_response('lab/stock_info.html', context_dict, context)
-
-
 @login_required
 def single_isolatestock_info(request, isolatestock_table_id):
     context = RequestContext(request)
@@ -517,7 +298,8 @@ def isolatestock_id_search(request):
     else:
         starts_with = request.POST['suggestion']
     if starts_with:
-        isolatestock_id_list = IsolateStock.objects.filter(isolatestock_id__contains=starts_with)[:2000]
+        # __icontains method calls for case insensitive search
+        isolatestock_id_list = IsolateStock.objects.filter(isolatestock_id__icontains=starts_with)[:2000]
     else:
         isolatestock_id_list = None
         context_dict = checkbox_session_variable_check(request)
