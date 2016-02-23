@@ -1054,7 +1054,7 @@ def update_isolate_info(request, isolate_id):
 	context_dict['isolate_id'] = isolate_id
 	context_dict['obs_tracker_isolate_form'] = obs_tracker_isolate_form
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/isolate_info_update.html', context_dict, context)
+	return render_to_response('lab/isolate/isolate_info_update.html', context_dict, context)
 
 @login_required
 def edit_info(request, obj_type, obj_id):
