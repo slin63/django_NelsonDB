@@ -132,15 +132,15 @@
 								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Collected Isolates</h3>
-										{% if glycerol_stock_data %}
-										<h5><a href='/lab/data/glycerol_stock/{{experiment.name}}/'>View</a></h5>
-										<h5><a href='/lab/download/glycerol_stock/{{experiment.name}}/'>Download</a></h5>
+										{% if isolate_data %}
+										<h5><a href='/lab/data/isolate/{{experiment.name}}/'>View</a></h5>
+										<h5><a href='/lab/download/isolate/{{experiment.name}}/'>Download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}
 									</div>
 									<div class="span5">
-										<img src='{% static '/media/site_images/glycerol_stock.png' %}' />
+										<img src='{% static '/media/site_images/isolate.png' %}' />
 									</div>
 								</div>
 							</div>

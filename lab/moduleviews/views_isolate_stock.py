@@ -11,7 +11,7 @@ from itertools import chain
 
 from lab.forms import LogIsolateStocksOnlineForm
 from lab.models import Passport, Stock, Taxonomy, ObsRow, ObsPlant, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, \
-    ObsTracker, IsolateStock, GlycerolStock
+    ObsTracker, IsolateStock, Isolate
 from lab.views import checkbox_session_variable_check, get_obs_tracker
 
 
@@ -82,7 +82,7 @@ def checkbox_isolatestock_sort(request):
 @login_required
 def isolatestock_inventory(request):
     """
-    ::url:: = /iso_inventory/ - To change
+    ::url:: = /isolatestock_inventory/ - To change
     ::func:: = Renders view for the seed inventory page
     ::html:: = seed_inventory.html
     """
@@ -91,6 +91,30 @@ def isolatestock_inventory(request):
     context_dict = checkbox_session_variable_check(request)
     context_dict['logged_in_user'] = request.user.username
     return render_to_response('lab/isolatestock/isolatestock_inventory.html', context_dict, context)
+
+
+def suggest_isolatestock_disease(request):
+    isolatestock_disease_list = []
+    starts_with = ''
+    if request.method == 'GET':
+        starts_with = request.GET['suggestion']
+    else:
+        starts_with = request.POST['suggestion']
+    if starts_with:
+        if request.session.get('checkbox_isolatestock_taxonomy', None):
+            checkbox_isolatestock_taxonomy = request.session.get('checkbox_isolatestock_taxonomy')
+            for taxonomy_id in checkbox_isolatestock_taxonomy:
+                disease = IsolateStock.objects.filter(disease_info__common_name__contains=starts_with, passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()
+                isolatestock_disease_list = list(chain(disease, isolatestock_disease_list))
+            for t in isolatestock_disease_list:
+                t['input'] = '<input type="checkbox" name="checkbox_isolatestock_disease_id" value="%s">' % (t['disease_info__id'])
+        else:
+            isolatestock_disease_list = list(DiseaseInfo.objects.filter(common_name__contains=starts_with).values('id', 'common_name').distinct())
+            for t in isolatestock_disease_list:
+                t['input'] = '<input type="checkbox" name="checkbox_isolatestock_disease_id" value="%s">' % (t['id'])
+                t['disease_info__common_name'] = t['common_name']
+                t['passport__taxonomy__genus'] = ''
+    return JsonResponse({'data':isolatestock_disease_list})
 
 
 def select_taxonomy(request):
@@ -193,7 +217,7 @@ def update_isolatestock_info(request, isolatestock_id):
             with transaction.atomic():
                 try:
                     obs_tracker = ObsTracker.objects.get(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id, experiment=obs_tracker_isolatestock_form.cleaned_data['experiment'])
-                    obs_tracker.glycerol_stock_id = 1
+                    obs_tracker.isolate_id = 1
                     obs_tracker.maize_sample_id = 1
                     obs_tracker.obs_extract_id = 1
                     obs_tracker.locality = obs_tracker_isolatestock_form.cleaned_data['isolatestock__locality']
@@ -272,9 +296,9 @@ def single_isolatestock_info(request, isolatestock_table_id):
     if isolatestock_info is not None:
         obs_tracker = get_obs_tracker('isolatestock_id', isolatestock_table_id)
     try:
-        # Section where glycerol stocks are added
-        associated_isolates = ObsTracker.objects.filter(isolatestock=isolatestock_info.id, obs_entity_type='glycerol_stock')
-    except GlycerolStock.DoesNotExist:
+        # Section where Isolates are added
+        associated_isolates = ObsTracker.objects.filter(isolatestock=isolatestock_info.id, obs_entity_type='isolate')
+    except Isolate.DoesNotExist:
         associated_isolates = None
     context_dict['isolatestock_info'] = isolatestock_info
     context_dict['obs_tracker'] = obs_tracker

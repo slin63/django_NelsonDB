@@ -9,8 +9,8 @@
 
   <hr>
   <a href="{% url 'update_iso_info' isolatestock_info.id %}"><input class="btn btn-info" type="submit" name="submit" value="Update IsolateStock Information"/></a>
-  <a href="{% url 'log_data_online' 'glycerol_stock' %}"><input class="btn btn-warning" type="submit" name="submit" value="Add new Glycerol Stock"/></a>
-  <a href="{% url 'iso_inventory' %}"><input class="btn btn-danger" type="submit" name="submit" value="Return to IsolateStock table"/></a>
+  <a href="{% url 'log_data_online' 'isolate' %}"><input class="btn btn-warning" type="submit" name="submit" value="Add new Isolate"/></a>
+  <a href="{% url 'isolatestock_inventory' %}"><input class="btn btn-danger" type="submit" name="submit" value="Return to IsolateStock table"/></a>
   <hr>
 
 
@@ -74,12 +74,12 @@
         <tbody>
           {% for iso in associated_isolates %}
           <tr>
-            <td><a href="{% url 'single_glycerol_stock_info' iso.glycerol_stock.id %}">{{ iso.glycerol_stock.glycerol_stock_id }}</a></td>
+            <td><a href="{% url 'single_isolate_info' iso.isolate.id %}">{{ iso.isolate.isolate_id }}</a></td>
             <td>{{ iso.location.location_name }}</td>
-            <td>{{ iso.glycerol_stock.stock_date }}</td>
-            <td>{{ iso.glycerol_stock.extract_color }}</td>
-            <td>{{ iso.glycerol_stock.organism }}</td>
-            <td>{{ iso.glycerol_stock.comments }}</td>
+            <td>{{ iso.isolate.stock_date }}</td>
+            <td>{{ iso.isolate.extract_color }}</td>
+            <td>{{ iso.isolate.organism }}</td>
+            <td>{{ iso.isolate.comments }}</td>
           </tr>
           {% endfor %}
         </tbody>

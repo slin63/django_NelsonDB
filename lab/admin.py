@@ -22,7 +22,7 @@ admin.site.register(Experiment, ExperimentAdmin)
 
 
 # Test registrations
-from lab.models import GlycerolStock, IsolateStock
+from lab.models import Isolate, IsolateStock
 
-admin.site.register(GlycerolStock)
+admin.site.register(Isolate)
 admin.site.register(IsolateStock)

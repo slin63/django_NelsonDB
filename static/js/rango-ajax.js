@@ -1202,14 +1202,14 @@ $(document).ready(function() {
 	    ],
     });
 
-		$('#glycerol_inventory_datatable').dataTable({
+		$('#isolate_inventory_datatable').dataTable({
 			"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-			"ajax": "/lab/datatable/glycerol_stock_inventory/",
+			"ajax": "/lab/datatable/isolate_inventory/",
 			"deferRender": true,
 			"aoColumns": [
-			  { "mData": "glycerol_stock_id",
+			  { "mData": "isolate_id",
 			    "mRender": function (data, type, full) {
-				    return '<a href=/lab/glycerol_stock/' + full.id + '/>' + full.glycerol_stock_id + '</a>';
+				    return '<a href=/lab/isolate/' + full.id + '/>' + full.isolate_id + '</a>';
 			    }
 		    },
 			  { "mData": "experiment_name",
@@ -1336,7 +1336,7 @@ $('#seedidsearch').keyup(function(){
 $('#isolatestockidsearch').keyup(function(){
 	var query;
 	query = $(this).val();
-	$.get('/lab/iso_inventory/isolatestock_id_search/', {suggestion: query}, function(data){
+	$.get('/lab/isolatestock_inventory/isolatestock_id_search/', {suggestion: query}, function(data){
 		$('#isolatestock_id_search_results').html(data);
 		$('#isolatestock_id_search_table').dataTable({
 			"searching": false,

@@ -630,26 +630,26 @@ class LogIsolateStocksOnlineForm(forms.Form):
                                         help_text="Additional Comments:", required=False)
 
 
-class LogGlycerolStocksOnlineForm(forms.Form):
+class LogIsolatesOnlineForm(forms.Form):
     experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---",
                                         help_text="Experiment:", required=True)
-    glycerol_stock__glycerol_stock_id = forms.CharField(
-        widget=forms.TextInput(attrs={'placeholder': 'Glycerol Stock ID'}), help_text="Glycerol Stock ID:",
+    isolate__isolate_id = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Isolate ID'}), help_text="Isolate ID:",
         required=True)
     isolatestock__isolatestock_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'IsolateStock ID'}),
                                           help_text="Source IsolateStock ID:", required=True)
     location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Storage Location ---",
                                       help_text="Storage Location:", required=True)
-    glycerol_stock__stock_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Stock Date'}),
-                                                 help_text="Stock Date:", required=False)
-    glycerol_stock__extract_color = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Extract Color'}),
-                                                    help_text="Extract Color:", required=False)
-    glycerol_stock__organism = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Organism'}),
-                                               help_text="Organism:", required=False)
-    glycerol_stock__comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}),
-                                               help_text="Comments:", required=False)
     field = forms.ModelChoiceField(queryset=Field.objects.all(), empty_label="--- Source Field Name ---",
                                    help_text="Source Field Name:", required=True)
+    isolate__stock_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Stock Date'}),
+                                                 help_text="Stock Date:", required=False)
+    isolate__extract_color = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Extract Color'}),
+                                                    help_text="Extract Color:", required=False)
+    isolate__organism = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Organism'}),
+                                               help_text="Organism:", required=False)
+    isolate__comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}),
+                                               help_text="Comments:", required=False)
     obs_culture__culture_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Culture ID'}),
                                               help_text="Source Culture ID:", required=False)
     obs_dna__dna_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source DNA ID'}),

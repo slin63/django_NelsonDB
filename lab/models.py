@@ -380,15 +380,15 @@ class IsolateStock(models.Model):
         return self.isolatestock_id
 
 
-class GlycerolStock(models.Model):
-    glycerol_stock_id = models.CharField(max_length=200, unique=True)
+class Isolate(models.Model):
+    isolate_id = models.CharField(max_length=200, unique=True)
     stock_date = models.CharField(max_length=200, blank=True)
     extract_color = models.CharField(max_length=200, blank=True)
     organism = models.CharField(max_length=200, blank=True)
     comments = models.CharField(max_length=1000, blank=True)
 
     def __unicode__(self):
-        return self.glycerol_stock_id
+        return self.isolate_id
 
 
 class StockPacket(models.Model):
@@ -436,7 +436,7 @@ class ObsTracker(models.Model):
     isolatestock = models.ForeignKey(IsolateStock, blank=True, null=True)
     stock = models.ForeignKey(Stock, blank=True, null=True)
     maize_sample = models.ForeignKey(MaizeSample, blank=True, null=True)
-    glycerol_stock = models.ForeignKey(GlycerolStock, blank=True, null=True)
+    isolate = models.ForeignKey(Isolate, blank=True, null=True)
     obs_culture = models.ForeignKey(ObsCulture, blank=True, null=True)
     obs_dna = models.ForeignKey(ObsDNA, blank=True, null=True)
     obs_microbe = models.ForeignKey(ObsMicrobe, blank=True, null=True)
