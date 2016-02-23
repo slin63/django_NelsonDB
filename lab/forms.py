@@ -230,11 +230,11 @@ class NewTaxonomyForm(forms.Form):
     population = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Population'}),
                                  help_text="Type the population:", required=False)
     alias = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Alias'}),
-                            help_text="Type the alias (historically for isolates):", required=False)
+                            help_text="Type the alias (historically for isolatestocks):", required=False)
     race = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Race'}),
-                           help_text="Type the race (historically for isolates):", required=False)
+                           help_text="Type the race (historically for isolatestocks):", required=False)
     subtaxa = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Sub-taxa'}),
-                              help_text="Type the sub-taxa (historically for isolates):", required=False)
+                              help_text="Type the sub-taxa (historically for isolatestocks):", required=False)
 
 
 class UpdateSeedDataOnlineForm(forms.Form):
@@ -586,15 +586,16 @@ class LogSeparationsOnlineForm(forms.Form):
     separation_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}), required=False)
 
 
-class LogIsolatesOnlineForm(forms.Form):
+class LogIsolateStocksOnlineForm(forms.Form):
     experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---",
                                         help_text="Experiment:", required=True)
-    isolate__isolate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Isolate ID'}),
-                                          help_text="Isolate ID:", required=True)
-    location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Location Name ---",
-                                      help_text="Location:", required=True)
+    isolatestock__isolatestock_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'IsolateStock ID'}),
+                                          help_text="IsolateStock ID:", required=True)
+    isolatestock__locality = forms.ModelChoiceField(queryset=Locality.objects.all(), empty_label="--- Locality Name ---",
+                                      help_text="Locality:", required=True)
     field = forms.ModelChoiceField(queryset=Field.objects.all(), empty_label="--- Source Field Name ---",
                                    help_text="Source Field Name:", required=True)
+    isolatestock__disease_info = forms.ModelChoiceField(queryset=DiseaseInfo.objects.all(), empty_label="--- Disease ---", help_text="Disease Name:", required=True)
     obs_dna__dna_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source DNA ID'}),
                                       help_text="Source DNA ID:", required=False)
     obs_microbe__microbe_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Microbe ID'}),
@@ -613,21 +614,19 @@ class LogIsolatesOnlineForm(forms.Form):
                                           help_text="Source Plate ID:", required=False)
     obs_well__well_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Well ID'}),
                                         help_text="Source Well ID:", required=False)
-    isolate__isolate_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Isolate Name'}),
-                                            help_text="Isolate Name:", required=False)
-    isolate__disease_info = forms.ModelChoiceField(queryset=DiseaseInfo.objects.all(), empty_label="--- Disease ---",
-                                                   help_text="Disease Name:", required=True)
-    isolate__plant_organ = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plant Organ'}),
+    isolatestock__isolatestock_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'IsolateStock Name'}),
+                                            help_text="IsolateStock Name:", required=False)
+    isolatestock__plant_organ = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plant Organ'}),
                                            help_text="Plant Organ:", required=False)
-    isolate__passport__taxonomy__genus = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Genus'}),
+    isolatestock__passport__taxonomy__genus = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Genus'}),
                                                          help_text="Genus:", required=False)
-    isolate__passport__taxonomy__alias = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Alias'}),
+    isolatestock__passport__taxonomy__alias = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Alias'}),
                                                          help_text="Alias:", required=False)
-    isolate__passport__taxonomy__race = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Race'}),
+    isolatestock__passport__taxonomy__race = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Race'}),
                                                         help_text="Race:", required=False)
-    isolate__passport__taxonomy__subtaxa = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Subtaxa'}),
+    isolatestock__passport__taxonomy__subtaxa = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Subtaxa'}),
                                                            help_text="Subtaxa:", required=False)
-    isolate__comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}),
+    isolatestock__comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}),
                                         help_text="Additional Comments:", required=False)
 
 
@@ -637,8 +636,10 @@ class LogGlycerolStocksOnlineForm(forms.Form):
     glycerol_stock__glycerol_stock_id = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Glycerol Stock ID'}), help_text="Glycerol Stock ID:",
         required=True)
-    location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Location Name ---",
-                                      help_text="Location:", required=True)
+    isolatestock__isolatestock_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'IsolateStock ID'}),
+                                          help_text="Source IsolateStock ID:", required=True)
+    location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Storage Location ---",
+                                      help_text="Storage Location:", required=True)
     glycerol_stock__stock_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Stock Date'}),
                                                  help_text="Stock Date:", required=False)
     glycerol_stock__extract_color = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Extract Color'}),
@@ -669,8 +670,7 @@ class LogGlycerolStocksOnlineForm(forms.Form):
                                         help_text="Source Well ID:", required=False)
     obs_microbe__microbe_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Microbe ID'}),
                                               help_text="Source Microbe ID:", required=False)
-    isolate__isolate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Isolate ID'}),
-                                          help_text="Source Isolate ID:", required=False)
+
 
 
 class LogMeasurementsOnlineForm(forms.Form):

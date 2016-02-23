@@ -367,23 +367,21 @@ class DiseaseInfo(models.Model):
         return self.common_name
 
 
-class Isolate(models.Model):
+class IsolateStock(models.Model):
     passport = models.ForeignKey(Passport)
-    location = models.ForeignKey(Location)
+    locality = models.ForeignKey(Locality)
     disease_info = models.ForeignKey(DiseaseInfo)
-    isolate_id = models.CharField(max_length=200, unique=True)
-    isolate_name = models.CharField(max_length=200, blank=True)
+    isolatestock_id = models.CharField(max_length=200, unique=True)
+    isolatestock_name = models.CharField(max_length=200, blank=True)
     plant_organ = models.CharField(max_length=200, blank=True)
     comments = models.CharField(max_length=1000, blank=True)
 
     def __unicode__(self):
-        return self.isolate_id
+        return self.isolatestock_id
 
 
 class GlycerolStock(models.Model):
     glycerol_stock_id = models.CharField(max_length=200, unique=True)
-    glycerol_location = models.ForeignKey(Location, default=1)
-    associated_isolate = models.ForeignKey(Isolate)
     stock_date = models.CharField(max_length=200, blank=True)
     extract_color = models.CharField(max_length=200, blank=True)
     organism = models.CharField(max_length=200, blank=True)
@@ -435,7 +433,7 @@ class ObsTracker(models.Model):
     location = models.ForeignKey(Location, blank=True, null=True)
     experiment = models.ForeignKey(Experiment, blank=True, null=True)
     field = models.ForeignKey(Field, blank=True, null=True)
-    isolate = models.ForeignKey(Isolate, blank=True, null=True)
+    isolatestock = models.ForeignKey(IsolateStock, blank=True, null=True)
     stock = models.ForeignKey(Stock, blank=True, null=True)
     maize_sample = models.ForeignKey(MaizeSample, blank=True, null=True)
     glycerol_stock = models.ForeignKey(GlycerolStock, blank=True, null=True)

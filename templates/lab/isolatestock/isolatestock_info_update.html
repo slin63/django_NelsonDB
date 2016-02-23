@@ -1,10 +1,10 @@
 {% extends 'lab/base.html' %}
-{% block title %}Update Isolate Info{% endblock %}
+{% block title %}Update IsolateStock Info{% endblock %}
 {% block body_block %}
 <div class="hero-unit">
-  <h1>Update Isolate Info</h1>
+  <h1>Update IsolateStock Info</h1>
   <hr>
-  <a href='/lab/isolate/{{isolate_id}}/'><input class="btn btn-info" type="submit" name="submit" value="Back to Seed Info Page"/></a>
+  <a href='/lab/isolatestock/{{isolatestock_id}}/'><input class="btn btn-info" type="submit" name="submit" value="Back to IsolateStock Info Page"/></a>
   <hr>
   {% if updated %}
     <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Edit Was Saved!<br/>&nbsp;</h4>
@@ -12,9 +12,9 @@
   <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Edit Was Not Saved! Fix Errors.<br/>&nbsp;</h4>
   {% endif %}
   <div class="container-fluid">
-    <form class="form-signin" id="update_seed" method="post" action="/lab/isolate_inventory/update/{{isolate_id}}/">
+    <form class="form-signin" id="update_seed" method="post" action="/lab/iso_inventory/update/{{isolatestock_id}}/">
       {% csrf_token %}
-      {% for field in obs_tracker_isolate_form.visible_fields %}
+      {% for field in obs_tracker_isolatestock_form.visible_fields %}
         <div class="row">
           <div class="span4 offset1"><font color="247eca">{{ field.help_text }}</font></div>
           <div class="span3">{{ field }}</div>

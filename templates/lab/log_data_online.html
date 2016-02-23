@@ -17,19 +17,19 @@
     {% endif %}
 
     {% if sent %}
-    
+
       {% if failed %}
     <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Data Was Not Saved to the Database!<br/>&nbsp;</h4>
-    
+
       {% else %}
-    
+
       {% if data_url %}
     <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Successful upload! <a href="/lab/{{data_url}}">Click to return to the {{data_type|capfirst}} table.</a><br/>&nbsp;</h4>
-    
+
       {% else %}
     <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Successful upload! <a href="/lab/data/{{data_type}}">Click to return to the {{data_type}} table.</a><br/>&nbsp;</h4>
       {% endif %}
-      
+
     {% endif %}
     {% endif %}
 
@@ -139,14 +139,37 @@
       <hr>
       <h3>Or Upload Using Online Form: </h3>
     {% endif %}
-    {% if data_type == 'isolate' %}
+    {% if data_type == 'isolatestock' %}
       <hr>
       <h3>Upload From File: </h3>
-      <h5><a href='/lab/download/template/isolate_data/'>Download Template</a></h5>
-      <h5><a href='/lab/download/template/isolate_data_help/'>Download Template Help</a></h5>
-      <h5><a href='/lab/upload_online/isolate_data/'>Upload Online</a></h5>
+      <h5><a href='/lab/download/template/isolatestock_data/'>Download Template</a></h5>
+      <h5><a href='/lab/download/template/isolatestock_data_help/'>Download Template Help</a></h5>
+      <h5><a href='/lab/upload_online/isolatestock_data/'>Upload Online</a></h5>
       <hr>
       <h3>Or Upload Using Online Form: </h3>
+    {% endif %}
+    {% if data_type == 'glycerol_stock' %}
+      <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
+        <div class="row-fluid">
+          <div class="span5">
+            <ul class="nav nav-list">
+              <h4>First Make Sure IsolateStock ID is in Database!</h4>
+              <hr>
+              <li class="nav-header">Search IsolateStock ID to Determine if IsolateStock Info in Database</li>
+              <form>
+                <label></label>
+                <li><input  class="search-query" type="text" name="isolatestockidsearch" id="isolatestockidsearch" placeholder="IsolateStock ID (e.g. 090B01_1s)"/></li>
+              </form>
+            </ul>
+          </div>
+          <div class="span3 offset4">
+            &nbsp;&nbsp;&nbsp;<a href='/lab/log_data/isolatestock/'><input class="btn btn-info" type="submit" name="submit" value="Add New IsolateStock Information"/></a>
+          </div>
+        </div>
+        <div id="isolatestock_id_search_results">
+          {% include 'lab/isolatestock/isolatestock_id_search_list.html' with isolatestock_id_list=isolatestock_id_list %}
+        </div>
+      </div>
     {% endif %}
     {% if data_type == 'sample' %}
       <hr>

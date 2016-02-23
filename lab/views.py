@@ -6,8 +6,8 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.conf import settings
-from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, Isolate, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, GlycerolStock, FileDump
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolatesOnlineForm, LogSeparationsOnlineForm, LogMaizeSurveyOnlineForm, LogGlycerolStocksOnlineForm, FileDumpForm
+from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, GlycerolStock, FileDump
+from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolateStocksOnlineForm, LogSeparationsOnlineForm, LogMaizeSurveyOnlineForm, LogGlycerolStocksOnlineForm, FileDumpForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -252,7 +252,7 @@ def experiment(request, experiment_name_url):
 				treatment_data = None
 			context_dict['treatment_data'] = treatment_data
 
-			obs_type_list = ['stock', 'isolate', 'glycerol_stock', 'maize', 'row', 'plant', 'sample', 'environment', 'dna', 'tissue', 'plate', 'well', 'microbe', 'culture', 'extract', 'maize']
+			obs_type_list = ['stock', 'isolatestock', 'glycerol_stock', 'maize', 'row', 'plant', 'sample', 'environment', 'dna', 'tissue', 'plate', 'well', 'microbe', 'culture', 'extract', 'maize']
 			for obs_type in obs_type_list:
 				obs_data = "%s_data" % (obs_type)
 				try:
@@ -492,10 +492,10 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_pedigree'] = request.session.get('checkbox_pedigree')
 	if request.session.get('checkbox_taxonomy', None):
 		context_dict['checkbox_taxonomy'] = request.session.get('checkbox_taxonomy')
-	if request.session.get('checkbox_isolate_disease', None):
-		context_dict['checkbox_isolate_disease'] = request.session.get('checkbox_isolate_disease')
-	if request.session.get('checkbox_isolate_taxonomy', None):
-		context_dict['checkbox_isolate_taxonomy'] = request.session.get('checkbox_isolate_taxonomy')
+	if request.session.get('checkbox_isolatestock_disease', None):
+		context_dict['checkbox_isolatestock_disease'] = request.session.get('checkbox_isolatestock_disease')
+	if request.session.get('checkbox_isolatestock_taxonomy', None):
+		context_dict['checkbox_isolatestock_taxonomy'] = request.session.get('checkbox_isolatestock_taxonomy')
 	if request.session.get('checkbox_row_experiment', None):
 		context_dict['checkbox_row_experiment'] = request.session.get('checkbox_row_experiment')
 	if request.session.get('checkbox_plant_experiment', None):
@@ -524,10 +524,10 @@ def checkbox_session_variable_check(request):
 		context_dict['checkbox_measurement_parameter'] = request.session.get('checkbox_measurement_parameter')
 	if request.session.get('checkbox_seedinv_parameters', None):
 		context_dict['checkbox_seedinv_parameters'] = request.session.get('checkbox_seedinv_parameters')
-	if request.session.get('checkbox_isolate_disease_names', None):
-		context_dict['checkbox_isolate_disease_names'] = request.session.get('checkbox_isolate_disease_names')
-	if request.session.get('checkbox_isolate_taxonomy_names', None):
-		context_dict['checkbox_isolate_taxonomy_names'] = request.session.get('checkbox_isolate_taxonomy_names')
+	if request.session.get('checkbox_isolatestock_disease_names', None):
+		context_dict['checkbox_isolatestock_disease_names'] = request.session.get('checkbox_isolatestock_disease_names')
+	if request.session.get('checkbox_isolatestock_taxonomy_names', None):
+		context_dict['checkbox_isolatestock_taxonomy_names'] = request.session.get('checkbox_isolatestock_taxonomy_names')
 	return context_dict
 
 @login_required
@@ -717,8 +717,8 @@ def select_taxonomy(request):
 	::url:: = /seed_inventory/select_taxonomy/ - To change
 	::func:: = Supporting function for the Population (taxonomy) search table in seed_inventory
 	::ajax:: = $('#select_taxonomy_form_submit').
-	::html:: = isolate_source_list.html, seed_inventory.html
-	::NOTES:: = Native cross functionality with Isolate Stock pages
+	::html:: = isolatestock_source_list.html, seed_inventory.html
+	::NOTES:: = Native cross functionality with IsolateStock pages
 	"""
 	taxonomy = request.POST['taxonomy']
 	taxonomy_list = json.loads(taxonomy)
@@ -901,80 +901,80 @@ def stock_delete(request):
 	return JsonResponse({'data':True}, safe=True)
 
 @login_required
-def update_isolate_info(request, isolate_id):
+def update_isolatestock_info(request, isolatestock_id):
 	context = RequestContext(request)
 	context_dict = {}
 	if request.method == 'POST':
-		obs_tracker_isolate_form = LogIsolatesOnlineForm(data=request.POST)
-		if obs_tracker_isolate_form.is_valid():
+		obs_tracker_isolatestock_form = LogIsolateStocksOnlineForm(data=request.POST)
+		if obs_tracker_isolatestock_form.is_valid():
 			with transaction.atomic():
 				try:
-					obs_tracker = ObsTracker.objects.get(obs_entity_type='isolate', isolate_id=isolate_id, experiment=obs_tracker_isolate_form.cleaned_data['experiment'])
+					obs_tracker = ObsTracker.objects.get(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id, experiment=obs_tracker_isolatestock_form.cleaned_data['experiment'])
 					obs_tracker.glycerol_stock_id = 1
 					obs_tracker.maize_sample_id = 1
 					obs_tracker.obs_extract_id = 1
-					obs_tracker.location = obs_tracker_isolate_form.cleaned_data['location']
-					obs_tracker.field = obs_tracker_isolate_form.cleaned_data['field']
-					if obs_tracker_isolate_form.cleaned_data['obs_dna__dna_id'] != '':
-						obs_tracker.obs_dna = ObsDNA.objects.get(dna_id=obs_tracker_isolate_form.cleaned_data['obs_dna__dna_id'])
+					obs_tracker.location = obs_tracker_isolatestock_form.cleaned_data['location']
+					obs_tracker.field = obs_tracker_isolatestock_form.cleaned_data['field']
+					if obs_tracker_isolatestock_form.cleaned_data['obs_dna__dna_id'] != '':
+						obs_tracker.obs_dna = ObsDNA.objects.get(dna_id=obs_tracker_isolatestock_form.cleaned_data['obs_dna__dna_id'])
 					else:
 						obs_tracker.obs_dna = ObsDNA.objects.get(dna_id='No DNA')
-					if obs_tracker_isolate_form.cleaned_data['obs_microbe__microbe_id'] != '':
-						obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id=obs_tracker_isolate_form.cleaned_data['obs_microbe__microbe_id'])
+					if obs_tracker_isolatestock_form.cleaned_data['obs_microbe__microbe_id'] != '':
+						obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id=obs_tracker_isolatestock_form.cleaned_data['obs_microbe__microbe_id'])
 					else:
 						obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id='No Microbe')
-					if obs_tracker_isolate_form.cleaned_data['obs_row__row_id'] != '':
-						obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_isolate_form.cleaned_data['obs_row__row_id'])
+					if obs_tracker_isolatestock_form.cleaned_data['obs_row__row_id'] != '':
+						obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_isolatestock_form.cleaned_data['obs_row__row_id'])
 					else:
 						obs_tracker.obs_row = ObsRow.objects.get(row_id='No Row')
-					if obs_tracker_isolate_form.cleaned_data['stock__seed_id'] != '':
-						obs_tracker.stock = Stock.objects.get(seed_id=obs_tracker_isolate_form.cleaned_data['stock__seed_id'])
+					if obs_tracker_isolatestock_form.cleaned_data['stock__seed_id'] != '':
+						obs_tracker.stock = Stock.objects.get(seed_id=obs_tracker_isolatestock_form.cleaned_data['stock__seed_id'])
 					else:
 						obs_tracker.stock = Stock.objects.get(seed_id='No Stock')
-					if obs_tracker_isolate_form.cleaned_data['obs_plant__plant_id'] != '':
-						obs_tracker.obs_plant = ObsPlant.objects.get(plant_id=obs_tracker_isolate_form.cleaned_data['obs_plant__plant_id'])
+					if obs_tracker_isolatestock_form.cleaned_data['obs_plant__plant_id'] != '':
+						obs_tracker.obs_plant = ObsPlant.objects.get(plant_id=obs_tracker_isolatestock_form.cleaned_data['obs_plant__plant_id'])
 					else:
 						obs_tracker.obs_plant = ObsPlant.objects.get(plant_id='No Plant')
-					if obs_tracker_isolate_form.cleaned_data['obs_tissue__tissue_id'] != '':
-						obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id=obs_tracker_isolate_form.cleaned_data['obs_tissue__tissue_id'])
+					if obs_tracker_isolatestock_form.cleaned_data['obs_tissue__tissue_id'] != '':
+						obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id=obs_tracker_isolatestock_form.cleaned_data['obs_tissue__tissue_id'])
 					else:
 						obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id='No Tissue')
-					if obs_tracker_isolate_form.cleaned_data['obs_culture__culture_id'] != '':
-						obs_tracker.obs_culture = ObsCulture.objects.get(culture_id=obs_tracker_isolate_form.cleaned_data['obs_culture__culture_id'])
+					if obs_tracker_isolatestock_form.cleaned_data['obs_culture__culture_id'] != '':
+						obs_tracker.obs_culture = ObsCulture.objects.get(culture_id=obs_tracker_isolatestock_form.cleaned_data['obs_culture__culture_id'])
 					else:
 						obs_tracker.obs_culture = ObsCulture.objects.get(culture_id='No Culture')
-					if obs_tracker_isolate_form.cleaned_data['obs_plate__plate_id'] != '':
-						obs_tracker.obs_plate = ObsPlate.objects.get(plate_id=obs_tracker_isolate_form.cleaned_data['obs_plate__plate_id'])
+					if obs_tracker_isolatestock_form.cleaned_data['obs_plate__plate_id'] != '':
+						obs_tracker.obs_plate = ObsPlate.objects.get(plate_id=obs_tracker_isolatestock_form.cleaned_data['obs_plate__plate_id'])
 					else:
 						obs_tracker.obs_plate = ObsPlate.objects.get(plate_id='No Plate')
-					if obs_tracker_isolate_form.cleaned_data['obs_well__well_id'] != '':
-						obs_tracker.obs_well = ObsWell.objects.get(well_id=obs_tracker_isolate_form.cleaned_data['obs_well__well_id'])
+					if obs_tracker_isolatestock_form.cleaned_data['obs_well__well_id'] != '':
+						obs_tracker.obs_well = ObsWell.objects.get(well_id=obs_tracker_isolatestock_form.cleaned_data['obs_well__well_id'])
 					else:
 						obs_tracker.obs_well = ObsWell.objects.get(well_id='No Well')
 
-					isolate = Isolate.objects.get(id=isolate_id)
-					isolate.isolate_id = obs_tracker_isolate_form.cleaned_data['isolate__isolate_id']
-					isolate.isolate_name = obs_tracker_isolate_form.cleaned_data['isolate__isolate_name']
-					isolate.disease_info = obs_tracker_isolate_form.cleaned_data['isolate__disease_info']
-					isolate.plant_organ = obs_tracker_isolate_form.cleaned_data['isolate__plant_organ']
-					isolate.comments = obs_tracker_isolate_form.cleaned_data['isolate__comments']
-					updated_taxonomy, created = Taxonomy.objects.get_or_create(genus=obs_tracker_isolate_form.cleaned_data['isolate__passport__taxonomy__genus'], species='', population='', common_name='Isolate', alias=obs_tracker_isolate_form.cleaned_data['isolate__passport__taxonomy__alias'], race=obs_tracker_isolate_form.cleaned_data['isolate__passport__taxonomy__race'], subtaxa=obs_tracker_isolate_form.cleaned_data['isolate__passport__taxonomy__subtaxa'])
-					updated_passport, created = Passport.objects.get_or_create(collecting=isolate.passport.collecting, people=isolate.passport.people, taxonomy=updated_taxonomy)
-					isolate.passport = updated_passport
-					isolate.save()
+					isolatestock = IsolateStock.objects.get(id=isolatestock_id)
+					isolatestock.isolatestock_id = obs_tracker_isolatestock_form.cleaned_data['isolatestock__isolatestock_id']
+					isolatestock.isolatestock_name = obs_tracker_isolatestock_form.cleaned_data['isolatestock__isolatestock_name']
+					isolatestock.disease_info = obs_tracker_isolatestock_form.cleaned_data['isolatestock__disease_info']
+					isolatestock.plant_organ = obs_tracker_isolatestock_form.cleaned_data['isolatestock__plant_organ']
+					isolatestock.comments = obs_tracker_isolatestock_form.cleaned_data['isolatestock__comments']
+					updated_taxonomy, created = Taxonomy.objects.get_or_create(genus=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__genus'], species='', population='', common_name='IsolateStock', alias=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__alias'], race=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__race'], subtaxa=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__subtaxa'])
+					updated_passport, created = Passport.objects.get_or_create(collecting=isolatestock.passport.collecting, people=isolatestock.passport.people, taxonomy=updated_taxonomy)
+					isolatestock.passport = updated_passport
+					isolatestock.save()
 					obs_tracker.save()
 					context_dict['updated'] = True
 				except Exception:
 					context_dict['failed'] = True
 		else:
-			print(obs_tracker_isolate_form.errors)
+			print(obs_tracker_isolatestock_form.errors)
 	else:
-		isolate_data = ObsTracker.objects.filter(obs_entity_type='isolate', isolate_id=isolate_id).values('experiment', 'isolate__isolate_id', 'location', 'field', 'obs_dna__dna_id', 'obs_microbe__microbe_id', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'obs_culture__culture_id', 'obs_plate__plate_id', 'obs_well__well_id', 'isolate__isolate_name', 'isolate__disease_info', 'isolate__plant_organ', 'isolate__passport__taxonomy__genus', 'isolate__passport__taxonomy__alias', 'isolate__passport__taxonomy__race', 'isolate__passport__taxonomy__subtaxa', 'isolate__comments')
-		obs_tracker_isolate_form = LogIsolatesOnlineForm(initial=isolate_data[0])
-	context_dict['isolate_id'] = isolate_id
-	context_dict['obs_tracker_isolate_form'] = obs_tracker_isolate_form
+		isolatestock_data = ObsTracker.objects.filter(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id).values('experiment', 'isolatestock__isolatestock_id', 'location', 'field', 'obs_dna__dna_id', 'obs_microbe__microbe_id', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'obs_culture__culture_id', 'obs_plate__plate_id', 'obs_well__well_id', 'isolatestock__isolatestock_name', 'isolatestock__disease_info', 'isolatestock__plant_organ', 'isolatestock__passport__taxonomy__genus', 'isolatestock__passport__taxonomy__alias', 'isolatestock__passport__taxonomy__race', 'isolatestock__passport__taxonomy__subtaxa', 'isolatestock__comments')
+		obs_tracker_isolatestock_form = LogIsolateStocksOnlineForm(initial=isolatestock_data[0])
+	context_dict['isolatestock_id'] = isolatestock_id
+	context_dict['obs_tracker_isolatestock_form'] = obs_tracker_isolatestock_form
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/isolate_info_update.html', context_dict, context)
+	return render_to_response('lab/isolatestock_info_update.html', context_dict, context)
 
 @login_required
 def update_glycerol_stock_info(request, glycerol_stock_id):
@@ -1030,10 +1030,10 @@ def update_glycerol_stock_info(request, glycerol_stock_id):
 						obs_tracker.obs_sample = ObsSample.objects.get(sample_id=obs_tracker_glycerol_stock_form.cleaned_data['obs_sample__sample_id'])
 					else:
 						obs_tracker.obs_sample = ObsSample.objects.get(sample_id='No Sample')
-					if obs_tracker_glycerol_stock_form.cleaned_data['isolate__isolate_id'] != '':
-						obs_tracker.isolate = Isolate.objects.get(isolate_id=obs_tracker_glycerol_stock_form.cleaned_data['isolate__isolate_id'])
+					if obs_tracker_glycerol_stock_form.cleaned_data['isolatestock__isolatestock_id'] != '':
+						obs_tracker.isolatestock = IsolateStock.objects.get(isolatestock_id=obs_tracker_glycerol_stock_form.cleaned_data['isolatestock__isolatestock_id'])
 					else:
-						obs_tracker.isolate = Isolate.objects.get(isolate_id='No Isolate')
+						obs_tracker.isolatestock = IsolateStock.objects.get(isolatestock_id='No IsolateStock')
 
 					gstock = GlycerolStock.objects.get(id=glycerol_stock_id)
 					gstock.glycerol_stock_id = obs_tracker_glycerol_stock_form.cleaned_data['glycerol_stock__glycerol_stock_id']
@@ -1049,7 +1049,7 @@ def update_glycerol_stock_info(request, glycerol_stock_id):
 		else:
 			print(obs_tracker_glycerol_stock_form.errors)
 	else:
-		glycerol_stock_data = ObsTracker.objects.filter(obs_entity_type='glycerol_stock', glycerol_stock_id=glycerol_stock_id).values('experiment', 'glycerol_stock__glycerol_stock_id', 'location', 'glycerol_stock__stock_date', 'glycerol_stock__extract_color', 'glycerol_stock__organism', 'glycerol_stock__comments', 'field', 'obs_dna__dna_id', 'obs_microbe__microbe_id', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'obs_culture__culture_id', 'obs_plate__plate_id', 'obs_well__well_id', 'obs_sample__sample_id', 'isolate__isolate_id')
+		glycerol_stock_data = ObsTracker.objects.filter(obs_entity_type='glycerol_stock', glycerol_stock_id=glycerol_stock_id).values('experiment', 'glycerol_stock__glycerol_stock_id', 'location', 'glycerol_stock__stock_date', 'glycerol_stock__extract_color', 'glycerol_stock__organism', 'glycerol_stock__comments', 'field', 'obs_dna__dna_id', 'obs_microbe__microbe_id', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'obs_culture__culture_id', 'obs_plate__plate_id', 'obs_well__well_id', 'obs_sample__sample_id', 'isolatestock__isolatestock_id')
 		obs_tracker_glycerol_stock_form = LogGlycerolStocksOnlineForm(initial=glycerol_stock_data[0])
 	context_dict['glycerol_stock_id'] = glycerol_stock_id
 	context_dict['obs_tracker_glycerol_stock_form'] = obs_tracker_glycerol_stock_form
@@ -1376,8 +1376,8 @@ def datatable_glycerol_inventory(request):
 		    	'experiment_name': data.experiment.name,
 		    	'field_id': data.field_id,
 		    	'field_name': data.field.field_name,
-		    	'isolate_table_id': data.isolate_id,
-		    	'isolate_id': data.isolate.isolate_id,
+		    	'isolatestock_table_id': data.isolatestock_id,
+		    	'isolatestock_id': data.isolatestock.isolatestock_id,
 		    	'obs_dna_id': data.obs_dna_id,
 		    	'dna_id': data.obs_dna.dna_id,
 		    	'location_id': data.location_id,
@@ -1399,16 +1399,16 @@ def glycerol_stock_inventory(request):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/glycerol_stock_inventory.html', context_dict, context)
 
-def datatable_isolate_inventory(request):
-	selected_isolates = checkbox_isolate_sort(request)
-	#count = selected_isolates.count()
+def datatable_isolatestock_inventory(request):
+	selected_isolatestocks = checkbox_isolatestock_sort(request)
+	#count = selected_isolatestocks.count()
 	arr = []
-	for data in selected_isolates:
+	for data in selected_isolatestocks:
 		arr.append({
-			'input': '<input type="checkbox" name="checkbox_isolates" value="%s">'%(data.id),
+			'input': '<input type="checkbox" name="checkbox_isolatestocks" value="%s">'%(data.id),
         	'id': data.id,
-        	'isolate_id': data.isolate_id,
-        	'isolate_name': data.isolate_name,
+        	'isolatestock_id': data.isolatestock_id,
+        	'isolatestock_name': data.isolatestock_name,
         	'disease_name': data.disease_info.common_name,
         	'disease_id': data.disease_info.id,
         	'plant_organ': data.plant_organ,
@@ -1421,162 +1421,162 @@ def datatable_isolate_inventory(request):
 	return JsonResponse({'data':arr}, safe=True)
 
 @login_required
-def isolate_inventory(request):
+def isolatestock_inventory(request):
 	context = RequestContext(request)
 	context_dict = {}
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/isolate_inventory.html', context_dict, context)
+	return render_to_response('lab/isolatestock_inventory.html', context_dict, context)
 
-def checkbox_isolate_sort(request):
-	selected_isolates = {}
+def checkbox_isolatestock_sort(request):
+	selected_isolatestocks = {}
 	checkbox_taxonomy_list = []
 	checkbox_disease_list = []
-	if request.session.get('checkbox_isolate_taxonomy', None):
-		checkbox_taxonomy_list = request.session.get('checkbox_isolate_taxonomy')
-		if request.session.get('checkbox_isolate_disease', None):
-			checkbox_disease_list = request.session.get('checkbox_isolate_disease')
+	if request.session.get('checkbox_isolatestock_taxonomy', None):
+		checkbox_taxonomy_list = request.session.get('checkbox_isolatestock_taxonomy')
+		if request.session.get('checkbox_isolatestock_disease', None):
+			checkbox_disease_list = request.session.get('checkbox_isolatestock_disease')
 			for disease_id in checkbox_disease_list:
 				for taxonomy_id in checkbox_taxonomy_list:
-					isolates = Isolate.objects.filter(disease_info__id=disease_id, passport__taxonomy__id=taxonomy_id)
-					selected_isolates = list(chain(selected_isolates, isolates))
+					isolatestocks = IsolateStock.objects.filter(disease_info__id=disease_id, passport__taxonomy__id=taxonomy_id)
+					selected_isolatestocks = list(chain(selected_isolatestocks, isolatestocks))
 		else:
 			for taxonomy_id in checkbox_taxonomy_list:
-				isolates = Isolate.objects.filter(passport__taxonomy__id=taxonomy_id)
-				selected_isolates = list(chain(selected_isolates, isolates))
+				isolatestocks = IsolateStock.objects.filter(passport__taxonomy__id=taxonomy_id)
+				selected_isolatestocks = list(chain(selected_isolatestocks, isolatestocks))
 	else:
-		if request.session.get('checkbox_isolate_disease', None):
-			checkbox_disease_list = request.session.get('checkbox_isolate_disease')
+		if request.session.get('checkbox_isolatestock_disease', None):
+			checkbox_disease_list = request.session.get('checkbox_isolatestock_disease')
 			for disease_id in checkbox_disease_list:
-				isolates = Isolate.objects.filter(disease_info__id=disease_id)
-				selected_isolates = list(chain(selected_isolates, isolates))
+				isolatestocks = IsolateStock.objects.filter(disease_info__id=disease_id)
+				selected_isolatestocks = list(chain(selected_isolatestocks, isolatestocks))
 		else:
-			selected_isolates = list(Isolate.objects.all().exclude(id=1))[:2000]
-	return selected_isolates
+			selected_isolatestocks = list(IsolateStock.objects.all().exclude(id=1))[:2000]
+	return selected_isolatestocks
 
-def show_all_isolate_taxonomy(request):
-	isolate_taxonomy_list = []
-	if request.session.get('checkbox_isolate_disease', None):
-		checkbox_isolate_disease = request.session.get('checkbox_isolate_disease')
-		for disease_id in checkbox_isolate_disease:
-			taxonomy = Isolate.objects.filter(disease_info__id=disease_id).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__genus', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa', 'passport__taxonomy__species').distinct()
-			isolate_taxonomy_list = list(chain(taxonomy, isolate_taxonomy_list))
-		for p in isolate_taxonomy_list:
-			p['input'] = '<input type="checkbox" name="checkbox_isolate_taxonomy_id" value="%s">' % (p['passport__taxonomy__id'])
+def show_all_isolatestock_taxonomy(request):
+	isolatestock_taxonomy_list = []
+	if request.session.get('checkbox_isolatestock_disease', None):
+		checkbox_isolatestock_disease = request.session.get('checkbox_isolatestock_disease')
+		for disease_id in checkbox_isolatestock_disease:
+			taxonomy = IsolateStock.objects.filter(disease_info__id=disease_id).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__genus', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa', 'passport__taxonomy__species').distinct()
+			isolatestock_taxonomy_list = list(chain(taxonomy, isolatestock_taxonomy_list))
+		for p in isolatestock_taxonomy_list:
+			p['input'] = '<input type="checkbox" name="checkbox_isolatestock_taxonomy_id" value="%s">' % (p['passport__taxonomy__id'])
 	else:
-		isolate_taxonomy_list = list(Taxonomy.objects.filter(common_name='Isolate').values('id', 'genus', 'alias', 'race', 'subtaxa', 'species').distinct())
-		for t in isolate_taxonomy_list:
-			t['input'] = '<input type="checkbox" name="checkbox_isolate_taxonomy_id" value="%s">' % (t['id'])
+		isolatestock_taxonomy_list = list(Taxonomy.objects.filter(common_name='IsolateStock').values('id', 'genus', 'alias', 'race', 'subtaxa', 'species').distinct())
+		for t in isolatestock_taxonomy_list:
+			t['input'] = '<input type="checkbox" name="checkbox_isolatestock_taxonomy_id" value="%s">' % (t['id'])
 			t['disease_info__common_name'] = ''
 			t['passport__taxonomy__genus'] = t['genus']
 			t['passport__taxonomy__alias'] = t['alias']
 			t['passport__taxonomy__race'] = t['race']
 			t['passport__taxonomy__subtaxa'] = t['subtaxa']
 			t['passport__taxonomy__species'] = t['species']
-	return JsonResponse({'data':isolate_taxonomy_list})
+	return JsonResponse({'data':isolatestock_taxonomy_list})
 
-def show_all_isolate_disease(request):
-	isolate_disease_list = []
-	if request.session.get('checkbox_isolate_taxonomy', None):
-		checkbox_isolate_taxonomy = request.session.get('checkbox_isolate_taxonomy')
-		for taxonomy_id in checkbox_isolate_taxonomy:
-			disease = Isolate.objects.filter(passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()
-			isolate_disease_list = list(chain(disease, isolate_disease_list))
-		for p in isolate_disease_list:
-			p['input'] = '<input type="checkbox" name="checkbox_isolate_disease_id" value="%s">' % (p['disease_info__id'])
+def show_all_isolatestock_disease(request):
+	isolatestock_disease_list = []
+	if request.session.get('checkbox_isolatestock_taxonomy', None):
+		checkbox_isolatestock_taxonomy = request.session.get('checkbox_isolatestock_taxonomy')
+		for taxonomy_id in checkbox_isolatestock_taxonomy:
+			disease = IsolateStock.objects.filter(passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()
+			isolatestock_disease_list = list(chain(disease, isolatestock_disease_list))
+		for p in isolatestock_disease_list:
+			p['input'] = '<input type="checkbox" name="checkbox_isolatestock_disease_id" value="%s">' % (p['disease_info__id'])
 	else:
-		isolate_disease_list = list(DiseaseInfo.objects.filter().values('id', 'common_name').distinct())
-		for t in isolate_disease_list:
-			t['input'] = '<input type="checkbox" name="checkbox_isolate_disease_id" value="%s">' % (t['id'])
+		isolatestock_disease_list = list(DiseaseInfo.objects.filter().values('id', 'common_name').distinct())
+		for t in isolatestock_disease_list:
+			t['input'] = '<input type="checkbox" name="checkbox_isolatestock_disease_id" value="%s">' % (t['id'])
 			t['disease_info__common_name'] = t['common_name']
 			t['passport__taxonomy__genus'] = ''
-	return JsonResponse({'data':isolate_disease_list})
+	return JsonResponse({'data':isolatestock_disease_list})
 
-def suggest_isolate_taxonomy(request):
-	isolate_taxonomy_list = []
+def suggest_isolatestock_taxonomy(request):
+	isolatestock_taxonomy_list = []
 	starts_with = ''
 	if request.method == 'GET':
 		starts_with = request.GET['suggestion']
 	else:
 		starts_with = request.POST['suggestion']
 	if starts_with:
-		if request.session.get('checkbox_isolate_disease', None):
-			checkbox_isolate_disease = request.session.get('checkbox_isolate_disease')
-			for disease_id in checkbox_isolate_disease:
-				taxonomy = Isolate.objects.filter(disease_info__id=disease_id, passport__taxonomy__genus__contains=starts_with).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__genus', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa', 'passport__taxonomy__species').distinct()
-				isolate_taxonomy_list = list(chain(taxonomy, isolate_taxonomy_list))
-			for t in isolate_taxonomy_list:
-				t['input'] = '<input type="checkbox" name="checkbox_isolate_taxonomy_id" value="%s">' % (t['passport__taxonomy__id'])
+		if request.session.get('checkbox_isolatestock_disease', None):
+			checkbox_isolatestock_disease = request.session.get('checkbox_isolatestock_disease')
+			for disease_id in checkbox_isolatestock_disease:
+				taxonomy = IsolateStock.objects.filter(disease_info__id=disease_id, passport__taxonomy__genus__contains=starts_with).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__genus', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa', 'passport__taxonomy__species').distinct()
+				isolatestock_taxonomy_list = list(chain(taxonomy, isolatestock_taxonomy_list))
+			for t in isolatestock_taxonomy_list:
+				t['input'] = '<input type="checkbox" name="checkbox_isolatestock_taxonomy_id" value="%s">' % (t['passport__taxonomy__id'])
 		else:
-			isolate_taxonomy_list = list(Taxonomy.objects.filter(genus__contains=starts_with, common_name='Isolate').values('id', 'genus', 'alias', 'race', 'subtaxa', 'species').distinct())
-			for t in isolate_taxonomy_list:
-				t['input'] = '<input type="checkbox" name="checkbox_isolate_taxonomy_id" value="%s">' % (t['id'])
+			isolatestock_taxonomy_list = list(Taxonomy.objects.filter(genus__contains=starts_with, common_name='IsolateStock').values('id', 'genus', 'alias', 'race', 'subtaxa', 'species').distinct())
+			for t in isolatestock_taxonomy_list:
+				t['input'] = '<input type="checkbox" name="checkbox_isolatestock_taxonomy_id" value="%s">' % (t['id'])
 				t['disease_info__common_name'] = ''
 				t['passport__taxonomy__genus'] = t['genus']
 				t['passport__taxonomy__alias'] = t['alias']
 				t['passport__taxonomy__race'] = t['race']
 				t['passport__taxonomy__subtaxa'] = t['subtaxa']
 				t['passport__taxonomy__species'] = t['species']
-	return JsonResponse({'data':isolate_taxonomy_list})
+	return JsonResponse({'data':isolatestock_taxonomy_list})
 
-def suggest_isolate_disease(request):
-	isolate_disease_list = []
+def suggest_isolatestock_disease(request):
+	isolatestock_disease_list = []
 	starts_with = ''
 	if request.method == 'GET':
 		starts_with = request.GET['suggestion']
 	else:
 		starts_with = request.POST['suggestion']
 	if starts_with:
-		if request.session.get('checkbox_isolate_taxonomy', None):
-			checkbox_isolate_taxonomy = request.session.get('checkbox_isolate_taxonomy')
-			for taxonomy_id in checkbox_isolate_taxonomy:
-				disease = Isolate.objects.filter(disease_info__common_name__contains=starts_with, passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()
-				isolate_disease_list = list(chain(disease, isolate_disease_list))
-			for t in isolate_disease_list:
-				t['input'] = '<input type="checkbox" name="checkbox_isolate_disease_id" value="%s">' % (t['disease_info__id'])
+		if request.session.get('checkbox_isolatestock_taxonomy', None):
+			checkbox_isolatestock_taxonomy = request.session.get('checkbox_isolatestock_taxonomy')
+			for taxonomy_id in checkbox_isolatestock_taxonomy:
+				disease = IsolateStock.objects.filter(disease_info__common_name__contains=starts_with, passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()
+				isolatestock_disease_list = list(chain(disease, isolatestock_disease_list))
+			for t in isolatestock_disease_list:
+				t['input'] = '<input type="checkbox" name="checkbox_isolatestock_disease_id" value="%s">' % (t['disease_info__id'])
 		else:
-			isolate_disease_list = list(DiseaseInfo.objects.filter(common_name__contains=starts_with).values('id', 'common_name').distinct())
-			for t in isolate_disease_list:
-				t['input'] = '<input type="checkbox" name="checkbox_isolate_disease_id" value="%s">' % (t['id'])
+			isolatestock_disease_list = list(DiseaseInfo.objects.filter(common_name__contains=starts_with).values('id', 'common_name').distinct())
+			for t in isolatestock_disease_list:
+				t['input'] = '<input type="checkbox" name="checkbox_isolatestock_disease_id" value="%s">' % (t['id'])
 				t['disease_info__common_name'] = t['common_name']
 				t['passport__taxonomy__genus'] = ''
-	return JsonResponse({'data':isolate_disease_list})
+	return JsonResponse({'data':isolatestock_disease_list})
 
-def select_isolate_taxonomy(request):
+def select_isolatestock_taxonomy(request):
 	taxonomies = request.POST['taxonomies']
-	checkbox_isolate_taxonomy_ids = json.loads(taxonomies)
-	checkbox_isolate_taxonomy_names = []
-	for taxonomy_id in checkbox_isolate_taxonomy_ids:
+	checkbox_isolatestock_taxonomy_ids = json.loads(taxonomies)
+	checkbox_isolatestock_taxonomy_names = []
+	for taxonomy_id in checkbox_isolatestock_taxonomy_ids:
 		taxonomy_name = Taxonomy.objects.filter(id=taxonomy_id).values('genus')
-		checkbox_isolate_taxonomy_names = list(chain(taxonomy_name, checkbox_isolate_taxonomy_names))
-	request.session['checkbox_isolate_taxonomy'] = checkbox_isolate_taxonomy_ids
-	request.session['checkbox_isolate_taxonomy_names'] = checkbox_isolate_taxonomy_names
+		checkbox_isolatestock_taxonomy_names = list(chain(taxonomy_name, checkbox_isolatestock_taxonomy_names))
+	request.session['checkbox_isolatestock_taxonomy'] = checkbox_isolatestock_taxonomy_ids
+	request.session['checkbox_isolatestock_taxonomy_names'] = checkbox_isolatestock_taxonomy_names
 	return JsonResponse({'success':True})
 
-def select_isolate_disease(request):
+def select_isolatestock_disease(request):
 	diseases = request.POST['diseases']
 	disease_list = json.loads(diseases)
-	checkbox_isolate_disease_names = []
+	checkbox_isolatestock_disease_names = []
 	for disease_id in disease_list:
 		disease_name = DiseaseInfo.objects.filter(id=disease_id).values('common_name')
-		checkbox_isolate_disease_names = list(chain(disease_name, checkbox_isolate_disease_names))
-	request.session['checkbox_isolate_disease'] = disease_list
-	request.session['checkbox_isolate_disease_names'] = checkbox_isolate_disease_names
+		checkbox_isolatestock_disease_names = list(chain(disease_name, checkbox_isolatestock_disease_names))
+	request.session['checkbox_isolatestock_disease'] = disease_list
+	request.session['checkbox_isolatestock_disease_names'] = checkbox_isolatestock_disease_names
 	return JsonResponse({'success':True})
 
-def select_isolates(request):
+def select_isolatestocks(request):
 	context = RequestContext(request)
 	context_dict = {}
-	selected_isolates = []
-	checkbox_isolates_list = request.POST.getlist('checkbox_isolates')
-	request.session['checkbox_isolates'] = checkbox_isolates_list
-	for isolate in checkbox_isolates_list:
-		isolate = Isolate.objects.filter(id=isolate)
-		selected_isolates = list(chain(isolate, selected_isolates))
+	selected_isolatestocks = []
+	checkbox_isolatestocks_list = request.POST.getlist('checkbox_isolatestocks')
+	request.session['checkbox_isolatestocks'] = checkbox_isolatestocks_list
+	for isolatestock in checkbox_isolatestocks_list:
+		isolatestock = IsolateStock.objects.filter(id=isolatestock)
+		selected_isolatestocks = list(chain(isolatestock, selected_isolatestocks))
 	context_dict = checkbox_session_variable_check(request)
-	context_dict['selected_isolates'] = selected_isolates
+	context_dict['selected_isolatestocks'] = selected_isolatestocks
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/isolate.html', context_dict, context)
+	return render_to_response('lab/isolatestock.html', context_dict, context)
 
 @login_required
 def single_disease_info(request, disease_id):
@@ -1929,9 +1929,9 @@ def download_glycerol_stocks_experiment(request, experiment_name):
 	response['Content-Disposition'] = 'attachment; filename="%s_glycerol_stocks.csv"' % (experiment_name)
 	glycerol_stock_data = find_glycerol_stock_from_experiment(experiment_name)
 	writer = csv.writer(response)
-	writer.writerow(['Glycerol Stock ID', 'Stock Date', 'Extract Color', 'Organism', 'Location Name', 'Source Seed ID', 'Source Row ID', 'Source Culture ID', 'Source Isolate ID', 'Comments'])
+	writer.writerow(['Glycerol Stock ID', 'Stock Date', 'Extract Color', 'Organism', 'Location Name', 'Source Seed ID', 'Source Row ID', 'Source Culture ID', 'Source IsolateStock ID', 'Comments'])
 	for row in glycerol_stock_data:
-		writer.writerow([row.glycerol_stock.glycerol_stock_id, row.glycerol_stock.stock_date, row.glycerol_stock.extract_color, row.glycerol_stock.organism, row.location, row.stock.seed_id, row.obs_row.row_id, row.obs_culture.culture_id, row.isolate.isolate_id, row.glycerol_stock.comments])
+		writer.writerow([row.glycerol_stock.glycerol_stock_id, row.glycerol_stock.stock_date, row.glycerol_stock.extract_color, row.glycerol_stock.organism, row.location, row.stock.seed_id, row.obs_row.row_id, row.obs_culture.culture_id, row.isolatestock.isolatestock_id, row.glycerol_stock.comments])
 	return response
 
 @login_required
@@ -3556,30 +3556,30 @@ def download_stockpackets_collected_experiment(request, experiment_name):
 		writer.writerow([row.stock.seed_id, row.stock.seed_name, row.stock.cross_type, row.stock.pedigree, row.stock.passport.taxonomy.population, row.stock.stock_status, row.stock.inoculated, row.stock.comments, row.weight, row.num_seeds, row.location.location_name, row.comments])
 	return response
 
-def find_isolate_for_experiment(experiment_name):
+def find_isolatestock_for_experiment(experiment_name):
 	try:
-		isolate_data = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='isolate')
+		isolatestock_data = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='isolatestock')
 	except ObsTracker.DoesNotExist:
-		isolate_data = None
-	return isolate_data
+		isolatestock_data = None
+	return isolatestock_data
 
-def isolate_data_from_experiment(request, experiment_name):
+def isolatestock_data_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
-	isolate_data = find_isolate_for_experiment(experiment_name)
-	context_dict['isolate_data'] = isolate_data
+	isolatestock_data = find_isolatestock_for_experiment(experiment_name)
+	context_dict['isolatestock_data'] = isolatestock_data
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/isolate_from_experiment.html', context_dict, context)
+	return render_to_response('lab/isolatestock_from_experiment.html', context_dict, context)
 
-def download_isolates_experiment(request, experiment_name):
+def download_isolatestocks_experiment(request, experiment_name):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="%s_measurements.csv"' % (experiment_name)
-	isolate_data = find_isolate_for_experiment(experiment_name)
+	isolatestock_data = find_isolatestock_for_experiment(experiment_name)
 	writer = csv.writer(response)
-	writer.writerow(['Isolate ID', 'Isolate Name', 'Plant Organ', 'Isolate Comments', 'Genus', 'Species', 'Alias', 'Race', 'Subtaxa', 'Disease Name', 'Location Name', 'Box Name'])
-	for i in isolate_data:
-		writer.writerow([i.isolate_id, i.isolate_name, i.plant_organ, i.comments, i.passport.taxonomy.genus, i.passport.taxonomy.species, i.passport.taxonomy.alias, i.passport.taxonomy.race, i.passport.taxonomy.subtaxa, i.disease_info, i.location.location_name, i.location.box_name])
+	writer.writerow(['IsolateStock ID', 'IsolateStock Name', 'Plant Organ', 'IsolateStock Comments', 'Genus', 'Species', 'Alias', 'Race', 'Subtaxa', 'Disease Name', 'Location Name', 'Box Name'])
+	for i in isolatestock_data:
+		writer.writerow([i.isolatestock_id, i.isolatestock_name, i.plant_organ, i.comments, i.passport.taxonomy.genus, i.passport.taxonomy.species, i.passport.taxonomy.alias, i.passport.taxonomy.race, i.passport.taxonomy.subtaxa, i.disease_info, i.location.location_name, i.location.box_name])
 	return response
 
 def make_obs_tracker_info(tracker):
@@ -3589,11 +3589,11 @@ def make_obs_tracker_info(tracker):
 			obs_tracker_id_info = [tracker.stock.seed_id, obs_entity_type, tracker.stock_id]
 		except Stock.DoesNotExist:
 			obs_tracker_id_info = ['No Stock', obs_entity_type, 1]
-	elif obs_entity_type == 'isolate':
+	elif obs_entity_type == 'isolatestock':
 		try:
-			obs_tracker_id_info = [tracker.isolate.isolate_id, obs_entity_type, tracker.isolate_id]
-		except Isolate.DoesNotExist:
-			obs_tracker_id_info = ['No Isolate', obs_entity_type, 1]
+			obs_tracker_id_info = [tracker.isolatestock.isolatestock_id, obs_entity_type, tracker.isolatestock_id]
+		except IsolateStock.DoesNotExist:
+			obs_tracker_id_info = ['No IsolateStock', obs_entity_type, 1]
 	elif obs_entity_type == 'glycerol_stock':
 		try:
 			obs_tracker_id_info = [tracker.glycerol_stock.glycerol_stock_id, obs_entity_type, tracker.glycerol_stock_id]
@@ -3805,22 +3805,22 @@ def single_row_info(request, obs_row_id):
 	return render_to_response('lab/row_info.html', context_dict, context)
 
 @login_required
-def single_isolate_info(request, isolate_table_id):
+def single_isolatestock_info(request, isolatestock_table_id):
 	"""
 	Deprecated
 	"""
 	context = RequestContext(request)
 	context_dict = {}
 	try:
-		isolate_info = Isolate.objects.get(id=isolate_table_id)
-	except Isolate.DoesNotExist:
-		isolate_info = None
-	if isolate_info is not None:
-		obs_tracker = get_obs_tracker('isolate_id', isolate_table_id)
-	context_dict['isolate_info'] = isolate_info
+		isolatestock_info = IsolateStock.objects.get(id=isolatestock_table_id)
+	except IsolateStock.DoesNotExist:
+		isolatestock_info = None
+	if isolatestock_info is not None:
+		obs_tracker = get_obs_tracker('isolatestock_id', isolatestock_table_id)
+	context_dict['isolatestock_info'] = isolatestock_info
 	context_dict['obs_tracker'] = obs_tracker
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/isolate_info.html', context_dict, context)
+	return render_to_response('lab/isolatestock_info.html', context_dict, context)
 
 @login_required
 def single_glycerol_stock_info(request, glycerol_stock_table_id):
@@ -4038,10 +4038,10 @@ def log_data_online(request, data_type):
 								else:
 									obs_plant = ObsPlant.objects.get(id=1)
 								if experiment_used == True:
-									new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=new_stock, experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=obs_plant, obs_plate_id=1, obs_row=obs_row, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+									new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=new_stock, experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=obs_plant, obs_plate_id=1, obs_row=obs_row, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 								if experiment_collected == True:
-									new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=new_stock, experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=obs_plant, obs_plate_id=1, obs_row=obs_row, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
-									new_obs_tracker_exp, created = ObsTracker.objects.get_or_create(obs_entity_type='experiment', stock_id=1, experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+									new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=new_stock, experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=obs_plant, obs_plate_id=1, obs_row=obs_row, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+									new_obs_tracker_exp, created = ObsTracker.objects.get_or_create(obs_entity_type='experiment', stock_id=1, experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 									new_obs_tracker_source, created = ObsTrackerSource.objects.get_or_create(source_obs=new_obs_tracker_exp, target_obs=new_obs_tracker, relationship='stock_from_experiment')
 									if row_id != '':
 										source_row, created = ObsTracker.objects.get_or_create(obs_entity_type='row', obs_row=obs_row)
@@ -4338,7 +4338,7 @@ def log_data_online(request, data_type):
 							obs_row_id = 1
 						try:
 							new_obsplant, created = ObsPlant.objects.get_or_create(plant_id=plant_id, plant_num=plant_num, comments=plant_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='plant', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=field_id, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=new_obsplant, obs_plate_id=1, obs_row_id=obs_row_id, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='plant', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=field_id, glycerol_stock_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=new_obsplant, obs_plate_id=1, obs_row_id=obs_row_id, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 							if row_id !='':
 								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='row', obs_row__row_id=row_id), target_obs=new_obs_tracker, relationship="plant_from_row")
 						except Exception as e:
@@ -4382,7 +4382,7 @@ def log_data_online(request, data_type):
 
 						try:
 							new_obsrow, created = ObsRow.objects.get_or_create(row_id=row_id, row_name=row_name, range_num=range_num, plot=plot, block=block, rep=rep, kernel_num=kernel_num, planting_date=planting_date, harvest_date=harvest_date, comments=row_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='row', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row=new_obsrow, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='row', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row=new_obsrow, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 							if seed_id !='' and seed_id !='No Stock':
 								new_source_stock, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='stock', stock__seed_id=seed_id), target_obs=new_obs_tracker, relationship="row_from_stock")
 						except Exception as e:
@@ -4416,7 +4416,7 @@ def log_data_online(request, data_type):
 
 						try:
 							new_obsenv, created = ObsEnv.objects.get_or_create(environment_id=environment_id, longitude=longitude, latitude=latitude, comments=environment_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='environment', stock_id=1, experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env=new_obsenv, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='environment', stock_id=1, experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env=new_obsenv, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
@@ -4465,7 +4465,7 @@ def log_data_online(request, data_type):
 
 						try:
 							new_obssample, created = ObsSample.objects.get_or_create(sample_id=sample_id, sample_type=sample_type, sample_name=sample_name, weight=weight, volume=volume, density=density, kernel_num=kernel_num, photo=photo, comments=sample_comments)
-							new_obs_tracker, new_obs_tracker_created = ObsTracker.objects.get_or_create(obs_entity_type='sample', stock=Stock.objects.get(seed_id=source_seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=ObsPlant.objects.get(plant_id=source_plant_id), obs_plate_id=1, obs_row=ObsRow.objects.get(row_id=source_row_id), obs_sample=new_obssample, obs_tissue_id=1, obs_well_id=1)
+							new_obs_tracker, new_obs_tracker_created = ObsTracker.objects.get_or_create(obs_entity_type='sample', stock=Stock.objects.get(seed_id=source_seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=ObsPlant.objects.get(plant_id=source_plant_id), obs_plate_id=1, obs_row=ObsRow.objects.get(row_id=source_row_id), obs_sample=new_obssample, obs_tissue_id=1, obs_well_id=1)
 							if source_sample_id !='' and source_sample_id !='No Sample':
 								new_source_sample, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='sample', obs_sample__sample_id=source_sample_id), target_obs=new_obs_tracker, relationship='sample_from_sample')
 							if source_row_id !='' and source_row_id != 'No Row':
@@ -4518,7 +4518,7 @@ def log_data_online(request, data_type):
 
 						try:
 							new_obstissue, created = ObsTissue.objects.get_or_create(tissue_id=tissue_id, tissue_name=tissue_name, tissue_type=tissue_type, date_ground=date_ground, comments=tissue_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='tissue', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=new_obstissue, obs_well_id=1)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='tissue', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=new_obstissue, obs_well_id=1)
 							if row_id !='' and row_id !='No Row':
 								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_row__row_id=row_id), target_obs=new_obs_tracker, relationship='tissue_from_row')
 							if culture_id !='' and culture_id !='No Culture':
@@ -4579,7 +4579,7 @@ def log_data_online(request, data_type):
 
 						try:
 							new_obsculture, created = ObsCulture.objects.get_or_create(medium=medium, culture_id=culture_id, culture_name=culture_name, microbe_type=microbe_type, plating_cycle=plating_cycle, dilution=dilution, image_filename=image, num_colonies=num_colonies, num_microbes=num_microbes, comments=tissue_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='culture', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture=new_obsculture, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_row=ObsRow.objects.get(row_id=row_id), obs_sample=new_obssample, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well_id=1)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='culture', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=new_obsculture, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_row=ObsRow.objects.get(row_id=row_id), obs_sample=new_obssample, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well_id=1)
 							if row_id !='' and row_id !='No Row':
 								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_row__row_id=row_id), target_obs=new_obs_tracker, relationship='culture_from_row')
 							if tissue_id !='' and tissue_id !='No Tissue':
@@ -4635,7 +4635,7 @@ def log_data_online(request, data_type):
 
 						try:
 							new_obsmicrobe, created = ObsMicrobe.objects.get_or_create(microbe_id=microbe_id, microbe_type=microbe_type, comments=microbe_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='microbe', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe=new_obsmicrobe, obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_row=ObsRow.objects.get(row_id=row_id), obs_sample=new_obssample, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well_id=1)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='microbe', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe=new_obsmicrobe, obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_row=ObsRow.objects.get(row_id=row_id), obs_sample=new_obssample, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well_id=1)
 							if row_id !='' and row_id !='No Row':
 								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_row__row_id=row_id), target_obs=new_obs_tracker, relationship='microbe_from_row')
 							if tissue_id !='' and tissue_id !='No Tissue':
@@ -4706,7 +4706,7 @@ def log_data_online(request, data_type):
 
 						try:
 							new_obsdna, created = ObsDNA.objects.get_or_create(dna_id=dna_id, extraction_method=extraction, date=date, tube_id=tube_id, tube_type=tube_type, comments=dna_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='dna', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=new_obsdna, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample=ObsSample.objects.get(sample_id=sample_id), obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='dna', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=new_obsdna, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample=ObsSample.objects.get(sample_id=sample_id), obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
 							if row_id !='' and row_id != 'No Row':
 								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_row__row_id=row_id), target_obs=new_obs_tracker, relationship='dna_from_row')
 							if tissue_id !='' and tissue_id != 'No Tissue':
@@ -4760,7 +4760,7 @@ def log_data_online(request, data_type):
 
 						try:
 							new_obsplate, created = ObsPlate.objects.get_or_create(plate_id=plate_id, plate_name=plate_name, date=date, contents=contents, rep=rep, plate_type=plate_type, plate_status=plate_status, comments=plate_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='plate', stock_id=1, experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate=new_obsplate, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='plate', stock_id=1, experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate=new_obsplate, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
@@ -4814,7 +4814,7 @@ def log_data_online(request, data_type):
 
 						try:
 							new_obswell, created = ObsWell.objects.get_or_create(well_id=well_id, well=well, date=date, well_inventory=inventory, tube_label=tube_label, comments=well_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='well', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=new_obsdna, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=new_obswell)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='well', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=new_obsdna, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=new_obswell)
 							if row_id !='' and row_id != 'No Row':
 								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs= ObsTracker.objects.get(obs_entity_type='row', obs_row__row_id=row_id), target_obs=new_obs_tracker, relationship='well_from_row')
 							if tissue_id !='' and tissue_id != 'No Tissue':
@@ -4911,7 +4911,7 @@ def log_data_online(request, data_type):
 
 						try:
 							new_maize_sample, created = MaizeSample.objects.get_or_create(maize_id=maize_id, county=county, sub_location=sub_location, village=village, weight=weight, harvest_date=harvest_date, storage_months=storage_months, storage_conditions=storage_conditions, maize_variety=maize_variety, seed_source=seed_source, moisture_content=moisture_content, source_type=source_type, appearance=appearance, gps_latitude=gps_latitude, gps_longitude=gps_longitude, gps_altitude=gps_altitude, gps_accuracy=gps_accuracy, photo=photo)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='maize', stock_id=1, experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolate_id=1, location_id=1, maize_sample=new_maize_sample, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='maize', stock_id=1, experiment=experiment, user=user, field_id=1, glycerol_stock_id=1, isolatestock_id=1, location_id=1, maize_sample=new_maize_sample, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_row_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
@@ -4924,9 +4924,9 @@ def log_data_online(request, data_type):
 			sent = False
 			log_data_online_form_set = LogDataOnlineFormSet
 
-	if data_type == 'isolate':
-		data_type_title = 'Load Isolate Info'
-		LogDataOnlineFormSet = formset_factory(LogIsolatesOnlineForm, extra=10)
+	if data_type == 'isolatestock':
+		data_type_title = 'Load IsolateStock Info'
+		LogDataOnlineFormSet = formset_factory(LogIsolateStocksOnlineForm, extra=10)
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
 			if log_data_online_form_set.is_valid():
@@ -4934,8 +4934,7 @@ def log_data_online(request, data_type):
 				for form in log_data_online_form_set:
 					try:
 						experiment = form.cleaned_data['experiment']
-						isolate_id = form.cleaned_data['isolate__isolate_id']
-						location = form.cleaned_data['location']
+						isolatestock_id = form.cleaned_data['isolatestock__isolatestock_id']
 						field = form.cleaned_data['field']
 						dna_id = form.cleaned_data['obs_dna__dna_id']
 						microbe_id = form.cleaned_data['obs_microbe__microbe_id']
@@ -4946,14 +4945,15 @@ def log_data_online(request, data_type):
 						culture_id = form.cleaned_data['obs_culture__culture_id']
 						plate_id = form.cleaned_data['obs_plate__plate_id']
 						well_id = form.cleaned_data['obs_well__well_id']
-						isolate_name = form.cleaned_data['isolate__isolate_name']
-						disease = form.cleaned_data['isolate__disease_info']
-						plant_organ = form.cleaned_data['isolate__plant_organ']
-						genus = form.cleaned_data['isolate__passport__taxonomy__genus']
-						alias = form.cleaned_data['isolate__passport__taxonomy__alias']
-						race = form.cleaned_data['isolate__passport__taxonomy__race']
-						subtaxa = form.cleaned_data['isolate__passport__taxonomy__subtaxa']
-						isolate_comments = form.cleaned_data['isolate__comments']
+						isolatestock_name = form.cleaned_data['isolatestock__isolatestock_name']
+						disease = form.cleaned_data['isolatestock__disease_info']
+						plant_organ = form.cleaned_data['isolatestock__plant_organ']
+						genus = form.cleaned_data['isolatestock__passport__taxonomy__genus']
+						alias = form.cleaned_data['isolatestock__passport__taxonomy__alias']
+						race = form.cleaned_data['isolatestock__passport__taxonomy__race']
+						subtaxa = form.cleaned_data['isolatestock__passport__taxonomy__subtaxa']
+						locality = form.cleaned_data['isolatestock__locality']
+						isolatestock_comments = form.cleaned_data['isolatestock__comments']
 						user = request.user
 
 						if row_id == '':
@@ -4976,28 +4976,28 @@ def log_data_online(request, data_type):
 							well_id = 'No Well'
 
 						try:
-							new_taxonomy, created = Taxonomy.objects.get_or_create(genus=genus, common_name='Isolate', alias=alias, race=race, subtaxa=subtaxa)
+							new_taxonomy, created = Taxonomy.objects.get_or_create(genus=genus, common_name='IsolateStock', alias=alias, race=race, subtaxa=subtaxa)
 							new_passport, created = Passport.objects.get_or_create(taxonomy=new_taxonomy, people_id=1, collecting_id=1)
-							new_isolate, created = Isolate.objects.get_or_create(passport=new_passport, location=location, disease_info=disease, isolate_id=isolate_id, isolate_name=isolate_name, plant_organ=plant_organ, comments=isolate_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='isolate', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolate=new_isolate, location=location, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=ObsDNA.objects.get(dna_id=dna_id), obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
+							new_isolatestock, created = IsolateStock.objects.get_or_create(passport=new_passport, locality=locality, disease_info=disease, isolatestock_id=isolatestock_id, isolatestock_name=isolatestock_name, plant_organ=plant_organ, comments=isolatestock_comments)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='isolatestock', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, glycerol_stock_id=1, isolatestock=new_isolatestock, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=ObsDNA.objects.get(dna_id=dna_id), obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
 							if row_id !='' and row_id !='No Row':
-								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_row__row_id=row_id), target_obs=new_obs_tracker, relationship='isolate_from_row')
+								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_row__row_id=row_id), target_obs=new_obs_tracker, relationship='isolatestock_from_row')
 							if tissue_id !='' and tissue_id != 'No Tissue':
-								new_source_tissue, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue__tissue_id=tissue_id), target_obs=new_obs_tracker, relationship="isolate_from_tissue")
+								new_source_tissue, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue__tissue_id=tissue_id), target_obs=new_obs_tracker, relationship="isolatestock_from_tissue")
 							if plant_id !='' and plant_id != 'No Plant':
-								new_source_plant, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='plant', obs_plant__plant_id=plant_id), target_obs=new_obs_tracker, relationship="isolate_from_plant")
+								new_source_plant, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='plant', obs_plant__plant_id=plant_id), target_obs=new_obs_tracker, relationship="isolatestock_from_plant")
 							if seed_id !='' and seed_id != 'No Stock':
-								new_source_stock, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='stock', stock__seed_id=seed_id), target_obs=new_obs_tracker, relationship="isolate_from_stock")
+								new_source_stock, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='stock', stock__seed_id=seed_id), target_obs=new_obs_tracker, relationship="isolatestock_from_stock")
 							if culture_id !='' and culture_id != 'No Culture':
-								new_source_culture, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='culture', obs_culture__culture_id=culture_id), target_obs=new_obs_tracker, relationship="isolate_from_culture")
+								new_source_culture, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='culture', obs_culture__culture_id=culture_id), target_obs=new_obs_tracker, relationship="isolatestock_from_culture")
 							if microbe_id !='' and microbe_id != 'No Microbe':
-								new_source_microbe, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='microbe', obs_microbe__microbe_id=microbe_id), target_obs=new_obs_tracker, relationship="isolate_from_microbe")
+								new_source_microbe, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='microbe', obs_microbe__microbe_id=microbe_id), target_obs=new_obs_tracker, relationship="isolatestock_from_microbe")
 							if plate_id !='' and plate_id != 'No Plate':
-								new_source_plate, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='plate', obs_plate__plate_id=plate_id), target_obs=new_obs_tracker, relationship="isolate_from_plate")
+								new_source_plate, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='plate', obs_plate__plate_id=plate_id), target_obs=new_obs_tracker, relationship="isolatestock_from_plate")
 							if well_id !='' and well_id != 'No Well':
-								new_source_well, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='well', obs_well__well_id=well_id), target_obs=new_obs_tracker, relationship="isolate_from_well")
+								new_source_well, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='well', obs_well__well_id=well_id), target_obs=new_obs_tracker, relationship="isolatestock_from_well")
 							if dna_id !='' and dna_id !='No DNA':
-								new_source_dna, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='dna', obs_dna__dna_id=dna_id), target_obs=new_obs_tracker, relationship="isolate_from_dna")
+								new_source_dna, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='dna', obs_dna__dna_id=dna_id), target_obs=new_obs_tracker, relationship="isolatestock_from_dna")
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
@@ -5011,7 +5011,7 @@ def log_data_online(request, data_type):
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	if data_type == 'glycerol_stock':
-		data_type_title = 'Load Glycerol Stock Info'  # This used to stay Load Isolate Stock Info? Confused -slin63
+		data_type_title = 'Load Glycerol Stock Info'  # This used to stay Load IsolateStock Info? Confused -slin63
 		LogDataOnlineFormSet = formset_factory(LogGlycerolStocksOnlineForm, extra=10)
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
@@ -5022,7 +5022,7 @@ def log_data_online(request, data_type):
 						experiment = form.cleaned_data['experiment']
 						glycerol_stock_id = form.cleaned_data['glycerol_stock__glycerol_stock_id']
 						location = form.cleaned_data['location']
-						stock_date = form.cleaned_data['glycerol_stock__date']
+						stock_date = form.cleaned_data['glycerol_stock__stock_date']
 						extract_color = form.cleaned_data['glycerol_stock__extract_color']
 						organism = form.cleaned_data['glycerol_stock__organism']
 						glycerol_stock_comments = form.cleaned_data['glycerol_stock__comments']
@@ -5037,7 +5037,7 @@ def log_data_online(request, data_type):
 						sample_id = form.cleaned_data['obs_sample__sample_id']
 						well_id = form.cleaned_data['obs_well__well_id']
 						microbe_id = form.cleaned_data['obs_microbe__microbe_id']
-						isolate_id = form.cleaned_data['isolate__isolate_id']
+						isolatestock_id = form.cleaned_data['isolatestock__isolatestock_id']
 						user = request.user
 
 						if row_id == '':
@@ -5060,34 +5060,38 @@ def log_data_online(request, data_type):
 							well_id = 'No Well'
 						if sample_id == '':
 							sample_id = 'No Sample'
-						if isolate_id == '':
-							isolate_id = 'No Isolate'
+						if isolatestock_id == '':
+							isolatestock_id = 'No IsolateStock'
 
 						try:
 							new_glycerol_stock, created = GlycerolStock.objects.get_or_create(glycerol_stock_id=glycerol_stock_id, stock_date=stock_date, extract_color=extract_color, organism=organism, comments=glycerol_stock_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='glycerol_stock', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, glycerol_stock=new_glycerol_stock, isolate=Isolate.objects.get(isolate_id=isolate_id), location=location, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=ObsDNA.objects.get(dna_id=dna_id), obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample=ObsSample.objects.get(sample_id=sample_id), obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='glycerol_stock', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, glycerol_stock=new_glycerol_stock, isolatestock=IsolateStock.objects.get(isolatestock_id=isolatestock_id), location=location, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=ObsDNA.objects.get(dna_id=dna_id), obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample=ObsSample.objects.get(sample_id=sample_id), obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
 							if row_id !='' and row_id != 'No Row':
-								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_row__row_id=row_id), target_obs=new_obs_tracker, relationship='isolate_stock_from_row')
+								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_row__row_id=row_id), target_obs=new_obs_tracker, relationship='isolatestock_stock_from_row')
 							if tissue_id !='' and tissue_id !='No Tissue':
-								new_source_tissue, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue__tissue_id=tissue_id), target_obs=new_obs_tracker, relationship="isolate_stock_from_tissue")
+								new_source_tissue, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue__tissue_id=tissue_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_tissue")
 							if plant_id !='' and plant_id !='No Plant':
-								new_source_plant, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='plant', obs_plant__plant_id=plant_id), target_obs=new_obs_tracker, relationship="isolate_stock_from_plant")
+								new_source_plant, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='plant', obs_plant__plant_id=plant_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_plant")
 							if seed_id !='' and seed_id != 'No Stock':
-								new_source_stock, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='stock', stock__seed_id=seed_id), target_obs=new_obs_tracker, relationship="isolate_stock_from_stock")
+								new_source_stock, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='stock', stock__seed_id=seed_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_stock")
 							if culture_id !='' and culture_id !='No Culture':
-								new_source_culture, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='culture', obs_culture__culture_id=culture_id), target_obs=new_obs_tracker, relationship="isolate_stock_from_culture")
+								new_source_culture, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='culture', obs_culture__culture_id=culture_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_culture")
 							if microbe_id !='' and microbe_id != 'No Microbe':
-								new_source_microbe, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='microbe', obs_microbe__microbe_id=microbe_id), target_obs=new_obs_tracker, relationship="isolate_stock_from_microbe")
+								new_source_microbe, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='microbe', obs_microbe__microbe_id=microbe_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_microbe")
 							if plate_id !='' and plate_id !='No Plate':
-								new_source_plate, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='plate', obs_plate__plate_id=plate_id), target_obs=new_obs_tracker, relationship="isolate_stock_from_plate")
+								new_source_plate, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='plate', obs_plate__plate_id=plate_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_plate")
 							if well_id !='' and well_id != 'No Well':
-								new_source_well, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='well', obs_well__well_id=well_id), target_obs=new_obs_tracker, relationship="isolate_stock_from_well")
+								new_source_well, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='well', obs_well__well_id=well_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_well")
 							if dna_id !='' and dna_id !='No DNA':
-								new_source_dna, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='dna', obs_dna__dna_id=dna_id), target_obs=new_obs_tracker, relationship="isolate_stock_from_dna")
+								new_source_dna, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='dna', obs_dna__dna_id=dna_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_dna")
 							if sample_id !='' and sample_id !='No Sample':
-								new_source_sample, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='sample', obs_sample__sample_id=sample_id), target_obs=new_obs_tracker, relationship="isolate_stock_from_sample")
-							if isolate_id !='' and isolate_id !='No Isolate':
-								new_source_isolate, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='isolate', isolate__isolate_id=isolate_id), target_obs=new_obs_tracker, relationship="isolate_stock_from_isolate")
+								new_source_sample, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='sample', obs_sample__sample_id=sample_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_sample")
+							if isolatestock_id !='' and isolatestock_id !='No IsolateStock':
+								new_source_isolatestock, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='isolatestock', isolatestock__isolatestock_id=isolatestock_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_isolatestock")
+
+							new_glycerol_stock.save()
+							new_obs_tracker.save()
+
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
@@ -5214,12 +5218,12 @@ def log_data_online(request, data_type):
 	# If url does not fall under lab/data directory: goes here
 	data_type_to_url = {
 	'seed_packet': 'seed_inventory', 'seed_inventory':'seed_inventory',
-	'disease': 'data/disease_info/', 'isolate': 'isolate_inventory',
+	'disease': 'data/disease_info/', 'isolatestock': 'iso_inventory',
 	'glycerol_stock': 'glycerol_stock'
 	}
 
 	# 'data_url' handles the redirect link after a form has been successfully completed.
-	if data_type in ['seed_packet', 'disease', 'isolate', 'glycerol_stock', 'seed_inventory']:
+	if data_type in ['seed_packet', 'disease', 'isolatestock', 'glycerol_stock', 'seed_inventory']:
 		context_dict['data_url'] = data_type_to_url[data_type]
 	context_dict['log_data_online_form_set'] = log_data_online_form_set
 	context_dict['data_type'] = data_type
@@ -5318,7 +5322,7 @@ def sidebar_search_page(request):
 	context_dict = {}
 	experiment_results = []
 	row_results = []
-	isolate_results = []
+	isolatestock_results = []
 	glycerol_results = []
 	plant_results = []
 	plate_results = []
@@ -5349,11 +5353,11 @@ def sidebar_search_page(request):
 	for result in row_results:
 		result.url = "/lab/row/%d/" % (result.id)
 	try:
-		isolate_results = Isolate.objects.filter(isolate_id__icontains=starts_with).exclude(isolate_id='No Isolate')
-	except Isolate.DoesNotExist:
-		isolate_results = None
-	for result in isolate_results:
-		result.url = "/lab/isolate/%d/" % (result.id)
+		isolatestock_results = IsolateStock.objects.filter(isolatestock_id__icontains=starts_with).exclude(isolatestock_id='No IsolateStock')
+	except IsolateStock.DoesNotExist:
+		isolatestock_results = None
+	for result in isolatestock_results:
+		result.url = "/lab/isolatestock/%d/" % (result.id)
 	try:
 		glycerol_results = GlycerolStock.objects.filter(glycerol_stock_id__icontains=starts_with)
 	except GlycerolStock.DoesNotExist:
@@ -5460,7 +5464,7 @@ def sidebar_search_page(request):
 	context_dict['starts_with'] = starts_with
 	context_dict['experiment_results'] = experiment_results
 	context_dict['row_results'] = row_results
-	context_dict['isolate_results'] = isolate_results
+	context_dict['isolatestock_results'] = isolatestock_results
 	context_dict['glycerol_results'] = glycerol_results
 	context_dict['plant_results'] = plant_results
 	context_dict['plate_results'] = plate_results
@@ -5504,11 +5508,11 @@ def sidebar_search(request):
 		for result in row_results:
 			result.url = "/lab/row/%d/" % (result.id)
 		try:
-			isolate_results = Isolate.objects.filter(isolate_id__contains=starts_with).exclude(isolate_id='No Isolate')[:10]
-		except Isolate.DoesNotExist:
-			isolate_results = None
-		for result in isolate_results:
-			result.url = "/lab/isolate/%d/" % (result.id)
+			isolatestock_results = IsolateStock.objects.filter(isolatestock_id__contains=starts_with).exclude(isolatestock_id='No IsolateStock')[:10]
+		except IsolateStock.DoesNotExist:
+			isolatestock_results = None
+		for result in isolatestock_results:
+			result.url = "/lab/isolatestock/%d/" % (result.id)
 		try:
 			glycerol_results = GlycerolStock.objects.filter(glycerol_stock_id__contains=starts_with)[:10]
 		except GlycerolStock.DoesNotExist:
@@ -5612,7 +5616,7 @@ def sidebar_search(request):
 		for result in stock_results:
 			result.url = "/lab/stock/%d/" % (result.id)
 
-		results_list = list(chain(experiment_results, user_results, row_results, stock_results, isolate_results, glycerol_results, plant_results, plate_results, culture_results, microbe_results, extract_results, dna_results, sample_results, tissue_results, env_results, well_results, maize_results, field_results, locality_results, people_results))[:10]
+		results_list = list(chain(experiment_results, user_results, row_results, stock_results, isolatestock_results, glycerol_results, plant_results, plate_results, culture_results, microbe_results, extract_results, dna_results, sample_results, tissue_results, env_results, well_results, maize_results, field_results, locality_results, people_results))[:10]
 
 	else:
 		results_list = None
@@ -5943,8 +5947,8 @@ def upload_online(request, template_type):
 				results_dict = loader_scripts.well_loader_prep(request.FILES['file_name'], new_upload_user)
 			elif template_type == 'env_data':
 				results_dict = loader_scripts.env_loader_prep(request.FILES['file_name'], new_upload_user)
-			elif template_type == 'isolate_data':
-				results_dict = loader_scripts.isolate_loader_prep(request.FILES['file_name'], new_upload_user)
+			elif template_type == 'isolatestock_data':
+				results_dict = loader_scripts.isolatestock_loader_prep(request.FILES['file_name'], new_upload_user)
 			elif template_type == 'samples_data':
 				results_dict = loader_scripts.samples_loader_prep(request.FILES['file_name'], new_upload_user)
 			elif template_type == 'separation_data':
@@ -5983,8 +5987,8 @@ def upload_online(request, template_type):
 						output = loader_scripts.well_loader_prep_output(results_dict, new_upload_exp, template_type)
 					elif template_type == 'env_data':
 						output = loader_scripts.env_loader_prep_output(results_dict, new_upload_exp, template_type)
-					elif template_type == 'isolate_data':
-						output = loader_scripts.isolate_loader_prep_output(results_dict, new_upload_exp, template_type)
+					elif template_type == 'isolatestock_data':
+						output = loader_scripts.isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type)
 					elif template_type == 'samples_data':
 						output = loader_scripts.samples_loader_prep_output(results_dict, new_upload_exp, template_type)
 					elif template_type == 'separation_data':
@@ -6022,8 +6026,8 @@ def upload_online(request, template_type):
 						uploaded = loader_scripts.well_loader(results_dict)
 					elif template_type == 'env_data':
 						uploaded = loader_scripts.env_loader(results_dict)
-					elif template_type == 'isolate_data':
-						uploaded = loader_scripts.isolate_loader(results_dict)
+					elif template_type == 'isolatestock_data':
+						uploaded = loader_scripts.isolatestock_loader(results_dict)
 					elif template_type == 'samples_data':
 						uploaded = loader_scripts.samples_loader(results_dict)
 					elif template_type == 'separation_data':
