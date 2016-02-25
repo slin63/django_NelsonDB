@@ -34,6 +34,7 @@ urlpatterns = patterns('',
                        url(r'^isolate/$', views.isolate_inventory, name='isolate_inventory'),
                        url(r'^isolate/update/(?P<isolate_id>\d+)/$', views.update_isolate_info, name='update_isolate_info'),
                        url(r'^isolate/(?P<isolate_table_id>\d+)/$', views.single_isolate_info, name='single_isolate_info'),
+                       url(r'^data/isolate_delete/$', views_is.isolate_delete, name='isolate_delete'),
 
                        url(r'^datatable/seed_inventory/$', views.datatable_seed_inventory, name='datatable_seed_inventory'),
                        url(r'^seed_inventory/$', views.seed_inventory, name='seed_inventory'),

@@ -5,11 +5,13 @@
 {% if isolate_info %}
   <div class="hero-unit">
     <h1>Isolate Info: <a href='/lab/isolate/{{isolate_info.id}}/'>{{isolate_info.isolate_id}}</a></h1>
+    <input type="hidden" id="isolate_detail_id" value={{isolate_info.id}} />
   </div>
 
   <hr>
   <a href='/lab/isolate/update/{{isolate_info.id}}/'><input class="btn btn-info" type="submit" name="submit" value="Update Isolate Information"/></a>
   <a href='/lab/isolatestock/{{obs_tracker.0.isolatestock.id}}'><input class="btn btn-warning" type="submit" name="submit" value="Go to Isolate Stock"/></a>
+  <button id="isolate_detail_delete_button" class="btn btn-danger" type="submit" name="submit" >Delete Stock</button>
   <hr>
 
   <h2>Isolate</h2>

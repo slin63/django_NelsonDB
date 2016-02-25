@@ -30,6 +30,14 @@ def select_isolatestocks(request):
     return render_to_response('lab/isolatestock/isolatestock.html', context_dict, context)
 
 
+@login_required
+def isolate_delete(request):
+    isolate_id = request.POST.get('isolate_id', False)
+    Isolate.objects.get(id=isolate_id).delete()
+
+    return JsonResponse({'data':True}, safe=True)
+
+
 def datatable_isolatestock_inventory(request):
     selected_isolatestocks = checkbox_isolatestock_sort(request)
     #count = selected_isolatestocks.count()

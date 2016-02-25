@@ -83,6 +83,26 @@ $(document).ready(function(){
 
 });
 
+$('#isolate_detail_delete_button').click(function(){
+	if (confirm("Are you sure you want to delete this isolate? It cannot be undone.")) {
+		$.ajax({
+			dataType: "json",
+			url: "/lab/data/isolate_delete/",
+			type: "POST",
+			data: {'isolate_id':$('#isolate_detail_id').val()},
+			beforeSend: function(xhr, settings) {
+				var csrftoken = getCookie('csrftoken');
+				if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+					xhr.setRequestHeader("X-CSRFToken", csrftoken);
+				}
+			},
+			success: function(data) {
+				location.reload();
+			}
+		});
+	}
+});
+
 $('#stock_detail_delete_button').click(function(){
 	if (confirm("Are you sure you want to delete this stock? It cannot be undone.")) {
 		$.ajax({

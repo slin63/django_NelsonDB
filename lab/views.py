@@ -3831,8 +3831,9 @@ def single_isolate_info(request, isolate_table_id):
 		isolate_info = Isolate.objects.get(id=isolate_table_id)
 	except Isolate.DoesNotExist:
 		isolate_info = None
+		obs_tracker = None
 	if isolate_info is not None:
-		obs_tracker = get_obs_tracker('isolate_id', isolate_table_id)
+			obs_tracker = get_obs_tracker('isolate_id', isolate_table_id)
 	context_dict['isolate_info'] = isolate_info
 	context_dict['obs_tracker'] = obs_tracker
 	context_dict['logged_in_user'] = request.user.username
