@@ -9,7 +9,7 @@ DataBase Header Dictionary,,,,,,
 IsolateStock Template,For recording information aobut isolatestocks.,,,,,
 Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
 Experiment Name,1,1,0,lab_obstracker,experiment_id=Experiment(experiment).id,The experiment name to which this isolatestock is a part of.
-Location Name,1,0,0,lab_obstracker,location_name,The location name for where the isolatestock is located.
+Locality Name,1,0,0,lab_isolatestock,locality_name,The locality name for where the isolatestock was collected.
 IsolateStock ID,0,1,1,lab_isolatestock,isolatestock_id,A unique ID in the format Af0001i. This is the ID that is printed on the isolatestock tubes. MUST BE UNIQUE
 IsolateStock Name,0,0,0,lab_isolatestock,isolatestock_name,A human readable name for the isolatestock.
 Plant Organ,0,0,0,lab_isolatestock,plant_organ,"The plant organ that the isolatestock came from, if relevant."
@@ -44,7 +44,6 @@ Source Comments,0,0,0,lab_people,comments,Any additional comments about the isol
 ,,,,,,
 DEPENDENCIES,,,,,,
 ,,,,,,
-Location,For recording the isolatestocks location,,,,,
 Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
 Locality,1,1,0,lab_location,locality_id=Locality(locality).id,"The city, state, country, zipcode where the location is."
 Location Name,0,1,1,lab_location,location_name,A descriptive name for the location. MUST BE UNIQUE

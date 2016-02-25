@@ -3610,7 +3610,7 @@ def isolatestock_loader_prep(upload_file, user):
     well_id_error = OrderedDict({})
     dna_id_error = OrderedDict({})
     microbe_id_error = OrderedDict({})
-    location_name_error = OrderedDict({})
+    locality_name_error = OrderedDict({})
     disease_common_name_error = OrderedDict({})
     field_name_error = OrderedDict({})
     collecting_hash_exists = OrderedDict({})
@@ -3654,7 +3654,7 @@ def isolatestock_loader_prep(upload_file, user):
         phone = row["Phone"]
         email = row["Email"]
         source_comments = row["Source Comments"]
-        location_name = row["Location Name"]
+        locality_name = row["Locality Name"]
         user = user
 
         if seed_id != '':
@@ -3891,18 +3891,18 @@ def isolatestock_loader_prep(upload_file, user):
             temp_passport_id = 1
             error_count = error_count + 1
 
-        isolatestock_hash = str(temp_passport_id) + str(location_id) + str(disease_info_id) + isolatestock_id + isolatestock_name + plant_organ + isolatestock_comments
+        isolatestock_hash = str(temp_passport_id) + str(locality_id) + str(disease_info_id) + isolatestock_id + isolatestock_name + plant_organ + isolatestock_comments
         isolatestock_hash_fix = isolatestock_hash + '\r'
         if isolatestock_id not in isolatestock_id_table and isolatestock_id + '\r' not in isolatestock_id_table:
             if isolatestock_hash not in isolatestock_hash_table and isolatestock_hash_fix not in isolatestock_hash_table:
                 isolatestock_hash_table[isolatestock_hash] = isolatestock_table_id
-                isolatestock_new[(isolatestock_table_id, temp_passport_id, location_id, disease_info_id, isolatestock_id, isolatestock_name, plant_organ, isolatestock_comments)] = isolatestock_table_id
-                isolatestock_id_table[isolatestock_id] = (isolatestock_table_id, temp_passport_id, location_id, disease_info_id, isolatestock_id, isolatestock_name, plant_organ, isolatestock_comments)
+                isolatestock_new[(isolatestock_table_id, temp_passport_id, locality_id, disease_info_id, isolatestock_id, isolatestock_name, plant_organ, isolatestock_comments)] = isolatestock_table_id
+                isolatestock_id_table[isolatestock_id] = (isolatestock_table_id, temp_passport_id, locality_id, disease_info_id, isolatestock_id, isolatestock_name, plant_organ, isolatestock_comments)
                 isolatestock_table_id = isolatestock_table_id + 1
             else:
-                isolatestock_hash_exists[(temp_passport_id, location_id, disease_info_id, isolatestock_id, isolatestock_name, plant_organ, isolatestock_comments)] = isolatestock_table_id
+                isolatestock_hash_exists[(temp_passport_id, locality_id, disease_info_id, isolatestock_id, isolatestock_name, plant_organ, isolatestock_comments)] = isolatestock_table_id
         else:
-            isolatestock_hash_exists[(temp_passport_id, location_id, disease_info_id, isolatestock_id, isolatestock_name, plant_organ, isolatestock_comments)] = isolatestock_table_id
+            isolatestock_hash_exists[(temp_passport_id, locality_id, disease_info_id, isolatestock_id, isolatestock_name, plant_organ, isolatestock_comments)] = isolatestock_table_id
 
         if isolatestock_id in isolatestock_id_table:
             temp_isolatestock_id = isolatestock_id_table[isolatestock_id][0]
@@ -3916,14 +3916,14 @@ def isolatestock_loader_prep(upload_file, user):
             temp_isolatestock_id = 1
             error_count = error_count + 1
 
-        obs_tracker_isolatestock_hash = 'isolatestock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(temp_isolatestock_id) + str(location_id) + str(1) + str(obs_culture_id) + str(obs_dna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_row_id) + str(1) + str(obs_tissue_id) + str(obs_well_id) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_isolatestock_hash = 'isolatestock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(temp_isolatestock_id) + str(locality_id) + str(1) + str(obs_culture_id) + str(obs_dna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_row_id) + str(1) + str(obs_tissue_id) + str(obs_well_id) + str(stock_id) + str(user_hash_table[user.username])
         obs_tracker_isolatestock_hash_fix = obs_tracker_isolatestock_hash + '\r'
         if obs_tracker_isolatestock_hash not in obs_tracker_hash_table and obs_tracker_isolatestock_hash_fix not in obs_tracker_hash_table:
             obs_tracker_hash_table[obs_tracker_isolatestock_hash] = obs_tracker_id
-            obs_tracker_new[(obs_tracker_id, 'isolatestock', experiment_name_table[experiment_name][0], field_id, 1, temp_isolatestock_id, location_id, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'isolatestock', experiment_name_table[experiment_name][0], field_id, 1, temp_isolatestock_id, locality_id, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
             obs_tracker_id = obs_tracker_id + 1
         else:
-            obs_tracker_hash_exists[('isolatestock', experiment_name_table[experiment_name][0], field_id, 1, temp_isolatestock_id, location_id, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_hash_exists[('isolatestock', experiment_name_table[experiment_name][0], field_id, 1, temp_isolatestock_id, locality_id, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
     end = time.clock()
     stats = {}
@@ -3947,7 +3947,7 @@ def isolatestock_loader_prep(upload_file, user):
     results_dict['microbe_id_error'] = microbe_id_error
     results_dict['dna_id_error'] = dna_id_error
     results_dict['well_id_error'] = well_id_error
-    results_dict['location_name_error'] = location_name_error
+    results_dict['locality_name_error'] = locality_name_error
     results_dict['collecting_hash_exists'] = collecting_hash_exists
     results_dict['people_hash_exists'] = people_hash_exists
     results_dict['taxonomy_hash_exists'] = taxonomy_hash_exists
@@ -4050,7 +4050,7 @@ def isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type)
     writer.writerow([''])
     writer.writerow(['Location Name Errors'])
     writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'genus', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
-    for key in results_dict['location_name_error'].iterkeys():
+    for key in results_dict['locality_name_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Disease Common Name Errors'])

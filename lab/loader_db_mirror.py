@@ -552,7 +552,7 @@ def isolatestock_id_mirror():
 
     isolatestock_file = IsolateStock.objects.all()
     for row in isolatestock_file:
-        isolatestock_id_table[row.isolatestock_id] = (row.id, row.passport_id, row.location_id, row.disease_info_id, row.isolatestock_id, row.isolatestock_name, row.plant_organ, row.comments)
+        isolatestock_id_table[row.isolatestock_id] = (row.id, row.passport_id, row.locality_id, row.disease_info_id, row.isolatestock_id, row.isolatestock_name, row.plant_organ, row.comments)
     return isolatestock_id_table
 
 def disease_name_mirror():
@@ -994,7 +994,7 @@ def isolatestock_hash_mirror():
 
     isolatestock_file = IsolateStock.objects.all()
     for row in isolatestock_file:
-        isolatestock_hash = str(row.passport_id) + str(row.location_id) + str(row.disease_info_id) + row.isolatestock_id + row.isolatestock_name + row.plant_organ + row.comments
+        isolatestock_hash = str(row.passport_id) + str(row.locality_id) + str(row.disease_info_id) + row.isolatestock_id + row.isolatestock_name + row.plant_organ + row.comments
         isolatestock_hash.rstrip('\r')
         isolatestock_hash.rstrip('\n')
         isolatestock_hash_table[isolatestock_hash] = row.id

@@ -5,6 +5,7 @@
   <h1>Update Isolate Info</h1>
   <hr>
   <a href='/lab/isolate/{{isolate_id}}/'><input class="btn btn-info" type="submit" name="submit" value="Back to Isolate Info Page"/></a>
+  <a href="{% url 'update_isolatestock_info' obs_tracker.isolatestock.id %}"><input class="btn btn-warning" type="submit" name="submit" value="Go to Update Isolate Stock Info"/></a>
   <hr>
   {% if updated %}
     <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Edit Was Saved!<br/>&nbsp;</h4>

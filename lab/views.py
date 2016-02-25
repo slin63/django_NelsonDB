@@ -7,7 +7,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.conf import settings
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, Isolate, FileDump
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolateStocksOnlineForm, LogSeparationsOnlineForm, LogMaizeSurveyOnlineForm, LogIsolatesOnlineForm, FileDumpForm
+from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolateStocksOnlineForm, LogSeparationsOnlineForm, LogMaizeSurveyOnlineForm, LogIsolatesOnlineForm, FileDumpForm, UpdateIsolatesOnlineForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -981,7 +981,7 @@ def update_isolate_info(request, isolate_id):
 	context = RequestContext(request)
 	context_dict = {}
 	if request.method == 'POST':
-		obs_tracker_isolate_form = LogIsolatesOnlineForm(data=request.POST)
+		obs_tracker_isolate_form = UpdateIsolatesOnlineForm(data=request.POST)
 		if obs_tracker_isolate_form.is_valid():
 			with transaction.atomic():
 				try:
@@ -1030,10 +1030,10 @@ def update_isolate_info(request, isolate_id):
 						obs_tracker.obs_sample = ObsSample.objects.get(sample_id=obs_tracker_isolate_form.cleaned_data['obs_sample__sample_id'])
 					else:
 						obs_tracker.obs_sample = ObsSample.objects.get(sample_id='No Sample')
-					if obs_tracker_isolate_form.cleaned_data['isolatestock__isolatestock_id'] != '':
-						obs_tracker.isolatestock = IsolateStock.objects.get(isolatestock_id=obs_tracker_isolate_form.cleaned_data['isolatestock__isolatestock_id'])
-					else:
-						obs_tracker.isolatestock = IsolateStock.objects.get(isolatestock_id='No IsolateStock')
+					# if obs_tracker_isolate_form.cleaned_data['isolatestock__isolatestock_id'] != '':
+					# 	obs_tracker.isolatestock = IsolateStock.objects.get(isolatestock_id=obs_tracker_isolate_form.cleaned_data['isolatestock__isolatestock_id'])
+					# else:
+					# 	obs_tracker.isolatestock = IsolateStock.objects.get(isolatestock_id='No IsolateStock')
 
 					gstock = Isolate.objects.get(id=isolate_id)
 					gstock.isolate_id = obs_tracker_isolate_form.cleaned_data['isolate__isolate_id']
@@ -1052,6 +1052,7 @@ def update_isolate_info(request, isolate_id):
 		isolate_data = ObsTracker.objects.filter(obs_entity_type='isolate', isolate_id=isolate_id).values('experiment', 'isolate__isolate_id', 'location', 'isolate__stock_date', 'isolate__extract_color', 'isolate__organism', 'isolate__comments', 'field', 'obs_dna__dna_id', 'obs_microbe__microbe_id', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'obs_culture__culture_id', 'obs_plate__plate_id', 'obs_well__well_id', 'obs_sample__sample_id', 'isolatestock__isolatestock_id')
 		obs_tracker_isolate_form = LogIsolatesOnlineForm(initial=isolate_data[0])
 	context_dict['isolate_id'] = isolate_id
+	context_dict['obs_tracker'] = ObsTracker.objects.get(isolate_id=isolate_id)
 	context_dict['obs_tracker_isolate_form'] = obs_tracker_isolate_form
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/isolate/isolate_info_update.html', context_dict, context)
