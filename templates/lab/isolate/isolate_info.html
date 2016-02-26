@@ -11,7 +11,7 @@
   <hr>
   <a href='/lab/isolate/update/{{isolate_info.id}}/'><input class="btn btn-info" type="submit" name="submit" value="Update Isolate Information"/></a>
   <a href='/lab/isolatestock/{{obs_tracker.0.isolatestock.id}}'><input class="btn btn-warning" type="submit" name="submit" value="Go to Isolate Stock"/></a>
-  <button id="isolate_detail_delete_button" class="btn btn-danger" type="submit" name="submit" >Delete Stock</button>
+  <button id="isolate_detail_delete_button" class="btn btn-danger" type="submit" name="submit">Delete Isolate</button>
   <hr>
 
   <h2>Isolate</h2>
@@ -72,9 +72,9 @@
 -->
 {% else %}
   <div class="hero-unit">
-    <h1>Isolate Info: <a href='/lab/'>Not Found!</a></h1>
+    <h1>Isolate Not Found! </h1>
   </div>
-  <h2>No Isolate Info Found!</h2>
+  <h2><a href={% url 'isolatestock_inventory' %}>Click here to return to the IsolateStock table</a>></h2>
 {% endif %}
 
 {% endblock %}

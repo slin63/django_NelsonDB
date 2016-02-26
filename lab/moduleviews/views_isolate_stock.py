@@ -38,6 +38,14 @@ def isolate_delete(request):
     return JsonResponse({'data':True}, safe=True)
 
 
+@login_required
+def isolatestock_delete(request):
+    isolatestock_id = request.POST.get('isolatestock_id', False)
+    IsolateStock.objects.get(id=isolatestock_id).delete()
+
+    return JsonResponse({'data':True}, safe=True)
+
+
 def datatable_isolatestock_inventory(request):
     selected_isolatestocks = checkbox_isolatestock_sort(request)
     #count = selected_isolatestocks.count()
@@ -303,11 +311,15 @@ def single_isolatestock_info(request, isolatestock_table_id):
         isolatestock_info = None
     if isolatestock_info is not None:
         obs_tracker = get_obs_tracker('isolatestock_id', isolatestock_table_id)
-    try:
+        try:
         # Section where Isolates are added
-        associated_isolates = ObsTracker.objects.filter(isolatestock=isolatestock_info.id, obs_entity_type='isolate')
-    except Isolate.DoesNotExist:
+            associated_isolates = ObsTracker.objects.filter(isolatestock=isolatestock_info.id, obs_entity_type='isolate')
+        except Isolate.DoesNotExist:
+            associated_isolates = None
+    else:
+        obs_tracker = None
         associated_isolates = None
+
     context_dict['isolatestock_info'] = isolatestock_info
     context_dict['obs_tracker'] = obs_tracker
     context_dict['associated_isolates'] = associated_isolates

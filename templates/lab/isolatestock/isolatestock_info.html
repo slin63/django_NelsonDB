@@ -5,12 +5,14 @@
 {% if isolatestock_info %}
   <div class="hero-unit">
     <h1>IsolateStock Info: <a href="{% url 'single_isolatestock_info' isolatestock_info.id %}">{{isolatestock_info.isolatestock_id}}</a></h1>
+    <input type="hidden" id="isolatestock_detail_id" value={{isolatestock_info.id}} />
   </div>
 
   <hr>
   <a href="/lab/isolatestock_inventory/update/{{ isolatestock_info.id }}"><input class="btn btn-info" type="submit" name="submit" value="Update IsolateStock Information"/></a>
   <a href="{% url 'log_data_online' 'isolate' %}"><input class="btn btn-warning" type="submit" name="submit" value="Add new Isolate"/></a>
-  <a href="{% url 'isolatestock_inventory' %}"><input class="btn btn-danger" type="submit" name="submit" value="Return to IsolateStock table"/></a>
+  <a href="{% url 'isolatestock_inventory' %}"><input class="btn btn-warning" type="submit" name="submit" value="Return to IsolateStock table"/></a>
+  <button id="isolatestock_detail_delete_button" class="btn btn-danger" type="submit" name="submit">Delete Isolate Stock</button>
   <hr>
 
 
@@ -118,9 +120,9 @@
 
 {% else %}
   <div class="hero-unit">
-    <h1>IsolateStock Info: <a href='/lab/'>Not Found!</a></h1>
+    <h1>IsolateStock Not Found!</h1>
   </div>
-  <h2>No IsolateStock Info Found!</h2>
+  <h2><a href={% url 'isolatestock_inventory' %}>Click here to return to the IsolateStock table</a></h2>
 {% endif %}
 
 {% endblock %}

@@ -55,6 +55,7 @@ urlpatterns = patterns('',
 
                        # Added 2/15/2016 - slin63
                        url(r'^datatable/isolatestock_inventory/$', views_is.datatable_isolatestock_inventory, name='datatable_isolatestock_inventory'),
+                       url(r'^data/isolatestock_delete/$', views_is.isolatestock_delete, name='isolatestock_delete'),
                        url(r'^isolatestock_inventory/$', views_is.isolatestock_inventory, name='isolatestock_inventory'),
                        url(r'^isolatestock_inventory/select_taxonomy/$', views_is.select_taxonomy, name='select_taxonomy'),
                        url(r'^isolatestock_inventory/show_all_taxonomy/$', views_is.show_all_isolatestock_taxonomy, name='show_all_iso_taxonomy'),
