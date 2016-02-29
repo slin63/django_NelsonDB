@@ -4942,7 +4942,6 @@ def log_data_online(request, data_type):
 						seed_id = form.cleaned_data['stock__seed_id']
 						tissue_id = form.cleaned_data['obs_tissue__tissue_id']
 						isolatestock_name = form.cleaned_data['isolatestock__isolatestock_name']
-						# disease = form.cleaned_data['isolatestock__disease_info']
 						plant_organ = form.cleaned_data['isolatestock__plant_organ']
 						genus = form.cleaned_data['isolatestock__passport__taxonomy__genus']
 						alias = form.cleaned_data['isolatestock__passport__taxonomy__alias']
@@ -4950,6 +4949,13 @@ def log_data_online(request, data_type):
 						subtaxa = form.cleaned_data['isolatestock__passport__taxonomy__subtaxa']
 						locality = form.cleaned_data['isolatestock__locality']
 						isolatestock_comments = form.cleaned_data['isolatestock__comments']
+
+						source_fname = form.cleaned_data['isolatestock__passport__people__first_name']
+						source_lname = form.cleaned_data['isolatestock__passport__people__last_name']
+						source_organization = form.cleaned_data['isolatestock__passport__people__organization']
+						source_phone = form.cleaned_data['isolatestock__passport__people__phone']
+						source_email = form.cleaned_data['isolatestock__passport__people__email']
+						source_comments = form.cleaned_data['isolatestock__passport__people__comments']
 						user = request.user
 
 						if row_id == '':
@@ -4962,8 +4968,9 @@ def log_data_online(request, data_type):
 							tissue_id = 'No Tissue'
 
 						try:
+							new_people, created = People.objects.get_or_create(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)
 							new_taxonomy, created = Taxonomy.objects.get_or_create(genus=genus, common_name='IsolateStock', alias=alias, race=race, subtaxa=subtaxa)
-							new_passport, created = Passport.objects.get_or_create(taxonomy=new_taxonomy, people_id=1, collecting_id=1)
+							new_passport, created = Passport.objects.get_or_create(taxonomy=new_taxonomy, people=new_people, collecting_id=1)
 							new_isolatestock, created = IsolateStock.objects.get_or_create(passport=new_passport, locality=locality, disease_info_id=1, isolatestock_id=isolatestock_id, isolatestock_name=isolatestock_name, plant_organ=plant_organ, comments=isolatestock_comments)
 							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='isolatestock', stock=Stock.objects.get(seed_id=seed_id), experiment_id=1, user=user, field=field, isolate_id=1, isolatestock=new_isolatestock, location_id=1, maize_sample_id=1, obs_env_id=1, obs_extract_id=1,  obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id))
 							if row_id !='' and row_id !='No Row':
