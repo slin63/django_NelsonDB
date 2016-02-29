@@ -7,7 +7,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.conf import settings
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, Isolate, FileDump
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolateStocksOnlineForm, LogSeparationsOnlineForm, LogMaizeSurveyOnlineForm, LogIsolatesOnlineForm, FileDumpForm, UpdateIsolatesOnlineForm
+from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolateStocksOnlineForm, LogSeparationsOnlineForm, LogMaizeSurveyOnlineForm, LogIsolatesOnlineForm, FileDumpForm, UpdateIsolatesOnlineForm, UpdateStockPacketOnlineForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -827,15 +827,20 @@ def update_seed_packet_info(request, stock_id):
 		if edit_packet_form_set.is_valid():
 			failed = None
 			with transaction.atomic():
-				for form in edit_packet_form_set:
-					step = 0
-					while step < num_packets:
+				step = 0
+				while step < num_packets:
+					for form in edit_packet_form_set:
+							# context_dict['form'] = form
+							# context_dict['num_packets'] = num_packets
+							# context_dict['step'] = step
+							# context_dict['seeds'] = StockPacket.objects.filter(stock_id=stock_id)[0].weight
+							# return render_to_response('lab/test.html', context_dict, context)
 						try:
 							update_packet = StockPacket.objects.filter(stock_id=stock_id)[step]
 							update_packet.weight = form.cleaned_data['weight']
 							update_packet.num_seeds = form.cleaned_data['num_seeds']
 							update_packet.comments = form.cleaned_data['comments']
-							update_packet.location, created = Location.objects.get_or_create(locality=form.cleaned_data['location__locality'], building_name=form.cleaned_data['location__building_name'], location_name=form.cleaned_data['location__location_name'], room=form.cleaned_data['location__room'], shelf=form.cleaned_data['location__shelf'], column=form.cleaned_data['location__column'], box_name=form.cleaned_data['location__box_name'], comments=form.cleaned_data['location__comments'])
+							update_packet.location = form.cleaned_data['location']
 							update_packet.save()
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
@@ -848,7 +853,7 @@ def update_seed_packet_info(request, stock_id):
 		else:
 			print(edit_packet_form_set.errors)
 	else:
-		packets = StockPacket.objects.filter(stock_id=stock_id).values('stock__seed_id', 'weight', 'num_seeds', 'comments', 'location__building_name', 'location__location_name', 'location__room', 'location__shelf', 'location__column', 'location__box_name', 'location__comments', 'location__locality')
+		packets = StockPacket.objects.filter(stock_id=stock_id).values('stock__seed_id', 'weight', 'num_seeds', 'comments', 'location')
 		edit_packet_form_set = EditStockPacketFormSet(initial=packets)
 	context_dict['edit_packet_form_set'] = edit_packet_form_set
 	context_dict['stock_id'] = stock_id
@@ -4080,17 +4085,9 @@ def log_data_online(request, data_type):
 								weight = form.cleaned_data['weight']
 								num_seeds = form.cleaned_data['num_seeds']
 								packet_comments = form.cleaned_data['comments']
-								locality = form.cleaned_data['location__locality']
-								building_name = form.cleaned_data['location__building_name']
-								location_name = form.cleaned_data['location__location_name']
-								room = form.cleaned_data['location__room']
-								shelf = form.cleaned_data['location__shelf']
-								column = form.cleaned_data['location__column']
-								box_name = form.cleaned_data['location__box_name']
-								location_comments = form.cleaned_data['location__comments']
+								location = form.cleaned_data['location']
 
-								new_location, created = Location.objects.get_or_create(locality=locality, building_name=building_name, location_name=location_name, room=room, shelf=shelf, column=column, box_name=box_name, comments=location_comments)
-								new_stock_packet = StockPacket.objects.get_or_create(stock=Stock.objects.get(seed_id=seed_id), location=new_location, weight=weight, num_seeds=num_seeds, comments=packet_comments)
+								new_stock_packet = StockPacket.objects.get_or_create(stock=Stock.objects.get(seed_id=seed_id), location=location, weight=weight, num_seeds=num_seeds, comments=packet_comments)
 							except Exception as e:
 								print("Error: %s %s" % (e.message, e.args))
 								failed = True
@@ -5292,7 +5289,7 @@ def seed_id_search(request):
 	else:
 		starts_with = request.POST['suggestion']
 	if starts_with:
-		seed_id_list = Stock.objects.filter(seed_id__contains=starts_with)[:2000]
+		seed_id_list = Stock.objects.filter(seed_id__icontains=starts_with)[:2000]
 	else:
 		seed_id_list = None
 	context_dict = checkbox_session_variable_check(request)
