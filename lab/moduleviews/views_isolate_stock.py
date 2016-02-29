@@ -225,6 +225,7 @@ def find_isolatestock_for_experiment(experiment_name):
 def update_isolatestock_info(request, isolatestock_id):
     context = RequestContext(request)
     context_dict = {}
+    # If user is submitting data
     if request.method == 'POST':
         obs_tracker_isolatestock_form = LogIsolateStocksOnlineForm(data=request.POST)
         if obs_tracker_isolatestock_form.is_valid():
@@ -232,20 +233,13 @@ def update_isolatestock_info(request, isolatestock_id):
             # return render_to_response('lab/test.html', context_dict, context)
             with transaction.atomic():
                 try:
-                    obs_tracker = ObsTracker.objects.get(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id, experiment=obs_tracker_isolatestock_form.cleaned_data['experiment'])
+                    obs_tracker = ObsTracker.objects.get(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id)
                     obs_tracker.isolate_id = 1
                     obs_tracker.maize_sample_id = 1
                     obs_tracker.obs_extract_id = 1
                     obs_tracker.locality = obs_tracker_isolatestock_form.cleaned_data['isolatestock__locality']
                     obs_tracker.field = obs_tracker_isolatestock_form.cleaned_data['field']
-                    if obs_tracker_isolatestock_form.cleaned_data['obs_dna__dna_id'] != '':
-                        obs_tracker.obs_dna = ObsDNA.objects.get(dna_id=obs_tracker_isolatestock_form.cleaned_data['obs_dna__dna_id'])
-                    else:
-                        obs_tracker.obs_dna = ObsDNA.objects.get(dna_id='No DNA')
-                    if obs_tracker_isolatestock_form.cleaned_data['obs_microbe__microbe_id'] != '':
-                        obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id=obs_tracker_isolatestock_form.cleaned_data['obs_microbe__microbe_id'])
-                    else:
-                        obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id='No Microbe')
+
                     if obs_tracker_isolatestock_form.cleaned_data['obs_row__row_id'] != '':
                         obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_isolatestock_form.cleaned_data['obs_row__row_id'])
                     else:
@@ -262,18 +256,6 @@ def update_isolatestock_info(request, isolatestock_id):
                         obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id=obs_tracker_isolatestock_form.cleaned_data['obs_tissue__tissue_id'])
                     else:
                         obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id='No Tissue')
-                    if obs_tracker_isolatestock_form.cleaned_data['obs_culture__culture_id'] != '':
-                        obs_tracker.obs_culture = ObsCulture.objects.get(culture_id=obs_tracker_isolatestock_form.cleaned_data['obs_culture__culture_id'])
-                    else:
-                        obs_tracker.obs_culture = ObsCulture.objects.get(culture_id='No Culture')
-                    if obs_tracker_isolatestock_form.cleaned_data['obs_plate__plate_id'] != '':
-                        obs_tracker.obs_plate = ObsPlate.objects.get(plate_id=obs_tracker_isolatestock_form.cleaned_data['obs_plate__plate_id'])
-                    else:
-                        obs_tracker.obs_plate = ObsPlate.objects.get(plate_id='No Plate')
-                    if obs_tracker_isolatestock_form.cleaned_data['obs_well__well_id'] != '':
-                        obs_tracker.obs_well = ObsWell.objects.get(well_id=obs_tracker_isolatestock_form.cleaned_data['obs_well__well_id'])
-                    else:
-                        obs_tracker.obs_well = ObsWell.objects.get(well_id='No Well')
 
                     isolatestock = IsolateStock.objects.get(id=isolatestock_id)
                     isolatestock.isolatestock_id = obs_tracker_isolatestock_form.cleaned_data['isolatestock__isolatestock_id']
@@ -292,8 +274,9 @@ def update_isolatestock_info(request, isolatestock_id):
                     context_dict['failed'] = True
         else:
             print(obs_tracker_isolatestock_form.errors)
+    # If user is accessing the update model form
     else:
-        isolatestock_data = ObsTracker.objects.filter(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id).values('experiment', 'isolatestock__isolatestock_id', 'isolatestock__locality', 'field', 'obs_dna__dna_id', 'obs_microbe__microbe_id', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'obs_culture__culture_id', 'obs_plate__plate_id', 'obs_well__well_id', 'isolatestock__isolatestock_name', 'isolatestock__disease_info', 'isolatestock__plant_organ', 'isolatestock__passport__taxonomy__genus', 'isolatestock__passport__taxonomy__alias', 'isolatestock__passport__taxonomy__race', 'isolatestock__passport__taxonomy__subtaxa', 'isolatestock__comments')
+        isolatestock_data = ObsTracker.objects.filter(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id).values('isolatestock__isolatestock_id', 'isolatestock__locality', 'field', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'isolatestock__isolatestock_name', 'isolatestock__disease_info', 'isolatestock__plant_organ', 'isolatestock__passport__taxonomy__genus', 'isolatestock__passport__taxonomy__alias', 'isolatestock__passport__taxonomy__race', 'isolatestock__passport__taxonomy__subtaxa', 'isolatestock__comments')
         obs_tracker_isolatestock_form = LogIsolateStocksOnlineForm(initial=isolatestock_data[0])
     context_dict['isolatestock_id'] = isolatestock_id
     context_dict['obs_tracker_isolatestock_form'] = obs_tracker_isolatestock_form
