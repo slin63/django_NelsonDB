@@ -356,22 +356,17 @@ class LogSeedDataOnlineForm(forms.Form):
 
 
 class LogStockPacketOnlineForm(forms.Form):
-    stock__seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Seed ID'}), required=True)
+    stock__seed_id = forms.ModelChoiceField(queryset=Stock.objects.all(), empty_label="--- Seed ID ---", required=True)
     weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Weight'}), required=False)
     num_seeds = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Num Seeds'}), required=False)
     comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Packet Comments'}), required=False)
-    location__locality = forms.ModelChoiceField(queryset=Locality.objects.all(), empty_label="--- Locality ---",
-                                                required=True)
-    location__building_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Building Name'}),
-                                              required=False)
-    location__location_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Location Name'}),
-                                              required=True)
-    location__room = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Room'}), required=False)
-    location__shelf = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Shelf'}), required=False)
-    location__column = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Column'}), required=False)
-    location__box_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Box Name'}), required=False)
-    location__comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Location Comments'}),
-                                         required=False)
+    location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Storage Location ---", required=True)
+
+class UpdateStockPacketOnlineForm(forms.Form):
+    weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Weight'}), required=False)
+    num_seeds = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Num Seeds'}), required=False)
+    comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Packet Comments'}), required=False)
+    location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Storage Location ---", required=True)
 
 
 class LogRowsOnlineForm(forms.Form):
