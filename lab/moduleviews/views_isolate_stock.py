@@ -11,7 +11,7 @@ from itertools import chain
 
 from lab.forms import LogIsolateStocksOnlineForm
 from lab.models import Passport, Stock, Taxonomy, ObsRow, ObsPlant, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, \
-    ObsTracker, IsolateStock, Isolate
+    ObsTracker, IsolateStock, Isolate, People
 from lab.views import checkbox_session_variable_check, get_obs_tracker
 
 
@@ -260,12 +260,13 @@ def update_isolatestock_info(request, isolatestock_id):
                     isolatestock = IsolateStock.objects.get(id=isolatestock_id)
                     isolatestock.isolatestock_id = obs_tracker_isolatestock_form.cleaned_data['isolatestock__isolatestock_id']
                     isolatestock.isolatestock_name = obs_tracker_isolatestock_form.cleaned_data['isolatestock__isolatestock_name']
-                    # isolatestock.disease_info = obs_tracker_isolatestock_form.cleaned_data['isolatestock__disease_info']
                     isolatestock.plant_organ = obs_tracker_isolatestock_form.cleaned_data['isolatestock__plant_organ']
                     isolatestock.comments = obs_tracker_isolatestock_form.cleaned_data['isolatestock__comments']
                     isolatestock.locality = obs_tracker_isolatestock_form.cleaned_data['isolatestock__locality']
+
+                    updated_people, created = People.objects.get_or_create(first_name=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__people__first_name'], last_name=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__people__last_name'], organization=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__people__organization'], phone=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__people__phone'], email=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__people__email'], comments=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__people__comments'])
                     updated_taxonomy, created = Taxonomy.objects.get_or_create(genus=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__genus'], species='', population='', common_name='IsolateStock', alias=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__alias'], race=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__race'], subtaxa=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__subtaxa'])
-                    updated_passport, created = Passport.objects.get_or_create(collecting=isolatestock.passport.collecting, people=isolatestock.passport.people, taxonomy=updated_taxonomy)
+                    updated_passport, created = Passport.objects.get_or_create(collecting=isolatestock.passport.collecting, people=updated_people, taxonomy=updated_taxonomy)
                     isolatestock.passport = updated_passport
                     isolatestock.save()
                     obs_tracker.save()

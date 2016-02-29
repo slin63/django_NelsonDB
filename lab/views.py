@@ -1350,10 +1350,10 @@ def passport(request, passport_id):
 	# 	collecting_field = True
 	# else:
 	# 	collecting_field = None
-	if passport.people.organization != 'No Source' and passport.people.organization != '' and passport.people.organization != 'NULL':
+	if passport.people.organization != 'No Source':
 		collecting_source = True
 	else:
-		collecting_source = None
+		collecting_source = False
 	context_dict['passport'] = passport
 	# context_dict['collecting_field'] = collecting_field
 	context_dict['collecting_source'] = collecting_source
