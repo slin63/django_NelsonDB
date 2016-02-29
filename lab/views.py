@@ -821,7 +821,7 @@ def update_seed_packet_info(request, stock_id):
 	context = RequestContext(request)
 	context_dict = {}
 	num_packets = StockPacket.objects.filter(stock_id=stock_id).count()
-	EditStockPacketFormSet = formset_factory(LogStockPacketOnlineForm, extra=0)
+	EditStockPacketFormSet = formset_factory(UpdateStockPacketOnlineForm, extra=0)
 	if request.method == 'POST':
 		edit_packet_form_set = EditStockPacketFormSet(request.POST)
 		if edit_packet_form_set.is_valid():
@@ -830,11 +830,6 @@ def update_seed_packet_info(request, stock_id):
 				step = 0
 				while step < num_packets:
 					for form in edit_packet_form_set:
-							# context_dict['form'] = form
-							# context_dict['num_packets'] = num_packets
-							# context_dict['step'] = step
-							# context_dict['seeds'] = StockPacket.objects.filter(stock_id=stock_id)[0].weight
-							# return render_to_response('lab/test.html', context_dict, context)
 						try:
 							update_packet = StockPacket.objects.filter(stock_id=stock_id)[step]
 							update_packet.weight = form.cleaned_data['weight']
