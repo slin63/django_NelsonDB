@@ -587,19 +587,12 @@ class LogSeparationsOnlineForm(forms.Form):
 
 
 class LogIsolateStocksOnlineForm(forms.Form):
-    experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---",
-                                        help_text="Experiment:", required=True)
     isolatestock__isolatestock_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'IsolateStock ID'}),
                                           help_text="IsolateStock ID:", required=True)
     isolatestock__locality = forms.ModelChoiceField(queryset=Locality.objects.all(), empty_label="--- Locality Name ---",
                                       help_text="Locality:", required=True)
     field = forms.ModelChoiceField(queryset=Field.objects.all(), empty_label="--- Source Field Name ---",
                                    help_text="Source Field Name:", required=True)
-    isolatestock__disease_info = forms.ModelChoiceField(queryset=DiseaseInfo.objects.all(), empty_label="--- Disease ---", help_text="Disease Name:", required=True)
-    obs_dna__dna_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source DNA ID'}),
-                                      help_text="Source DNA ID:", required=False)
-    obs_microbe__microbe_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Microbe ID'}),
-                                              help_text="Source Microbe ID:", required=False)
     obs_row__row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Row ID'}),
                                       help_text="Source Row ID:", required=False)
     stock__seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Seed ID'}),
@@ -608,12 +601,6 @@ class LogIsolateStocksOnlineForm(forms.Form):
                                           help_text="Source Plant ID:", required=False)
     obs_tissue__tissue_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Tissue ID'}),
                                             help_text="Source Tissue ID:", required=False)
-    obs_culture__culture_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Culture ID'}),
-                                              help_text="Source Culture ID:", required=False)
-    obs_plate__plate_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plate ID'}),
-                                          help_text="Source Plate ID:", required=False)
-    obs_well__well_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Well ID'}),
-                                        help_text="Source Well ID:", required=False)
     isolatestock__isolatestock_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'IsolateStock Name'}),
                                             help_text="IsolateStock Name:", required=False)
     isolatestock__plant_organ = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plant Organ'}),
@@ -628,6 +615,20 @@ class LogIsolateStocksOnlineForm(forms.Form):
                                                            help_text="Subtaxa:", required=False)
     isolatestock__comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}),
                                         help_text="Additional Comments:", required=False)
+    isolatestock__passport__people__first_name = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Source First Name'}), help_text="Source First Name",
+        required=False)
+    isolatestock__passport__people__last_name = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Source Last Name'}), help_text="Source Last Name", required=False)
+    isolatestock__passport__people__organization = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Source Organization'}), help_text="Source Organization",
+        required=False)
+    isolatestock__passport__people__phone = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Phone'}),
+                                                     help_text="Source Phone", required=False)
+    isolatestock__passport__people__email = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Email'}),
+                                                     help_text="Source Email", required=False)
+    isolatestock__passport__people__comments = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Source Comments'}), help_text="Source Comments", required=False)
 
 
 class LogIsolatesOnlineForm(forms.Form):

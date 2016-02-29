@@ -13,7 +13,6 @@
           <th>IsolateStock ID</th>
           <th>IsolateStock Name</th>
           <th>Genus</th>
-          <th>Disease</th>
           <th>Locality</th>
           <th>Comments</th>
         </tr>
@@ -24,7 +23,6 @@
           <td>{{ isolatestock.isolatestock_id }}</td>
           <td>{{ isolatestock.isolatestock_name }}</td>
           <td>{{ isolatestock.passport.taxonomy.genus }}</td>
-          <td><a href='/lab/disease_info/{{isolatestock.disease_info.id}}/'>{{ isolatestock.disease_info.common_name }}</a></td>
           <td><a href="{% url 'single_locality_info' isolatestock.locality_id %}">{{ isolatestock.locality }}</a></td>
           <td>{{ isolatestock.comments }}</td>
         </tr>

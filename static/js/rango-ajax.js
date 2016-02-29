@@ -1228,11 +1228,11 @@ $(document).ready(function() {
 			    }
 		    },
 		    { "mData": "isolatestock_name"},
-		    { "mData": "disease_name",
-				  "mRender": function (data, type, full) {
-					  return '<a href=/lab/disease_info/' + full.disease_id + '/>' + full.disease_name + '</a>';
-				  }
-				},
+		  //   { "mData": "disease_name",
+				//   "mRender": function (data, type, full) {
+				// 	  return '<a href=/lab/disease_info/' + full.disease_id + '/>' + full.disease_name + '</a>';
+				//   }
+				// },
 		    { "mData": "plant_organ"},
 		    { "mData": "genus"},
 		    { "mData": "alias"},
