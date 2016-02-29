@@ -25,7 +25,6 @@
 
         <td>Locality</td>
 
-        <td>Disease</td>
         <td>Plant Organ</td>
         <td>Genus</td>
         <td>Alias</td>
@@ -40,7 +39,6 @@
         <td><a href="{% url 'single_isolatestock_info' isolatestock_info.id %}">{{ isolatestock_info.isolatestock_id }}</a></td>
         <td>{{ isolatestock_info.isolatestock_name }}</td>
         <td><a href="{% url 'single_locality_info' isolatestock_info.locality_id %}">{{ isolatestock_info.locality }}</a></td>
-        <td><a href="{% url 'single_disease_info' isolatestock_info.disease_info.id %}">{{ isolatestock_info.disease_info.common_name }}</a></td>
         <td>{{ isolatestock_info.plant_organ }}</td>
         <td>{{ isolatestock_info.passport.taxonomy.genus }}</td>
         <td>{{ isolatestock_info.passport.taxonomy.alias }}</td>

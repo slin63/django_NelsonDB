@@ -4942,7 +4942,7 @@ def log_data_online(request, data_type):
 						seed_id = form.cleaned_data['stock__seed_id']
 						tissue_id = form.cleaned_data['obs_tissue__tissue_id']
 						isolatestock_name = form.cleaned_data['isolatestock__isolatestock_name']
-						disease = form.cleaned_data['isolatestock__disease_info']
+						# disease = form.cleaned_data['isolatestock__disease_info']
 						plant_organ = form.cleaned_data['isolatestock__plant_organ']
 						genus = form.cleaned_data['isolatestock__passport__taxonomy__genus']
 						alias = form.cleaned_data['isolatestock__passport__taxonomy__alias']
@@ -4954,27 +4954,17 @@ def log_data_online(request, data_type):
 
 						if row_id == '':
 							row_id = 'No Row'
-						# if dna_id == '':
-						# 	dna_id = 'No DNA'
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
 							seed_id = 'No Stock'
 						if tissue_id == '':
 							tissue_id = 'No Tissue'
-						# if culture_id == '':
-						# 	culture_id = 'No Culture'
-						# if microbe_id == '':
-						# 	microbe_id = 'No Microbe'
-						# if plate_id == '':
-						# 	plate_id = 'No Plate'
-						# if well_id == '':
-						# 	well_id = 'No Well'
 
 						try:
 							new_taxonomy, created = Taxonomy.objects.get_or_create(genus=genus, common_name='IsolateStock', alias=alias, race=race, subtaxa=subtaxa)
 							new_passport, created = Passport.objects.get_or_create(taxonomy=new_taxonomy, people_id=1, collecting_id=1)
-							new_isolatestock, created = IsolateStock.objects.get_or_create(passport=new_passport, locality=locality, disease_info=disease, isolatestock_id=isolatestock_id, isolatestock_name=isolatestock_name, plant_organ=plant_organ, comments=isolatestock_comments)
+							new_isolatestock, created = IsolateStock.objects.get_or_create(passport=new_passport, locality=locality, disease_info_id=1, isolatestock_id=isolatestock_id, isolatestock_name=isolatestock_name, plant_organ=plant_organ, comments=isolatestock_comments)
 							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='isolatestock', stock=Stock.objects.get(seed_id=seed_id), experiment_id=1, user=user, field=field, isolate_id=1, isolatestock=new_isolatestock, location_id=1, maize_sample_id=1, obs_env_id=1, obs_extract_id=1,  obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id))
 							if row_id !='' and row_id !='No Row':
 								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_row__row_id=row_id), target_obs=new_obs_tracker, relationship='isolatestock_from_row')
@@ -4984,16 +4974,6 @@ def log_data_online(request, data_type):
 								new_source_plant, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='plant', obs_plant__plant_id=plant_id), target_obs=new_obs_tracker, relationship="isolatestock_from_plant")
 							if seed_id !='' and seed_id != 'No Stock':
 								new_source_stock, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='stock', stock__seed_id=seed_id), target_obs=new_obs_tracker, relationship="isolatestock_from_stock")
-							# if culture_id !='' and culture_id != 'No Culture':
-							# 	new_source_culture, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='culture', obs_culture__culture_id=culture_id), target_obs=new_obs_tracker, relationship="isolatestock_from_culture")
-							# if microbe_id !='' and microbe_id != 'No Microbe':
-							# 	new_source_microbe, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='microbe', obs_microbe__microbe_id=microbe_id), target_obs=new_obs_tracker, relationship="isolatestock_from_microbe")
-							# if plate_id !='' and plate_id != 'No Plate':
-							# 	new_source_plate, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='plate', obs_plate__plate_id=plate_id), target_obs=new_obs_tracker, relationship="isolatestock_from_plate")
-							# if well_id !='' and well_id != 'No Well':
-							# 	new_source_well, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='well', obs_well__well_id=well_id), target_obs=new_obs_tracker, relationship="isolatestock_from_well")
-							# if dna_id !='' and dna_id !='No DNA':
-							# 	new_source_dna, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='dna', obs_dna__dna_id=dna_id), target_obs=new_obs_tracker, relationship="isolatestock_from_dna")
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True

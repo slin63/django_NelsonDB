@@ -260,7 +260,7 @@ def update_isolatestock_info(request, isolatestock_id):
                     isolatestock = IsolateStock.objects.get(id=isolatestock_id)
                     isolatestock.isolatestock_id = obs_tracker_isolatestock_form.cleaned_data['isolatestock__isolatestock_id']
                     isolatestock.isolatestock_name = obs_tracker_isolatestock_form.cleaned_data['isolatestock__isolatestock_name']
-                    isolatestock.disease_info = obs_tracker_isolatestock_form.cleaned_data['isolatestock__disease_info']
+                    # isolatestock.disease_info = obs_tracker_isolatestock_form.cleaned_data['isolatestock__disease_info']
                     isolatestock.plant_organ = obs_tracker_isolatestock_form.cleaned_data['isolatestock__plant_organ']
                     isolatestock.comments = obs_tracker_isolatestock_form.cleaned_data['isolatestock__comments']
                     isolatestock.locality = obs_tracker_isolatestock_form.cleaned_data['isolatestock__locality']
@@ -276,7 +276,7 @@ def update_isolatestock_info(request, isolatestock_id):
             print(obs_tracker_isolatestock_form.errors)
     # If user is accessing the update model form
     else:
-        isolatestock_data = ObsTracker.objects.filter(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id).values('isolatestock__isolatestock_id', 'isolatestock__locality', 'field', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'isolatestock__isolatestock_name', 'isolatestock__disease_info', 'isolatestock__plant_organ', 'isolatestock__passport__taxonomy__genus', 'isolatestock__passport__taxonomy__alias', 'isolatestock__passport__taxonomy__race', 'isolatestock__passport__taxonomy__subtaxa', 'isolatestock__comments')
+        isolatestock_data = ObsTracker.objects.filter(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id).values('isolatestock__isolatestock_id', 'isolatestock__locality', 'field', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'isolatestock__isolatestock_name', 'isolatestock__plant_organ', 'isolatestock__passport__taxonomy__genus', 'isolatestock__passport__taxonomy__alias', 'isolatestock__passport__taxonomy__race', 'isolatestock__passport__taxonomy__subtaxa', 'isolatestock__comments')
         obs_tracker_isolatestock_form = LogIsolateStocksOnlineForm(initial=isolatestock_data[0])
     context_dict['isolatestock_id'] = isolatestock_id
     context_dict['obs_tracker_isolatestock_form'] = obs_tracker_isolatestock_form
