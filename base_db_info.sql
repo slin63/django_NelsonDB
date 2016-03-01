@@ -110,8 +110,8 @@ TRUNCATE TABLE `lab_isolate`;
 -- Dumping data for table `lab_isolate`
 --
 
-INSERT INTO `lab_isolate` (`id`, `isolate_id`,  `stock_date`, `extract_color`, `organism`, `comments`) VALUES
-(1, 'No Isolate', 'No Isolate', '', '', '');
+INSERT INTO `lab_isolate` (`id`, `isolate_id`, `isolatestock_id`, `location_id`, `stock_date`, `extract_color`, `organism`, `comments`, `user_id`) VALUES
+(1, 'No Isolate', 1, 1, 'No Isolate', '', '', '', 1);
 
 --
 -- Truncate table before insert `lab_gwasexperimentset`
@@ -542,8 +542,8 @@ TRUNCATE TABLE `lab_taxonomy`;
 -- Dumping data for table `lab_taxonomy`
 --
 
-INSERT INTO `lab_taxonomy` (`id`, `genus`, `species`, `population`, `common_name`, `alias`, `race`, `subtaxa`) VALUES
-(1, 'No Taxonomy', 'No Taxonomy', 'No Taxonomy', 'No Taxonomy', 'No Taxonomy', 'No Taxonomy', 'No Taxonomy');
+INSERT INTO `lab_taxonomy` (`id`, `binomial`, `population`, `common_name`, `alias`, `race`, `subtaxa`) VALUES
+(1, 'No Taxonomy', 'No Taxonomy', 'No Taxonomy', 'No Taxonomy', 'No Taxonomy', 'No Taxonomy');
 
 --
 -- Truncate table before insert `lab_treatment`

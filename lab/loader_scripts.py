@@ -26,7 +26,7 @@ def seed_stock_loader_prep(upload_file, user):
     #--- Key = (people_id, first_name, last_name, organization, phone, email, comments)
     #--- Value = (people_id)
     taxonomy_new = OrderedDict({})
-    #--- Key = (taxonomy_id, genus, species, population, common_name, alias, race, subtaxa)
+    #--- Key = (taxonomy_id, binomial, species, population, common_name, alias, race, subtaxa)
     #--- Value = (taxonomy_id)
     obs_tracker_new = OrderedDict({})
     #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
@@ -82,7 +82,7 @@ def seed_stock_loader_prep(upload_file, user):
         stock_date = row["Stock Date"]
         inoculated = row["Inoculated"]
         stock_comments = row["Stock Comments"]
-        genus = row["Genus"]
+        binomial = row["binomial"]
         species = row["Species"]
         population = row["Population"]
         row_id = row["Row ID"]
@@ -106,7 +106,7 @@ def seed_stock_loader_prep(upload_file, user):
             elif row_id_fix in row_id_table:
                 obs_row_id = row_id_table[row_id_fix][0]
             else:
-                row_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, genus, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
+                row_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
                 error_count = error_count + 1
                 obs_row_id = 1
         else:
@@ -119,7 +119,7 @@ def seed_stock_loader_prep(upload_file, user):
             elif plant_id_fix in plant_id_table:
                 obs_plant_id = plant_id_table[plant_id_fix][0]
             else:
-                plant_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, genus, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
+                plant_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
                 error_count = error_count + 1
                 obs_plant_id = 1
         else:
@@ -132,7 +132,7 @@ def seed_stock_loader_prep(upload_file, user):
             elif field_name_fix in field_name_table:
                 field_id = field_name_table[field_name_fix][0]
             else:
-                field_name_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, genus, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
+                field_name_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
                 error_count = error_count + 1
                 field_id = 1
         else:
@@ -175,14 +175,14 @@ def seed_stock_loader_prep(upload_file, user):
             temp_people_id = 1
             error_count = error_count + 1
 
-        taxonomy_hash = genus + species + population + 'Maize' + '' + '' + ''
+        taxonomy_hash = binomial + species + population + 'Maize' + '' + '' + ''
         taxonomy_hash_fix = taxonomy_hash + '\r'
         if taxonomy_hash not in taxonomy_hash_table and taxonomy_hash_fix not in taxonomy_hash_table:
             taxonomy_hash_table[taxonomy_hash] = taxonomy_id
-            taxonomy_new[(taxonomy_id, genus, species, population, 'Maize', '', '', '')] = taxonomy_id
+            taxonomy_new[(taxonomy_id, binomial, species, population, 'Maize', '', '', '')] = taxonomy_id
             taxonomy_id = taxonomy_id + 1
         else:
-            taxonomy_hash_exists[(genus, species, population, 'Maize', '', '', '')] = taxonomy_id
+            taxonomy_hash_exists[(binomial, species, population, 'Maize', '', '', '')] = taxonomy_id
 
         if taxonomy_hash in taxonomy_hash_table:
             temp_taxonomy_id = taxonomy_hash_table[taxonomy_hash]
@@ -338,7 +338,7 @@ def seed_stock_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Taxonomy Table'])
-    writer.writerow(['taxonomy_id', 'genus', 'species', 'population', 'common_name', 'alias', 'race', 'subtaxa'])
+    writer.writerow(['taxonomy_id', 'binomial', 'species', 'population', 'common_name', 'alias', 'race', 'subtaxa'])
     for key in results_dict['taxonomy_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -360,17 +360,17 @@ def seed_stock_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['---------------------------------------------------------------------------------------------------'])
     writer.writerow([''])
     writer.writerow(['Plant ID Errors'])
-    writer.writerow(['seed_id', 'seed_name', 'cross_type', 'pedigree', 'stock_status', 'stock_date', 'inoculated', 'stock_comments', 'genus', 'species', 'population', 'row_id', 'field_name', 'plant_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'first_name', 'last_name', 'phone', 'email', 'source_comments'])
+    writer.writerow(['seed_id', 'seed_name', 'cross_type', 'pedigree', 'stock_status', 'stock_date', 'inoculated', 'stock_comments', 'binomial', 'species', 'population', 'row_id', 'field_name', 'plant_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'first_name', 'last_name', 'phone', 'email', 'source_comments'])
     for key in results_dict['plant_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Field Name Errors'])
-    writer.writerow(['seed_id', 'seed_name', 'cross_type', 'pedigree', 'stock_status', 'stock_date', 'inoculated', 'stock_comments', 'genus', 'species', 'population', 'row_id', 'field_name', 'plant_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'first_name', 'last_name', 'phone', 'email', 'source_comments'])
+    writer.writerow(['seed_id', 'seed_name', 'cross_type', 'pedigree', 'stock_status', 'stock_date', 'inoculated', 'stock_comments', 'binomial', 'species', 'population', 'row_id', 'field_name', 'plant_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'first_name', 'last_name', 'phone', 'email', 'source_comments'])
     for key in results_dict['field_name_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Row ID Errors'])
-    writer.writerow(['seed_id', 'seed_name', 'cross_type', 'pedigree', 'stock_status', 'stock_date', 'inoculated', 'stock_comments', 'genus', 'species', 'population', 'row_id', 'field_name', 'plant_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'first_name', 'last_name', 'phone', 'email', 'source_comments'])
+    writer.writerow(['seed_id', 'seed_name', 'cross_type', 'pedigree', 'stock_status', 'stock_date', 'inoculated', 'stock_comments', 'binomial', 'species', 'population', 'row_id', 'field_name', 'plant_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'first_name', 'last_name', 'phone', 'email', 'source_comments'])
     for key in results_dict['row_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -423,7 +423,7 @@ def seed_stock_loader(results_dict):
         for key in results_dict['taxonomy_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = Taxonomy.objects.create(id=key[0], genus=key[1], species=key[2], population=key[3], common_name=key[4], alias=key[5], race=key[6], subtaxa=key[7])
+                    new_stock = Taxonomy.objects.create(id=key[0], binomial=key[1], species=key[2], population=key[3], common_name=key[4], alias=key[5], race=key[6], subtaxa=key[7])
             except Exception as e:
                 print("Taxonomy Error: %s %s" % (e.message, e.args))
                 return False
@@ -517,7 +517,7 @@ def seed_packet_loader_prep(upload_file, user):
                 error_count = error_count + 1
                 stock_id = 1
         else:
-            seed_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, genus, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
+            seed_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
             error_count = error_count + 1
             stock_id = 1
 
@@ -3566,7 +3566,7 @@ def isolatestock_loader_prep(upload_file, user):
     #--- Key = (people_id, first_name, last_name, organization, phone, email, comments)
     #--- Value = (people_id)
     taxonomy_new = OrderedDict({})
-    #--- Key = (taxonomy_id, genus, species, population, common_name, alias, race, subtaxa)
+    #--- Key = (taxonomy_id, binomial, species, population, common_name, alias, race, subtaxa)
     #--- Value = (taxonomy_id)
     obs_tracker_new = OrderedDict({})
     #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
@@ -3627,7 +3627,7 @@ def isolatestock_loader_prep(upload_file, user):
         isolatestock_name = row["IsolateStock Name"]
         plant_organ = row["Plant Organ"]
         isolatestock_comments = row["IsolateStock Comments"]
-        genus = row["Genus"]
+        binomial = row["binomial"]
         species = row["Species"]
         population = row["Population"]
         alias = row["Alias"]
@@ -3664,7 +3664,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif seed_id_fix in seed_id_table:
                 stock_id = seed_id_table[seed_id_fix][0]
             else:
-                seed_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, genus, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name, building_name, room, shelf, column, box_name, location_comments)] = error_count
+                seed_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name, building_name, room, shelf, column, box_name, location_comments)] = error_count
                 error_count = error_count + 1
                 stock_id = 1
         else:
@@ -3677,7 +3677,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif field_name_fix in field_name_table:
                 field_id = field_name_table[field_name_fix][0]
             else:
-                field_name_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, genus, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                field_name_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
                 error_count = error_count + 1
                 field_id = 1
         else:
@@ -3690,7 +3690,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif location_name_fix in location_name_table:
                 location_id = location_name_table[location_name_fix][0]
             else:
-                location_name_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, genus, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                location_name_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
                 error_count = error_count + 1
                 location_id = 1
         else:
@@ -3703,7 +3703,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif row_id_fix in row_id_table:
                 obs_row_id = row_id_table[row_id_fix][0]
             else:
-                row_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, genus, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                row_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
                 error_count = error_count + 1
                 obs_row_id = 1
         else:
@@ -3716,7 +3716,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif plant_id_fix in plant_id_table:
                 obs_plant_id = plant_id_table[plant_id_fix][0]
             else:
-                plant_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, genus, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                plant_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
                 error_count = error_count + 1
                 obs_plant_id = 1
         else:
@@ -3729,7 +3729,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif tissue_id_fix in tissue_id_table:
                 obs_tissue_id = tissue_id_table[tissue_id_fix][0]
             else:
-                tissue_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, genus, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                tissue_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
                 error_count = error_count + 1
                 obs_tissue_id = 1
         else:
@@ -3742,7 +3742,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif culture_id_fix in culture_id_table:
                 obs_culture_id = culture_id_table[culture_id_fix][0]
             else:
-                culture_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, genus, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                culture_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
                 error_count = error_count + 1
                 obs_culture_id = 1
         else:
@@ -3755,7 +3755,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif plate_id_fix in plate_id_table:
                 obs_plate_id = plate_id_table[plate_id_fix][0]
             else:
-                plate_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, genus, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                plate_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
                 error_count = error_count + 1
                 obs_plate_id = 1
         else:
@@ -3768,7 +3768,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif microbe_id_fix in microbe_id_table:
                 obs_microbe_id = microbe_id_table[microbe_id_fix][0]
             else:
-                microbe_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, genus, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                microbe_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
                 error_count = error_count + 1
                 obs_microbe_id = 1
         else:
@@ -3781,7 +3781,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif well_id_fix in well_id_table:
                 obs_well_id = well_id_table[well_id_fix][0]
             else:
-                well_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, genus, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                well_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
                 error_count = error_count + 1
                 obs_well_id = 1
         else:
@@ -3794,7 +3794,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif dna_id_fix in dna_id_table:
                 obs_dna_id = dna_id_table[dna_id_fix][0]
             else:
-                dna_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, genus, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                dna_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
                 error_count = error_count + 1
                 obs_dna_id = 1
         else:
@@ -3807,7 +3807,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif disease_common_name_fix in disease_name_table:
                 disease_info_id = disease_name_table[disease_common_name_fix][0]
             else:
-                disease_common_name_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, genus, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                disease_common_name_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
                 error_count = error_count + 1
                 disease_info_id = 1
         else:
@@ -3819,7 +3819,7 @@ def isolatestock_loader_prep(upload_file, user):
             try:
                 collection_user_id = user_hash_table[collection_username]
             except KeyError:
-                collection_user_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, genus, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name, building_name, room, shelf, column, box_name, location_comments)] = error_count
+                collection_user_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name, building_name, room, shelf, column, box_name, location_comments)] = error_count
                 error_count = error_count + 1
                 collection_user_id = user_hash_table['unknown_person']
 
@@ -3840,14 +3840,14 @@ def isolatestock_loader_prep(upload_file, user):
             temp_collecting_id = 1
             error_count = error_count + 1
 
-        taxonomy_hash = genus + species + population + 'IsolateStock' + alias + race + subtaxa
+        taxonomy_hash = binomial + species + population + 'IsolateStock' + alias + race + subtaxa
         taxonomy_hash_fix = taxonomy_hash + '\r'
         if taxonomy_hash not in taxonomy_hash_table and taxonomy_hash_fix not in taxonomy_hash_table:
             taxonomy_hash_table[taxonomy_hash] = taxonomy_id
-            taxonomy_new[(taxonomy_id, genus, species, population, 'IsolateStock', alias, race, subtaxa)] = taxonomy_id
+            taxonomy_new[(taxonomy_id, binomial, species, population, 'IsolateStock', alias, race, subtaxa)] = taxonomy_id
             taxonomy_id = taxonomy_id + 1
         else:
-            taxonomy_hash_exists[(genus, species, population, 'IsolateStock', alias, race, subtaxa)] = taxonomy_id
+            taxonomy_hash_exists[(binomial, species, population, 'IsolateStock', alias, race, subtaxa)] = taxonomy_id
 
         if taxonomy_hash in taxonomy_hash_table:
             temp_taxonomy_id = taxonomy_hash_table[taxonomy_hash]
@@ -3982,7 +3982,7 @@ def isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type)
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Taxonomy Table'])
-    writer.writerow(['taxonomy_id', 'genus', 'species', 'population', 'common_name', 'alias', 'race', 'subtaxa'])
+    writer.writerow(['taxonomy_id', 'binomial', 'species', 'population', 'common_name', 'alias', 'race', 'subtaxa'])
     for key in results_dict['taxonomy_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -3999,62 +3999,62 @@ def isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type)
     writer.writerow(['---------------------------------------------------------------------------------------------------'])
     writer.writerow([''])
     writer.writerow(['Seed ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'genus', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Row ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'genus', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
     for key in results_dict['row_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plant ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'genus', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
     for key in results_dict['plant_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Tissue ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'genus', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
     for key in results_dict['tissue_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Culture ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'genus', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
     for key in results_dict['culture_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Microbe ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'genus', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
     for key in results_dict['microbe_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plate ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'genus', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
     for key in results_dict['plate_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Well ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'genus', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
     for key in results_dict['well_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['DNA ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'genus', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
     for key in results_dict['dna_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Field Name Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'genus', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
     for key in results_dict['field_name_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Location Name Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'genus', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
     for key in results_dict['locality_name_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Disease Common Name Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'genus', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
     for key in results_dict['disease_common_name_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -4102,7 +4102,7 @@ def isolatestock_loader(results_dict):
         for key in results_dict['taxonomy_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_isolatestock = Taxonomy.objects.create(id=key[0], genus=key[1], species=key[2], population=key[3], common_name=key[4], alias=key[5], race=key[6], subtaxa=key[7])
+                    new_isolatestock = Taxonomy.objects.create(id=key[0], binomial=key[1], species=key[2], population=key[3], common_name=key[4], alias=key[5], race=key[6], subtaxa=key[7])
             except Exception as e:
                 print("Taxonomy Error: %s %s" % (e.message, e.args))
                 return False

@@ -10,7 +10,7 @@
 
   <hr>
   <a href='/lab/isolate/update/{{isolate_info.id}}/'><input class="btn btn-info" type="submit" name="submit" value="Update Isolate Information"/></a>
-  <a href='/lab/isolatestock/{{obs_tracker.0.isolatestock.id}}'><input class="btn btn-warning" type="submit" name="submit" value="Go to Isolate Stock"/></a>
+  <a href='/lab/isolatestock/{{isolate_info.isolatestock.id}}'><input class="btn btn-warning" type="submit" name="submit" value="Go to Isolate Stock"/></a>
   <button id="isolate_detail_delete_button" class="btn btn-danger" type="submit" name="submit">Delete Isolate</button>
   <hr>
 
@@ -19,6 +19,8 @@
     <thead>
       <tr>
         <th>Isolate ID</th>
+        <th>Isolate Stock ID</th>
+        <th>Location</th>
         <th>Date</th>
         <th>Extract Color</th>
         <th>Organism</th>
@@ -28,6 +30,8 @@
     <tbody>
       <tr>
         <td><a href='/lab/isolate/{{isolate_info.id}}/'>{{ isolate_info.isolate_id }}</a></td>
+        <td><a href="{% url 'single_isolatestock_info' isolate_info.isolatestock_id %}">{{ isolate_info.isolatestock }}</a></td>
+        <td><a href="{% url 'single_location_info' isolate_info.location_id %}">{{ isolate_info.location }}</a></td>
         <td>{{ isolate_info.stock_date }}</td>
         <td>{{ isolate_info.extract_color }}</td>
         <td>{{ isolate_info.organism }}</td>

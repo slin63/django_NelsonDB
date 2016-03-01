@@ -1113,12 +1113,12 @@ def people_id_mirror():
 
 def taxonomy_hash_mirror():
     taxonomy_hash_table = OrderedDict({})
-    #--- Key = (genus + species + population + common_name + alias + race + subtaxa)
+    #--- Key = (binomial + species + population + common_name + alias + race + subtaxa)
     #--- Value = (taxonomy_id)
 
     taxonomy_file = Taxonomy.objects.all()
     for row in taxonomy_file:
-        taxonomy_hash = row.genus + row.species + row.population + row.common_name + row.alias + row.race + row.subtaxa
+        taxonomy_hash = row.binomial + row.species + row.population + row.common_name + row.alias + row.race + row.subtaxa
         taxonomy_hash_table[taxonomy_hash] = row.id
     return taxonomy_hash_table
 

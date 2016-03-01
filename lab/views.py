@@ -548,16 +548,15 @@ def show_all_seedinv_taxonomy(request):
 	if request.session.get('checkbox_pedigree', None):
 		checkbox_pedigree_list = request.session.get('checkbox_pedigree')
 		for pedigree in checkbox_pedigree_list:
-			taxonomy = Stock.objects.filter(pedigree=pedigree).values('pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()
+			taxonomy = Stock.objects.filter(pedigree=pedigree).values('pedigree', 'passport__taxonomy__population').distinct()
 			taxonomy_list = list(chain(taxonomy, taxonomy_list))
 		for t in taxonomy_list:
 			t['input'] = '<input type="checkbox" name="checkbox_taxonomy" value="%s">' % (t['passport__taxonomy__population'])
 	else:
-		taxonomy_list = list(Taxonomy.objects.filter(common_name='Maize').values('population', 'species').distinct())
+		taxonomy_list = list(Taxonomy.objects.filter(common_name='Maize').values('population').distinct())
 		for t in taxonomy_list:
 			t['input'] = '<input type="checkbox" name="checkbox_taxonomy" value="%s">' % (t['population'])
 			t['passport__taxonomy__population'] = t['population']
-			t['passport__taxonomy__species'] = t['species']
 			t['pedigree'] = ''
 	return JsonResponse({'data':taxonomy_list})
 
@@ -687,16 +686,15 @@ def suggest_taxonomy(request):
 		if request.session.get('checkbox_pedigree', None):
 			checkbox_pedigree_list = request.session.get('checkbox_pedigree')
 			for pedigree in checkbox_pedigree_list:
-				taxonomy = Stock.objects.filter(pedigree=pedigree, passport__taxonomy__population__contains=starts_with).values('pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()
+				taxonomy = Stock.objects.filter(pedigree=pedigree, passport__taxonomy__population__contains=starts_with).values('pedigree', 'passport__taxonomy__population').distinct()
 				taxonomy_list = list(chain(taxonomy, taxonomy_list))
 			for t in taxonomy_list:
 				t['input'] = '<input type="checkbox" name="checkbox_taxonomy" value="%s">' % (t['passport__taxonomy__population'])
 		else:
-			taxonomy_list = list(Taxonomy.objects.filter(population__contains=starts_with, common_name='Maize').values('population', 'species').distinct())
+			taxonomy_list = list(Taxonomy.objects.filter(population__contains=starts_with, common_name='Maize').values('population').distinct())
 			for t in taxonomy_list:
 				t['input'] = '<input type="checkbox" name="checkbox_taxonomy" value="%s">' % (t['population'])
 				t['passport__taxonomy__population'] = t['population']
-				t['passport__taxonomy__species'] = t['species']
 				t['pedigree'] = ''
 	return JsonResponse({'data':taxonomy_list})
 
@@ -798,7 +796,7 @@ def update_seed_info(request, stock_id):
 					stock.comments = obs_tracker_stock_form.cleaned_data['stock__comments']
 					updated_collecting, created = Collecting.objects.get_or_create(collection_date=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__collection_date'], collection_method=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__collection_method'], comments=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__comments'], user=obs_tracker_stock_form.cleaned_data['stock__passport__collecting__user'])
 					updated_people, created = People.objects.get_or_create(first_name=obs_tracker_stock_form.cleaned_data['stock__passport__people__first_name'], last_name=obs_tracker_stock_form.cleaned_data['stock__passport__people__last_name'], organization=obs_tracker_stock_form.cleaned_data['stock__passport__people__organization'], phone=obs_tracker_stock_form.cleaned_data['stock__passport__people__phone'], email=obs_tracker_stock_form.cleaned_data['stock__passport__people__email'], comments=obs_tracker_stock_form.cleaned_data['stock__passport__people__comments'])
-					updated_taxonomy, created = Taxonomy.objects.get_or_create(genus=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__genus'], species=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__species'], population=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__population'], common_name='Maize', alias='', race='', subtaxa='')
+					updated_taxonomy, created = Taxonomy.objects.get_or_create(binomial=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__binomial'], population=obs_tracker_stock_form.cleaned_data['stock__passport__taxonomy__population'], common_name='Maize', alias='', race='', subtaxa='')
 					updated_passport, created = Passport.objects.get_or_create(collecting=updated_collecting, people=updated_people, taxonomy=updated_taxonomy)
 					stock.passport = updated_passport
 					stock.save()
@@ -809,7 +807,7 @@ def update_seed_info(request, stock_id):
 		else:
 			print(obs_tracker_stock_form.errors)
 	else:
-		stock_data = ObsTracker.objects.filter(obs_entity_type='stock', stock_id=stock_id).values('experiment', 'stock__seed_id', 'stock__seed_name', 'stock__cross_type', 'stock__pedigree', 'stock__stock_status', 'stock__stock_date', 'stock__inoculated', 'stock__comments', 'stock__passport__collecting__user', 'stock__passport__collecting__collection_date', 'stock__passport__collecting__collection_method', 'stock__passport__collecting__comments', 'stock__passport__people__first_name', 'stock__passport__people__last_name', 'stock__passport__people__organization', 'stock__passport__people__phone', 'stock__passport__people__email', 'stock__passport__people__comments', 'stock__passport__taxonomy__genus', 'stock__passport__taxonomy__species', 'stock__passport__taxonomy__population', 'obs_row__row_id', 'obs_plant__plant_id', 'field')
+		stock_data = ObsTracker.objects.filter(obs_entity_type='stock', stock_id=stock_id).values('experiment', 'stock__seed_id', 'stock__seed_name', 'stock__cross_type', 'stock__pedigree', 'stock__stock_status', 'stock__stock_date', 'stock__inoculated', 'stock__comments', 'stock__passport__collecting__user', 'stock__passport__collecting__collection_date', 'stock__passport__collecting__collection_method', 'stock__passport__collecting__comments', 'stock__passport__people__first_name', 'stock__passport__people__last_name', 'stock__passport__people__organization', 'stock__passport__people__phone', 'stock__passport__people__email', 'stock__passport__people__comments', 'stock__passport__taxonomy__binomial', 'stock__passport__taxonomy__population', 'obs_row__row_id', 'obs_plant__plant_id', 'field')
 		obs_tracker_stock_form = UpdateSeedDataOnlineForm(initial=stock_data[0])
 	context_dict['stock_id'] = stock_id
 	context_dict['obs_tracker_stock_form'] = obs_tracker_stock_form
@@ -958,7 +956,7 @@ def update_isolatestock_info(request, isolatestock_id):
 					isolatestock.disease_info = obs_tracker_isolatestock_form.cleaned_data['isolatestock__disease_info']
 					isolatestock.plant_organ = obs_tracker_isolatestock_form.cleaned_data['isolatestock__plant_organ']
 					isolatestock.comments = obs_tracker_isolatestock_form.cleaned_data['isolatestock__comments']
-					updated_taxonomy, created = Taxonomy.objects.get_or_create(genus=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__genus'], species='', population='', common_name='IsolateStock', alias=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__alias'], race=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__race'], subtaxa=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__subtaxa'])
+					updated_taxonomy, created = Taxonomy.objects.get_or_create(binomial=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__binomial'], population='', common_name='IsolateStock', alias=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__alias'], race=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__race'], subtaxa=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__subtaxa'])
 					updated_passport, created = Passport.objects.get_or_create(collecting=isolatestock.passport.collecting, people=isolatestock.passport.people, taxonomy=updated_taxonomy)
 					isolatestock.passport = updated_passport
 					isolatestock.save()
@@ -969,7 +967,7 @@ def update_isolatestock_info(request, isolatestock_id):
 		else:
 			print(obs_tracker_isolatestock_form.errors)
 	else:
-		isolatestock_data = ObsTracker.objects.filter(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id).values('experiment', 'isolatestock__isolatestock_id', 'location', 'field', 'obs_dna__dna_id', 'obs_microbe__microbe_id', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'obs_culture__culture_id', 'obs_plate__plate_id', 'obs_well__well_id', 'isolatestock__isolatestock_name', 'isolatestock__disease_info', 'isolatestock__plant_organ', 'isolatestock__passport__taxonomy__genus', 'isolatestock__passport__taxonomy__alias', 'isolatestock__passport__taxonomy__race', 'isolatestock__passport__taxonomy__subtaxa', 'isolatestock__comments')
+		isolatestock_data = ObsTracker.objects.filter(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id).values('experiment', 'isolatestock__isolatestock_id', 'location', 'field', 'obs_dna__dna_id', 'obs_microbe__microbe_id', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'obs_culture__culture_id', 'obs_plate__plate_id', 'obs_well__well_id', 'isolatestock__isolatestock_name', 'isolatestock__disease_info', 'isolatestock__plant_organ', 'isolatestock__passport__taxonomy__binomial', 'isolatestock__passport__taxonomy__alias', 'isolatestock__passport__taxonomy__race', 'isolatestock__passport__taxonomy__subtaxa', 'isolatestock__comments')
 		obs_tracker_isolatestock_form = LogIsolateStocksOnlineForm(initial=isolatestock_data[0])
 	context_dict['isolatestock_id'] = isolatestock_id
 	context_dict['obs_tracker_isolatestock_form'] = obs_tracker_isolatestock_form
@@ -981,79 +979,29 @@ def update_isolate_info(request, isolate_id):
 	context = RequestContext(request)
 	context_dict = {}
 	if request.method == 'POST':
-		obs_tracker_isolate_form = UpdateIsolatesOnlineForm(data=request.POST)
-		if obs_tracker_isolate_form.is_valid():
+		isolate_form = UpdateIsolatesOnlineForm(data=request.POST)
+		if isolate_form.is_valid():
 			with transaction.atomic():
 				try:
-					obs_tracker = ObsTracker.objects.get(obs_entity_type='isolate', isolate_id=isolate_id, experiment=obs_tracker_isolate_form.cleaned_data['experiment'])
-					obs_tracker.maize_sample_id = 1
-					obs_tracker.obs_extract_id = 1
-					obs_tracker.location = obs_tracker_isolate_form.cleaned_data['location']
-					obs_tracker.field = obs_tracker_isolate_form.cleaned_data['field']
-					if obs_tracker_isolate_form.cleaned_data['obs_dna__dna_id'] != '':
-						obs_tracker.obs_dna = ObsDNA.objects.get(dna_id=obs_tracker_isolate_form.cleaned_data['obs_dna__dna_id'])
-					else:
-						obs_tracker.obs_dna = ObsDNA.objects.get(dna_id='No DNA')
-					if obs_tracker_isolate_form.cleaned_data['obs_microbe__microbe_id'] != '':
-						obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id=obs_tracker_isolate_form.cleaned_data['obs_microbe__microbe_id'])
-					else:
-						obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id='No Microbe')
-					if obs_tracker_isolate_form.cleaned_data['obs_row__row_id'] != '':
-						obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_isolate_form.cleaned_data['obs_row__row_id'])
-					else:
-						obs_tracker.obs_row = ObsRow.objects.get(row_id='No Row')
-					if obs_tracker_isolate_form.cleaned_data['stock__seed_id'] != '':
-						obs_tracker.stock = Stock.objects.get(seed_id=obs_tracker_isolate_form.cleaned_data['stock__seed_id'])
-					else:
-						obs_tracker.stock = Stock.objects.get(seed_id='No Stock')
-					if obs_tracker_isolate_form.cleaned_data['obs_plant__plant_id'] != '':
-						obs_tracker.obs_plant = ObsPlant.objects.get(plant_id=obs_tracker_isolate_form.cleaned_data['obs_plant__plant_id'])
-					else:
-						obs_tracker.obs_plant = ObsPlant.objects.get(plant_id='No Plant')
-					if obs_tracker_isolate_form.cleaned_data['obs_tissue__tissue_id'] != '':
-						obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id=obs_tracker_isolate_form.cleaned_data['obs_tissue__tissue_id'])
-					else:
-						obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id='No Tissue')
-					if obs_tracker_isolate_form.cleaned_data['obs_culture__culture_id'] != '':
-						obs_tracker.obs_culture = ObsCulture.objects.get(culture_id=obs_tracker_isolate_form.cleaned_data['obs_culture__culture_id'])
-					else:
-						obs_tracker.obs_culture = ObsCulture.objects.get(culture_id='No Culture')
-					if obs_tracker_isolate_form.cleaned_data['obs_plate__plate_id'] != '':
-						obs_tracker.obs_plate = ObsPlate.objects.get(plate_id=obs_tracker_isolate_form.cleaned_data['obs_plate__plate_id'])
-					else:
-						obs_tracker.obs_plate = ObsPlate.objects.get(plate_id='No Plate')
-					if obs_tracker_isolate_form.cleaned_data['obs_well__well_id'] != '':
-						obs_tracker.obs_well = ObsWell.objects.get(well_id=obs_tracker_isolate_form.cleaned_data['obs_well__well_id'])
-					else:
-						obs_tracker.obs_well = ObsWell.objects.get(well_id='No Well')
-					if obs_tracker_isolate_form.cleaned_data['obs_sample__sample_id'] != '':
-						obs_tracker.obs_sample = ObsSample.objects.get(sample_id=obs_tracker_isolate_form.cleaned_data['obs_sample__sample_id'])
-					else:
-						obs_tracker.obs_sample = ObsSample.objects.get(sample_id='No Sample')
-					# if obs_tracker_isolate_form.cleaned_data['isolatestock__isolatestock_id'] != '':
-					# 	obs_tracker.isolatestock = IsolateStock.objects.get(isolatestock_id=obs_tracker_isolate_form.cleaned_data['isolatestock__isolatestock_id'])
-					# else:
-					# 	obs_tracker.isolatestock = IsolateStock.objects.get(isolatestock_id='No IsolateStock')
-
-					gstock = Isolate.objects.get(id=isolate_id)
-					gstock.isolate_id = obs_tracker_isolate_form.cleaned_data['isolate__isolate_id']
-					gstock.stock_date = obs_tracker_isolate_form.cleaned_data['isolate__stock_date']
-					gstock.extract_color = obs_tracker_isolate_form.cleaned_data['isolate__extract_color']
-					gstock.organism = obs_tracker_isolate_form.cleaned_data['isolate__organism']
-					gstock.comments = obs_tracker_isolate_form.cleaned_data['isolate__comments']
-					gstock.save()
-					obs_tracker.save()
+					isolate = Isolate.objects.get(id=isolate_id)
+					isolate.isolate_id = isolate_form.cleaned_data['isolate_id']
+					isolate.location = isolate_form.cleaned_data['location']
+					isolate.stock_date = isolate_form.cleaned_data['stock_date']
+					isolate.extract_color = isolate_form.cleaned_data['extract_color']
+					isolate.organism = isolate_form.cleaned_data['organism']
+					isolate.comments = isolate_form.cleaned_data['comments']
+					isolate.save()
 					context_dict['updated'] = True
 				except Exception:
 					context_dict['failed'] = True
 		else:
-			print(obs_tracker_isolate_form.errors)
+			print(isolate_form.errors)
 	else:
-		isolate_data = ObsTracker.objects.filter(obs_entity_type='isolate', isolate_id=isolate_id).values('experiment', 'isolate__isolate_id', 'location', 'isolate__stock_date', 'isolate__extract_color', 'isolate__organism', 'isolate__comments', 'field', 'obs_dna__dna_id', 'obs_microbe__microbe_id', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'obs_culture__culture_id', 'obs_plate__plate_id', 'obs_well__well_id', 'obs_sample__sample_id', 'isolatestock__isolatestock_id')
-		obs_tracker_isolate_form = LogIsolatesOnlineForm(initial=isolate_data[0])
+		isolate_data = Isolate.objects.filter(id=isolate_id).values('isolate_id', 'location', 'stock_date', 'extract_color', 'organism', 'comments')
+		isolate_form = UpdateIsolatesOnlineForm(initial=isolate_data[0])
 	context_dict['isolate_id'] = isolate_id
-	context_dict['obs_tracker'] = ObsTracker.objects.get(isolate_id=isolate_id)
-	context_dict['obs_tracker_isolate_form'] = obs_tracker_isolate_form
+	context_dict['isolate'] = Isolate.objects.get(id=isolate_id)
+	context_dict['isolate_form'] = isolate_form
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/isolate/isolate_info_update.html', context_dict, context)
 
@@ -1147,6 +1095,7 @@ def edit_info(request, obj_type, obj_id):
 					try:
 						locality = Locality.objects.get(id=obj_id)
 						locality.city = locality_form.cleaned_data['city']
+						locality.county = locality_form.cleaned_data['county']
 						locality.state = locality_form.cleaned_data['state']
 						locality.country = locality_form.cleaned_data['country']
 						locality.zipcode = locality_form.cleaned_data['zipcode']
@@ -1157,7 +1106,7 @@ def edit_info(request, obj_type, obj_id):
 			else:
 				print(locality_form.errors)
 		else:
-			locality_data = Locality.objects.filter(id=obj_id).values('city', 'state', 'country', 'zipcode')
+			locality_data = Locality.objects.filter(id=obj_id).values('city', 'county', 'state', 'country', 'zipcode')
 			locality_form = NewLocalityForm(initial=locality_data[0])
 		context_dict['locality_id'] = obj_id
 		context_dict['locality_form'] = locality_form
@@ -1224,8 +1173,7 @@ def edit_info(request, obj_type, obj_id):
 				with transaction.atomic():
 					try:
 						taxonomy = Taxonomy.objects.get(id=obj_id)
-						taxonomy.genus = taxonomy_form.cleaned_data['genus']
-						taxonomy.species = taxonomy_form.cleaned_data['species']
+						taxonomy.binomial = taxonomy_form.cleaned_data['binomial']
 						taxonomy.population = taxonomy_form.cleaned_data['population']
 						taxonomy.alias = taxonomy_form.cleaned_data['alias']
 						taxonomy.race = taxonomy_form.cleaned_data['race']
@@ -1237,7 +1185,7 @@ def edit_info(request, obj_type, obj_id):
 			else:
 				print(taxonomy_form.errors)
 		else:
-			taxonomy_data = Taxonomy.objects.filter(id=obj_id).values('genus', 'species', 'population', 'alias', 'race', 'subtaxa')
+			taxonomy_data = Taxonomy.objects.filter(id=obj_id).values('binomial', 'population', 'alias', 'race', 'subtaxa')
 			taxonomy_form = NewTaxonomyForm(initial=taxonomy_data[0])
 		context_dict['taxonomy_id'] = obj_id
 		context_dict['taxonomy_form'] = taxonomy_form
@@ -1331,6 +1279,7 @@ def download_row_experiment(request, experiment_name):
 		writer.writerow([row.obs_row.row_id, row.obs_row.row_name, row.field.field_name, row.stock.seed_id, row.obs_row.range_num, row.obs_row.plot, row.obs_row.block, row.obs_row.rep, row.obs_row.kernel_num, row.obs_row.planting_date, row.obs_row.harvest_date, row.obs_row.comments])
 	return response
 
+
 @login_required
 def passport(request, passport_id):
 	context = RequestContext(request)
@@ -1360,34 +1309,30 @@ def passport(request, passport_id):
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/passport.html', context_dict, context)
 
+
 def datatable_isolate_inventory(request):
-	isolates = ObsTracker.objects.filter(obs_entity_type='isolate')
-	count = isolates.count()
+	isolatelist = Isolate.objects.all()
+	count = isolatelist.count()
 	arr = []
 	check = []
-	for data in isolates:
-		if data.isolate_id in check:
+	for isolate in isolatelist:
+		if isolate.isolate_id in check:
 			pass
 		else:
-			check.append(data.isolate_id)
+			check.append(isolate.id)
 			try:
 				arr.append({
-		    	'id': data.isolate_id,
-		    	'isolate_id': data.isolate.isolate_id,
-		    	'experiment_name': data.experiment.name,
-		    	'field_id': data.field_id,
-		    	'field_name': data.field.field_name,
-		    	'isolatestock_table_id': data.isolatestock_id,
-		    	'isolatestock_id': data.isolatestock.isolatestock_id,
-		    	'obs_dna_id': data.obs_dna_id,
-		    	'dna_id': data.obs_dna.dna_id,
-		    	'location_id': data.location_id,
-		    	'location_name': data.location.location_name,
-		    	'stock_date': data.isolate.stock_date,
-		    	'extract_color': data.isolate.extract_color,
-		    	'organism': data.isolate.organism,
-		    	'username': data.user.username,
-		    	'comments': data.isolate.comments,
+		    	'id': isolate.id,
+		    	'isolate_id': isolate.isolate_id,
+		    	'isolatestock_table_id': isolate.isolatestock.id,
+		    	'isolatestock_id': isolate.isolatestock.isolatestock_id,
+		    	'location_id': isolate.location.id,
+		    	'location_name': isolate.location.location_name,
+		    	'stock_date': isolate.stock_date,
+		    	'extract_color': isolate.extract_color,
+		    	'organism': isolate.organism,
+		    	'username': isolate.user.username,
+		    	'comments': isolate.comments,
 				})
 			except Isolate.DoesNotExist:
 				pass
@@ -1413,7 +1358,7 @@ def datatable_isolatestock_inventory(request):
         	'disease_name': data.disease_info.common_name,
         	'disease_id': data.disease_info.id,
         	'plant_organ': data.plant_organ,
-        	'genus': data.passport.taxonomy.genus,
+        	'binomial': data.passport.taxonomy.binomial,
         	'alias': data.passport.taxonomy.alias,
         	'race': data.passport.taxonomy.race,
         	'subtaxa': data.passport.taxonomy.subtaxa,
@@ -1460,20 +1405,19 @@ def show_all_isolatestock_taxonomy(request):
 	if request.session.get('checkbox_isolatestock_disease', None):
 		checkbox_isolatestock_disease = request.session.get('checkbox_isolatestock_disease')
 		for disease_id in checkbox_isolatestock_disease:
-			taxonomy = IsolateStock.objects.filter(disease_info__id=disease_id).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__genus', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa', 'passport__taxonomy__species').distinct()
+			taxonomy = IsolateStock.objects.filter(disease_info__id=disease_id).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__binomial', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa').distinct()
 			isolatestock_taxonomy_list = list(chain(taxonomy, isolatestock_taxonomy_list))
 		for p in isolatestock_taxonomy_list:
 			p['input'] = '<input type="checkbox" name="checkbox_isolatestock_taxonomy_id" value="%s">' % (p['passport__taxonomy__id'])
 	else:
-		isolatestock_taxonomy_list = list(Taxonomy.objects.filter(common_name='IsolateStock').values('id', 'genus', 'alias', 'race', 'subtaxa', 'species').distinct())
+		isolatestock_taxonomy_list = list(Taxonomy.objects.filter(common_name='IsolateStock').values('id', 'binomial', 'alias', 'race', 'subtaxa').distinct())
 		for t in isolatestock_taxonomy_list:
 			t['input'] = '<input type="checkbox" name="checkbox_isolatestock_taxonomy_id" value="%s">' % (t['id'])
 			t['disease_info__common_name'] = ''
-			t['passport__taxonomy__genus'] = t['genus']
+			t['passport__taxonomy__binomial'] = t['binomial']
 			t['passport__taxonomy__alias'] = t['alias']
 			t['passport__taxonomy__race'] = t['race']
 			t['passport__taxonomy__subtaxa'] = t['subtaxa']
-			t['passport__taxonomy__species'] = t['species']
 	return JsonResponse({'data':isolatestock_taxonomy_list})
 
 def show_all_isolatestock_disease(request):
@@ -1481,7 +1425,7 @@ def show_all_isolatestock_disease(request):
 	if request.session.get('checkbox_isolatestock_taxonomy', None):
 		checkbox_isolatestock_taxonomy = request.session.get('checkbox_isolatestock_taxonomy')
 		for taxonomy_id in checkbox_isolatestock_taxonomy:
-			disease = IsolateStock.objects.filter(passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()
+			disease = IsolateStock.objects.filter(passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__binomial').distinct()
 			isolatestock_disease_list = list(chain(disease, isolatestock_disease_list))
 		for p in isolatestock_disease_list:
 			p['input'] = '<input type="checkbox" name="checkbox_isolatestock_disease_id" value="%s">' % (p['disease_info__id'])
@@ -1490,7 +1434,7 @@ def show_all_isolatestock_disease(request):
 		for t in isolatestock_disease_list:
 			t['input'] = '<input type="checkbox" name="checkbox_isolatestock_disease_id" value="%s">' % (t['id'])
 			t['disease_info__common_name'] = t['common_name']
-			t['passport__taxonomy__genus'] = ''
+			t['passport__taxonomy__binomial'] = ''
 	return JsonResponse({'data':isolatestock_disease_list})
 
 def suggest_isolatestock_taxonomy(request):
@@ -1504,20 +1448,19 @@ def suggest_isolatestock_taxonomy(request):
 		if request.session.get('checkbox_isolatestock_disease', None):
 			checkbox_isolatestock_disease = request.session.get('checkbox_isolatestock_disease')
 			for disease_id in checkbox_isolatestock_disease:
-				taxonomy = IsolateStock.objects.filter(disease_info__id=disease_id, passport__taxonomy__genus__contains=starts_with).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__genus', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa', 'passport__taxonomy__species').distinct()
+				taxonomy = IsolateStock.objects.filter(disease_info__id=disease_id, passport__taxonomy__binomial__contains=starts_with).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__binomial', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa').distinct()
 				isolatestock_taxonomy_list = list(chain(taxonomy, isolatestock_taxonomy_list))
 			for t in isolatestock_taxonomy_list:
 				t['input'] = '<input type="checkbox" name="checkbox_isolatestock_taxonomy_id" value="%s">' % (t['passport__taxonomy__id'])
 		else:
-			isolatestock_taxonomy_list = list(Taxonomy.objects.filter(genus__contains=starts_with, common_name='IsolateStock').values('id', 'genus', 'alias', 'race', 'subtaxa', 'species').distinct())
+			isolatestock_taxonomy_list = list(Taxonomy.objects.filter(binomial__contains=starts_with, common_name='IsolateStock').values('id', 'binomial', 'alias', 'race', 'subtaxa').distinct())
 			for t in isolatestock_taxonomy_list:
 				t['input'] = '<input type="checkbox" name="checkbox_isolatestock_taxonomy_id" value="%s">' % (t['id'])
 				t['disease_info__common_name'] = ''
-				t['passport__taxonomy__genus'] = t['genus']
+				t['passport__taxonomy__binomial'] = t['binomial']
 				t['passport__taxonomy__alias'] = t['alias']
 				t['passport__taxonomy__race'] = t['race']
 				t['passport__taxonomy__subtaxa'] = t['subtaxa']
-				t['passport__taxonomy__species'] = t['species']
 	return JsonResponse({'data':isolatestock_taxonomy_list})
 
 def suggest_isolatestock_disease(request):
@@ -1531,7 +1474,7 @@ def suggest_isolatestock_disease(request):
 		if request.session.get('checkbox_isolatestock_taxonomy', None):
 			checkbox_isolatestock_taxonomy = request.session.get('checkbox_isolatestock_taxonomy')
 			for taxonomy_id in checkbox_isolatestock_taxonomy:
-				disease = IsolateStock.objects.filter(disease_info__common_name__contains=starts_with, passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()
+				disease = IsolateStock.objects.filter(disease_info__common_name__contains=starts_with, passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__binomial').distinct()
 				isolatestock_disease_list = list(chain(disease, isolatestock_disease_list))
 			for t in isolatestock_disease_list:
 				t['input'] = '<input type="checkbox" name="checkbox_isolatestock_disease_id" value="%s">' % (t['disease_info__id'])
@@ -1540,7 +1483,7 @@ def suggest_isolatestock_disease(request):
 			for t in isolatestock_disease_list:
 				t['input'] = '<input type="checkbox" name="checkbox_isolatestock_disease_id" value="%s">' % (t['id'])
 				t['disease_info__common_name'] = t['common_name']
-				t['passport__taxonomy__genus'] = ''
+				t['passport__taxonomy__binomial'] = ''
 	return JsonResponse({'data':isolatestock_disease_list})
 
 def select_isolatestock_taxonomy(request):
@@ -1548,7 +1491,7 @@ def select_isolatestock_taxonomy(request):
 	checkbox_isolatestock_taxonomy_ids = json.loads(taxonomies)
 	checkbox_isolatestock_taxonomy_names = []
 	for taxonomy_id in checkbox_isolatestock_taxonomy_ids:
-		taxonomy_name = Taxonomy.objects.filter(id=taxonomy_id).values('genus')
+		taxonomy_name = Taxonomy.objects.filter(id=taxonomy_id).values('binomial')
 		checkbox_isolatestock_taxonomy_names = list(chain(taxonomy_name, checkbox_isolatestock_taxonomy_names))
 	request.session['checkbox_isolatestock_taxonomy'] = checkbox_isolatestock_taxonomy_ids
 	request.session['checkbox_isolatestock_taxonomy_names'] = checkbox_isolatestock_taxonomy_names
@@ -1721,7 +1664,7 @@ def browse_disease_info_data(request):
 def browse_taxonomy_data(request):
 	context = RequestContext(request)
 	context_dict = {}
-	taxonomy_data = Taxonomy.objects.filter().exclude(genus='').exclude(genus=0)
+	taxonomy_data = Taxonomy.objects.filter().exclude(binomial='').exclude(binomial=0)
 	context_dict['taxonomy_data'] = taxonomy_data
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/taxonomy_data.html', context_dict, context)
@@ -3578,9 +3521,9 @@ def download_isolatestocks_experiment(request, experiment_name):
 	response['Content-Disposition'] = 'attachment; filename="%s_measurements.csv"' % (experiment_name)
 	isolatestock_data = find_isolatestock_for_experiment(experiment_name)
 	writer = csv.writer(response)
-	writer.writerow(['IsolateStock ID', 'IsolateStock Name', 'Plant Organ', 'IsolateStock Comments', 'Genus', 'Species', 'Alias', 'Race', 'Subtaxa', 'Disease Name', 'Location Name', 'Box Name'])
+	writer.writerow(['IsolateStock ID', 'IsolateStock Name', 'Plant Organ', 'IsolateStock Comments', 'binomial', 'Alias', 'Race', 'Subtaxa', 'Disease Name', 'Location Name', 'Box Name'])
 	for i in isolatestock_data:
-		writer.writerow([i.isolatestock_id, i.isolatestock_name, i.plant_organ, i.comments, i.passport.taxonomy.genus, i.passport.taxonomy.species, i.passport.taxonomy.alias, i.passport.taxonomy.race, i.passport.taxonomy.subtaxa, i.disease_info, i.location.location_name, i.location.box_name])
+		writer.writerow([i.isolatestock_id, i.isolatestock_name, i.plant_organ, i.comments, i.passport.taxonomy.binomial, i.passport.taxonomy.alias, i.passport.taxonomy.race, i.passport.taxonomy.subtaxa, i.disease_info, i.location.location_name, i.location.box_name])
 	return response
 
 def make_obs_tracker_info(tracker):
@@ -4009,8 +3952,7 @@ def log_data_online(request, data_type):
 								stock_date = form.cleaned_data['stock__stock_date']
 								inoculated = form.cleaned_data['stock__inoculated']
 								stock_comments = form.cleaned_data['stock__comments']
-								genus = form.cleaned_data['stock__passport__taxonomy__genus']
-								species = form.cleaned_data['stock__passport__taxonomy__species']
+								binomial = form.cleaned_data['stock__passport__taxonomy__binomial']
 								population = form.cleaned_data['stock__passport__taxonomy__population']
 								row_id = form.cleaned_data['obs_row__row_id']
 								plant_id = form.cleaned_data['obs_plant__plant_id']
@@ -4027,7 +3969,7 @@ def log_data_online(request, data_type):
 								source_comments = form.cleaned_data['stock__passport__people__comments']
 
 								new_people, created = People.objects.get_or_create(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)
-								new_taxonomy, created = Taxonomy.objects.get_or_create(genus=genus, species=species, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL')
+								new_taxonomy, created = Taxonomy.objects.get_or_create(binomial=binomial, population=population, common_name='Maize', alias='NULL', race='NULL', subtaxa='NULL')
 								new_collecting, created = Collecting.objects.get_or_create(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments)
 								new_passport, created = Passport.objects.get_or_create(collecting=new_collecting, taxonomy=new_taxonomy, people=new_people)
 								new_stock, created = Stock.objects.get_or_create(passport=new_passport, seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments)
@@ -4133,12 +4075,13 @@ def log_data_online(request, data_type):
 				for form in log_data_online_form_set:
 					try:
 						city = form.cleaned_data['city']
+						county = form.cleaned_data['county']
 						state = form.cleaned_data['state']
 						country = form.cleaned_data['country']
 						zipcode = form.cleaned_data['zipcode']
 
 						try:
-							new_locality, created = Locality.objects.get_or_create(city=city, state=state, country=country, zipcode=zipcode)
+							new_locality, created = Locality.objects.get_or_create(city=city, county=county, state=state, country=country, zipcode=zipcode)
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
@@ -4935,7 +4878,7 @@ def log_data_online(request, data_type):
 						tissue_id = form.cleaned_data['obs_tissue__tissue_id']
 						isolatestock_name = form.cleaned_data['isolatestock__isolatestock_name']
 						plant_organ = form.cleaned_data['isolatestock__plant_organ']
-						genus = form.cleaned_data['isolatestock__passport__taxonomy__genus']
+						binomial = form.cleaned_data['isolatestock__passport__taxonomy__binomial']
 						alias = form.cleaned_data['isolatestock__passport__taxonomy__alias']
 						race = form.cleaned_data['isolatestock__passport__taxonomy__race']
 						subtaxa = form.cleaned_data['isolatestock__passport__taxonomy__subtaxa']
@@ -4961,7 +4904,7 @@ def log_data_online(request, data_type):
 
 						try:
 							new_people, created = People.objects.get_or_create(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)
-							new_taxonomy, created = Taxonomy.objects.get_or_create(genus=genus, common_name='IsolateStock', alias=alias, race=race, subtaxa=subtaxa)
+							new_taxonomy, created = Taxonomy.objects.get_or_create(binomial=binomial, common_name='IsolateStock', alias=alias, race=race, subtaxa=subtaxa)
 							new_passport, created = Passport.objects.get_or_create(taxonomy=new_taxonomy, people=new_people, collecting_id=1)
 							new_isolatestock, created = IsolateStock.objects.get_or_create(passport=new_passport, locality=locality, disease_info_id=1, isolatestock_id=isolatestock_id, isolatestock_name=isolatestock_name, plant_organ=plant_organ, comments=isolatestock_comments)
 							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='isolatestock', stock=Stock.objects.get(seed_id=seed_id), experiment_id=1, user=user, field=field, isolate_id=1, isolatestock=new_isolatestock, location_id=1, maize_sample_id=1, obs_env_id=1, obs_extract_id=1,  obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id))
@@ -4986,7 +4929,7 @@ def log_data_online(request, data_type):
 			log_data_online_form_set = LogDataOnlineFormSet
 
 	if data_type == 'isolate':
-		data_type_title = 'Load Isolate Info'  # This used to stay Load IsolateStock Info? Confused -slin63
+		data_type_title = 'Load Isolate Info'
 		LogDataOnlineFormSet = formset_factory(LogIsolatesOnlineForm, extra=10)
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
@@ -4994,78 +4937,18 @@ def log_data_online(request, data_type):
 				sent = True
 				for form in log_data_online_form_set:
 					try:
-						experiment = form.cleaned_data['experiment']
 						isolate_id = form.cleaned_data['isolate__isolate_id']
+						isolatestock = form.cleaned_data['isolate__isolatestock']
 						location = form.cleaned_data['location']
 						stock_date = form.cleaned_data['isolate__stock_date']
 						extract_color = form.cleaned_data['isolate__extract_color']
 						organism = form.cleaned_data['isolate__organism']
 						isolate_comments = form.cleaned_data['isolate__comments']
-						field = form.cleaned_data['field']
-						culture_id = form.cleaned_data['obs_culture__culture_id']
-						dna_id = form.cleaned_data['obs_dna__dna_id']
-						plate_id = form.cleaned_data['obs_plate__plate_id']
-						row_id = form.cleaned_data['obs_row__row_id']
-						plant_id = form.cleaned_data['obs_plant__plant_id']
-						tissue_id = form.cleaned_data['obs_tissue__tissue_id']
-						seed_id = form.cleaned_data['stock__seed_id']
-						sample_id = form.cleaned_data['obs_sample__sample_id']
-						well_id = form.cleaned_data['obs_well__well_id']
-						microbe_id = form.cleaned_data['obs_microbe__microbe_id']
-						isolatestock_id = form.cleaned_data['isolatestock__isolatestock_id']
 						user = request.user
 
-						if row_id == '':
-							row_id = 'No Row'
-						if dna_id == '':
-							dna_id = 'No DNA'
-						if plant_id == '':
-							plant_id = 'No Plant'
-						if seed_id == '':
-							seed_id = 'No Stock'
-						if tissue_id == '':
-							tissue_id = 'No Tissue'
-						if culture_id == '':
-							culture_id = 'No Culture'
-						if microbe_id == '':
-							microbe_id = 'No Microbe'
-						if plate_id == '':
-							plate_id = 'No Plate'
-						if well_id == '':
-							well_id = 'No Well'
-						if sample_id == '':
-							sample_id = 'No Sample'
-						if isolatestock_id == '':
-							isolatestock_id = 'No IsolateStock'
-
 						try:
-							new_isolate, created = Isolate.objects.get_or_create(isolate_id=isolate_id, stock_date=stock_date, extract_color=extract_color, organism=organism, comments=isolate_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='isolate', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, isolate=new_isolate, isolatestock=IsolateStock.objects.get(isolatestock_id=isolatestock_id), location=location, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=ObsDNA.objects.get(dna_id=dna_id), obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample=ObsSample.objects.get(sample_id=sample_id), obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
-							if row_id !='' and row_id != 'No Row':
-								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_row__row_id=row_id), target_obs=new_obs_tracker, relationship='isolatestock_stock_from_row')
-							if tissue_id !='' and tissue_id !='No Tissue':
-								new_source_tissue, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue__tissue_id=tissue_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_tissue")
-							if plant_id !='' and plant_id !='No Plant':
-								new_source_plant, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='plant', obs_plant__plant_id=plant_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_plant")
-							if seed_id !='' and seed_id != 'No Stock':
-								new_source_stock, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='stock', stock__seed_id=seed_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_stock")
-							if culture_id !='' and culture_id !='No Culture':
-								new_source_culture, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='culture', obs_culture__culture_id=culture_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_culture")
-							if microbe_id !='' and microbe_id != 'No Microbe':
-								new_source_microbe, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='microbe', obs_microbe__microbe_id=microbe_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_microbe")
-							if plate_id !='' and plate_id !='No Plate':
-								new_source_plate, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='plate', obs_plate__plate_id=plate_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_plate")
-							if well_id !='' and well_id != 'No Well':
-								new_source_well, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='well', obs_well__well_id=well_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_well")
-							if dna_id !='' and dna_id !='No DNA':
-								new_source_dna, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='dna', obs_dna__dna_id=dna_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_dna")
-							if sample_id !='' and sample_id !='No Sample':
-								new_source_sample, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='sample', obs_sample__sample_id=sample_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_sample")
-							if isolatestock_id !='' and isolatestock_id !='No IsolateStock':
-								new_source_isolatestock, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='isolatestock', isolatestock__isolatestock_id=isolatestock_id), target_obs=new_obs_tracker, relationship="isolatestock_stock_from_isolatestock")
-
+							new_isolate, created = Isolate.objects.get_or_create(isolate_id=isolate_id, isolatestock=isolatestock, location=location, stock_date=stock_date, extract_color=extract_color, organism=organism, comments=isolate_comments, user=user)
 							new_isolate.save()
-							new_obs_tracker.save()
 
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
@@ -5632,7 +5515,7 @@ def query_builder_options(request):
 		measurement_fields_list = [('measurement_time', "<select name='qb_measurement_time_choice'><option value='' >None</option><option value='time_of_measurement'>Ascending</option><option value='-time_of_measurement'>Descending</option></select>", '<input class="search-query" type="text" name="qb_measurement_time" placeholder="Type a Date"/>', 'checkbox_qb_measurement'),('measurement_value', "<select name='qb_measurement_value_choice'><option value='' >None</option><option value='value'>Ascending</option><option value='-value'>Descending</option></select>", '<input class="search-query" type="text" name="qb_measurement_value" placeholder="Type a Value"/>', 'checkbox_qb_measurement'),('measurement_comments', "<select name='qb_measurement_comments_choice'><option value='' >None</option><option value='comments'>A to Z</option><option value='-comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_measurement_comments" placeholder="Type a Comment"/>', 'checkbox_qb_measurement'),('measurement_parameter', "<select name='qb_measurement_parameter_choice'><option value='' >None</option><option value='measurement_parameter__parameter'>A to Z</option><option value='-measurement_parameter__parameter'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_measurement_parameter" placeholder="Type a Parameter"/>', 'checkbox_qb_measurement'),('measurement_parameter_type', "<select name='qb_measurement_type_choice'><option value='' >None</option><option value='measurement_parameter__parameter_type'>A to Z</option><option value='-measurement_parameter__parameter_type'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_measurement_type" placeholder="Type a Parameter Type"/>', 'checkbox_qb_measurement'),('measurement_protocol', "<select name='qb_measurement_protocol_choice'><option value='' >None</option><option value='measurement_parameter__protocol'>A to Z</option><option value='-measurement_parameter__protocol'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_measurement_protocol" placeholder="Type a Protocol"/>', 'checkbox_qb_measurement'),('measurement_unit_of_measure', "<select name='qb_measurement_unit_choice'><option value='' >None</option><option value='measurement_parameter__unit_of_measure'>A to Z</option><option value='-measurement_parameter__unit_of_measure'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_measurement_unit" placeholder="Type a Unit"/>', 'checkbox_qb_measurement'), ('measurement_trait_id_buckler', "<select name='qb_measurement_buckler_choice'><option value='' >None</option><option value='measurement_parameter__trait_id_buckler'>A to Z</option><option value='-measurement_parameter__trait_id_buckler'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_measurement_buckler" placeholder="Type a Buckler TraitID"/>', 'checkbox_qb_measurement')]
 		query_builder_fields_list = list(chain(measurement_fields_list, query_builder_fields_list))
 	if 'Stock' in selected_options:
-		stock_fields_list = [('stock_seed_id', "<select name='qb_stock_seed_id_choice'><option value='' >None</option><option value='stock__seed_id'>Ascending</option><option value='-stock__seed_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_stock_seed_id" placeholder="Type a Seed ID"/>', 'checkbox_qb_stock'), ('stock_seed_name', "<select name='qb_stock_seed_name_choice'><option value='' >None</option><option value='stock__seed_name'>A to Z</option><option value='-stock__seed_name'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_seed_name" placeholder="Type a Seed Name"/>', 'checkbox_qb_stock'), ('stock_cross_type', "<select name='qb_stock_cross_choice'><option value='' >None</option><option value='stock__cross_type'>A to Z</option><option value='-stock__cross_type'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_cross" placeholder="Type a Cross Type"/>', 'checkbox_qb_stock'), ('stock_pedigree', "<select name='qb_stock_pedigree_choice'><option value='' >None</option><option value='stock__pedigree'>A to Z</option><option value='-stock__pedigree'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_pedigree" placeholder="Type a Pedigree"/>', 'checkbox_qb_stock'), ('stock_status', "<select name='qb_stock_status_choice'><option value='' >None</option><option value='stock__stock_status'>A to Z</option><option value='-stock__stock_status'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_status" placeholder="Type a Stock Status"/>', 'checkbox_qb_stock'),('stock_date', "<select name='qb_stock_date_choice'><option value='' >None</option><option value='stock__stock_date'>Ascending</option><option value='-stock__stock_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_stock_date" placeholder="Type a Stock Date"/>', 'checkbox_qb_stock'),('stock_inoculated', '', '<input type="checkbox" name="qb_stock_inoculated" value="1"/>', 'checkbox_qb_stock'),('stock_comments', "<select name='qb_stock_comments_choice'><option value='' >None</option><option value='stock__comments'>A to Z</option><option value='-stock__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_comments" placeholder="Type Stock Comments"/>', 'checkbox_qb_stock'),('stock_genus', "<select name='qb_stock_genus_choice'><option value='' >None</option><option value='stock__passport__taxonomy__genus'>A to Z</option><option value='-stock__passport__taxonomy__genus'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_genus" placeholder="Type a Genus"/>', 'checkbox_qb_stock'),('stock_species', "<select name='qb_stock_species_choice'><option value='' >None</option><option value='stock__passport__taxonomy__species'>A to Z</option><option value='-stock__passport__taxonomy__species'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_species" placeholder="Type a Species"/>', 'checkbox_qb_stock'),('stock_population', "<select name='qb_stock_population_choice'><option value='' >None</option><option value='stock__passport__taxonomy__population'>A to Z</option><option value='-stock__passport__taxonomy__population'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_population" placeholder="Type a Population"/>', 'checkbox_qb_stock'),('stock_collection_date', "<select name='qb_stock_collecting_date_choice'><option value='' >None</option><option value='stock__passport__collecting__collection_date'>Ascending</option><option value='-stock__passport__collecting__collection_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_stock_collecting_date" placeholder="Type a Collection Date"/>', 'checkbox_qb_stock'),('stock_collection_method', "<select name='qb_stock_collecting_method_choice'><option value='' >None</option><option value='stock__passport__collecting__collection_method'>A to Z</option><option value='-stock__passport__collecting__collection_method'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_collecting_method" placeholder="Type a Collection Method"/>', 'checkbox_qb_stock'),('stock_collection_comments', "<select name='qb_stock_collecting_comments_choice'><option value='' >None</option><option value='stock__passport__collecting__comments'>A to Z</option><option value='-stock__passport__collecting__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_collecting_comments" placeholder="Type Collecting Comments"/>', 'checkbox_qb_stock'),('stock_source_organization', "<select name='qb_stock_people_org_choice'><option value='' >None</option><option value='stock__passport__people__organization'>A to Z</option><option value='-stock__passport__people__organization'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_people_org" placeholder="Type a Source"/>', 'checkbox_qb_stock')]
+		stock_fields_list = [('stock_seed_id', "<select name='qb_stock_seed_id_choice'><option value='' >None</option><option value='stock__seed_id'>Ascending</option><option value='-stock__seed_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_stock_seed_id" placeholder="Type a Seed ID"/>', 'checkbox_qb_stock'), ('stock_seed_name', "<select name='qb_stock_seed_name_choice'><option value='' >None</option><option value='stock__seed_name'>A to Z</option><option value='-stock__seed_name'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_seed_name" placeholder="Type a Seed Name"/>', 'checkbox_qb_stock'), ('stock_cross_type', "<select name='qb_stock_cross_choice'><option value='' >None</option><option value='stock__cross_type'>A to Z</option><option value='-stock__cross_type'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_cross" placeholder="Type a Cross Type"/>', 'checkbox_qb_stock'), ('stock_pedigree', "<select name='qb_stock_pedigree_choice'><option value='' >None</option><option value='stock__pedigree'>A to Z</option><option value='-stock__pedigree'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_pedigree" placeholder="Type a Pedigree"/>', 'checkbox_qb_stock'), ('stock_status', "<select name='qb_stock_status_choice'><option value='' >None</option><option value='stock__stock_status'>A to Z</option><option value='-stock__stock_status'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_status" placeholder="Type a Stock Status"/>', 'checkbox_qb_stock'),('stock_date', "<select name='qb_stock_date_choice'><option value='' >None</option><option value='stock__stock_date'>Ascending</option><option value='-stock__stock_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_stock_date" placeholder="Type a Stock Date"/>', 'checkbox_qb_stock'),('stock_inoculated', '', '<input type="checkbox" name="qb_stock_inoculated" value="1"/>', 'checkbox_qb_stock'),('stock_comments', "<select name='qb_stock_comments_choice'><option value='' >None</option><option value='stock__comments'>A to Z</option><option value='-stock__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_comments" placeholder="Type Stock Comments"/>', 'checkbox_qb_stock'),('stock_binomial', "<select name='qb_stock_binomial_choice'><option value='' >None</option><option value='stock__passport__taxonomy__binomial'>A to Z</option><option value='-stock__passport__taxonomy__binomial'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_binomial" placeholder="Type a binomial"/>', 'checkbox_qb_stock'),('checkbox_qb_stock'),('stock_population', "<select name='qb_stock_population_choice'><option value='' >None</option><option value='stock__passport__taxonomy__population'>A to Z</option><option value='-stock__passport__taxonomy__population'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_population" placeholder="Type a Population"/>', 'checkbox_qb_stock'),('stock_collection_date', "<select name='qb_stock_collecting_date_choice'><option value='' >None</option><option value='stock__passport__collecting__collection_date'>Ascending</option><option value='-stock__passport__collecting__collection_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_stock_collecting_date" placeholder="Type a Collection Date"/>', 'checkbox_qb_stock'),('stock_collection_method', "<select name='qb_stock_collecting_method_choice'><option value='' >None</option><option value='stock__passport__collecting__collection_method'>A to Z</option><option value='-stock__passport__collecting__collection_method'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_collecting_method" placeholder="Type a Collection Method"/>', 'checkbox_qb_stock'),('stock_collection_comments', "<select name='qb_stock_collecting_comments_choice'><option value='' >None</option><option value='stock__passport__collecting__comments'>A to Z</option><option value='-stock__passport__collecting__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_collecting_comments" placeholder="Type Collecting Comments"/>', 'checkbox_qb_stock'),('stock_source_organization', "<select name='qb_stock_people_org_choice'><option value='' >None</option><option value='stock__passport__people__organization'>A to Z</option><option value='-stock__passport__people__organization'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_stock_people_org" placeholder="Type a Source"/>', 'checkbox_qb_stock')]
 		query_builder_fields_list = list(chain(stock_fields_list, query_builder_fields_list))
 	if 'Experiment' in selected_options:
 		experiment_fields_list = [('experiment_name', "<select name='qb_experiment_name_choice'><option value='' >None</option><option value='experiment__name'>Ascending</option><option value='-experiment__name'>Descending</option></select>", '<input class="search-query" type="text" name="qb_experiment_name" placeholder="Type Experiment Name"/>', 'checkbox_qb_experiment'), ('experiment_field_name', "<select name='qb_experiment_field_name_choice'><option value='' >None</option><option value='experiment__field__field_name'>A to Z</option><option value='-experiment__field__field_name'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_experiment_field_name" placeholder="Type a Field Name"/>', 'checkbox_qb_experiment'), ('experiment_field_locality_city', "<select name='qb_experiment_field_locality_city_choice'><option value='' >None</option><option value='experiment__field__locality__city'>A to Z</option><option value='-experiment__field__locality__city'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_experiment_field_locality_city" placeholder="Type a Locality City"/>', 'checkbox_qb_experiment'), ('experiment_start_date', "<select name='qb_experiment_date_choice'><option value='' >None</option><option value='experiment__start_date'>Ascending</option><option value='-experiment__start_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_experiment_date" placeholder="Type an Experiment Date"/>', 'checkbox_qb_experiment'), ('experiment_purpose', "<select name='qb_experiment_purpose_choice'><option value='' >None</option><option value='experiment__purpose'>A to Z</option><option value='-experiment__purpose'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_experiment_purpose" placeholder="Type Experiment Purpose"/>', 'checkbox_qb_experiment'), ('experiment_comments', "<select name='qb_experiment_comments_choice'><option value='' >None</option><option value='experiment__comments'>A to Z</option><option value='-experiment__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_experiment_comments" placeholder="Type Experiment Comments"/>', 'checkbox_qb_experiment')]
@@ -5762,10 +5645,10 @@ def query_builder_fields(request):
 	if request.POST.getlist('checkbox_qb_stock', False):
 		obs_tracker_fields = list(chain(obs_tracker_fields, request.POST.getlist('checkbox_qb_stock')))
 		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_stock')))
-		stock_args = [('stock_seed_id', 'qb_stock_seed_id', 'qb_stock_seed_id_choice', 'stock__seed_id__contains'), ('stock_seed_name', 'qb_stock_seed_name', 'qb_stock_seed_name_choice', 'stock__seed_name__contains'), ('stock_cross_type', 'qb_stock_cross', 'qb_stock_cross_choice', 'stock__cross_type__contains'), ('stock_pedigree', 'qb_stock_pedigree', 'qb_stock_pedigree_choice', 'stock__pedigree__contains'), ('stock_status', 'qb_stock_status', 'qb_stock_status_choice', 'stock__stock_status__contains'), ('stock_date', 'qb_stock_date', 'qb_stock_date_choice', 'stock__stock_date__contains'), ('stock_inoculated', 'qb_stock_inoculated', '', 'stock__inoculated'), ('stock_comments', 'qb_stock_comments', 'qb_stock_comments_choice', 'stock__comments__contains'), ('stock_genus', 'qb_stock_genus', 'qb_stock_genus_choice', 'stock__passport__taxonomy__genus__contains'), ('stock_species', 'qb_stock_species', 'qb_stock_species_choice', 'stock__passport__taxonomy__species__contains'), ('stock_population', 'qb_stock_population', 'qb_stock_population_choice', 'stock__passport__taxonomy__population__contains'), ('stock_collection_date', 'qb_stock_collecting_date', 'qb_stock_collecting_date_choice', 'stock__passport__collecting__collection_date__contains'), ('stock_collection_method', 'qb_collecting_method', 'qb_collecting_method_choice', 'stock__passport__collecting__collection_method__contains'), ('stock_collection_comments', 'qb_stock_collecting_comments', 'qb_stock_collecting_comments_choice', 'stock__passport__collecting__comments__contains'), ('stock_source_organization', 'qb_stock_people_org', 'qb_stock_people_org_choice', 'stock__passport__people__organization__contains')]
+		stock_args = [('stock_seed_id', 'qb_stock_seed_id', 'qb_stock_seed_id_choice', 'stock__seed_id__contains'), ('stock_seed_name', 'qb_stock_seed_name', 'qb_stock_seed_name_choice', 'stock__seed_name__contains'), ('stock_cross_type', 'qb_stock_cross', 'qb_stock_cross_choice', 'stock__cross_type__contains'), ('stock_pedigree', 'qb_stock_pedigree', 'qb_stock_pedigree_choice', 'stock__pedigree__contains'), ('stock_status', 'qb_stock_status', 'qb_stock_status_choice', 'stock__stock_status__contains'), ('stock_date', 'qb_stock_date', 'qb_stock_date_choice', 'stock__stock_date__contains'), ('stock_inoculated', 'qb_stock_inoculated', '', 'stock__inoculated'), ('stock_comments', 'qb_stock_comments', 'qb_stock_comments_choice', 'stock__comments__contains'), ('stock_binomial', 'qb_stock_binomial', 'qb_stock_binomial_choice', 'stock__passport__taxonomy__binomial__contains'), ('stock_population', 'qb_stock_population', 'qb_stock_population_choice', 'stock__passport__taxonomy__population__contains'), ('stock_collection_date', 'qb_stock_collecting_date', 'qb_stock_collecting_date_choice', 'stock__passport__collecting__collection_date__contains'), ('stock_collection_method', 'qb_collecting_method', 'qb_collecting_method_choice', 'stock__passport__collecting__collection_method__contains'), ('stock_collection_comments', 'qb_stock_collecting_comments', 'qb_stock_collecting_comments_choice', 'stock__passport__collecting__comments__contains'), ('stock_source_organization', 'qb_stock_people_org', 'qb_stock_people_org_choice', 'stock__passport__people__organization__contains')]
 		obs_tracker_args.extend(stock_args)
 
-	model_field_mapper = {'measurement_time':'time_of_measurement', 'measurement_value': 'value', 'measurement_comments': 'comments', 'measurement_parameter': 'measurement_parameter__parameter', 'measurement_parameter_type': 'measurement_parameter__parameter_type', 'measurement_protocol': 'measurement_parameter__protocol', 'measurement_unit_of_measure': 'measurement_parameter__unit_of_measure', 'measurement_trait_id_buckler': 'measurement_parameter__trait_id_buckler', 'experiment_name': 'experiment__name', 'experiment_field_name': 'experiment__field__field_name', 'experiment_field_locality_city': 'experiment__field__locality__city', 'experiment_start_date': 'experiment__start_date', 'experiment_purpose': 'experiment__purpose', 'experiment_comments': 'experiment__comments', 'row_id': 'obs_row__row_id', 'row_name': 'obs_row__row_name', 'row_field_name': 'field__field_name', 'row_field_locality_city': 'field__locality__city', 'row_range_num': 'obs_row__range_num', 'row_plot': 'obs_row__plot', 'row_block': 'obs_row__block', 'row_rep': 'obs_row__rep', 'row_kernel_num': 'obs_row__kernel_num', 'row_planting_date': 'obs_row__planting_date', 'row_harvest_date': 'obs_row__harvest_date', 'row_comments': 'obs_row__comments', 'plant_id': 'obs_plant__plant_id', 'plant_num': 'obs_plant__plant_num', 'plant_comments': 'obs_plant__comments', 'stock_seed_id': 'stock__seed_id', 'stock_seed_name': 'stock__seed_name', 'stock_cross_type': 'stock__cross_type', 'stock_pedigree': 'stock__pedigree', 'stock_status': 'stock__stock_status', 'stock_date': 'stock__stock_date', 'stock_inoculated': 'stock__inoculated', 'stock_comments': 'stock__comments', 'stock_genus': 'stock__passport__taxonomy__genus', 'stock_species': 'stock__passport__taxonomy__species', 'stock_population': 'stock__passport__taxonomy__population', 'stock_collection_date': 'stock__passport__collecting__collection_date', 'stock_collection_method': 'stock__passport__collecting__collection_method', 'stock_collection_comments': 'stock__passport__collecting__comments', 'stock_source_organization': 'stock__passport__people__organization', 'tissue_id': 'obs_tissue__tissue_id', 'tissue_type': 'obs_tissue__tissue_type', 'tissue_name': 'obs_tissue__tissue_name', 'tissue_date_ground': 'obs_tissue__date_ground', 'tissue_comments': 'obs_tissue__comments', 'plate_id': 'obs_plate__plate_id', 'plate_name': 'obs_plate__plate_name', 'plate_date': 'obs_plate__date', 'plate_contents': 'obs_plate__contents', 'plate_rep': 'obs_plate__rep', 'plate_type': 'obs_plate__plate_type', 'plate_status': 'obs_plate__plate_status', 'plate_comments': 'obs_plate__comments', 'well_id': 'obs_well__well_id', 'well_well': 'obs_well__well', 'well_inventory': 'obs_well__well_inventory', 'well_tube_label': 'obs_well__tube_label', 'well_comments': 'obs_well__comments', 'culture_id': 'obs_culture__culture_id', 'culture_name': 'obs_culture__culture_name', 'culture_microbe_type': 'obs_culture__microbe_type', 'culture_plating_cycle': 'obs_culture__plating_cycle', 'culture_dilution': 'obs_culture__dilution', 'culture_image_filename': 'obs_culture__image_filename', 'culture_comments': 'obs_culture__comments', 'culture_medium_type': 'obs_culture__medium__media_type', 'culture_medium_name': 'obs_culture__medium__media_name', 'culture_medium_description': 'obs_culture__medium__media_description', 'culture_medium_preparation': 'obs_culture__medium__media_preparation', 'culture_medium_comments': 'obs_culture__medium__comments', 'culture_medium_citation_type': 'obs_culture__medium__citation__citation_type', 'culture_medium_citation_title': 'obs_culture__medium__citation__title', 'culture_medium_citation_url': 'obs_culture__medium__citation__url', 'culture_medium_citation_pubmed': 'obs_culture__medium__citation__pubmed_id', 'culture_medium_citation_comments': 'obs_culture__medium__citation__comments', 'dna_id': 'obs_dna__dna_id', 'dna_extraction_method': 'obs_dna__extraction_method', 'dna_date': 'obs_dna__date', 'dna_tube_id': 'obs_dna__tube_id', 'dna_tube_type': 'obs_dna__tube_type', 'dna_comments': 'obs_dna__comments'}
+	model_field_mapper = {'measurement_time':'time_of_measurement', 'measurement_value': 'value', 'measurement_comments': 'comments', 'measurement_parameter': 'measurement_parameter__parameter', 'measurement_parameter_type': 'measurement_parameter__parameter_type', 'measurement_protocol': 'measurement_parameter__protocol', 'measurement_unit_of_measure': 'measurement_parameter__unit_of_measure', 'measurement_trait_id_buckler': 'measurement_parameter__trait_id_buckler', 'experiment_name': 'experiment__name', 'experiment_field_name': 'experiment__field__field_name', 'experiment_field_locality_city': 'experiment__field__locality__city', 'experiment_start_date': 'experiment__start_date', 'experiment_purpose': 'experiment__purpose', 'experiment_comments': 'experiment__comments', 'row_id': 'obs_row__row_id', 'row_name': 'obs_row__row_name', 'row_field_name': 'field__field_name', 'row_field_locality_city': 'field__locality__city', 'row_range_num': 'obs_row__range_num', 'row_plot': 'obs_row__plot', 'row_block': 'obs_row__block', 'row_rep': 'obs_row__rep', 'row_kernel_num': 'obs_row__kernel_num', 'row_planting_date': 'obs_row__planting_date', 'row_harvest_date': 'obs_row__harvest_date', 'row_comments': 'obs_row__comments', 'plant_id': 'obs_plant__plant_id', 'plant_num': 'obs_plant__plant_num', 'plant_comments': 'obs_plant__comments', 'stock_seed_id': 'stock__seed_id', 'stock_seed_name': 'stock__seed_name', 'stock_cross_type': 'stock__cross_type', 'stock_pedigree': 'stock__pedigree', 'stock_status': 'stock__stock_status', 'stock_date': 'stock__stock_date', 'stock_inoculated': 'stock__inoculated', 'stock_comments': 'stock__comments', 'stock_binomial': 'stock__passport__taxonomy__binomial', 'stock_population': 'stock__passport__taxonomy__population', 'stock_collection_date': 'stock__passport__collecting__collection_date', 'stock_collection_method': 'stock__passport__collecting__collection_method', 'stock_collection_comments': 'stock__passport__collecting__comments', 'stock_source_organization': 'stock__passport__people__organization', 'tissue_id': 'obs_tissue__tissue_id', 'tissue_type': 'obs_tissue__tissue_type', 'tissue_name': 'obs_tissue__tissue_name', 'tissue_date_ground': 'obs_tissue__date_ground', 'tissue_comments': 'obs_tissue__comments', 'plate_id': 'obs_plate__plate_id', 'plate_name': 'obs_plate__plate_name', 'plate_date': 'obs_plate__date', 'plate_contents': 'obs_plate__contents', 'plate_rep': 'obs_plate__rep', 'plate_type': 'obs_plate__plate_type', 'plate_status': 'obs_plate__plate_status', 'plate_comments': 'obs_plate__comments', 'well_id': 'obs_well__well_id', 'well_well': 'obs_well__well', 'well_inventory': 'obs_well__well_inventory', 'well_tube_label': 'obs_well__tube_label', 'well_comments': 'obs_well__comments', 'culture_id': 'obs_culture__culture_id', 'culture_name': 'obs_culture__culture_name', 'culture_microbe_type': 'obs_culture__microbe_type', 'culture_plating_cycle': 'obs_culture__plating_cycle', 'culture_dilution': 'obs_culture__dilution', 'culture_image_filename': 'obs_culture__image_filename', 'culture_comments': 'obs_culture__comments', 'culture_medium_type': 'obs_culture__medium__media_type', 'culture_medium_name': 'obs_culture__medium__media_name', 'culture_medium_description': 'obs_culture__medium__media_description', 'culture_medium_preparation': 'obs_culture__medium__media_preparation', 'culture_medium_comments': 'obs_culture__medium__comments', 'culture_medium_citation_type': 'obs_culture__medium__citation__citation_type', 'culture_medium_citation_title': 'obs_culture__medium__citation__title', 'culture_medium_citation_url': 'obs_culture__medium__citation__url', 'culture_medium_citation_pubmed': 'obs_culture__medium__citation__pubmed_id', 'culture_medium_citation_comments': 'obs_culture__medium__citation__comments', 'dna_id': 'obs_dna__dna_id', 'dna_extraction_method': 'obs_dna__extraction_method', 'dna_date': 'obs_dna__date', 'dna_tube_id': 'obs_dna__tube_id', 'dna_tube_type': 'obs_dna__tube_type', 'dna_comments': 'obs_dna__comments'}
 
 	obs_tracker_model_fields = ['id']
 	for w,x,y,z in obs_tracker_args:
