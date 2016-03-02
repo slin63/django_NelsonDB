@@ -146,7 +146,7 @@ class NewLocalityForm(forms.Form):
     city = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'City'}), help_text="Type a city name:",
                            required=True)
     county = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'County'}), help_text="Type a county name:",
-                             required=True)
+                             required=False)
     state = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'State'}),
                             help_text="What state is the city in:", required=False)
     country = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Country'}),
