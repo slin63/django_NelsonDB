@@ -32,6 +32,7 @@ class UserProfile(models.Model):
 
 class Locality(models.Model):
     city = models.CharField(max_length=200, blank=True)
+    county = models.CharField(max_length=200, blank=True)
     state = models.CharField(max_length=200, blank=True)
     country = models.CharField(max_length=200, blank=True)
     zipcode = models.CharField(max_length=30, blank=True)
@@ -86,8 +87,7 @@ class Publication(models.Model):
 
 
 class Taxonomy(models.Model):
-    genus = models.CharField(max_length=200, blank=True)
-    species = models.CharField(max_length=200, blank=True)
+    binomial = models.CharField(max_length=200, blank=True)
     population = models.CharField(max_length=200, blank=True)
     common_name = models.CharField(max_length=200, blank=True)
     alias = models.CharField(max_length=200, blank=True)
@@ -382,10 +382,13 @@ class IsolateStock(models.Model):
 
 class Isolate(models.Model):
     isolate_id = models.CharField(max_length=200, unique=True)
+    isolatestock = models.ForeignKey(IsolateStock)
+    location = models.ForeignKey(Location)
     stock_date = models.CharField(max_length=200, blank=True)
     extract_color = models.CharField(max_length=200, blank=True)
     organism = models.CharField(max_length=200, blank=True)
     comments = models.CharField(max_length=1000, blank=True)
+    user = models.ForeignKey(User)
 
     def __unicode__(self):
         return self.isolate_id

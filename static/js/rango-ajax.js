@@ -155,7 +155,6 @@ $('#show_all_seedinv_taxonomy').click(function(){
 		"deferRender": true,
 		"aoColumns": [
 		{ "mData": "input"},
-		{ "mData": "passport__taxonomy__species"},
 		{ "mData": "passport__taxonomy__population"},
 		{ "mData": "pedigree"}
 		],
@@ -356,7 +355,6 @@ $('#taxonomysuggestion').keyup(function(){
 				"deferRender": true,
 				"aoColumns": [
 				{ "mData": "input"},
-				{ "mData": "passport__taxonomy__species"},
 				{ "mData": "passport__taxonomy__population"},
 				{ "mData": "pedigree"}
 				],
@@ -453,11 +451,10 @@ $('#show_all_isolatestock_taxonomy').click(function(){
 		"aoColumns": [
 		{ "mData": "input"},
 		{ "mData": "disease_info__common_name"},
-		{ "mData": "passport__taxonomy__genus"},
+		{ "mData": "passport__taxonomy__binomial"},
 		{ "mData": "passport__taxonomy__alias"},
 		{ "mData": "passport__taxonomy__race"},
-		{ "mData": "passport__taxonomy__subtaxa"},
-		{ "mData": "passport__taxonomy__species"},
+		{ "mData": "passport__taxonomy__subtaxa"}
 		],
 	});
 });
@@ -475,7 +472,7 @@ $('#show_all_isolatestock_disease').click(function(){
 		"aoColumns": [
 		{ "mData": "input"},
 		{ "mData": "disease_info__common_name"},
-		{ "mData": "passport__taxonomy__genus"},
+		{ "mData": "passport__taxonomy__binomial"},
 		],
 	});
 });
@@ -504,12 +501,11 @@ $('#isolatestock_taxonomysuggestion').keyup(function(){
 				"deferRender": true,
 				"aoColumns": [
 				{ "mData": "input"},
-				{ "mData": "disease_info__common_name"},
-				{ "mData": "passport__taxonomy__genus"},
+				// { "mData": "disease_info__common_name"},
+				{ "mData": "passport__taxonomy__binomial"},
 				{ "mData": "passport__taxonomy__alias"},
 				{ "mData": "passport__taxonomy__race"},
-				{ "mData": "passport__taxonomy__subtaxa"},
-				{ "mData": "passport__taxonomy__species"},
+				{ "mData": "passport__taxonomy__subtaxa"}
 				],
 			});
 		});
@@ -539,7 +535,7 @@ $('#isolatestock_diseasesuggestion').keyup(function(){
 				"aoColumns": [
 				{ "mData": "input"},
 				{ "mData": "disease_info__common_name"},
-				{ "mData": "passport__taxonomy__genus"},
+				{ "mData": "passport__taxonomy__binomial"},
 				],
 			});
 });
@@ -1234,7 +1230,7 @@ $(document).ready(function() {
 				//   }
 				// },
 		    { "mData": "plant_organ"},
-		    { "mData": "genus"},
+		    { "mData": "binomial"},
 		    { "mData": "alias"},
 		    { "mData": "race"},
 		    { "mData": "subtaxa"},
@@ -1252,24 +1248,9 @@ $(document).ready(function() {
 				    return '<a href=/lab/isolate/' + full.id + '/>' + full.isolate_id + '</a>';
 			    }
 		    },
-			  { "mData": "experiment_name",
-			    "mRender": function (data, type, full) {
-				    return '<a href=/lab/experiment/' + full.experiment_name + '/>' + full.experiment_name + '</a>';
-			    }
-		    },
-			  { "mData": "field_name",
-			    "mRender": function (data, type, full) {
-				    return '<a href=/lab/field/' + full.field_id + '/>' + full.field_name + '</a>';
-			    }
-		    },
 			  { "mData": "isolatestock_id",
 			    "mRender": function (data, type, full) {
 				    return '<a href=/lab/isolatestock/' + full.isolatestock_table_id + '/>' + full.isolatestock_id + '</a>';
-			    }
-		    },
-			  { "mData": "dna_id",
-			    "mRender": function (data, type, full) {
-				    return '<a href=/lab/dna/' + full.obs_dna_id + '/>' + full.dna_id + '</a>';
 			    }
 		    },
 			  { "mData": "location_name",

@@ -25,7 +25,7 @@
             <li class="nav-header">Select Taxonomy</li>
             <form>
             <label></label>
-            <li><input  class="search-query" type="text" name="isolatestock_taxonomysuggestion" id="isolatestock_taxonomysuggestion" placeholder="Type Genus (e.g. Aspergillus Flavus)" /></li>
+            <li><input  class="search-query" type="text" name="isolatestock_taxonomysuggestion" id="isolatestock_taxonomysuggestion" placeholder="Type Binomial (e.g. Aspergillus Flavus)" /></li>
             </form>
           </ul>
         </div>
@@ -43,8 +43,7 @@
           <thead>
             <tr>
               <th>Select</th>
-              <th>Genus</th>
-              <th>Species</th>
+              <th>Binomial</th>
               <th>Alias</th>
               <th>Race</th>
               <th>Subtaxa</th>
@@ -58,9 +57,9 @@
       </div>
       {% if checkbox_isolatestock_taxonomy_names %}
         <hr>
-        <h5>Selected Genus</h5>
-        {% for genus in checkbox_isolatestock_taxonomy_names %}
-          <li>{{ genus.genus }}</li>
+        <h5>Selected Binomial</h5>
+        {% for binomial in checkbox_isolatestock_taxonomy_names %}
+          <li>{{ binomial.binomial }}</li>
         {% endfor %}
       {% endif %}
     </div>

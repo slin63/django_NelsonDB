@@ -13,6 +13,7 @@
           <thead>
           <tr>
             <th>City</th>
+            <th>County</th>
             <th>State</th>
             <th>Country</th>
             <th>Zipcode</th>
@@ -22,6 +23,7 @@
           {% for data in locality_data %}
           <tr>
             <td><a href='/lab/locality/{{data.id}}/'>{{data.city}}</a></td>
+            <td>{{data.county}}</td>
             <td>{{data.state}}</td>
             <td>{{data.country}}</td>
             <td>{{data.zipcode}}</td>

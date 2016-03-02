@@ -48,7 +48,6 @@ def isolatestock_delete(request):
 
 def datatable_isolatestock_inventory(request):
     selected_isolatestocks = checkbox_isolatestock_sort(request)
-    #count = selected_isolatestocks.count()
     arr = []
     for data in selected_isolatestocks:
         arr.append({
@@ -59,7 +58,7 @@ def datatable_isolatestock_inventory(request):
             'disease_name': data.disease_info.common_name,
             'disease_id': data.disease_info.id,
             'plant_organ': data.plant_organ,
-            'genus': data.passport.taxonomy.genus,
+            'binomial': data.passport.taxonomy.binomial,
             'alias': data.passport.taxonomy.alias,
             'race': data.passport.taxonomy.race,
             'subtaxa': data.passport.taxonomy.subtaxa,
@@ -120,7 +119,7 @@ def suggest_isolatestock_disease(request):
         if request.session.get('checkbox_isolatestock_taxonomy', None):
             checkbox_isolatestock_taxonomy = request.session.get('checkbox_isolatestock_taxonomy')
             for taxonomy_id in checkbox_isolatestock_taxonomy:
-                disease = IsolateStock.objects.filter(disease_info__common_name__contains=starts_with, passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__genus').distinct()
+                disease = IsolateStock.objects.filter(disease_info__common_name__contains=starts_with, passport__taxonomy__id=taxonomy_id).values('disease_info__id', 'disease_info__common_name', 'passport__taxonomy__binomial').distinct()
                 isolatestock_disease_list = list(chain(disease, isolatestock_disease_list))
             for t in isolatestock_disease_list:
                 t['input'] = '<input type="checkbox" name="checkbox_isolatestock_disease_id" value="%s">' % (t['disease_info__id'])
@@ -129,7 +128,7 @@ def suggest_isolatestock_disease(request):
             for t in isolatestock_disease_list:
                 t['input'] = '<input type="checkbox" name="checkbox_isolatestock_disease_id" value="%s">' % (t['id'])
                 t['disease_info__common_name'] = t['common_name']
-                t['passport__taxonomy__genus'] = ''
+                t['passport__taxonomy__binomial'] = ''
     return JsonResponse({'data':isolatestock_disease_list})
 
 
@@ -164,19 +163,17 @@ def suggest_taxonomy(request):
                 taxonomy = Stock.objects.filter(
                     pedigree=pedigree,
                     passport__taxonomy__population__contains=starts_with).values(
-                    'pedigree', 'passport__taxonomy__population', 'passport__taxonomy__species').distinct()
+                    'pedigree', 'passport__taxonomy__population').distinct()
                 taxonomy_list = list(chain(taxonomy, taxonomy_list))
             for t in taxonomy_list:
                 t['input'] = '<input type="checkbox" name="checkbox_taxonomy" value="%s">' % (
                     t['passport__taxonomy__population'])
         else:
             taxonomy_list = list(
-                Taxonomy.objects.filter(population__contains=starts_with, common_name='Maize').values('population',
-                                                                                                      'species').distinct())
+                Taxonomy.objects.filter(population__contains=starts_with, common_name='Maize').values('population').distinct())
             for t in taxonomy_list:
                 t['input'] = '<input type="checkbox" name="checkbox_taxonomy" value="%s">' % (t['population'])
                 t['passport__taxonomy__population'] = t['population']
-                t['passport__taxonomy__species'] = t['species']
                 t['pedigree'] = ''
     return JsonResponse({'data': taxonomy_list})
 
@@ -186,20 +183,19 @@ def show_all_isolatestock_taxonomy(request):
     if request.session.get('checkbox_isolatestock_disease', None):
         checkbox_isolatestock_disease = request.session.get('checkbox_isolatestock_disease')
         for disease_id in checkbox_isolatestock_disease:
-            taxonomy = IsolateStock.objects.filter(disease_info__id=disease_id).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__genus', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa', 'passport__taxonomy__species').distinct()
+            taxonomy = IsolateStock.objects.filter(disease_info__id=disease_id).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__binomial', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa').distinct()
             isolatestock_taxonomy_list = list(chain(taxonomy, isolatestock_taxonomy_list))
         for p in isolatestock_taxonomy_list:
             p['input'] = '<input type="checkbox" name="checkbox_isolatestock_taxonomy_id" value="%s">' % (p['passport__taxonomy__id'])
     else:
-        isolatestock_taxonomy_list = list(Taxonomy.objects.filter(common_name='IsolateStock').values('id', 'genus', 'alias', 'race', 'subtaxa', 'species').distinct())
+        isolatestock_taxonomy_list = list(Taxonomy.objects.filter(common_name='IsolateStock').values('id', 'binomial', 'alias', 'race', 'subtaxa').distinct())
         for t in isolatestock_taxonomy_list:
             t['input'] = '<input type="checkbox" name="checkbox_isolatestock_taxonomy_id" value="%s">' % (t['id'])
             t['disease_info__common_name'] = ''
-            t['passport__taxonomy__genus'] = t['genus']
+            t['passport__taxonomy__binomial'] = t['binomial']
             t['passport__taxonomy__alias'] = t['alias']
             t['passport__taxonomy__race'] = t['race']
             t['passport__taxonomy__subtaxa'] = t['subtaxa']
-            t['passport__taxonomy__species'] = t['species']
     return JsonResponse({'data':isolatestock_taxonomy_list})
 
 
@@ -265,7 +261,7 @@ def update_isolatestock_info(request, isolatestock_id):
                     isolatestock.locality = obs_tracker_isolatestock_form.cleaned_data['isolatestock__locality']
 
                     updated_people, created = People.objects.get_or_create(first_name=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__people__first_name'], last_name=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__people__last_name'], organization=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__people__organization'], phone=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__people__phone'], email=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__people__email'], comments=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__people__comments'])
-                    updated_taxonomy, created = Taxonomy.objects.get_or_create(genus=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__genus'], species='', population='', common_name='IsolateStock', alias=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__alias'], race=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__race'], subtaxa=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__subtaxa'])
+                    updated_taxonomy, created = Taxonomy.objects.get_or_create(binomial=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__binomial'], population='', common_name='IsolateStock', alias=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__alias'], race=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__race'], subtaxa=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__subtaxa'])
                     updated_passport, created = Passport.objects.get_or_create(collecting=isolatestock.passport.collecting, people=updated_people, taxonomy=updated_taxonomy)
                     isolatestock.passport = updated_passport
                     isolatestock.save()
@@ -277,7 +273,7 @@ def update_isolatestock_info(request, isolatestock_id):
             print(obs_tracker_isolatestock_form.errors)
     # If user is accessing the update model form
     else:
-        isolatestock_data = ObsTracker.objects.filter(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id).values('isolatestock__isolatestock_id', 'isolatestock__locality', 'field', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'isolatestock__isolatestock_name', 'isolatestock__plant_organ', 'isolatestock__passport__taxonomy__genus', 'isolatestock__passport__taxonomy__alias', 'isolatestock__passport__taxonomy__race', 'isolatestock__passport__taxonomy__subtaxa', 'isolatestock__comments', 'isolatestock__passport__people__first_name', 'isolatestock__passport__people__last_name', 'isolatestock__passport__people__organization', 'isolatestock__passport__people__phone', 'isolatestock__passport__people__email', 'isolatestock__passport__people__comments')
+        isolatestock_data = ObsTracker.objects.filter(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id).values('isolatestock__isolatestock_id', 'isolatestock__locality', 'field', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'isolatestock__isolatestock_name', 'isolatestock__plant_organ', 'isolatestock__passport__taxonomy__binomial', 'isolatestock__passport__taxonomy__alias', 'isolatestock__passport__taxonomy__race', 'isolatestock__passport__taxonomy__subtaxa', 'isolatestock__comments', 'isolatestock__passport__people__first_name', 'isolatestock__passport__people__last_name', 'isolatestock__passport__people__organization', 'isolatestock__passport__people__phone', 'isolatestock__passport__people__email', 'isolatestock__passport__people__comments')
         obs_tracker_isolatestock_form = LogIsolateStocksOnlineForm(initial=isolatestock_data[0])
     context_dict['isolatestock_id'] = isolatestock_id
     context_dict['obs_tracker_isolatestock_form'] = obs_tracker_isolatestock_form
@@ -297,7 +293,7 @@ def single_isolatestock_info(request, isolatestock_table_id):
         obs_tracker = get_obs_tracker('isolatestock_id', isolatestock_table_id)
         try:
         # Section where Isolates are added
-            associated_isolates = ObsTracker.objects.filter(isolatestock=isolatestock_info.id, obs_entity_type='isolate')
+            associated_isolates = Isolate.objects.filter(isolatestock_id=isolatestock_info.id)
         except Isolate.DoesNotExist:
             associated_isolates = None
     else:

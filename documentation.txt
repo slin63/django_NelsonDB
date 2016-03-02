@@ -135,10 +135,10 @@ nelsonlab.cac.cornell.edu/lab/isolatestock_inventory/
 
 Filtering through IsolateStock Info to find Inventoried IsolateStocks
 
-1. On the IsolateStock Inventory page there are two Filters currently built in: Disease Name and Genus
+1. On the IsolateStock Inventory page there are two Filters currently built in: Disease Name and binomial
 2. Entering a disease name in the "Select Disease" box causes a list of matching results to appear. You can also click "Show all Diseases".
 3. Select the checkboxes that meet your needs and click "Select Disease"
-4. Entering a genus in the "Select Taxonomy" box causes a list of matching results to appear. You can also click "Show all Taxonomies".
+4. Entering a binomial in the "Select Taxonomy" box causes a list of matching results to appear. You can also click "Show all Taxonomies".
 5. Select the checkboxes that meet your needs and click "Select Taxonomies"
 6. These two filters are applied to the "IsolateStocks" table that appears on the bottom of the IsolateStock Inventory page.
 7. You can then select the isolatestocks of interest by selecting the checkboxes, and clicking "Search Inventory for Selected IsolateStocks".
