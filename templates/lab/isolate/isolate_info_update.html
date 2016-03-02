@@ -1,30 +1,40 @@
 {% extends 'lab/base.html' %}
 {% block title %}Update Isolate Info{% endblock %}
 {% block body_block %}
-<div class="hero-unit">
-  <h1>Update Isolate Info</h1>
-  <hr>
-  <a href='/lab/isolate/{{isolate_id}}/'><input class="btn btn-info" type="submit" name="submit" value="Back to Isolate Info Page"/></a>
-  <a href="{% url 'update_isolatestock_info' isolate.isolatestock_id %}"><input class="btn btn-warning" type="submit" name="submit" value="Go to Update Isolate Stock Info"/></a>
-  <hr>
-  {% if updated %}
-    <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Edit Was Saved!<br/>&nbsp;</h4>
-  {% elif failed %}
-  <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Edit Was Not Saved! Fix Errors.<br/>&nbsp;</h4>
-  {% endif %}
-  <div class="container-fluid">
-    <form class="form-signin" id="update_isolate" method="post" action="/lab/isolate/update/{{isolate_id}}/">
-      {% csrf_token %}
-      {% for field in isolate_form.visible_fields %}
-        <div class="row">
-          <div class="span4 offset1"><font color="247eca">{{ field.help_text }}</font></div>
-          <div class="span3">{{ field }}</div>
-          <div class="span4"><font color="red">{{ field.errors }}</font></div>
-        </div>
-      {% endfor %}
-      <br />
-      <input class="btn btn-primary" type="submit" name="submit" value="Update"/>
-    </form>
+{% if isolate %}
+  <div class="hero-unit">
+    <h1>Update Isolate Info</h1>
+    <input type="hidden" id="isolate_detail_id" value={{isolate.id}} />
+    <hr>
+    <!--<a href='/lab/isolate/{{isolate_id}}/'><input class="btn btn-info" type="submit" name="submit" value="Back to Isolate Info Page"/></a>-->
+    <button id="isolate_detail_delete_button" class="btn btn-danger" type="submit" name="submit">Delete Isolate</button>
+    <a href="{% url 'update_isolatestock_info' isolate.isolatestock_id %}"><input class="btn btn-warning" type="submit" name="submit" value="Go to Update Isolate Stock Info"/></a>
+    <hr>
+    {% if updated %}
+      <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Edit Was Saved!<br/>&nbsp;</h4>
+    {% elif failed %}
+    <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Edit Was Not Saved! Fix Errors.<br/>&nbsp;</h4>
+    {% endif %}
+    <div class="container-fluid">
+      <form class="form-signin" id="update_isolate" method="post" action="/lab/isolate/update/{{isolate_id}}/">
+        {% csrf_token %}
+        {% for field in isolate_form.visible_fields %}
+          <div class="row">
+            <div class="span4 offset1"><font color="247eca">{{ field.help_text }}</font></div>
+            <div class="span3">{{ field }}</div>
+            <div class="span4"><font color="red">{{ field.errors }}</font></div>
+          </div>
+        {% endfor %}
+        <br />
+        <input class="btn btn-primary" type="submit" name="submit" value="Update"/>
+      </form>
+    </div>
   </div>
-</div>
+{% else %}
+  <div class="hero-unit">
+  <h1>Isolate Not Found!</h1>
+  </div>
+  <h2><a href={% url 'isolatestock_inventory' %}>Click here to return to the Isolate Stock table</a></h2>
+{% endif %}
+
 {% endblock %}

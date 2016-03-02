@@ -998,9 +998,16 @@ def update_isolate_info(request, isolate_id):
 			print(isolate_form.errors)
 	else:
 		isolate_data = Isolate.objects.filter(id=isolate_id).values('isolate_id', 'location', 'stock_date', 'extract_color', 'organism', 'comments')
-		isolate_form = UpdateIsolatesOnlineForm(initial=isolate_data[0])
+		try:
+			isolate_form = UpdateIsolatesOnlineForm(initial=isolate_data[0])
+		except IndexError:
+			isolate_form = None
+
+	try:
+		context_dict['isolate'] = Isolate.objects.get(id=isolate_id)
+	except Isolate.DoesNotExist:
+		context_dict['isolate'] = None
 	context_dict['isolate_id'] = isolate_id
-	context_dict['isolate'] = Isolate.objects.get(id=isolate_id)
 	context_dict['isolate_form'] = isolate_form
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/isolate/isolate_info_update.html', context_dict, context)
