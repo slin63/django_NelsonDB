@@ -5084,7 +5084,7 @@ def log_data_online(request, data_type):
 	data_type_to_url = {
 	'seed_packet': 'seed_inventory', 'seed_inventory':'seed_inventory',
 	'disease': 'data/disease_info/', 'isolatestock': 'isolatestock_inventory',
-	'isolate': 'isolate'
+	'isolate': 'isolatestock_inventory'
 	}
 
 	# 'data_url' handles the redirect link after a form has been successfully completed.
