@@ -127,7 +127,7 @@ CREATE TABLE `auth_user` (
 
 LOCK TABLES `auth_user` WRITE;
 /*!40000 ALTER TABLE `auth_user` DISABLE KEYS */;
-INSERT INTO `auth_user` VALUES (1,'','1990-12-25 00:00:00',0,'unknown_person','Unknown','Person','',0,0,'1990-12-25 00:00:00'),(2,'pbkdf2_sha256$12000$Rjx9Y2539UK6$LPk6T47VPLFgNeaMYnwPljlB96Jqvd3QsCelWOkVHrA=','2015-10-09 15:29:42',1,'nick_morales','Nicolas','Morales','nm529@cornell.edu',1,1,'2015-10-09 15:27:50'),(3,'pbkdf2_sha256$12000$gqCrGR6WKKt3$7g1GMJGId0d6cjQ2jLgBK5XPSEm8hcTSXwWq6Gobni0=','2016-02-26 20:40:54',1,'slin63','Shean','Lin','slin63@illinois.edu',1,1,'2016-02-23 03:20:25'),(4,'pbkdf2_sha256$12000$xSZSMdujlaLh$PXNd/yHfiopbbuaynRGWcNbPFnfBPLzGETnKWAUzf9Q=','2016-02-23 17:24:56',0,'mehl1','Kelsey','Mehl','mehl1@illinois.edu',0,1,'2016-02-23 17:24:47'),(5,'pbkdf2_sha256$12000$MWUAEjnBOMmM$yB5waGoqqa4ObxludPDvuLqwsP33i5iS8oMTl9KmCHw=','2016-02-26 20:46:49',1,'smideros','Santiago','Mideros','smideros@illinois.edu',0,1,'2016-02-24 19:46:35'),(6,'pbkdf2_sha256$12000$rQklQzR56rog$Cehj8wHWal//m7WzIq7kUvk+Lc00ptTQhXfW83Mj4AM=','2016-02-26 19:23:13',0,'tjamann','Tiffany','Jamann','tjamann@illinois.edu',0,1,'2016-02-26 19:23:05'),(7,'pbkdf2_sha256$12000$ABUFtkLbKJIj$y7kfxVtQZG3+4q95P534xpV1O5Fq1HdY544sm6eFfQU=','2016-02-28 16:28:27',0,'clin88','Chen','Lin','chenmonitor@gmail.com',0,1,'2016-02-28 16:28:21');
+INSERT INTO `auth_user` VALUES (3,'pbkdf2_sha256$12000$gqCrGR6WKKt3$7g1GMJGId0d6cjQ2jLgBK5XPSEm8hcTSXwWq6Gobni0=','2016-02-26 20:40:54',1,'slin63','Shean','Lin','slin63@illinois.edu',1,1,'2016-02-23 03:20:25'),(4,'pbkdf2_sha256$12000$xSZSMdujlaLh$PXNd/yHfiopbbuaynRGWcNbPFnfBPLzGETnKWAUzf9Q=','2016-02-23 17:24:56',0,'mehl1','Kelsey','Mehl','mehl1@illinois.edu',0,1,'2016-02-23 17:24:47'),(5,'pbkdf2_sha256$12000$MWUAEjnBOMmM$yB5waGoqqa4ObxludPDvuLqwsP33i5iS8oMTl9KmCHw=','2016-02-26 20:46:49',1,'smideros','Santiago','Mideros','smideros@illinois.edu',0,1,'2016-02-24 19:46:35'),(6,'pbkdf2_sha256$12000$rQklQzR56rog$Cehj8wHWal//m7WzIq7kUvk+Lc00ptTQhXfW83Mj4AM=','2016-02-26 19:23:13',0,'tjamann','Tiffany','Jamann','tjamann@illinois.edu',0,1,'2016-02-26 19:23:05'),(7,'pbkdf2_sha256$12000$ABUFtkLbKJIj$y7kfxVtQZG3+4q95P534xpV1O5Fq1HdY544sm6eFfQU=','2016-02-28 16:28:27',0,'clin88','Chen','Lin','chenmonitor@gmail.com',0,1,'2016-02-28 16:28:21');
 /*!40000 ALTER TABLE `auth_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -356,7 +356,7 @@ CREATE TABLE `lab_collecting` (
 
 LOCK TABLES `lab_collecting` WRITE;
 /*!40000 ALTER TABLE `lab_collecting` DISABLE KEYS */;
-INSERT INTO `lab_collecting` VALUES (1,'No Collection','No Collection','No Collection',1),(2,'','','test',5),(3,'','','',2),(4,'','','Don White Collection',6),(5,'','','',6),(6,'03/01/2016','','',6),(7,'','','',1);
+INSERT INTO `lab_collecting` VALUES (2,'','','test',5),(3,'','','',2),(4,'','','Don White Collection',6),(5,'','','',6),(6,'03/01/2016','','',6),(7,'','','',1);
 /*!40000 ALTER TABLE `lab_collecting` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -417,7 +417,7 @@ CREATE TABLE `lab_experiment` (
 
 LOCK TABLES `lab_experiment` WRITE;
 /*!40000 ALTER TABLE `lab_experiment` DISABLE KEYS */;
-INSERT INTO `lab_experiment` VALUES (1,'No_Experiment','','','',1,1),(2,'15IS','2015-08-15','Collection of Isolates','',1,5),(3,'00DI','2016-02-29','Germination tests','test seed viability',1,6);
+INSERT INTO `lab_experiment` VALUES (2,'15IS','2015-08-15','Collection of Isolates','',1,5),(3,'00DI','2016-02-29','Germination tests','test seed viability',1,6);
 /*!40000 ALTER TABLE `lab_experiment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -645,7 +645,7 @@ CREATE TABLE `lab_isolatestock` (
 
 LOCK TABLES `lab_isolatestock` WRITE;
 /*!40000 ALTER TABLE `lab_isolatestock` DISABLE KEYS */;
-INSERT INTO `lab_isolatestock` VALUES (1,'No Isolate','No Isolate','No Isolate','',1,1,1),(3,'15st002','','Leaf','',2,4,3),(4,'TestStock ID','ISO NAME','ORGAN','COM',1,2,5);
+INSERT INTO `lab_isolatestock` VALUES (3,'15st002','','Leaf','',1,4,3),(4,'TestStock ID','ISO NAME','ORGAN','COM',1,2,5);
 /*!40000 ALTER TABLE `lab_isolatestock` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -659,6 +659,7 @@ DROP TABLE IF EXISTS `lab_locality`;
 CREATE TABLE `lab_locality` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `city` varchar(200) NOT NULL,
+  `county` varchar(200) NOT NULL,
   `state` varchar(200) NOT NULL,
   `country` varchar(200) NOT NULL,
   `zipcode` varchar(30) NOT NULL,
@@ -672,7 +673,7 @@ CREATE TABLE `lab_locality` (
 
 LOCK TABLES `lab_locality` WRITE;
 /*!40000 ALTER TABLE `lab_locality` DISABLE KEYS */;
-INSERT INTO `lab_locality` VALUES (1,'No Locality','No Locality','No Locality','No Locality'),(2,'Urbana','IL','USA','61801'),(3,'South Farms','IL','USA',''),(4,'Energy Farm','IL','USA',''),(5,'Auburn','IL','USA',''),(6,'DeKalb','IL','USA','');
+INSERT INTO `lab_locality` VALUES (1,'No Locality','','No Locality','No Locality','No Locality'),(2,'Urbana','','IL','USA','61801'),(3,'South Farms','','IL','USA',''),(4,'Energy Farm','','IL','USA',''),(5,'Auburn','','IL','USA',''),(6,'DeKalb','','IL','USA','');
 /*!40000 ALTER TABLE `lab_locality` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -706,7 +707,7 @@ CREATE TABLE `lab_location` (
 
 LOCK TABLES `lab_location` WRITE;
 /*!40000 ALTER TABLE `lab_location` DISABLE KEYS */;
-INSERT INTO `lab_location` VALUES (1,'No Location','No Location','No Location','No Location','No Location','No Location','',1),(2,'Turner Hall','Chest Freezer','N-520','','','','',2),(3,'','Turner Hall','','','','','',6),(4,'','Urbana','','','','','',2),(5,'Turner','Turner Cold Storage','C427','35','F','B73-B104','drawer stuck',2),(6,'Turner','Turner Cold Room','C427','4','K','B73-B104','shelf bent',2),(10,'','Tuerner','','','','','',2);
+INSERT INTO `lab_location` VALUES (2,'Turner Hall','Chest Freezer','N-520','','','','',2),(3,'','Turner Hall','','','','','',6),(4,'','Urbana','','','','','',2),(5,'Turner','Turner Cold Storage','C427','35','F','B73-B104','drawer stuck',2),(6,'Turner','Turner Cold Room','C427','4','K','B73-B104','shelf bent',2),(10,'','Tuerner','','','','','',2);
 /*!40000 ALTER TABLE `lab_location` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1402,7 +1403,7 @@ CREATE TABLE `lab_obstracker` (
 
 LOCK TABLES `lab_obstracker` WRITE;
 /*!40000 ALTER TABLE `lab_obstracker` DISABLE KEYS */;
-INSERT INTO `lab_obstracker` VALUES (1,'No Type',1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),(7,'isolatestock',2,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5),(9,'stock',2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,5),(10,'experiment',2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5),(11,'isolatestock',1,1,1,4,1,1,NULL,NULL,1,1,NULL,1,NULL,1,1,1,NULL,1,3),(13,'experiment',1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3),(14,'stock',1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,4,6),(15,'experiment',1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6),(16,'stock',3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,6),(17,'experiment',3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6),(18,'stock',3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6),(19,'stock',3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,6),(20,'stock',3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,8,6),(21,'stock',3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,9,6);
+INSERT INTO `lab_obstracker` VALUES (7,'isolatestock',2,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5),(9,'stock',2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,5),(10,'experiment',2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5),(11,'isolatestock',1,1,1,4,1,1,NULL,NULL,1,1,NULL,1,NULL,1,1,1,NULL,1,3),(13,'experiment',1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3),(14,'stock',1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,4,6),(15,'experiment',1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6),(16,'stock',3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5,6),(17,'experiment',3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6),(18,'stock',3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6,6),(19,'stock',3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,6),(20,'stock',3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,8,6),(21,'stock',3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,9,6);
 /*!40000 ALTER TABLE `lab_obstracker` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1493,7 +1494,7 @@ CREATE TABLE `lab_passport` (
 
 LOCK TABLES `lab_passport` WRITE;
 /*!40000 ALTER TABLE `lab_passport` DISABLE KEYS */;
-INSERT INTO `lab_passport` VALUES (1,1,1,1),(2,1,1,2),(3,1,1,3),(4,2,2,4),(5,1,3,5),(6,3,2,6),(7,4,2,6),(8,5,4,7),(9,6,5,6),(10,7,2,6);
+INSERT INTO `lab_passport` VALUES (2,1,1,2),(3,1,1,3),(4,2,2,4),(5,1,3,5),(6,3,2,6),(7,4,2,6),(8,5,4,7),(9,6,5,6),(10,7,2,6);
 /*!40000 ALTER TABLE `lab_passport` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1522,7 +1523,7 @@ CREATE TABLE `lab_people` (
 
 LOCK TABLES `lab_people` WRITE;
 /*!40000 ALTER TABLE `lab_people` DISABLE KEYS */;
-INSERT INTO `lab_people` VALUES (1,'No Source','No Source','No Source','No Source','No Source',''),(2,'','','','','',''),(3,'SHEAN','LIN','UIUC','33333333','3@GMAIL.COM','COM'),(4,'Don','White','UIUC','','','0026:565_01s'),(5,'Don','White','UIUC','','','');
+INSERT INTO `lab_people` VALUES (2,'','','','','',''),(3,'SHEAN','LIN','UIUC','33333333','3@GMAIL.COM','COM'),(4,'Don','White','UIUC','','','0026:565_01s'),(5,'Don','White','UIUC','','','');
 /*!40000 ALTER TABLE `lab_people` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1687,7 +1688,7 @@ CREATE TABLE `lab_stock` (
 
 LOCK TABLES `lab_stock` WRITE;
 /*!40000 ALTER TABLE `lab_stock` DISABLE KEYS */;
-INSERT INTO `lab_stock` VALUES (1,'No Stock','No Stock','No Stock','No Stock','No Stock','',0,'',1),(2,'15XX001','B666','self','B73 x 666','','',0,'',4),(4,'00DI001_001b','B73','bulk','?','','',0,'',7),(5,'00DI0002_002s','','Self','?','','',0,'',8),(6,'002:565_01s','b73','self','?','','',0,'',9),(7,'002:565_02s','b73','SELF','?','','',0,'',10),(8,'002:565_03s','b73','self','?','','',0,'',10),(9,'002:565_00b','b73','bulk','?','','',0,'',10);
+INSERT INTO `lab_stock` VALUES (2,'15XX001','B666','self','B73 x 666','','',0,'',4),(4,'00DI001_001b','B73','bulk','?','','',0,'',7),(5,'00DI0002_002s','','Self','?','','',0,'',8),(6,'002:565_01s','b73','self','?','','',0,'',9),(7,'002:565_02s','b73','SELF','?','','',0,'',10),(8,'002:565_03s','b73','self','?','','',0,'',10),(9,'002:565_00b','b73','bulk','?','','',0,'',10);
 /*!40000 ALTER TABLE `lab_stock` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1719,7 +1720,7 @@ CREATE TABLE `lab_stockpacket` (
 
 LOCK TABLES `lab_stockpacket` WRITE;
 /*!40000 ALTER TABLE `lab_stockpacket` DISABLE KEYS */;
-INSERT INTO `lab_stockpacket` VALUES (1,'No Stock Packet','No Stock Packet','',1,1),(2,'','100','',3,2),(6,'','','',6,4),(7,'','','',10,6);
+INSERT INTO `lab_stockpacket` VALUES (2,'','100','',3,2),(6,'','','',6,4),(7,'','','',10,6);
 /*!40000 ALTER TABLE `lab_stockpacket` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1748,7 +1749,7 @@ CREATE TABLE `lab_taxonomy` (
 
 LOCK TABLES `lab_taxonomy` WRITE;
 /*!40000 ALTER TABLE `lab_taxonomy` DISABLE KEYS */;
-INSERT INTO `lab_taxonomy` VALUES (1,'No Taxonomy', 'No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy','No Taxonomy'),(2,'','','IsolateStock','','',''),(3,'Setosphaeria turcica','','IsolateStock','Exerohilum turcicum','',''),(4,'Zea','','Maize','NULL','NULL','NULL'),(5,'GENUS','','IsolateStock','ALIAS','RACE','SUB'),(6,'','','Maize','NULL','NULL','NULL'),(7,'Zea / Mays','Illinois Pathology Panel','Maize','NULL','NULL','NULL');
+INSERT INTO `lab_taxonomy` VALUES (2,'','','IsolateStock','','',''),(3,'Setosphaeria turcica','','IsolateStock','Exerohilum turcicum','',''),(4,'Zea','','Maize','NULL','NULL','NULL'),(5,'GENUS','','IsolateStock','ALIAS','RACE','SUB'),(6,'','','Maize','NULL','NULL','NULL'),(7,'Zea / Mays','Illinois Pathology Panel','Maize','NULL','NULL','NULL');
 /*!40000 ALTER TABLE `lab_taxonomy` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1845,7 +1846,7 @@ CREATE TABLE `lab_userprofile` (
 
 LOCK TABLES `lab_userprofile` WRITE;
 /*!40000 ALTER TABLE `lab_userprofile` DISABLE KEYS */;
-INSERT INTO `lab_userprofile` VALUES (1,'No Profile','profile_images/underwater.jpg','No Profile','No Profile','No Profile','No Profile',1),(2,'','profile_images/underwater.jpg','321-695-9465','BTI Cornell','','Database',2),(3,'https://github.com/slin63','profile_images/512aTeupRIL._SL500_AA280__5bhR9UK.jpg','510-495-7455','UIUC','','Site Admin',3),(4,'','profile_images/underwater.jpg','8472801592','University of Illinois','','',4),(5,'','profile_images/underwater.jpg','2172654526','University of Illinois','','',5),(6,'','profile_images/underwater.jpg','999999999','UIUC','','',6),(7,'','profile_images/underwater.jpg','16262151307','meh','','',7);
+INSERT INTO `lab_userprofile` VALUES (3,'https://github.com/slin63','profile_images/512aTeupRIL._SL500_AA280__5bhR9UK.jpg','510-495-7455','UIUC','','Site Admin',3),(4,'','profile_images/underwater.jpg','8472801592','University of Illinois','','',4),(5,'','profile_images/underwater.jpg','2172654526','University of Illinois','','',5),(6,'','profile_images/underwater.jpg','999999999','UIUC','','',6),(7,'','profile_images/underwater.jpg','16262151307','meh','','',7);
 /*!40000 ALTER TABLE `lab_userprofile` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

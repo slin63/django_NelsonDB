@@ -226,7 +226,7 @@ class NewMediumForm(forms.Form):
 
 class NewTaxonomyForm(forms.Form):
     binomial = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Binomial'}),
-                               help_text="Type the binomial:",
+                               help_text="Type the Binomial:",
                                required=False)
     population = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Population'}),
                                  help_text="Type the population:", required=False)
@@ -256,8 +256,8 @@ class UpdateSeedDataOnlineForm(forms.Form):
     stock__inoculated = forms.BooleanField(help_text="Inoculated", required=False)
     stock__comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}),
                                       help_text="Stock Comments", required=False)
-    stock__passport__taxonomy__binomial = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'binomial'}),
-                                                          help_text="binomial", required=False)
+    stock__passport__taxonomy__binomial = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Binomial'}),
+                                                          help_text="Binomial", required=False)
     stock__passport__taxonomy__population = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Population'}),
                                                             help_text="Population", required=False)
     obs_row__row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Row ID'}), help_text="Row ID",
@@ -314,8 +314,8 @@ class LogSeedDataOnlineForm(forms.Form):
     stock__inoculated = forms.BooleanField(help_text="Inoculated", required=False)
     stock__comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}),
                                       help_text="Stock Comments", required=False)
-    stock__passport__taxonomy__binomial = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'binomial'}),
-                                                          help_text="binomial", required=False)
+    stock__passport__taxonomy__binomial = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Binomial'}),
+                                                          help_text="Binomial", required=False)
     stock__passport__taxonomy__population = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Population'}),
                                                             help_text="Population", required=False)
     obs_row__row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Row ID'}), help_text="Row ID",
@@ -604,7 +604,7 @@ class LogIsolateStocksOnlineForm(forms.Form):
                                                 help_text="Plant Organ:", required=False)
     isolatestock__passport__taxonomy__binomial = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Binomial'}),
-        help_text="binomial:", required=False)
+        help_text="Binomial:", required=False)
     isolatestock__passport__taxonomy__alias = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Alias'}),
                                                               help_text="Alias:", required=False)
     isolatestock__passport__taxonomy__race = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Race'}),
@@ -614,6 +614,20 @@ class LogIsolateStocksOnlineForm(forms.Form):
         help_text="Subtaxa:", required=False)
     isolatestock__comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}),
                                              help_text="Additional Comments:", required=False)
+
+    isolatestock__passport__collecting__user = forms.ModelChoiceField(queryset=User.objects.all(),
+                                                               empty_label="--- Collected By ---",
+                                                               initial=User.objects.get(username='unknown_person'),
+                                                               help_text="Collector", required=True)
+    isolatestock__passport__collecting__collection_date = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Collection Date'}), help_text="Date Collected", required=False)
+    isolatestock__passport__collecting__collection_method = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Collection Method'}), help_text="Collection Method",
+        required=False)
+    isolatestock__passport__collecting__comments = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Collection Comments'}), help_text="Collection Comments",
+        required=False)
+
     isolatestock__passport__people__first_name = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Source First Name'}), help_text="Source First Name",
         required=False)

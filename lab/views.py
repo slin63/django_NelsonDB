@@ -4892,6 +4892,11 @@ def log_data_online(request, data_type):
 						locality = form.cleaned_data['isolatestock__locality']
 						isolatestock_comments = form.cleaned_data['isolatestock__comments']
 
+						collection_user = form.cleaned_data['isolatestock__passport__collecting__user']
+						collection_date = form.cleaned_data['isolatestock__passport__collecting__collection_date']
+						collection_method = form.cleaned_data['isolatestock__passport__collecting__collection_method']
+						collection_comments = form.cleaned_data['isolatestock__passport__collecting__comments']
+
 						source_fname = form.cleaned_data['isolatestock__passport__people__first_name']
 						source_lname = form.cleaned_data['isolatestock__passport__people__last_name']
 						source_organization = form.cleaned_data['isolatestock__passport__people__organization']
@@ -4911,8 +4916,9 @@ def log_data_online(request, data_type):
 
 						try:
 							new_people, created = People.objects.get_or_create(first_name=source_fname, last_name=source_lname, organization=source_organization, phone=source_phone, email=source_email, comments=source_comments)
+							new_collecting, created = Collecting.objects.get_or_create(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments)
 							new_taxonomy, created = Taxonomy.objects.get_or_create(binomial=binomial, common_name='IsolateStock', alias=alias, race=race, subtaxa=subtaxa)
-							new_passport, created = Passport.objects.get_or_create(taxonomy=new_taxonomy, people=new_people, collecting_id=1)
+							new_passport, created = Passport.objects.get_or_create(taxonomy=new_taxonomy, people=new_people, collecting=new_collecting)
 							new_isolatestock, created = IsolateStock.objects.get_or_create(passport=new_passport, locality=locality, disease_info_id=1, isolatestock_id=isolatestock_id, isolatestock_name=isolatestock_name, plant_organ=plant_organ, comments=isolatestock_comments)
 							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='isolatestock', stock=Stock.objects.get(seed_id=seed_id), experiment_id=1, user=user, field=field, isolate_id=1, isolatestock=new_isolatestock, location_id=1, maize_sample_id=1, obs_env_id=1, obs_extract_id=1,  obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_row=ObsRow.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id))
 							if row_id !='' and row_id !='No Row':
