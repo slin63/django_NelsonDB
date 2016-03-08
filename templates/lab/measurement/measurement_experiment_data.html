@@ -20,7 +20,7 @@
             <th>Parameter</th>
             <th>Value</th>
             <th>Units</th>
-            <th>TraitID Buckler</th>
+            {# <th>TraitID Buckler</th> #}
             <th>Comments</th>
           </tr>
           </thead>
@@ -34,7 +34,7 @@
             <td><a href='/lab/measurement_parameter/{{data.measurement_parameter.id}}/'>{{data.measurement_parameter.parameter}}</a></td>
             <td>{{data.value}}</td>
             <td>{{data.measurement_parameter.unit_of_measure}}</td>
-            <td>{{data.measurement_parameter.trait_id_buckler}}</td>
+            {# <td>{{data.measurement_parameter.trait_id_buckler}}</td> #}
             <td>{{data.comments}}</td>
           </tr>
           {% endfor %}
@@ -49,7 +49,7 @@
     </div><br/><br/>
 
     <input type='hidden' id="measurement_experiment_name" value="{{experiment_name}}" />
-    <div id="separations_chart"></div>
+    {# <div id="separations_chart"></div> #}
 
 
 {% endblock %}
