@@ -537,6 +537,7 @@ class MeasurementParameter(models.Model):
     parameter_type = models.CharField(max_length=200, blank=True)
     unit_of_measure = models.CharField(max_length=200, blank=True)
     protocol = models.CharField(max_length=1000, blank=True)
+    description = models.CharField(max_length=200, blank=True)
     trait_id_buckler = models.CharField(max_length=200, blank=True)
     marker = models.ForeignKey(Marker, blank=True, null=True)
 
@@ -610,6 +611,7 @@ class Measurement(models.Model):
     time_of_measurement = models.CharField(max_length=200, blank=True)
     value = models.CharField(max_length=200, blank=True)
     comments = models.CharField(max_length=1000, blank=True)
+    experiment = models.ForeignKey(Experiment)
 
     def __unicode__(self):
         return self.value

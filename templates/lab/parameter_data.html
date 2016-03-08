@@ -16,17 +16,23 @@
             <th>Parameter Type</th>
             <th>Units</th>
             <th>Protocol</th>
+            <th>Description</th>
+            {% comment %}
             <th>Trait ID Buckler</th>
+            {% endcomment %}
           </tr>
           </thead>
           <tbody>
           {% for data in parameter_data %}
           <tr>
             <td><a href='/lab/measurement_parameter/{{data.id}}/'>{{data.parameter}}</a></td>
-            <td>{{data.parameter_type}}</td>
-            <td>{{data.unit_of_measure}}</td>
-            <td>{{data.protocol}}</td>
+            <td>{{ data.parameter_type }}</td>
+            <td>{{ data.unit_of_measure }}</td>
+            <td>{{ data.protocol }}</td>
+            <td>{{ data.description }}
+            {% comment %}
             <td>{{data.trait_id_buckler}}</td>
+            {% endcomment %}
           </tr>
           {% endfor %}
           </tbody>

@@ -162,7 +162,7 @@
               </form>
             </ul>
           </div>
-          <div class="span3 offset4">
+          <div class="span3 offset3">
             &nbsp;&nbsp;&nbsp;<a href='/lab/log_data/isolatestock/'><input class="btn btn-info" type="submit" name="submit" value="Add New IsolateStock Information"/></a>
           </div>
         </div>
@@ -269,6 +269,7 @@
               <th>Kernel Num</th>
               <th>Comments</th>
             {% elif data_type == 'measurement' %}
+              <th>Experiment</th>
               <th>Observation Unit</th>
               <th>Parameter</th>
               <th>Username</th>
@@ -305,7 +306,7 @@
               <th>Parameter</th>
               <th>Parameter Type</th>
               <th>Protocol</th>
-              <th>Buckler Trait ID</th>
+              <th>Description</th>
               <th>Unit of Measure</th>
             {% elif data_type == 'medium' %}
               <th>Citation</th>

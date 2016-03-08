@@ -8,7 +8,8 @@
     <hr>
     <!--<a href='/lab/isolate/{{isolate_id}}/'><input class="btn btn-info" type="submit" name="submit" value="Back to Isolate Info Page"/></a>-->
     <button id="isolate_detail_delete_button" class="btn btn-danger" type="submit" name="submit">Delete Isolate</button>
-    <a href="{% url 'update_isolatestock_info' isolate.isolatestock_id %}"><input class="btn btn-warning" type="submit" name="submit" value="Go to Update Isolate Stock Info"/></a>
+    <a href="{% url 'update_isolatestock_info' isolate.isolatestock_id %}"><input class="btn btn-primary" type="submit" name="submit" value="Go to Update Isolate Stock Info"/></a>
+    <a href="{% url 'single_isolatestock_info' isolate.isolatestock_id %}"><input class="btn btn-warning" type="submit" name="submit" value="Go back to Isolate Stock Info"/></a>
     <hr>
     {% if updated %}
       <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Edit Was Saved!<br/>&nbsp;</h4>

@@ -1199,6 +1199,7 @@ $(document).ready(function() {
 						return '<a href=/lab/stock/' + full.id + '/>' + full.seed_id + '</a>';
 					}
 				},
+				{ "mData": "seed_name"},
 		  	{ "mData": "cross_type"},
 		  	{ "mData": "pedigree"},
 		  	{ "mData": "population"},

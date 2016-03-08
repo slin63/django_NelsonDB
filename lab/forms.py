@@ -162,8 +162,10 @@ class NewMeasurementParameterForm(forms.Form):
                                      help_text="What type of parameter is this:", required=True)
     protocol = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Protocol'}),
                                help_text="Give a description of the protocol:", required=False)
-    trait_id_buckler = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Buckler Trait ID'}),
-                                       help_text="Give Buckler trait ID if exists:", required=False)
+    # Not needed for FCP
+    # trait_id_buckler = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Buckler Trait ID'}), help_text="Give Buckler trait ID if exists:", required=False)
+    description = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Description'}),
+                                       help_text="Briefly describe this parameter:", required=False)
     unit_of_measure = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Unit of Measure'}),
                                       help_text="What is the unit of measure:", required=False)
 
@@ -244,11 +246,11 @@ class UpdateSeedDataOnlineForm(forms.Form):
     stock__seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Seed ID'}), help_text="Seed ID:",
                                      required=True)
     stock__seed_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Seed Name'}),
-                                       help_text="Seed Name:", required=False)
+                                       help_text="Seed Name:", required=True)
     stock__cross_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Cross Type'}),
                                         help_text="Cross Type:", required=False)
     stock__pedigree = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Pedigree'}), help_text="Pedigree",
-                                      required=True)
+                                      required=False)
     stock__stock_status = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Stock Status'}),
                                           help_text="Stock Status", required=False)
     stock__stock_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Stock Date'}),
@@ -302,11 +304,11 @@ class LogSeedDataOnlineForm(forms.Form):
     stock__seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Seed ID'}), help_text="Seed ID:",
                                      required=True)
     stock__seed_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Seed Name'}),
-                                       help_text="Seed Name:", required=False)
+                                       help_text="Seed Name:", required=True)
     stock__cross_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Cross Type'}),
                                         help_text="Cross Type:", required=False)
     stock__pedigree = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Pedigree'}), help_text="Pedigree",
-                                      required=True)
+                                      required=False)
     stock__stock_status = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Stock Status'}),
                                           help_text="Stock Status", required=False)
     stock__stock_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Stock Date'}),
@@ -584,37 +586,21 @@ class LogSeparationsOnlineForm(forms.Form):
 class LogIsolateStocksOnlineForm(forms.Form):
     isolatestock__isolatestock_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'IsolateStock ID'}),
                                                     help_text="IsolateStock ID:", required=True)
-    isolatestock__locality = forms.ModelChoiceField(queryset=Locality.objects.all(),
-                                                    empty_label="--- Locality Name ---",
-                                                    help_text="Locality:", required=True)
-    field = forms.ModelChoiceField(queryset=Field.objects.all(), empty_label="--- Source Field Name ---",
-                                   help_text="Source Field Name:", required=True)
-    obs_row__row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Row ID'}),
-                                      help_text="Source Row ID:", required=False)
-    stock__seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Seed ID'}),
-                                     help_text="Source Seed ID:", required=False)
-    obs_plant__plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plant ID'}),
-                                          help_text="Source Plant ID:", required=False)
-    obs_tissue__tissue_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Tissue ID'}),
-                                            help_text="Source Tissue ID:", required=False)
     isolatestock__isolatestock_name = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'IsolateStock Name'}),
         help_text="IsolateStock Name:", required=False)
     isolatestock__plant_organ = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plant Organ'}),
                                                 help_text="Plant Organ:", required=False)
-    isolatestock__passport__taxonomy__binomial = forms.CharField(
-        widget=forms.TextInput(attrs={'placeholder': 'Binomial'}),
-        help_text="Binomial:", required=False)
-    isolatestock__passport__taxonomy__alias = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Alias'}),
-                                                              help_text="Alias:", required=False)
-    isolatestock__passport__taxonomy__race = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Race'}),
-                                                             help_text="Race:", required=False)
-    isolatestock__passport__taxonomy__subtaxa = forms.CharField(
-        widget=forms.TextInput(attrs={'placeholder': 'Subtaxa'}),
-        help_text="Subtaxa:", required=False)
     isolatestock__comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}),
                                              help_text="Additional Comments:", required=False)
+    isolatestock__locality = forms.ModelChoiceField(queryset=Locality.objects.all(),
+                                                    empty_label="--- Locality Name ---",
+                                                    help_text="Locality:", required=True)
+    # Temporarily Disabled
+    # field = forms.ModelChoiceField(queryset=Field.objects.all(), empty_label="--- Source Field Name ---",
+    #                                help_text="Source Field Name:", required=True)
 
+    # Passport Information -- Collecting model
     isolatestock__passport__collecting__user = forms.ModelChoiceField(queryset=User.objects.all(),
                                                                empty_label="--- Collected By ---",
                                                                initial=User.objects.get(username='unknown_person'),
@@ -628,6 +614,19 @@ class LogIsolateStocksOnlineForm(forms.Form):
         widget=forms.TextInput(attrs={'placeholder': 'Collection Comments'}), help_text="Collection Comments",
         required=False)
 
+    # Passport Information -- Taxonomy model
+    isolatestock__passport__taxonomy__binomial = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Binomial'}),
+        help_text="Binomial:", required=False)
+    isolatestock__passport__taxonomy__alias = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Alias'}),
+                                                              help_text="Alias:", required=False)
+    isolatestock__passport__taxonomy__race = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Race'}),
+                                                             help_text="Race:", required=False)
+    isolatestock__passport__taxonomy__subtaxa = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Subtaxa'}),
+        help_text="Subtaxa:", required=False)
+
+    # Passport Information -- People model (Used as the "source" of the stock)
     isolatestock__passport__people__first_name = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Source First Name'}), help_text="Source First Name",
         required=False)
@@ -644,6 +643,18 @@ class LogIsolateStocksOnlineForm(forms.Form):
         help_text="Source Email", required=False)
     isolatestock__passport__people__comments = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Source Comments'}), help_text="Source Comments", required=False)
+
+    # ObsTracker Related Fields
+    obs_row__row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Row ID'}),
+                                      help_text="Source Row ID:", required=False)
+    stock__seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Seed ID'}),
+                                     help_text="Source Seed ID:", required=False)
+    obs_plant__plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plant ID'}),
+                                          help_text="Source Plant ID:", required=False)
+    obs_tissue__tissue_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Tissue ID'}),
+                                            help_text="Source Tissue ID:", required=False)
+
+
 
 
 class LogIsolatesOnlineForm(forms.Form):
@@ -680,7 +691,9 @@ class UpdateIsolatesOnlineForm(forms.Form):
 
 
 class LogMeasurementsOnlineForm(forms.Form):
-    observation_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Observation Unit'}), required=True)
+    experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---",
+                                        help_text="Choose the experiment that data is related to:", required=True)
+    observation_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Model ID Being Measured'}), required=True)
     measurement_parameter = forms.ModelChoiceField(queryset=MeasurementParameter.objects.all(),
                                                    empty_label="--- Parameter ---", required=True)
     user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Username ---", required=True)

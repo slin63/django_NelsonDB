@@ -254,8 +254,8 @@ TRUNCATE TABLE `lab_measurement`;
 -- Dumping data for table `lab_measurement`
 --
 
-INSERT INTO `lab_measurement` (`id`, `time_of_measurement`, `value`, `comments`, `measurement_parameter_id`, `obs_tracker_id`, `user_id`) VALUES
-(1, 'No Measurement', 'No Measurement', '', 1, 1, 1);
+INSERT INTO `lab_measurement` (`id`, `time_of_measurement`, `value`, `comments`, `measurement_parameter_id`, `obs_tracker_id`, `user_id`, `experiment_id`) VALUES
+(1, 'No Measurement', 'No Measurement', '', 1, 1, 1, 1);
 
 --
 -- Truncate table before insert `lab_measurementparameter`
@@ -266,8 +266,8 @@ TRUNCATE TABLE `lab_measurementparameter`;
 -- Dumping data for table `lab_measurementparameter`
 --
 
-INSERT INTO `lab_measurementparameter` (`id`, `parameter`, `parameter_type`, `unit_of_measure`, `protocol`, `trait_id_buckler`, `marker_id`) VALUES
-(1, 'No Parameter', 'No Parameter', 'No Parameter', 'No Parameter', 'No Parameter', 1);
+INSERT INTO `lab_measurementparameter` (`id`, `parameter`, `parameter_type`, `unit_of_measure`, `protocol`, `trait_id_buckler`, `description`, `marker_id`) VALUES
+(1, 'No Parameter', 'No Parameter', 'No Parameter', 'No Parameter', 'No Parameter', 'No Parameter', 1);
 
 --
 -- Truncate table before insert `lab_medium`

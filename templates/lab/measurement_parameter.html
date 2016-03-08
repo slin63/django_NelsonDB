@@ -12,7 +12,11 @@
   <p>Type: {{parameter_info.parameter_type}}</p>
   <p>Protocol: {{parameter_info.protocol}}</p>
   <p>Units: {{parameter_info.unit_of_measure}}</p>
+  <p>Description: {{parameter_info.description}}</p>
+  {% comment %}
   <p>TraitID Buckler: {{parameter_info.trait_id_buckler}}</p>
+  {% endcomment %}
+
 
   <hr>
   <a href='/lab/edit/measurement_parameter/{{parameter_info.id}}/'><input class="btn btn-info" type="submit" name="submit" value="Edit Measurement Parameter"/></a>

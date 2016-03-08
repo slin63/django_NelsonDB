@@ -379,6 +379,7 @@ def datatable_seed_inventory(request):
 				'input': '<input type="checkbox" name="checkbox_stock" value="%s">'%(data.id),
 	        	'id': data.id,
 	        	'seed_id': data.seed_id,
+	        	'seed_name': data.seed_name,
 	        	'cross_type': data.cross_type,
 	        	'pedigree': data.pedigree,
 	        	'population': data.passport.taxonomy.population,
@@ -391,6 +392,7 @@ def datatable_seed_inventory(request):
 				'input': '<input type="checkbox" name="checkbox_stock" value="%s">'%(data['id']),
 	        	'id': data['id'],
 	        	'seed_id': data['seed_id'],
+	        	'seed_name': data['seed_name'],
 	        	'cross_type': data['cross_type'],
 	        	'pedigree': data['pedigree'],
 	        	'population': data['population'],
@@ -899,82 +901,6 @@ def stock_delete(request):
 	return JsonResponse({'data':True}, safe=True)
 
 @login_required
-def update_isolatestock_info(request, isolatestock_id):
-	context = RequestContext(request)
-	context_dict = {}
-	if request.method == 'POST':
-		obs_tracker_isolatestock_form = LogIsolateStocksOnlineForm(data=request.POST)
-		if obs_tracker_isolatestock_form.is_valid():
-			with transaction.atomic():
-				try:
-					obs_tracker = ObsTracker.objects.get(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id, experiment=obs_tracker_isolatestock_form.cleaned_data['experiment'])
-					obs_tracker.isolate_id = 1
-					obs_tracker.maize_sample_id = 1
-					obs_tracker.obs_extract_id = 1
-					obs_tracker.location = obs_tracker_isolatestock_form.cleaned_data['location']
-					obs_tracker.field = obs_tracker_isolatestock_form.cleaned_data['field']
-					if obs_tracker_isolatestock_form.cleaned_data['obs_dna__dna_id'] != '':
-						obs_tracker.obs_dna = ObsDNA.objects.get(dna_id=obs_tracker_isolatestock_form.cleaned_data['obs_dna__dna_id'])
-					else:
-						obs_tracker.obs_dna = ObsDNA.objects.get(dna_id='No DNA')
-					if obs_tracker_isolatestock_form.cleaned_data['obs_microbe__microbe_id'] != '':
-						obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id=obs_tracker_isolatestock_form.cleaned_data['obs_microbe__microbe_id'])
-					else:
-						obs_tracker.obs_microbe = ObsMicrobe.objects.get(microbe_id='No Microbe')
-					if obs_tracker_isolatestock_form.cleaned_data['obs_row__row_id'] != '':
-						obs_tracker.obs_row = ObsRow.objects.get(row_id=obs_tracker_isolatestock_form.cleaned_data['obs_row__row_id'])
-					else:
-						obs_tracker.obs_row = ObsRow.objects.get(row_id='No Row')
-					if obs_tracker_isolatestock_form.cleaned_data['stock__seed_id'] != '':
-						obs_tracker.stock = Stock.objects.get(seed_id=obs_tracker_isolatestock_form.cleaned_data['stock__seed_id'])
-					else:
-						obs_tracker.stock = Stock.objects.get(seed_id='No Stock')
-					if obs_tracker_isolatestock_form.cleaned_data['obs_plant__plant_id'] != '':
-						obs_tracker.obs_plant = ObsPlant.objects.get(plant_id=obs_tracker_isolatestock_form.cleaned_data['obs_plant__plant_id'])
-					else:
-						obs_tracker.obs_plant = ObsPlant.objects.get(plant_id='No Plant')
-					if obs_tracker_isolatestock_form.cleaned_data['obs_tissue__tissue_id'] != '':
-						obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id=obs_tracker_isolatestock_form.cleaned_data['obs_tissue__tissue_id'])
-					else:
-						obs_tracker.obs_tissue = ObsTissue.objects.get(tissue_id='No Tissue')
-					if obs_tracker_isolatestock_form.cleaned_data['obs_culture__culture_id'] != '':
-						obs_tracker.obs_culture = ObsCulture.objects.get(culture_id=obs_tracker_isolatestock_form.cleaned_data['obs_culture__culture_id'])
-					else:
-						obs_tracker.obs_culture = ObsCulture.objects.get(culture_id='No Culture')
-					if obs_tracker_isolatestock_form.cleaned_data['obs_plate__plate_id'] != '':
-						obs_tracker.obs_plate = ObsPlate.objects.get(plate_id=obs_tracker_isolatestock_form.cleaned_data['obs_plate__plate_id'])
-					else:
-						obs_tracker.obs_plate = ObsPlate.objects.get(plate_id='No Plate')
-					if obs_tracker_isolatestock_form.cleaned_data['obs_well__well_id'] != '':
-						obs_tracker.obs_well = ObsWell.objects.get(well_id=obs_tracker_isolatestock_form.cleaned_data['obs_well__well_id'])
-					else:
-						obs_tracker.obs_well = ObsWell.objects.get(well_id='No Well')
-
-					isolatestock = IsolateStock.objects.get(id=isolatestock_id)
-					isolatestock.isolatestock_id = obs_tracker_isolatestock_form.cleaned_data['isolatestock__isolatestock_id']
-					isolatestock.isolatestock_name = obs_tracker_isolatestock_form.cleaned_data['isolatestock__isolatestock_name']
-					isolatestock.disease_info = obs_tracker_isolatestock_form.cleaned_data['isolatestock__disease_info']
-					isolatestock.plant_organ = obs_tracker_isolatestock_form.cleaned_data['isolatestock__plant_organ']
-					isolatestock.comments = obs_tracker_isolatestock_form.cleaned_data['isolatestock__comments']
-					updated_taxonomy, created = Taxonomy.objects.get_or_create(binomial=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__binomial'], population='', common_name='IsolateStock', alias=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__alias'], race=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__race'], subtaxa=obs_tracker_isolatestock_form.cleaned_data['isolatestock__passport__taxonomy__subtaxa'])
-					updated_passport, created = Passport.objects.get_or_create(collecting=isolatestock.passport.collecting, people=isolatestock.passport.people, taxonomy=updated_taxonomy)
-					isolatestock.passport = updated_passport
-					isolatestock.save()
-					obs_tracker.save()
-					context_dict['updated'] = True
-				except Exception:
-					context_dict['failed'] = True
-		else:
-			print(obs_tracker_isolatestock_form.errors)
-	else:
-		isolatestock_data = ObsTracker.objects.filter(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id).values('experiment', 'isolatestock__isolatestock_id', 'location', 'field', 'obs_dna__dna_id', 'obs_microbe__microbe_id', 'obs_row__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'obs_culture__culture_id', 'obs_plate__plate_id', 'obs_well__well_id', 'isolatestock__isolatestock_name', 'isolatestock__disease_info', 'isolatestock__plant_organ', 'isolatestock__passport__taxonomy__binomial', 'isolatestock__passport__taxonomy__alias', 'isolatestock__passport__taxonomy__race', 'isolatestock__passport__taxonomy__subtaxa', 'isolatestock__comments')
-		obs_tracker_isolatestock_form = LogIsolateStocksOnlineForm(initial=isolatestock_data[0])
-	context_dict['isolatestock_id'] = isolatestock_id
-	context_dict['obs_tracker_isolatestock_form'] = obs_tracker_isolatestock_form
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/isolatestock_info_update.html', context_dict, context)
-
-@login_required
 def update_isolate_info(request, isolate_id):
 	context = RequestContext(request)
 	context_dict = {}
@@ -1026,7 +952,8 @@ def edit_info(request, obj_type, obj_id):
 						parameter.parameter = measurement_parameter_form.cleaned_data['parameter']
 						parameter.parameter_type = measurement_parameter_form.cleaned_data['parameter_type']
 						parameter.protocol = measurement_parameter_form.cleaned_data['protocol']
-						parameter.trait_id_buckler = measurement_parameter_form.cleaned_data['trait_id_buckler']
+						parameter.description = measurement_parameter_form.cleaned_data['description']
+						# parameter.trait_id_buckler = measurement_parameter_form.cleaned_data['trait_id_buckler']
 						parameter.unit_of_measure = measurement_parameter_form.cleaned_data['unit_of_measure']
 						parameter.save()
 						context_dict['updated'] = True
@@ -1035,7 +962,7 @@ def edit_info(request, obj_type, obj_id):
 			else:
 				print(measurement_parameter_form.errors)
 		else:
-			parameter_data = MeasurementParameter.objects.filter(id=obj_id).values('parameter', 'parameter_type', 'protocol', 'trait_id_buckler', 'unit_of_measure')
+			parameter_data = MeasurementParameter.objects.filter(id=obj_id).values('parameter', 'parameter_type', 'protocol', 'trait_id_buckler', 'unit_of_measure', 'description')
 			measurement_parameter_form = NewMeasurementParameterForm(initial=parameter_data[0])
 		context_dict['measurement_parameter_id'] = obj_id
 		context_dict['measurement_parameter_form'] = measurement_parameter_form
@@ -3161,7 +3088,8 @@ def datatable_measurement_data(request):
 	arr = []
 	for data in measurement_data:
 		arr.append({
-        	'experiment_name': data.obs_tracker.experiment.name,
+        	# 'experiment_name': data.obs_tracker.experiment.name,
+        	'experiment_name': data.experiment.name,
         	'obs_id': data.obs_tracker.obs_id,
         	'obs_url': data.obs_tracker.obs_id_url,
         	'username': data.user.username,
@@ -4113,11 +4041,14 @@ def log_data_online(request, data_type):
 						parameter = form.cleaned_data['parameter']
 						parameter_type = form.cleaned_data['parameter_type']
 						protocol = form.cleaned_data['protocol']
-						trait_id_buckler = form.cleaned_data['trait_id_buckler']
+						description = form.cleaned_data['description']
 						unit_of_measure = form.cleaned_data['unit_of_measure']
+						# ___! Below is debugging code that renders the form's POST information !___
+						# context_dict['form'] = form
+						# return render_to_response('lab/test.html', context_dict, context)
 
 						try:
-							new_parameter = MeasurementParameter.objects.get_or_create(parameter=parameter, parameter_type=parameter_type, protocol=protocol, trait_id_buckler=trait_id_buckler, unit_of_measure=unit_of_measure)
+							new_parameter = MeasurementParameter.objects.get_or_create(parameter=parameter, parameter_type=parameter_type, protocol=protocol, description=description, unit_of_measure=unit_of_measure)
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
@@ -4878,7 +4809,11 @@ def log_data_online(request, data_type):
 				for form in log_data_online_form_set:
 					try:
 						isolatestock_id = form.cleaned_data['isolatestock__isolatestock_id']
-						field = form.cleaned_data['field']
+						# field = form.cleaned_data['field']
+
+						# Temporarily disabled `Field` from isolatestocks form
+						field = Field.objects.get(id=1)
+
 						row_id = form.cleaned_data['obs_row__row_id']
 						plant_id = form.cleaned_data['obs_plant__plant_id']
 						seed_id = form.cleaned_data['stock__seed_id']
@@ -4977,6 +4912,7 @@ def log_data_online(request, data_type):
 
 	if data_type == 'measurement':
 		data_type_title = 'Load Measurements'
+		obs_tracker_found = False
 		LogDataOnlineFormSet = formset_factory(LogMeasurementsOnlineForm, extra=10)
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
@@ -4984,6 +4920,7 @@ def log_data_online(request, data_type):
 				sent = True
 				for form in log_data_online_form_set:
 					try:
+						experiment = form.cleaned_data['experiment']
 						observation_id = form.cleaned_data['observation_id']
 						measurement_parameter = form.cleaned_data['measurement_parameter']
 						user = form.cleaned_data['user']
@@ -5057,8 +4994,8 @@ def log_data_online(request, data_type):
 						except (ObsWell.DoesNotExist, ObsTracker.DoesNotExist):
 							pass
 						try:
-							obs_unit = Isolate.objects.get(isolate_id=observation_id)
-							obs_tracker = ObsTracker.objects.get(obs_entity_type='isolate', isolate=obs_unit)
+							obs_unit = IsolateStock.objects.get(isolatestock_id=observation_id)
+							obs_tracker = ObsTracker.objects.get(obs_entity_type='isolatestock', isolatestock=obs_unit)
 							obs_tracker_found = True
 						except (Isolate.DoesNotExist, ObsTracker.DoesNotExist):
 							pass
@@ -5071,7 +5008,7 @@ def log_data_online(request, data_type):
 
 						if obs_tracker_found == True:
 							try:
-								new_measurement, created = Measurement.objects.get_or_create(obs_tracker=obs_tracker, measurement_parameter=measurement_parameter, user=user, time_of_measurement=time_of_measurement, value=value, comments=measurement_comments)
+								new_measurement, created = Measurement.objects.get_or_create(obs_tracker=obs_tracker, measurement_parameter=measurement_parameter, user=user, time_of_measurement=time_of_measurement, value=value, comments=measurement_comments, experiment=experiment)
 							except Exception as e:
 								print("Error: %s %s" % (e.message, e.args))
 								failed = True
@@ -5090,11 +5027,12 @@ def log_data_online(request, data_type):
 	data_type_to_url = {
 	'seed_packet': 'seed_inventory', 'seed_inventory':'seed_inventory',
 	'disease': 'data/disease_info/', 'isolatestock': 'isolatestock_inventory',
-	'isolate': 'isolatestock_inventory'
+	'isolate': 'isolatestock_inventory', 'parameter': 'data/measurement_parameter/'
 	}
 
-	# 'data_url' handles the redirect link after a form has been successfully completed.
-	if data_type in ['seed_packet', 'disease', 'isolatestock', 'isolate', 'seed_inventory']:
+	# 'data_url' handles the redirect link after a form has been successfully completed
+	# Some data_types have intuitive urls, others are less straightforward
+	if data_type in data_type_to_url.keys():
 		context_dict['data_url'] = data_type_to_url[data_type]
 	context_dict['log_data_online_form_set'] = log_data_online_form_set
 	context_dict['data_type'] = data_type
