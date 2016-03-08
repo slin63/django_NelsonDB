@@ -3,7 +3,7 @@
 
 </div>
 <div class="bg-success" style="padding:15px">
-    <h3>Change Log:</h3>
+    {% comment %} <h3>Change Log:</h3>
         <ul>
             <li><b>2/8/2016</b>: Pushed site to production server, updated templates </br>Added Changelog / Issues page</li>
             <li><b>2/9/2016</b>: 500 Errors fixed for People and Help page</li>
@@ -15,11 +15,20 @@
             <li><b>2/21/2016</b>: Database update complete, string changes underway</li>
             <li><b>2/22/2016</b>: IsolateStock and Isolate changes complete, testing underway</li>
         </ul>
+    {% endcomment %}
+    <h3>Current Goals - <b>Week of 03/07/2016</b>:</h3>
+        <ul>
+            <li><mark>Get .csv uploads working!</li></mark>
+            <li>Remove <em>field</em> from IsolateStock form</li>
+            <li>Reorder IsolateStock form fields</li>
+            <li>Remove the Required tag from the Pedigree Field, add Required tag to Seed Name</li>
+            <li>Replace Buckler Trait ID with "detailed parameter name" OR "description"</li>
+            <li>Fix 500 error when using a non-existent model</li>
+            <li>Associate it with an experiment, not through a model (?) </li>
+        </ul>
     <h3>Issues:</h3>
         <ul>
-            <li>Seed stock upload doesn’t work if “No Field” is used</li>
-            <li>Isolate “Used For” table lists all items in database</li>
-            <li>Items cannot be deleted through Django admin page</li>
+            <li>.csv upload forms are not updated to match new model fields</li>
         </ul>
 
     <h3>Contact:</h3>
