@@ -1,4 +1,3 @@
-
 import os, tempfile, zipfile
 import csv
 import loader_scripts
@@ -287,7 +286,7 @@ def experiment(request, experiment_name_url):
 			context_dict['stockpackets_collected'] = stockpackets_collected
 
 			try:
-				measurement_data = Measurement.objects.filter(obs_tracker__experiment__name=experiment_name)
+				measurement_data = Measurement.objects.filter(experiment__name=experiment_name)
 			except Measurement.DoesNotExist:
 				measurement_data = None
 			context_dict['measurement_data'] = measurement_data
@@ -967,7 +966,7 @@ def edit_info(request, obj_type, obj_id):
 		context_dict['measurement_parameter_id'] = obj_id
 		context_dict['measurement_parameter_form'] = measurement_parameter_form
 		context_dict['logged_in_user'] = request.user.username
-		return render_to_response('lab/edit_measurement_parameter.html', context_dict, context)
+		return render_to_response('lab/measurement/edit_measurement_parameter.html', context_dict, context)
 
 	elif obj_type == 'medium':
 		if request.method == 'POST':
@@ -1490,7 +1489,7 @@ def single_parameter_info(request, parameter_id):
 		parameter_info = None
 	context_dict['parameter_info'] = parameter_info
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/measurement_parameter.html', context_dict, context)
+	return render_to_response('lab/measurement/measurement_parameter.html', context_dict, context)
 
 @login_required
 def single_medium_info(request, medium_id):
@@ -3248,7 +3247,7 @@ def show_all_measurement_parameter(request):
 
 def find_measurement_from_experiment(experiment_name):
 	try:
-		measurement_data = Measurement.objects.filter(obs_tracker__experiment__name=experiment_name)
+		measurement_data = Measurement.objects.filter(experiment__name=experiment_name)
 	except Measurement.DoesNotExist:
 		measurement_data = None
 	return measurement_data
@@ -3264,7 +3263,7 @@ def measurement_data_from_experiment(request, experiment_name):
 	context_dict['measurement_data'] = measurement_data
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/measurement_experiment_data.html', context_dict, context)
+	return render_to_response('lab/measurement/measurement_experiment_data.html', context_dict, context)
 
 def separations_measurement_data_from_experiment(request, experiment_name):
 	context = RequestContext(request)
@@ -5715,7 +5714,7 @@ def measurement_data_keyword_browse(request, keyword):
 		m = make_obs_tracker_info(m.obs_tracker)
 	context_dict['measurement_data'] = measurement_data
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/measurement_data.html', context_dict, context)
+	return render_to_response('lab/measurement/measurement_data.html', context_dict, context)
 
 @login_required
 def upload_online(request, template_type):

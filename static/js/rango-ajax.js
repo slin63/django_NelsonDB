@@ -1300,7 +1300,7 @@ $(document).ready(function() {
 				},
 				{ "mData": "value"},
 				{ "mData": "unit_of_measure"},
-				{ "mData": "trait_id_buckler"},
+				// { "mData": "trait_id_buckler"},
 				{ "mData": "comments"},
 			],
 		});
