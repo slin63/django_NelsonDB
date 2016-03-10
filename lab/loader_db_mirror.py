@@ -1118,7 +1118,7 @@ def taxonomy_hash_mirror():
 
     taxonomy_file = Taxonomy.objects.all()
     for row in taxonomy_file:
-        taxonomy_hash = row.binomial + row.species + row.population + row.common_name + row.alias + row.race + row.subtaxa
+        taxonomy_hash = row.binomial + row.population + row.common_name + row.alias + row.race + row.subtaxa
         taxonomy_hash_table[taxonomy_hash] = row.id
     return taxonomy_hash_table
 

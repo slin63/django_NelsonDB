@@ -3554,7 +3554,7 @@ def isolatestock_loader_prep(upload_file, user):
     start = time.clock()
 
     isolatestock_new = OrderedDict({})
-    #--- Key = (isolatestock_table_id, passport_id, location_id, disease_info_id, isolatestock_id, isolatestock_name, plant_organ, comments)
+    #--- Key = (isolatestock_table_id, passport_id, locatality_id, disease_info_id, isolatestock_id, isolatestock_name, plant_organ, comments)
     #--- Value = (isolatestock_table_id)
     passport_new = OrderedDict({})
     #--- Key = (passport_id, collecting_id, people_id, taxonomy_id)
@@ -3598,6 +3598,7 @@ def isolatestock_loader_prep(upload_file, user):
     experiment_name_table = loader_db_mirror.experiment_name_mirror()
     field_name_table = loader_db_mirror.field_name_mirror()
     disease_name_table = loader_db_mirror.disease_name_mirror()
+    locality_id_table = loader_db_mirror.locality_id_mirror()
     location_name_table = loader_db_mirror.location_name_mirror()
 
     error_count = 0
@@ -3610,7 +3611,9 @@ def isolatestock_loader_prep(upload_file, user):
     well_id_error = OrderedDict({})
     dna_id_error = OrderedDict({})
     microbe_id_error = OrderedDict({})
-    locality_name_error = OrderedDict({})
+    locality_id_error = OrderedDict({})
+    location_name_error = OrderedDict({})
+    collection_user_error = OrderedDict({})
     disease_common_name_error = OrderedDict({})
     field_name_error = OrderedDict({})
     collecting_hash_exists = OrderedDict({})
@@ -3621,29 +3624,50 @@ def isolatestock_loader_prep(upload_file, user):
     obs_tracker_hash_exists = OrderedDict({})
 
     isolatestock_file = csv.DictReader(upload_file)
+    # ___! Below is debugging code that renders the form's POST information !___
+    # from django.shortcuts import render_to_response
+    # context_dict = {}
+    # context_dict['form'] = isolatestock_file
+    # return render_to_response('lab/testcases/test.html', context_dict)
+    # exit()
     for row in isolatestock_file:
         isolatestock_id = row["IsolateStock ID"]
-        experiment_name = row["Experiment Name"]
+        # experiment_name = row["Experiment Name"]
+        experiment_name = "No_Experiment"
+
         isolatestock_name = row["IsolateStock Name"]
+        locality_id = row["Locality ID"]
         plant_organ = row["Plant Organ"]
         isolatestock_comments = row["IsolateStock Comments"]
-        binomial = row["binomial"]
-        species = row["Species"]
+        binomial = row["Binomial"]
+        # species = row["Species"]
         population = row["Population"]
         alias = row["Alias"]
         race = row["Race"]
         subtaxa = row["Subtaxa"]
-        disease_common_name = row["Disease Common Name"]
+        # disease_common_name = row["Disease Common Name"]
+        disease_common_name = "No Disease"
+
         row_id = row["Source Row ID"]
-        field_name = row["Source Field Name"]
+        # field_name = row["Source Field Name"]
+        field_name = "No Field"
+
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
         tissue_id = row["Source Tissue ID"]
-        culture_id = row["Source Culture ID"]
-        microbe_id = row["Source Microbe ID"]
-        plate_id = row["Source Plate ID"]
-        well_id = row["Source Well ID"]
-        dna_id = row["Source DNA ID"]
+
+        culture_id = ''
+        microbe_id = ''
+        plate_id = ''
+        well_id = ''
+        dna_id = ''
+        location_name = "No Location"
+
+        # culture_id = row["Source Culture ID"]
+        # microbe_id = row["Source Microbe ID"]
+        # plate_id = row["Source Plate ID"]
+        # well_id = row["Source Well ID"]
+        # dna_id = row["Source DNA ID"]
         collection_username = row["Username"]
         collection_date = row["Collection Date"]
         collection_method = row["Method"]
@@ -3654,8 +3678,14 @@ def isolatestock_loader_prep(upload_file, user):
         phone = row["Phone"]
         email = row["Email"]
         source_comments = row["Source Comments"]
-        locality_name = row["Locality Name"]
+        locality_id = row["Locality ID"]
         user = user
+
+        # Catches empty row errors
+        if isolatestock_id == '':
+            break
+
+        error_tuple = (isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, locality_id)
 
         if seed_id != '':
             seed_id_fix = seed_id + '\r'
@@ -3664,7 +3694,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif seed_id_fix in seed_id_table:
                 stock_id = seed_id_table[seed_id_fix][0]
             else:
-                seed_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name, building_name, room, shelf, column, box_name, location_comments)] = error_count
+                seed_id_error[error_tuple] = error_count
                 error_count = error_count + 1
                 stock_id = 1
         else:
@@ -3677,7 +3707,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif field_name_fix in field_name_table:
                 field_id = field_name_table[field_name_fix][0]
             else:
-                field_name_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                field_name_error[error_tuple] = error_count
                 error_count = error_count + 1
                 field_id = 1
         else:
@@ -3690,7 +3720,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif location_name_fix in location_name_table:
                 location_id = location_name_table[location_name_fix][0]
             else:
-                location_name_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                location_name_error[error_tuple] = error_count
                 error_count = error_count + 1
                 location_id = 1
         else:
@@ -3703,7 +3733,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif row_id_fix in row_id_table:
                 obs_row_id = row_id_table[row_id_fix][0]
             else:
-                row_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                row_id_error[error_tuple] = error_count
                 error_count = error_count + 1
                 obs_row_id = 1
         else:
@@ -3716,7 +3746,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif plant_id_fix in plant_id_table:
                 obs_plant_id = plant_id_table[plant_id_fix][0]
             else:
-                plant_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                plant_id_error[error_tuple] = error_count
                 error_count = error_count + 1
                 obs_plant_id = 1
         else:
@@ -3729,7 +3759,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif tissue_id_fix in tissue_id_table:
                 obs_tissue_id = tissue_id_table[tissue_id_fix][0]
             else:
-                tissue_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                tissue_id_error[error_tuple] = error_count
                 error_count = error_count + 1
                 obs_tissue_id = 1
         else:
@@ -3742,7 +3772,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif culture_id_fix in culture_id_table:
                 obs_culture_id = culture_id_table[culture_id_fix][0]
             else:
-                culture_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                culture_id_error[error_tuple] = error_count
                 error_count = error_count + 1
                 obs_culture_id = 1
         else:
@@ -3755,7 +3785,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif plate_id_fix in plate_id_table:
                 obs_plate_id = plate_id_table[plate_id_fix][0]
             else:
-                plate_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                plate_id_error[error_tuple] = error_count
                 error_count = error_count + 1
                 obs_plate_id = 1
         else:
@@ -3768,7 +3798,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif microbe_id_fix in microbe_id_table:
                 obs_microbe_id = microbe_id_table[microbe_id_fix][0]
             else:
-                microbe_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                microbe_id_error[error_tuple] = error_count
                 error_count = error_count + 1
                 obs_microbe_id = 1
         else:
@@ -3781,7 +3811,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif well_id_fix in well_id_table:
                 obs_well_id = well_id_table[well_id_fix][0]
             else:
-                well_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                well_id_error[error_tuple] = error_count
                 error_count = error_count + 1
                 obs_well_id = 1
         else:
@@ -3794,7 +3824,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif dna_id_fix in dna_id_table:
                 obs_dna_id = dna_id_table[dna_id_fix][0]
             else:
-                dna_id_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                dna_id_error[error_tuple] = error_count
                 error_count = error_count + 1
                 obs_dna_id = 1
         else:
@@ -3807,7 +3837,7 @@ def isolatestock_loader_prep(upload_file, user):
             elif disease_common_name_fix in disease_name_table:
                 disease_info_id = disease_name_table[disease_common_name_fix][0]
             else:
-                disease_common_name_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name)] = error_count
+                disease_common_name_error[error_tuple] = error_count
                 error_count = error_count + 1
                 disease_info_id = 1
         else:
@@ -3819,7 +3849,7 @@ def isolatestock_loader_prep(upload_file, user):
             try:
                 collection_user_id = user_hash_table[collection_username]
             except KeyError:
-                collection_user_error[(isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, species, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, location_name, building_name, room, shelf, column, box_name, location_comments)] = error_count
+                collection_user_error[error_tuple] = error_count
                 error_count = error_count + 1
                 collection_user_id = user_hash_table['unknown_person']
 
@@ -3840,14 +3870,14 @@ def isolatestock_loader_prep(upload_file, user):
             temp_collecting_id = 1
             error_count = error_count + 1
 
-        taxonomy_hash = binomial + species + population + 'IsolateStock' + alias + race + subtaxa
+        taxonomy_hash = binomial + population + 'IsolateStock' + alias + race + subtaxa
         taxonomy_hash_fix = taxonomy_hash + '\r'
         if taxonomy_hash not in taxonomy_hash_table and taxonomy_hash_fix not in taxonomy_hash_table:
             taxonomy_hash_table[taxonomy_hash] = taxonomy_id
-            taxonomy_new[(taxonomy_id, binomial, species, population, 'IsolateStock', alias, race, subtaxa)] = taxonomy_id
+            taxonomy_new[(taxonomy_id, binomial, population, 'IsolateStock', alias, race, subtaxa)] = taxonomy_id
             taxonomy_id = taxonomy_id + 1
         else:
-            taxonomy_hash_exists[(binomial, species, population, 'IsolateStock', alias, race, subtaxa)] = taxonomy_id
+            taxonomy_hash_exists[(binomial, population, 'IsolateStock', alias, race, subtaxa)] = taxonomy_id
 
         if taxonomy_hash in taxonomy_hash_table:
             temp_taxonomy_id = taxonomy_hash_table[taxonomy_hash]
@@ -3916,14 +3946,14 @@ def isolatestock_loader_prep(upload_file, user):
             temp_isolatestock_id = 1
             error_count = error_count + 1
 
-        obs_tracker_isolatestock_hash = 'isolatestock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(temp_isolatestock_id) + str(locality_id) + str(1) + str(obs_culture_id) + str(obs_dna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_row_id) + str(1) + str(obs_tissue_id) + str(obs_well_id) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_isolatestock_hash = 'isolatestock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(temp_isolatestock_id) + str(1) + str(1)  + str(1) + str(obs_culture_id) + str(obs_dna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_row_id) + str(1) + str(obs_tissue_id) + str(obs_well_id) + str(stock_id) + str(user_hash_table[user.username])
         obs_tracker_isolatestock_hash_fix = obs_tracker_isolatestock_hash + '\r'
         if obs_tracker_isolatestock_hash not in obs_tracker_hash_table and obs_tracker_isolatestock_hash_fix not in obs_tracker_hash_table:
             obs_tracker_hash_table[obs_tracker_isolatestock_hash] = obs_tracker_id
-            obs_tracker_new[(obs_tracker_id, 'isolatestock', experiment_name_table[experiment_name][0], field_id, 1, temp_isolatestock_id, locality_id, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'isolatestock', experiment_name_table[experiment_name][0], field_id, temp_isolatestock_id, 1, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
             obs_tracker_id = obs_tracker_id + 1
         else:
-            obs_tracker_hash_exists[('isolatestock', experiment_name_table[experiment_name][0], field_id, 1, temp_isolatestock_id, locality_id, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_hash_exists[('isolatestock', experiment_name_table[experiment_name][0], field_id, temp_isolatestock_id, 1, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
     end = time.clock()
     stats = {}
@@ -3947,7 +3977,7 @@ def isolatestock_loader_prep(upload_file, user):
     results_dict['microbe_id_error'] = microbe_id_error
     results_dict['dna_id_error'] = dna_id_error
     results_dict['well_id_error'] = well_id_error
-    results_dict['locality_name_error'] = locality_name_error
+    results_dict['locality_id_error'] = locality_id_error
     results_dict['collecting_hash_exists'] = collecting_hash_exists
     results_dict['people_hash_exists'] = people_hash_exists
     results_dict['taxonomy_hash_exists'] = taxonomy_hash_exists
@@ -3956,6 +3986,13 @@ def isolatestock_loader_prep(upload_file, user):
     results_dict['obs_tracker_hash_exists'] = obs_tracker_hash_exists
     results_dict['stats'] = stats
     return results_dict
+
+COLLECTING_TABLE = ['collecting_id', 'user_id', 'collection_date', 'collection_method', 'comments']
+PEOPLE_TABLE = ['people_id', 'first_name', 'last_name', 'organization', 'phone', 'email', 'comments']
+TAXONOMY_TABLE = ['taxonomy_id', 'binomial', 'population', 'common_name', 'alias', 'race', 'subtaxa']
+PASSPORT_TABLE = ['passport_id', 'collecting_id', 'people_id', 'taxonomy_id']
+OBSTRACKER_TABLE = ['obs_tracker_id', 'obs_entity_type', 'experiment_id', 'field_id', 'isolatestock_id', 'location_id', 'maize_sample_id', 'obs_culture_id', 'obs_dna_id', 'obs_env_id', 'obs_extract_id', 'obs_microbe_id', 'obs_plant_id', 'obs_plate_id', 'obs_row_id', 'obs_sample_id', 'obs_tissue_id', 'obs_well_id', 'stock_id', 'user_id']
+ERROR_TABLE = ['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name']
 
 def isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type):
     response = HttpResponse(content_type='text/csv')
@@ -3967,94 +4004,94 @@ def isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type)
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New IsolateStock Table'])
-    writer.writerow(['isolatestock_table_id', 'passport_id', 'location_id', 'disease_info_id', 'isolatestock_id', 'isolatestock_name', 'plant_organ', 'comments'])
+    writer.writerow(['isolatestock_table_id', 'passport_id', 'locality_id', 'disease_info_id', 'isolatestock_id', 'isolatestock_name', 'plant_organ', 'comments'])
     for key in results_dict['isolatestock_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Collecting Table'])
-    writer.writerow(['collecting_id', 'user_id', 'collection_date', 'collection_method', 'comments'])
+    writer.writerow(COLLECTING_TABLE)
     for key in results_dict['collecting_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New People Table'])
-    writer.writerow(['people_id', 'first_name', 'last_name', 'organization', 'phone', 'email', 'comments'])
+    writer.writerow(PEOPLE_TABLE)
     for key in results_dict['people_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Taxonomy Table'])
-    writer.writerow(['taxonomy_id', 'binomial', 'species', 'population', 'common_name', 'alias', 'race', 'subtaxa'])
+    writer.writerow(TAXONOMY_TABLE)
     for key in results_dict['taxonomy_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Passport Table'])
-    writer.writerow(['passport_id', 'collecting_id', 'people_id', 'taxonomy_id'])
+    writer.writerow(PASSPORT_TABLE)
     for key in results_dict['passport_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New ObsTracker Table'])
-    writer.writerow(['obs_tracker_id', 'obs_entity_type', 'experiment_id', 'field_id', 'isolate_id', 'isolatestock_id', 'location_id', 'maize_sample_id', 'obs_culture_id', 'obs_dna_id', 'obs_env_id', 'obs_extract_id', 'obs_microbe_id', 'obs_plant_id', 'obs_plate_id', 'obs_row_id', 'obs_sample_id', 'obs_tissue_id', 'obs_well_id', 'stock_id', 'user_id'])
+    writer.writerow(OBSTRACKER_TABLE)
     for key in results_dict['obs_tracker_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['---------------------------------------------------------------------------------------------------'])
     writer.writerow([''])
     writer.writerow(['Seed ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(ERROR_TABLE)
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Row ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(ERROR_TABLE)
     for key in results_dict['row_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plant ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(ERROR_TABLE)
     for key in results_dict['plant_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Tissue ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(ERROR_TABLE)
     for key in results_dict['tissue_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Culture ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(ERROR_TABLE)
     for key in results_dict['culture_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Microbe ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(ERROR_TABLE)
     for key in results_dict['microbe_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plate ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(ERROR_TABLE)
     for key in results_dict['plate_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Well ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(ERROR_TABLE)
     for key in results_dict['well_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['DNA ID Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(ERROR_TABLE)
     for key in results_dict['dna_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Field Name Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(ERROR_TABLE)
     for key in results_dict['field_name_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Location Name Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
-    for key in results_dict['locality_name_error'].iterkeys():
+    writer.writerow(ERROR_TABLE)
+    for key in results_dict['locality_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Disease Common Name Errors'])
-    writer.writerow(['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name'])
+    writer.writerow(ERROR_TABLE)
     for key in results_dict['disease_common_name_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
