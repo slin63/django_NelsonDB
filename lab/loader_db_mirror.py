@@ -100,7 +100,7 @@ def locality_table_mirror():
 
     locality_file = Locality.objects.all()
     for row in locality_file:
-        locality_table[(row.id, row.city, row.state, row.country, row.zipcode)] = (row.id)
+        locality_table[(row.id, row.city, row.county, row.state, row.country, row.zipcode)] = (row.id)
     return locality_table
 
 def locality_hash_mirror():
@@ -110,7 +110,7 @@ def locality_hash_mirror():
 
     locality_file = Locality.objects.all()
     for row in locality_file:
-        locality_hash = row.city + row.state + row.country + row.zipcode
+        locality_hash = row.city + row.state + row.county + row.country + row.zipcode
         locality_hash.rstrip('\r')
         locality_hash.rstrip('\n')
         locality_hash_table[locality_hash] = row.id

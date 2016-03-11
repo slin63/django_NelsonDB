@@ -3703,6 +3703,9 @@ def isolatestock_loader_prep(upload_file, user):
             else:
                 field_id = 1
 
+            if locality_id != '':
+                locality_id = 1
+
             if location_name != '':
                 location_name_fix = location_name + '\r'
                 if location_name in location_name_table:
