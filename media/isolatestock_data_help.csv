@@ -8,7 +8,7 @@ DataBase Header Dictionary,,,,,,
 ,,,,,,
 IsolateStock Template,For recording information aobut isolatestocks.,,,,,
 Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
-Locality Name,1,0,0,lab_isolatestock,locality_name,The locality name for where the isolatestock was collected.
+Locality ID,1,0,0,lab_isolatestock,locality_id,The locality ID for where the isolatestock was collected.
 IsolateStock ID,0,1,1,lab_isolatestock,isolatestock_id,A unique ID in the format Af0001i. This is the ID that is printed on the isolatestock tubes. MUST BE UNIQUE
 IsolateStock Name,0,0,0,lab_isolatestock,isolatestock_name,A human readable name for the isolatestock.
 Plant Organ,0,0,0,lab_isolatestock,plant_organ,"The plant organ that the isolatestock came from, if relevant."
@@ -31,34 +31,3 @@ Last Name,0,0,0,lab_people,last_name,The last name of the person who provided th
 Phone,0,0,0,lab_people,phone,The phone of the person who provided the isolatestock. Leave blank if isolatestock not sourced from somewhere.
 Email,0,0,0,lab_people,email,The email of the person who provided the isolatestock. Leave blank if isolatestock not sourced from somewhere.
 Source Comments,0,0,0,lab_people,comments,Any additional comments about the isolatestock provider. Leave blank if isolatestock not sourced from somewhere.
-,,,,,,
-DEPENDENCIES,,,,,,
-Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
-Locality,1,1,0,lab_location,locality_id=Locality(locality).id,"The city, state, country, zipcode where the location is."
-Location Name,0,1,1,lab_location,location_name,A descriptive name for the location. MUST BE UNIQUE
-Building Name,0,0,0,lab_location,buiding_name,"The building name. Example: Plant Science, Emerson"
-Room,0,0,0,lab_location,room,The room number or name
-Shelf,0,0,0,lab_location,shelf,"The shelf in which the isolatestock is located. Example: 1, 2, 3"
-Column,0,0,0,lab_location,column,"The column in which the isolatestock is located. Example: A, B, C"
-Box Name,0,0,0,lab_location,box_name,The box which the isolatestock is in.
-Location Comments,0,0,0,lab_location,comments,Any additional comments about the location of the isolatestock.
-Locality Template,For recording information about a locality.,,,,,
-Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
-City,0,0,0,lab_locality,city,The locality's city name.
-State,0,0,0,lab_locality,state,The locality's state.
-County,0,0,0,lab_locality,county,The locality's county
-Country,0,0,0,lab_locality,country,The locality's country.
-Zipcode,0,0,0,lab_locality,zipcode,The locality's zipcode.
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
-,,,,,,
