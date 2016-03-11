@@ -5724,7 +5724,10 @@ def upload_online(request, template_type):
 		sent = True
 		upload_form = UploadQueueForm(request.POST, request.FILES)
 		if upload_form.is_valid():
-			new_upload_exp = upload_form.cleaned_data['experiment']
+			if upload_form.cleaned_data['experiment']:
+				new_upload_exp = upload_form.cleaned_data['experiment']
+			else:
+				new_upload_exp = 'No Experiment'
 			new_upload_user = upload_form.cleaned_data['user']
 			new_upload_filename = upload_form.cleaned_data['file_name']
 			new_upload_comments = upload_form.cleaned_data['comments']
