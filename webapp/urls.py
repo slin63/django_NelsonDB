@@ -1,8 +1,8 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, include, url, handler500
 from django.contrib import admin
 from django.conf import settings
 
-handler500 = 'lab.views.handler500'
+handler500 = 'lab.views.server_error'
 
 urlpatterns = patterns('',
     # Examples:
