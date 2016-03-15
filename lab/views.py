@@ -35,6 +35,11 @@ def encode_url(str):
 def decode_url(str):
 	return str.replace('_', ' ')
 
+def error_500(request):
+	response = render_to_response(template='errors/500.html', context_instance=RequestContext(request))
+	response.status_code = 500
+	return response
+
 def get_experiment_list(max_results=0, starts_with=''):
 	exp_list = []
 	if starts_with:
