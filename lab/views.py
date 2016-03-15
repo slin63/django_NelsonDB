@@ -4996,7 +4996,7 @@ def log_data_online(request, data_type):
 							obs_unit = IsolateStock.objects.get(isolatestock_id=observation_id)
 							obs_tracker = ObsTracker.objects.get(obs_entity_type='isolatestock', isolatestock=obs_unit)
 							obs_tracker_found = True
-						except (Isolate.DoesNotExist, ObsTracker.DoesNotExist):
+						except (IsolateStock.DoesNotExist, ObsTracker.DoesNotExist):
 							pass
 						try:
 							obs_unit = Stock.objects.get(seed_id=observation_id)

@@ -381,7 +381,7 @@ class IsolateStock(models.Model):
 
 
 class Isolate(models.Model):
-    isolate_id = models.CharField(max_length=200, unique=True)
+    isolate_id = models.CharField(max_length=200)
     isolatestock = models.ForeignKey(IsolateStock)
     location = models.ForeignKey(Location)
     stock_date = models.CharField(max_length=200, blank=True)
