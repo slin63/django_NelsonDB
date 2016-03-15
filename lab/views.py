@@ -65,6 +65,7 @@ def index(request):
 	else:
 		request.session['last_visit'] = str(datetime.now())
 		request.session['visits'] = 1
+	exit()
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/index.html', context_dict, context)
 
