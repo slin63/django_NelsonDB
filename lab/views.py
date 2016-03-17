@@ -35,6 +35,16 @@ def encode_url(str):
 def decode_url(str):
 	return str.replace('_', ' ')
 
+def server_error(request, template_name='errors/500.html'):
+    """
+    500 error handler.
+    Templates: `500.html`
+    Context: None
+    """
+    return render_to_response(template_name,
+        context_instance = RequestContext(request)
+    )
+
 def get_experiment_list(max_results=0, starts_with=''):
 	exp_list = []
 	if starts_with:
@@ -60,6 +70,9 @@ def index(request):
 	else:
 		request.session['last_visit'] = str(datetime.now())
 		request.session['visits'] = 1
+
+	this_will_throw_500error
+
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/index.html', context_dict, context)
 
