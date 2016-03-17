@@ -1148,7 +1148,7 @@ def obs_tracker_source_hash_mirror():
 
     source_file = ObsTrackerSource.objects.all()
     for row in source_file:
-        source_hash = str(row.source_obs_id) + str(row.target_obs_id) + row.relationship
+        source_hash = str(row.source_obs_id) + str(row.target_obs_id) + str(row.relationship)
         obs_tracker_source_hash_table[source_hash] = row.id
     return obs_tracker_source_hash_table
 
