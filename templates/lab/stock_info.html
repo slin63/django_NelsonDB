@@ -61,14 +61,12 @@
     <thead>
       <tr>
         <th>Binomial</th>
-        <th>Species</th>
         <th>Population</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td>{{ stock_info.passport.taxonomy.binomial }}</td>
-        <td>{{ stock_info.passport.taxonomy.species }}</td>
         <td>{{ stock_info.passport.taxonomy.population }}</td>
       </tr>
     </tbody>
@@ -90,16 +88,16 @@
         </tr>
       </thead>
       <tbody>
-        {% for collection in obs_tracker %}
-          {% if collection.obs_entity_type == 'stock' %}
+        {# {% for collection in obs_tracker %} #}
+          {# {% if collection.obs_entity_type == 'stock' %} #}
           <tr>
             <td><a href='/lab/profile/{{ stock_info.passport.collecting.user.username }}/'>{{ stock_info.passport.collecting.user }}</a></td>
             <td>{{ stock_info.passport.collecting.collection_date }}</td>
             <td>{{ stock_info.passport.collecting.collection_method }}</td>
             <td>{{ stock_info.passport.collecting.comments }}</td>
           </tr>
-          {% endif %}
-        {% endfor %}
+          {# {% endif %} #}
+        {# {% endfor %} #}
       </tbody>
     </table>
   {% else %}

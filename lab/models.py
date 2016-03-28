@@ -316,7 +316,7 @@ class Passport(models.Model):
     taxonomy = models.ForeignKey(Taxonomy)
 
     def __unicode__(self):
-        return self.taxonomy.genus
+        return self.taxonomy.binomial
 
 
 class Stock(models.Model):

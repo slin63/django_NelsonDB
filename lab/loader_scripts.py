@@ -90,7 +90,7 @@ def seed_stock_loader_prep(upload_file, user):
         stock_date = row["Stock Date"]
         inoculated = row["Inoculated"]
         stock_comments = row["Stock Comments"]
-        binomial = row["binomial"]
+        binomial = row["Binomial"]
         species = row["Species"]
         population = row["Population"]
         row_id = row["Row ID"]
@@ -107,194 +107,197 @@ def seed_stock_loader_prep(upload_file, user):
         email = row["Email"]
         source_comments = row["Source Comments"]
 
-        if row_id != '':
-            row_id_fix = row_id + '\r'
-            if row_id in row_id_table:
-                obs_row_id = row_id_table[row_id][0]
-            elif row_id_fix in row_id_table:
-                obs_row_id = row_id_table[row_id_fix][0]
+        # Catches empty rows
+
+        if seed_id != '':
+            if row_id != '':
+                row_id_fix = row_id + '\r'
+                if row_id in row_id_table:
+                    obs_row_id = row_id_table[row_id][0]
+                elif row_id_fix in row_id_table:
+                    obs_row_id = row_id_table[row_id_fix][0]
+                else:
+                    row_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
+                    error_count = error_count + 1
+                    obs_row_id = 1
             else:
-                row_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
-                error_count = error_count + 1
                 obs_row_id = 1
-        else:
-            obs_row_id = 1
 
-        if plant_id != '':
-            plant_id_fix = plant_id + '\r'
-            if plant_id in plant_id_table:
-                obs_plant_id = plant_id_table[plant_id][0]
-            elif plant_id_fix in plant_id_table:
-                obs_plant_id = plant_id_table[plant_id_fix][0]
+            if plant_id != '':
+                plant_id_fix = plant_id + '\r'
+                if plant_id in plant_id_table:
+                    obs_plant_id = plant_id_table[plant_id][0]
+                elif plant_id_fix in plant_id_table:
+                    obs_plant_id = plant_id_table[plant_id_fix][0]
+                else:
+                    plant_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
+                    error_count = error_count + 1
+                    obs_plant_id = 1
             else:
-                plant_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
-                error_count = error_count + 1
                 obs_plant_id = 1
-        else:
-            obs_plant_id = 1
 
-        if field_name != '':
-            field_name_fix = field_name + '\r'
-            if field_name in field_name_table:
-                field_id = field_name_table[field_name][0]
-            elif field_name_fix in field_name_table:
-                field_id = field_name_table[field_name_fix][0]
+            if field_name != '':
+                field_name_fix = field_name + '\r'
+                if field_name in field_name_table:
+                    field_id = field_name_table[field_name][0]
+                elif field_name_fix in field_name_table:
+                    field_id = field_name_table[field_name_fix][0]
+                else:
+                    field_name_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
+                    error_count = error_count + 1
+                    field_id = 1
             else:
-                field_name_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
-                error_count = error_count + 1
                 field_id = 1
-        else:
-            field_id = 1
 
-        if collection_username == '':
-            collection_username = 'unknown_person'
+            if collection_username == '':
+                collection_username = 'unknown_person'
 
-        collecting_hash = str(user_hash_table[collection_username]) + collection_date + collection_method + collection_comments
-        collecting_hash_fix = collecting_hash + '\r'
-        if collecting_hash not in collecting_hash_table and collecting_hash_fix not in collecting_hash_table:
-            collecting_hash_table[collecting_hash] = collecting_id
-            collecting_new[(collecting_id, user_hash_table[collection_username], collection_date, collection_method, collection_comments)] = collecting_id
-            collecting_id = collecting_id + 1
-        else:
-            collecting_hash_exists[(user_hash_table[collection_username], collection_date, collection_method, collection_comments)] = collecting_id
+            collecting_hash = str(user_hash_table[collection_username]) + collection_date + collection_method + collection_comments
+            collecting_hash_fix = collecting_hash + '\r'
+            if collecting_hash not in collecting_hash_table and collecting_hash_fix not in collecting_hash_table:
+                collecting_hash_table[collecting_hash] = collecting_id
+                collecting_new[(collecting_id, user_hash_table[collection_username], collection_date, collection_method, collection_comments)] = collecting_id
+                collecting_id = collecting_id + 1
+            else:
+                collecting_hash_exists[(user_hash_table[collection_username], collection_date, collection_method, collection_comments)] = collecting_id
 
-        if collecting_hash in collecting_hash_table:
-            temp_collecting_id = collecting_hash_table[collecting_hash]
-        elif collecting_hash_fix in collecting_hash_table:
-            temp_collecting_id = collecting_hash_table[collecting_hash_fix]
-        else:
-            temp_collecting_id = 1
-            error_count = error_count + 1
+            if collecting_hash in collecting_hash_table:
+                temp_collecting_id = collecting_hash_table[collecting_hash]
+            elif collecting_hash_fix in collecting_hash_table:
+                temp_collecting_id = collecting_hash_table[collecting_hash_fix]
+            else:
+                temp_collecting_id = 1
+                error_count = error_count + 1
 
-        people_hash = first_name + last_name + organization + phone + email + source_comments
-        people_hash_fix = people_hash + '\r'
-        if people_hash not in people_hash_table and people_hash_fix not in people_hash_table:
-            people_hash_table[people_hash] = people_id
-            people_new[(people_id, first_name, last_name, organization, phone, email, source_comments)] = people_id
-            people_id = people_id + 1
-        else:
-            people_hash_exists[(first_name, last_name, organization, phone, email, source_comments)] = people_id
+            people_hash = first_name + last_name + organization + phone + email + source_comments
+            people_hash_fix = people_hash + '\r'
+            if people_hash not in people_hash_table and people_hash_fix not in people_hash_table:
+                people_hash_table[people_hash] = people_id
+                people_new[(people_id, first_name, last_name, organization, phone, email, source_comments)] = people_id
+                people_id = people_id + 1
+            else:
+                people_hash_exists[(first_name, last_name, organization, phone, email, source_comments)] = people_id
 
-        if people_hash in people_hash_table:
-            temp_people_id = people_hash_table[people_hash]
-        elif people_hash_fix in people_hash_table:
-            temp_people_id = people_hash_table[people_hash_fix]
-        else:
-            temp_people_id = 1
-            error_count = error_count + 1
+            if people_hash in people_hash_table:
+                temp_people_id = people_hash_table[people_hash]
+            elif people_hash_fix in people_hash_table:
+                temp_people_id = people_hash_table[people_hash_fix]
+            else:
+                temp_people_id = 1
+                error_count = error_count + 1
 
-        taxonomy_hash = binomial + species + population + 'Maize' + '' + '' + ''
-        taxonomy_hash_fix = taxonomy_hash + '\r'
-        if taxonomy_hash not in taxonomy_hash_table and taxonomy_hash_fix not in taxonomy_hash_table:
-            taxonomy_hash_table[taxonomy_hash] = taxonomy_id
-            taxonomy_new[(taxonomy_id, binomial, species, population, 'Maize', '', '', '')] = taxonomy_id
-            taxonomy_id = taxonomy_id + 1
-        else:
-            taxonomy_hash_exists[(binomial, species, population, 'Maize', '', '', '')] = taxonomy_id
+            taxonomy_hash = binomial + population + 'Maize' + '' + '' + ''
+            taxonomy_hash_fix = taxonomy_hash + '\r'
+            if taxonomy_hash not in taxonomy_hash_table and taxonomy_hash_fix not in taxonomy_hash_table:
+                taxonomy_hash_table[taxonomy_hash] = taxonomy_id
+                taxonomy_new[(taxonomy_id, binomial, population, 'Maize', '', '', '')] = taxonomy_id
+                taxonomy_id = taxonomy_id + 1
+            else:
+                taxonomy_hash_exists[(binomial, population, 'Maize', '', '', '')] = taxonomy_id
 
-        if taxonomy_hash in taxonomy_hash_table:
-            temp_taxonomy_id = taxonomy_hash_table[taxonomy_hash]
-        elif taxonomy_hash_fix in taxonomy_hash_table:
-            temp_taxonomy_id = taxonomy_hash_table[taxonomy_hash_fix]
-        else:
-            temp_taxonomy_id = 1
-            error_count = error_count + 1
+            if taxonomy_hash in taxonomy_hash_table:
+                temp_taxonomy_id = taxonomy_hash_table[taxonomy_hash]
+            elif taxonomy_hash_fix in taxonomy_hash_table:
+                temp_taxonomy_id = taxonomy_hash_table[taxonomy_hash_fix]
+            else:
+                temp_taxonomy_id = 1
+                error_count = error_count + 1
 
-        passport_hash = str(temp_collecting_id) + str(temp_people_id) + str(temp_taxonomy_id)
-        passport_hash_fix = passport_hash + '\r'
-        if passport_hash not in passport_hash_table and passport_hash_fix not in passport_hash_table:
-            passport_hash_table[passport_hash] = passport_id
-            passport_new[(passport_id, collecting_hash_table[collecting_hash], people_hash_table[people_hash], taxonomy_hash_table[taxonomy_hash])] = passport_id
-            passport_id = passport_id + 1
-        else:
-            passport_hash_exists[(collecting_hash_table[collecting_hash], people_hash_table[people_hash], taxonomy_hash_table[taxonomy_hash])] = passport_id
+            passport_hash = str(temp_collecting_id) + str(temp_people_id) + str(temp_taxonomy_id)
+            passport_hash_fix = passport_hash + '\r'
+            if passport_hash not in passport_hash_table and passport_hash_fix not in passport_hash_table:
+                passport_hash_table[passport_hash] = passport_id
+                passport_new[(passport_id, collecting_hash_table[collecting_hash], people_hash_table[people_hash], taxonomy_hash_table[taxonomy_hash])] = passport_id
+                passport_id = passport_id + 1
+            else:
+                passport_hash_exists[(collecting_hash_table[collecting_hash], people_hash_table[people_hash], taxonomy_hash_table[taxonomy_hash])] = passport_id
 
-        if passport_hash in passport_hash_table:
-            temp_passport_id = passport_hash_table[passport_hash]
-        elif passport_hash_fix in passport_hash_table:
-            temp_passport_id = passport_hash_table[passport_hash_fix]
-        else:
-            temp_passport_id = 1
-            error_count = error_count + 1
+            if passport_hash in passport_hash_table:
+                temp_passport_id = passport_hash_table[passport_hash]
+            elif passport_hash_fix in passport_hash_table:
+                temp_passport_id = passport_hash_table[passport_hash_fix]
+            else:
+                temp_passport_id = 1
+                error_count = error_count + 1
 
-        stock_hash = str(temp_passport_id) + seed_id + seed_name + cross_type + pedigree + stock_status + stock_date + inoculated + stock_comments
-        stock_hash_fix = stock_hash + '\r'
-        if seed_id not in seed_id_table and seed_id + '\r' not in seed_id_table:
-            if stock_hash not in stock_hash_table and stock_hash_fix not in stock_hash_table:
-                stock_hash_table[stock_hash] = stock_id
-                stock_new[(stock_id, passport_hash_table[passport_hash], seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments)] = stock_id
-                seed_id_table[seed_id] = (stock_id, passport_hash_table[passport_hash], seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments)
-                stock_id = stock_id + 1
+            stock_hash = str(temp_passport_id) + seed_id + seed_name + cross_type + pedigree + stock_status + stock_date + inoculated + stock_comments
+            stock_hash_fix = stock_hash + '\r'
+            if seed_id not in seed_id_table and seed_id + '\r' not in seed_id_table:
+                if stock_hash not in stock_hash_table and stock_hash_fix not in stock_hash_table:
+                    stock_hash_table[stock_hash] = stock_id
+                    stock_new[(stock_id, passport_hash_table[passport_hash], seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments)] = stock_id
+                    seed_id_table[seed_id] = (stock_id, passport_hash_table[passport_hash], seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments)
+                    stock_id = stock_id + 1
+                else:
+                    stock_hash_exists[(passport_hash_table[passport_hash], seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments)] = stock_id
             else:
                 stock_hash_exists[(passport_hash_table[passport_hash], seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments)] = stock_id
-        else:
-            stock_hash_exists[(passport_hash_table[passport_hash], seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments)] = stock_id
 
-        if experiment_name == '':
-            experiment_name = 'No Experiment'
+            if experiment_name == '':
+                experiment_name = 'No Experiment'
 
-        if seed_id in seed_id_table:
-            temp_stock_id = seed_id_table[seed_id][0]
-        elif seed_id + '\r' in seed_id_table:
-            temp_stock_id = seed_id_table[seed_id + '\r'][0]
-        elif stock_hash in stock_hash_table:
-            temp_stock_id = stock_hash_table[stock_hash]
-        elif stock_hash_fix in stock_hash_table:
-            temp_stock_id = stock_hash_table[stock_hash_fix]
-        else:
-            temp_stock_id = 1
-            error_count = error_count + 1
-
-        if experiment_used == '1':
-            obs_tracker_stock_hash = 'stock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_row_id) + str(1) + str(1) + str(1) + str(temp_stock_id) + str(user_hash_table[user.username])
-            obs_tracker_stock_hash_fix = obs_tracker_stock_hash + '\r'
-            if obs_tracker_stock_hash not in obs_tracker_hash_table and obs_tracker_stock_hash_fix not in obs_tracker_hash_table:
-                obs_tracker_hash_table[obs_tracker_stock_hash] = obs_tracker_id
-                obs_tracker_new[(obs_tracker_id, 'stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
-                obs_tracker_id = obs_tracker_id + 1
+            if seed_id in seed_id_table:
+                temp_stock_id = seed_id_table[seed_id][0]
+            elif seed_id + '\r' in seed_id_table:
+                temp_stock_id = seed_id_table[seed_id + '\r'][0]
+            elif stock_hash in stock_hash_table:
+                temp_stock_id = stock_hash_table[stock_hash]
+            elif stock_hash_fix in stock_hash_table:
+                temp_stock_id = stock_hash_table[stock_hash_fix]
             else:
-                obs_tracker_hash_exists[('stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
-
-        if experiment_collected == '1':
-            obs_tracker_stock_hash = 'stock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_row_id) + str(1) + str(1) + str(1) + str(temp_stock_id) + str(user_hash_table[user.username])
-            obs_tracker_stock_hash_fix = obs_tracker_stock_hash + '\r'
-            if obs_tracker_stock_hash not in obs_tracker_hash_table and obs_tracker_stock_hash_fix not in obs_tracker_hash_table:
-                obs_tracker_hash_table[obs_tracker_stock_hash] = obs_tracker_id
-                obs_tracker_new[(obs_tracker_id, 'stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
-                obs_tracker_id = obs_tracker_id + 1
-            else:
-                obs_tracker_hash_exists[('stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
-
-            if obs_tracker_stock_hash in obs_tracker_hash_table:
-                temp_targetobs_id = obs_tracker_hash_table[obs_tracker_stock_hash]
-            elif obs_tracker_stock_hash_fix in obs_tracker_hash_table:
-                temp_targetobs_id = obs_tracker_hash_table[obs_tracker_stock_hash_fix]
-            else:
-                temp_targetobs_id = 1
+                temp_stock_id = 1
                 error_count = error_count + 1
 
-            obs_tracker_exp_hash = 'experiment' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(user_hash_table[user.username])
-            if obs_tracker_exp_hash not in obs_tracker_hash_table:
-                obs_tracker_hash_table[obs_tracker_exp_hash] = obs_tracker_id
-                obs_tracker_new[(obs_tracker_id, 'experiment', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, user_hash_table[user.username])] = obs_tracker_id
-                obs_tracker_id = obs_tracker_id + 1
+            if experiment_used == '1':
+                obs_tracker_stock_hash = 'stock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_row_id) + str(1) + str(1) + str(1) + str(temp_stock_id) + str(user_hash_table[user.username])
+                obs_tracker_stock_hash_fix = obs_tracker_stock_hash + '\r'
+                if obs_tracker_stock_hash not in obs_tracker_hash_table and obs_tracker_stock_hash_fix not in obs_tracker_hash_table:
+                    obs_tracker_hash_table[obs_tracker_stock_hash] = obs_tracker_id
+                    obs_tracker_new[(obs_tracker_id, 'stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
+                    obs_tracker_id = obs_tracker_id + 1
+                else:
+                    obs_tracker_hash_exists[('stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
 
-            obs_tracker_source_hash = str(obs_tracker_hash_table[obs_tracker_exp_hash]) + str(temp_targetobs_id) + 'stock_from_experiment'
-            if obs_tracker_source_hash not in obs_tracker_source_hash_table:
-                obs_tracker_source_hash_table[obs_tracker_source_hash] = obs_tracker_source_id
-                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_exp_hash], temp_targetobs_id, 'stock_from_experiment')] = obs_tracker_source_id
-                obs_tracker_source_id = obs_tracker_source_id + 1
-            else:
-                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_exp_hash], temp_targetobs_id, 'stock_from_experiment')] = obs_tracker_source_id
+            if experiment_collected == '1':
+                obs_tracker_stock_hash = 'stock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_row_id) + str(1) + str(1) + str(1) + str(temp_stock_id) + str(user_hash_table[user.username])
+                obs_tracker_stock_hash_fix = obs_tracker_stock_hash + '\r'
+                if obs_tracker_stock_hash not in obs_tracker_hash_table and obs_tracker_stock_hash_fix not in obs_tracker_hash_table:
+                    obs_tracker_hash_table[obs_tracker_stock_hash] = obs_tracker_id
+                    obs_tracker_new[(obs_tracker_id, 'stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
+                    obs_tracker_id = obs_tracker_id + 1
+                else:
+                    obs_tracker_hash_exists[('stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
 
-            if obs_row_id != 1:
-                obs_tracker_source_row_hash = str(obs_tracker_obs_row_id_table[obs_row_id][0]) + str(temp_targetobs_id) + 'stock_from_row'
-                if obs_tracker_source_row_hash not in obs_tracker_source_hash_table:
-                    obs_tracker_source_hash_table[obs_tracker_source_row_hash] = obs_tracker_source_id
-                    obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], temp_targetobs_id, 'stock_from_row')] = obs_tracker_source_id
+                if obs_tracker_stock_hash in obs_tracker_hash_table:
+                    temp_targetobs_id = obs_tracker_hash_table[obs_tracker_stock_hash]
+                elif obs_tracker_stock_hash_fix in obs_tracker_hash_table:
+                    temp_targetobs_id = obs_tracker_hash_table[obs_tracker_stock_hash_fix]
+                else:
+                    temp_targetobs_id = 1
+                    error_count = error_count + 1
+
+                obs_tracker_exp_hash = 'experiment' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(user_hash_table[user.username])
+                if obs_tracker_exp_hash not in obs_tracker_hash_table:
+                    obs_tracker_hash_table[obs_tracker_exp_hash] = obs_tracker_id
+                    obs_tracker_new[(obs_tracker_id, 'experiment', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, user_hash_table[user.username])] = obs_tracker_id
+                    obs_tracker_id = obs_tracker_id + 1
+
+                obs_tracker_source_hash = str(obs_tracker_hash_table[obs_tracker_exp_hash]) + str(temp_targetobs_id) + 'stock_from_experiment'
+                if obs_tracker_source_hash not in obs_tracker_source_hash_table:
+                    obs_tracker_source_hash_table[obs_tracker_source_hash] = obs_tracker_source_id
+                    obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_exp_hash], temp_targetobs_id, 'stock_from_experiment')] = obs_tracker_source_id
                     obs_tracker_source_id = obs_tracker_source_id + 1
                 else:
-                    obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], temp_targetobs_id, 'stock_from_row')] = obs_tracker_source_id
+                    obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_exp_hash], temp_targetobs_id, 'stock_from_experiment')] = obs_tracker_source_id
+
+                if obs_row_id != 1:
+                    obs_tracker_source_row_hash = str(obs_tracker_obs_row_id_table[obs_row_id][0]) + str(temp_targetobs_id) + 'stock_from_row'
+                    if obs_tracker_source_row_hash not in obs_tracker_source_hash_table:
+                        obs_tracker_source_hash_table[obs_tracker_source_row_hash] = obs_tracker_source_id
+                        obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], temp_targetobs_id, 'stock_from_row')] = obs_tracker_source_id
+                        obs_tracker_source_id = obs_tracker_source_id + 1
+                    else:
+                        obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], temp_targetobs_id, 'stock_from_row')] = obs_tracker_source_id
 
     end = time.clock()
     stats = {}
@@ -324,6 +327,9 @@ def seed_stock_loader_prep(upload_file, user):
 def seed_stock_loader_prep_output(results_dict, new_upload_exp, template_type):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="%s_%s_prep.csv"' % (new_upload_exp, template_type)
+
+    ERROR_TABLE_SEEDSTOCK = ['seed_id', 'seed_name', 'cross_type', 'pedigree', 'stock_status', 'stock_date', 'inoculated', 'stock_comments', 'binomial', 'species', 'population', 'row_id', 'field_name', 'plant_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'first_name', 'last_name', 'phone', 'email', 'source_comments']
+
     writer = csv.writer(response)
     writer.writerow(['Stats'])
     writer.writerow([''])
@@ -368,17 +374,17 @@ def seed_stock_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['---------------------------------------------------------------------------------------------------'])
     writer.writerow([''])
     writer.writerow(['Plant ID Errors'])
-    writer.writerow(['seed_id', 'seed_name', 'cross_type', 'pedigree', 'stock_status', 'stock_date', 'inoculated', 'stock_comments', 'binomial', 'species', 'population', 'row_id', 'field_name', 'plant_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'first_name', 'last_name', 'phone', 'email', 'source_comments'])
+    writer.writerow(ERROR_TABLE_SEEDSTOCK)
     for key in results_dict['plant_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Field Name Errors'])
-    writer.writerow(['seed_id', 'seed_name', 'cross_type', 'pedigree', 'stock_status', 'stock_date', 'inoculated', 'stock_comments', 'binomial', 'species', 'population', 'row_id', 'field_name', 'plant_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'first_name', 'last_name', 'phone', 'email', 'source_comments'])
+    writer.writerow(ERROR_TABLE_SEEDSTOCK)
     for key in results_dict['field_name_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Row ID Errors'])
-    writer.writerow(['seed_id', 'seed_name', 'cross_type', 'pedigree', 'stock_status', 'stock_date', 'inoculated', 'stock_comments', 'binomial', 'species', 'population', 'row_id', 'field_name', 'plant_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'first_name', 'last_name', 'phone', 'email', 'source_comments'])
+    writer.writerow(ERROR_TABLE_SEEDSTOCK)
     for key in results_dict['row_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -418,6 +424,7 @@ def seed_stock_loader(results_dict):
             try:
                 with transaction.atomic():
                     new_stock = Collecting.objects.create(id=key[0], user_id=key[1], collection_date=key[2], collection_method=key[3], comments=key[4])
+                    new_stock.save()
             except Exception as e:
                 print("Collecting Error: %s %s" % (e.message, e.args))
                 return False
@@ -425,13 +432,15 @@ def seed_stock_loader(results_dict):
             try:
                 with transaction.atomic():
                     new_stock = People.objects.create(id=key[0], first_name=key[1], last_name=key[2], organization=key[3], phone=key[4], email=key[5], comments=key[6])
+                    new_stock.save()
             except Exception as e:
                 print("People Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['taxonomy_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = Taxonomy.objects.create(id=key[0], binomial=key[1], species=key[2], population=key[3], common_name=key[4], alias=key[5], race=key[6], subtaxa=key[7])
+                    new_stock = Taxonomy.objects.create(id=key[0], binomial=key[1], population=key[2], common_name=key[3], alias=key[4], race=key[5], subtaxa=key[6])
+                    new_stock.save()
             except Exception as e:
                 print("Taxonomy Error: %s %s" % (e.message, e.args))
                 return False
@@ -439,6 +448,7 @@ def seed_stock_loader(results_dict):
             try:
                 with transaction.atomic():
                     new_stock = Passport.objects.create(id=key[0], collecting_id=key[1], people_id=key[2], taxonomy_id=key[3])
+                    new_stock.save()
             except Exception as e:
                 print("Passport Error: %s %s" % (e.message, e.args))
                 return False
@@ -446,13 +456,15 @@ def seed_stock_loader(results_dict):
             try:
                 with transaction.atomic():
                     new_stock = Stock.objects.create(id=key[0], passport_id=key[1], seed_id=key[2], seed_name=key[3], cross_type=key[4], pedigree=key[5], stock_status=key[6], stock_date=key[7], inoculated=key[8], comments=key[9])
+                    new_stock.save()
             except Exception as e:
                 print("Stock Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolatestock_id=key[4], location_id=key[5], maize_sample_id=key[6], obs_culture_id=key[7], obs_dna_id=key[8], obs_env_id=key[9], obs_extract_id=key[10], obs_microbe_id=key[11], obs_plant_id=key[12], obs_plate_id=key[13], obs_row_id=key[14], obs_sample_id=key[15], obs_tissue_id=key[16], obs_well_id=key[17], stock_id=key[18], user_id=key[19])
+                    new_stock.save()
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -460,6 +472,7 @@ def seed_stock_loader(results_dict):
             try:
                 with transaction.atomic():
                     new_stock = ObsTrackerSource.objects.create(id=key[0], source_obs_id=key[1], target_obs_id=key[2], relationship=key[3])
+                    new_stock.save()
             except Exception as e:
                 print("ObsTrackerSource Error: %s %s" % (e.message, e.args))
                 return False
