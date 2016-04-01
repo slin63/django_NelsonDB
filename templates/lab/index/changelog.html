@@ -16,51 +16,9 @@
                     on <i>{{ issue.created_at }}</i>
                 </small>
             </h4>{{ issue.body_html | safe }}</li>
+            <hr>
         {% endfor %}
     </ul>
-    {% comment %} <h3>Change Log:</h3>
-        <ul>
-            <li><b>2/8/2016</b>: Pushed site to production server, updated templates </br>Added Changelog / Issues page</li>
-            <li><b>2/9/2016</b>: 500 Errors fixed for People and Help page</li>
-            <li><b>2/10/2016</b>: Started working on <a href="https://drive.google.com/folderview?id=0B5gz9ZDwT2_IbnM5M2FiZ3hBdU0&usp=sharing">FCP documentation</a> <br/>Added redirect link after form completion</li>
-            <li><b>2/11/2016</b>: Profile picture uploads now work</li>
-            <li><b>2/14/2016</b>: Began working on IsolateStock page</li>
-            <li><b>2/15/2016</b>: IsolateStock placeholder page created</li>
-            <li><b>2/17/2016</b>: IsolateStock page finished, database updates underway</li>
-            <li><b>2/21/2016</b>: Database update complete, string changes underway</li>
-            <li><b>2/22/2016</b>: IsolateStock and Isolate changes complete, testing underway</li>
-        </ul>
-    {% endcomment %}
-
-    {% comment %}
-    <h3>Current Goals - <b>Week of 03/07/2016</b>:</h3>
-        <ol>
-            <li><mark>Get .csv uploads working for SeedStock, Measurements</li></mark>
-
-            <li>Add "Search All Model" search box to measurement data log_data_online</li>
-
-            <li>Create dynamic changelog and suggestion form</li>
-            <li><s>Fix 500 error when measurement uses an invalid model</li>
-            <li>Display seed packet PID in seed packet table</li>
-            <li>Remove unique tag from isolate_id field</li>
-            <li>Make loader_scripts automatically recognize nothing for locality field as "No Locality"</s> <b>Done: 03/15/2016</b>>
-            <s><li>
-            <li>Reorder IsolateStock form fields</li>
-            <li>Remove the Required tag from the Pedigree Field, add Required tag to Seed Name</li>
-            <li>Replace Buckler Trait ID with "detailed parameter name" OR "description"</li>
-            <li>Measurement Data - Fix 500 error when using a non-existent model</s> - <b>Done 03/07/2016</b></li>
-            <li><s>Associate Measurement Data with an experiment, not through a model (?) </li>
-            <li>Half done with above. . . need to find a way for the experiment to understand that the measurement is associated with it. </s> <b>Done 03/08/2016</b></li>
-        </ol>
-    <h3>Issues:</h3>
-        <ul>
-            <li>.csv upload forms are not updated to match new model fields</li>
-        </ul>
-
-    <h3>Contact:</h3><ul>
-            <li>
-        </ul>
-        {% endcomment %}
 </div>
 
 
