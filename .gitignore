@@ -63,4 +63,5 @@ media/files/
 media/chromatogram_files/
 media/fasta_files/
 media/profile_images/
-.idea/django_NelsonDB.iml
+.idea/*
+myvenv/*

@@ -26,6 +26,7 @@ from django.http import JsonResponse
 from django.utils.encoding import smart_str
 from django.core.servers.basehttp import FileWrapper
 from django.conf import settings
+from github3 import login
 import mimetypes
 import json
 
@@ -58,6 +59,26 @@ def get_experiment_list(max_results=0, starts_with=''):
 		exp.url = encode_url(exp.name)
 	return exp_list
 
+def collect_issues():
+	auth_git = login(token=settings.GIT_TOKEN)
+	user = 'slin63'
+	repo_name = 'django_NelsonDB'
+
+	repo = auth_git.repository(user, repo_name)
+
+	issue_list = []
+	iterator = repo.iter_issues(state='open')
+
+	[issue_list.append(issue) for issue in iterator.__iter__()]
+
+	# issue_string = ''
+
+	# for issue in issue_list:
+	#     issue_string += '%s %s:\n\t%s\n' % (issue.title, [label.name for label in issue.labels], issue.body)
+
+	return issue_list
+
+
 def index(request):
 	context = RequestContext(request)
 	context_dict = {}
@@ -70,6 +91,7 @@ def index(request):
 	else:
 		request.session['last_visit'] = str(datetime.now())
 		request.session['visits'] = 1
+	context_dict['issue_list'] = collect_issues()
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/index.html', context_dict, context)
 

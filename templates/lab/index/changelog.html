@@ -1,8 +1,23 @@
 <div class="hero-unit">
-    <h1>Changelog and Known Issues</h1>
+    <h1>Git Changelog and Known Issues</h1>
 
 </div>
 <div class="bg-success" style="padding:15px">
+    <ul>
+        {% for issue in issue_list %}
+            <li> <h4> <a href={{ issue.html_url }}>{{ issue.title }}</a>
+                <small>
+                    {% for label in issue.labels %}
+                        [{{ label.name | capfirst }}]
+                    {% empty %}
+                        No labels!
+                    {% endfor %}
+                    - opened by <i><a href="https://github.com/{{ issue.user }}/">{{ issue.user }}</a></i>
+                    on <i>{{ issue.created_at }}</i>
+                </small>
+            </h4>{{ issue.body_html | safe }}</li>
+        {% endfor %}
+    </ul>
     {% comment %} <h3>Change Log:</h3>
         <ul>
             <li><b>2/8/2016</b>: Pushed site to production server, updated templates </br>Added Changelog / Issues page</li>
@@ -16,6 +31,8 @@
             <li><b>2/22/2016</b>: IsolateStock and Isolate changes complete, testing underway</li>
         </ul>
     {% endcomment %}
+
+    {% comment %}
     <h3>Current Goals - <b>Week of 03/07/2016</b>:</h3>
         <ol>
             <li><mark>Get .csv uploads working for SeedStock, Measurements</li></mark>
@@ -26,8 +43,8 @@
             <li><s>Fix 500 error when measurement uses an invalid model</li>
             <li>Display seed packet PID in seed packet table</li>
             <li>Remove unique tag from isolate_id field</li>
-            <li>Make loader_scripts automatically recognize nothing for locality field as "No Locality"</s> <b>Done: 03/15/2016</b></li>
-            <s><li>Remove <em>field</em> from IsolateStock form</li>
+            <li>Make loader_scripts automatically recognize nothing for locality field as "No Locality"</s> <b>Done: 03/15/2016</b>>
+            <s><li>
             <li>Reorder IsolateStock form fields</li>
             <li>Remove the Required tag from the Pedigree Field, add Required tag to Seed Name</li>
             <li>Replace Buckler Trait ID with "detailed parameter name" OR "description"</li>
@@ -40,8 +57,10 @@
             <li>.csv upload forms are not updated to match new model fields</li>
         </ul>
 
-    <h3>Contact:</h3>
-        <ul>
-            <li>Email <em>slin63@illinois.edu</em> or <em>smideros@illinois.edu</em> with any other problems or for help.</li>
+    <h3>Contact:</h3><ul>
+            <li>
         </ul>
+        {% endcomment %}
 </div>
+
+
