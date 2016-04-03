@@ -70,7 +70,7 @@
           <tr>
             <!--<td><a href="{% url 'single_isolate_info' iso.id %}">{{ iso.isolate_id }}</a></td>-->
             <td>{{ iso.isolate_id }}</td>
-            <td><a href="{% url 'single_location_info' iso.location.id %}">{{ iso.location }}</a></td>
+            <td><a href="{% url 'single_location_info' iso.location.id %}">{{ iso.location.box_name }} - {{ iso.coordinate }}</a></td>
             <td>{{ iso.stock_date }}</td>
             <td>{{ iso.extract_color }}</td>
             <td>{{ iso.organism }}</td>
@@ -86,6 +86,7 @@
     <h3><small>No Associated Isolates</small></h3>
   {% endif %}
 </div>
+
 
 <div class="well well-sm">
 {% if isolatestock_info.passport.people.id != 1 and isolatestock_info.passport.people.id != 2 and isolatestock_info.passport.people.id != 35 %}

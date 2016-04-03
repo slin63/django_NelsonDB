@@ -29,9 +29,9 @@
     </thead>
     <tbody>
       <tr>
-        <<td><a href='/lab/isolate/{{isolate_info.id}}/'>{{ isolate_info.isolate_id }}</a></td>
+        <td><a href='/lab/isolate/{{isolate_info.id}}/'>{{ isolate_info.isolate_id }}</a></td>
         <td><a href="{% url 'single_isolatestock_info' isolate_info.isolatestock_id %}">{{ isolate_info.isolatestock }}</a></td>
-        <td><a href="{% url 'single_location_info' isolate_info.location_id %}">{{ isolate_info.location }}</a></td>
+        <td><a href="{% url 'single_location_info' isolate_info.location_id %}">{{ isolate_info.location }} - {{ isolate_info.coordinate }}</a></td>
         <td>{{ isolate_info.stock_date }}</td>
         <td>{{ isolate_info.extract_color }}</td>
         <td>{{ isolate_info.organism }}</td>

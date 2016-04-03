@@ -664,6 +664,8 @@ class LogIsolatesOnlineForm(forms.Form):
     isolate__isolatestock = forms.ModelChoiceField(queryset=IsolateStock.objects.all(), empty_label="--- Isolate Stock ---", help_text="Source IsolateStock ID:", required=True)
     location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Storage Location ---",
                                       help_text="Storage Location:", required=True)
+    isolate__coordinate = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Coordinate in storage box'}),
+                                          help_text="Box Coordinate:", required=False)
     isolate__stock_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Stock Date'}),
                                           help_text="Stock Date:", required=False)
     isolate__extract_color = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Extract Color'}),
@@ -680,6 +682,8 @@ class UpdateIsolatesOnlineForm(forms.Form):
         required=True)
     location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Storage Location ---",
                                       help_text="Storage Location:", required=True)
+    coordinate = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Coordinate in storage box'}),
+                                          help_text="Box Coordinate:", required=False)
     stock_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Stock Date'}),
                                           help_text="Stock Date:", required=False)
     extract_color = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Extract Color'}),
