@@ -297,7 +297,8 @@ class Location(models.Model):
     comments = models.CharField(max_length=1000, blank=True)
 
     def __unicode__(self):
-        return self.location_name
+        # return self.location_name
+        return self.box_name
 
 
 class Collecting(models.Model):
@@ -384,6 +385,7 @@ class Isolate(models.Model):
     isolate_id = models.CharField(max_length=200)
     isolatestock = models.ForeignKey(IsolateStock)
     location = models.ForeignKey(Location)
+    coordinate = models.CharField(max_length=200, blank=True)
     stock_date = models.CharField(max_length=200, blank=True)
     extract_color = models.CharField(max_length=200, blank=True)
     organism = models.CharField(max_length=200, blank=True)

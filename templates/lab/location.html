@@ -7,13 +7,13 @@
   <h1>Location<h1>
 {% if location_info %}
   <br/>
-  <h2>Location Name: {{ location_info.location_name }}</h2>
+  <h2>Box Name: {{location_info.box_name}}</h2>
 
   <p>Building Name: {{location_info.building_name}}</p>
   <p>Room: {{location_info.room}}</p>
   <p>Shelf: {{location_info.shelf}}</p>
   <p>Column: {{location_info.column}}</p>
-  <p>Box Name: {{location_info.box_name}}</p>
+  <p>Location Name: {{ location_info.location_name }}</p>
   <p>Comments: {{location_info.comments}}</p>
   <p>Locality City: {{location_info.locality.city}}</p>
   <p>Locality State: {{location_info.locality.state}}</p>
