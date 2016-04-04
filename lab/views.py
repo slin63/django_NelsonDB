@@ -60,18 +60,24 @@ def get_experiment_list(max_results=0, starts_with=''):
 	return exp_list
 
 def collect_issues():
-	auth_git = login(token=settings.GIT_TOKEN)
-	user = 'slin63'
-	repo_name = 'django_NelsonDB'
+    gh = login(token=settings.GIT_TOKEN) # Use your own GitAPI token here
+    user = 'slin63'
+    repo_name = 'django_NelsonDB'
 
-	repo = auth_git.repository(user, repo_name)
+    repo = gh.repository(user, repo_name)
 
-	issue_list = []
-	iterator = repo.iter_issues(state='open')
+    open_issues = []
+    iterator_open = repo.iter_issues(state='open')
 
-	[issue_list.append(issue) for issue in iterator.__iter__()]
+    [open_issues.append(issue) for issue in iterator_open.__iter__()]
 
-	return issue_list
+    closed_issues = []
+    iterator_closed = repo.iter_issues(state='closed', sort='closed')
+    [closed_issues.append(issue) for issue in iterator_closed.__iter__()]
+
+    issue_tuple = (open_issues, closed_issues[0:5]) # Only the last 5 closed issues
+
+    return issue_tuple
 
 def index(request):
 	context = RequestContext(request)
@@ -85,7 +91,7 @@ def index(request):
 	else:
 		request.session['last_visit'] = str(datetime.now())
 		request.session['visits'] = 1
-	context_dict['issue_list'] = collect_issues()
+	context_dict['issue_tuple'] = collect_issues()
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/index.html', context_dict, context)
 
