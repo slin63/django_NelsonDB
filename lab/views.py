@@ -26,7 +26,7 @@ from django.http import JsonResponse
 from django.utils.encoding import smart_str
 from django.core.servers.basehttp import FileWrapper
 from django.conf import settings
-from github3 import login
+from github3 import login as gitlogin
 import mimetypes
 import json
 
@@ -60,7 +60,7 @@ def get_experiment_list(max_results=0, starts_with=''):
 	return exp_list
 
 def collect_issues():
-    gh = login(token=settings.GIT_TOKEN) # Use your own GitAPI token here
+    gh = gitlogin(token=settings.GIT_TOKEN) # Use your own GitAPI token here
     user = 'slin63'
     repo_name = 'django_NelsonDB'
 
