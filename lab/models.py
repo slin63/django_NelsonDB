@@ -297,7 +297,6 @@ class Location(models.Model):
     comments = models.CharField(max_length=1000, blank=True)
 
     def __unicode__(self):
-        # return self.location_name
         return self.box_name
 
 
