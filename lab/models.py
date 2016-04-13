@@ -289,7 +289,7 @@ class ObsMicrobe(models.Model):
 class Location(models.Model):
     locality = models.ForeignKey(Locality)
     building_name = models.CharField(max_length=200, blank=True)
-    location_name = models.CharField(max_length=200, unique=True)
+    location_name = models.CharField(max_length=200, unique=False)
     room = models.CharField(max_length=200, blank=True)
     shelf = models.CharField(max_length=200, blank=True)
     column = models.CharField(max_length=200, blank=True)
@@ -385,6 +385,7 @@ class Isolate(models.Model):
     isolate_id = models.CharField(max_length=200)
     isolatestock = models.ForeignKey(IsolateStock)
     location = models.ForeignKey(Location)
+    locality = models.ForeignKey(Locality)
     coordinate = models.CharField(max_length=200, blank=True)
     stock_date = models.CharField(max_length=200, blank=True)
     extract_color = models.CharField(max_length=200, blank=True)

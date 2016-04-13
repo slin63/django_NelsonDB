@@ -59,6 +59,7 @@
             <th>Collection Date</th>
             <th>Extract Color</th>
             <th>Organism</th>
+            <th>Locality</th>
             <th>Comments</th>
             <th>Submitted By</th>
             <th>Update Link</th>
@@ -74,6 +75,7 @@
             <td>{{ iso.stock_date }}</td>
             <td>{{ iso.extract_color }}</td>
             <td>{{ iso.organism }}</td>
+            <td><a href="{% url 'single_locality_info' iso.locality.id %}">{{ iso.locality }}</a></td>
             <td>{{ iso.comments }}</td>
             <td>{{ iso.user }}</td>
             <td><a href="{% url 'update_isolate_info' iso.id %}">Update {{ iso }}</a></td>
