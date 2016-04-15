@@ -3598,6 +3598,8 @@ def isolatestock_loader_prep(upload_file, user):
     #--- Key (isolate_id, isolatestock, location, coordinate, stock_date, extract_color, organism, comments, user)
     #--- Value = (isolate_id)
     location_new = OrderedDict({})
+    #--- Key (box_name, building_name, room, location_name)
+    #--- Value = (None)
 
     user_hash_table = loader_db_mirror.user_hash_mirror()
     passport_hash_table = loader_db_mirror.passport_hash_mirror()
@@ -3684,10 +3686,13 @@ def isolatestock_loader_prep(upload_file, user):
 
         # Isolate sub-loading fields
         box_name = row["Box Name"]
+        location_name = row["Location Name"]
+        building_name = row["Building Name"]
+        room = row["Room"]
+
         coordinate_set = row["Coordinate"].split(", ")
 
         # Declaring blank fields
-        location_name = "No Location"
         experiment_name = "No_Experiment"
         disease_common_name = "No Disease"
         field_name = "No Field"
@@ -3980,7 +3985,7 @@ def isolatestock_loader_prep(upload_file, user):
 
             # Isolate sub-loaders
 
-            location_new[(box_name,)] = box_name
+            location_new[(box_name, building_name, room, location_name)] = box_name
 
             for coord in coordinate_set:
                 isolate_new[(isolatestock_id, temp_isolatestock_id, box_name, locality_id, coord, '', '', '', '', user)] = temp_isolatestock_id
@@ -3994,10 +3999,8 @@ def isolatestock_loader_prep(upload_file, user):
     results_dict['isolatestock_new'] = isolatestock_new
     results_dict['passport_new'] = passport_new
     results_dict['collecting_new'] = collecting_new
-
     results_dict['isolate_new'] = isolate_new
     results_dict['location_new'] = location_new
-
     results_dict['people_new'] = people_new
     results_dict['taxonomy_new'] = taxonomy_new
     results_dict['obs_tracker_new'] = obs_tracker_new
@@ -4036,13 +4039,16 @@ def isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type)
     writer.writerow(['isolatestock_table_id', 'passport_id', 'locality_id', 'disease_info_id', 'isolatestock_id', 'isolatestock_name', 'plant_organ', 'comments'])
     for key in results_dict['isolatestock_new'].iterkeys():
         writer.writerow(key)
-
+    writer.writerow([''])
+    writer.writerow(['New Location Table'])
+    writer.writerow(['box_name', 'building_name', 'room', 'location_name'])
+    for key in results_dict['location_new'].iterkeys():
+        writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Isolate Table'])
     writer.writerow(['IsolateStock', 'IsolateStock ID', 'Box Name', 'Locality ID', 'Coordinate', 'stock_date', 'extract_color', 'organism', 'comments', 'user'])
     for key in results_dict['isolate_new'].iterkeys():
         writer.writerow(key)
-
     writer.writerow([''])
     writer.writerow(['New Collecting Table'])
     writer.writerow(COLLECTING_TABLE)
@@ -4209,20 +4215,19 @@ def isolatestock_loader(results_dict):
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 success = False
-        # new_location = 1
         for key in results_dict['location_new'].iterkeys():
             try:
-                # print 'key = ', key
-                new_location = Location.objects.get_or_create(box_name=key[0], locality_id=1)[0]
-                new_location.save()
+                with transaction.atomic():
+                    new_location = Location.objects.get_or_create(box_name=key[0], building_name=key[1], room=key[2], location_name=key[3], locality_id=1)[0]
+                    new_location.save()
             except Exception as e:
                 print("Location Error: %s %s" % (e.message, e.args))
                 success = False
         for key in results_dict['isolate_new'].iterkeys():
             try:
-                # print 'box_name = ', new_location
-                new_isolate = Isolate.objects.get_or_create(isolate_id=key[0], isolatestock_id=key[1], location=Location.objects.get_or_create(box_name=key[2], locality_id=1)[0], locality_id=key[3], coordinate=key[4], user=key[9])[0]
-                new_isolate.save()
+                with transaction.atomic():
+                    new_isolate = Isolate.objects.get_or_create(isolate_id=key[0], isolatestock_id=key[1], location=Location.objects.get(box_name=key[2]), locality_id=key[3], coordinate=key[4], user=key[9])[0]
+                    new_isolate.save()
             except Exception as e:
                 print("Isolate Error: %s %s" % (e.message, e.args))
                 success = False
