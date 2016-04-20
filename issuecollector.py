@@ -2,6 +2,7 @@
 from github3 import login
 from webapp import settings
 from datetime import datetime
+import os
 
 
 def collect_issues():
@@ -105,7 +106,11 @@ def generate_issue_html(issue_list):
 
     return html_string
 
+
 if __name__ == '__main__':
     issues = collect_issues()
-    write_to_html(issues, "templates/lab/index/issues.html")
-    print "Es bueno!"
+    # Should return absolute path to output file
+    html_output = os.path.dirname(os.path.abspath(__file__)) + '/templates/lab/index/issues.html'
+    write_to_html(issues, html_output)
+
+
