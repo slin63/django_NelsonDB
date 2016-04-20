@@ -113,4 +113,3 @@ if __name__ == '__main__':
     html_output = os.path.dirname(os.path.abspath(__file__)) + '/templates/lab/index/issues.html'
     write_to_html(issues, html_output)
 
-
