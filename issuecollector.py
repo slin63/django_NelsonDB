@@ -52,7 +52,7 @@ def write_to_html(issue_set, output="issues.html"):
     issue_closed_header = """
         </br>
         <div class="hero-unit">
-            <h1>Clsed Changes and Issues:</h1>
+            <h1>Closed Changes and Issues:</h1>
         </div>
 
         <div class="bg-success" style="padding:15px">
@@ -108,4 +108,4 @@ def generate_issue_html(issue_list):
 if __name__ == '__main__':
     issues = collect_issues()
     write_to_html(issues, "templates/lab/index/issues.html")
-
+    print "Es bueno!"
