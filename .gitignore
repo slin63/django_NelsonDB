@@ -43,6 +43,7 @@ mine_project/mine.db
 *.xml
 *.pyc
 *~
+templates/lab/index/issues.html
 
 webapp/data_dump.json
 webapp/nelson_db.sql
