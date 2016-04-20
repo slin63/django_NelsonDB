@@ -1,33 +1,38 @@
-NelsonLab IsolateStock Invetory Template Help,,,,,,
-"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
-,,,,,,
-Template Name: isolatestock_inventory_v0.2,,,,,,
-Authored 07/01/2015,,,,,,
-,,,,,,
-DataBase Header Dictionary,,,,,,
-,,,,,,
-IsolateStock Template,For recording information aobut isolatestocks.,,,,,
-Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
-Locality ID,1,0,0,lab_isolatestock,locality_id,The locality ID for where the isolatestock was collected.
-IsolateStock ID,0,1,1,lab_isolatestock,isolatestock_id,A unique ID in the format Af0001i. This is the ID that is printed on the isolatestock tubes. MUST BE UNIQUE
-IsolateStock Name,0,0,0,lab_isolatestock,isolatestock_name,A human readable name for the isolatestock.
-Plant Organ,0,0,0,lab_isolatestock,plant_organ,"The plant organ that the isolatestock came from, if relevant."
-IsolateStock Comments,0,0,0,lab_isolatestock,comments,Any additional comments about the isolatestocks.
-Binomial,0,0,0,lab_taxonomy,Binomial,The binomial of the isolatestock.
-Alias,0,0,0,lab_taxonomy,alias,The isolatestock's alias.
-Race,0,0,0,lab_taxonomy,race,The isolatestock's race classification.
-Subtaxa,0,0,0,lab_taxonomy,subtaxa,The isolatestock's subtaxa classification.
-Source Row ID,1,0,0,lab_obstracker,obs_row_id = ObsRow(row_id).id,The Row ID from which the isolatestock was collected. Example 08PN0023. Leave blank if isolatestock not collected from a row.
-Source Plant ID,1,0,0,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,The Plant ID from which the isolatestock was collected. Example 08PN0023_001. Leave blank if isolatestock not collected from a plant.
-Source Seed ID,1,0,0,lab_obstracker,stock_id=Stock(seed_id).id,The Seed ID from which the isolatestock is associated. Leave blank if not applicable.
-Source Tissue ID,1,0,0,lab_obstracker,obs_tissue_id = ObsTissue(tissue_id).id,The Tissue ID from which the isolatestock was collected. Leave blank if isolatestock not collected from a tissue.
-Username,1,0,0,lab_collecting,user_id = User(username).id,The username of the person which collected the isolatestock. Example: firstname_lastname. Leave blank if isolatestock not collected.
-Collection Date,0,0,0,lab_collecting,collection_date,The date when the isolatestock was collected. Format 2015-01-30. Leave blank if isolatestock not collected
-Method,0,0,0,lab_collecting,collection_method,The method which isolatestock was collected by. Example: Manual field harvest. Leave blank if isolatestock not collected
-Collection Comments,0,0,0,lab_collecting,comments,Any additional comments about the collection. Leave blank if isolatestock not collected.
-Organization,0,0,0,lab_people,organization,The organization from which isolatestock was provided by. Leave blank if isolatestock not sourced from somewhere.
-First Name,0,0,0,lab_people,first_name,The first name of the person who provided the isolatestock. Leave blank if isolatestock not sourced from somewhere.
-Last Name,0,0,0,lab_people,last_name,The last name of the person who provided the isolatestock. Leave blank if isolatestock not sourced from somewhere.
-Phone,0,0,0,lab_people,phone,The phone of the person who provided the isolatestock. Leave blank if isolatestock not sourced from somewhere.
-Email,0,0,0,lab_people,email,The email of the person who provided the isolatestock. Leave blank if isolatestock not sourced from somewhere.
-Source Comments,0,0,0,lab_people,comments,Any additional comments about the isolatestock provider. Leave blank if isolatestock not sourced from somewhere.
+NelsonLab IsolateStock Invetory Template Help,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Template Name: isolatestock_inventory_v1.0A,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Authored 04/14/2016,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+DataBase Header Dictionary,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+IsolateStock Template,For recording information aobut isolatestocks.,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition,,,,,,,,,,,,,,,,,,,,,,
+Locality ID,1,0,0,lab_isolatestock,locality_id,The locality ID for where the isolatestock was collected.,,,,,,,,,,,,,,,,,,,,,,
+IsolateStock ID,0,1,1,lab_isolatestock,isolatestock_id,A unique ID in the format Af0001i. This is the ID that is printed on the isolatestock tubes. MUST BE UNIQUE,,,,,,,,,,,,,,,,,,,,,,
+IsolateStock Name,0,0,0,lab_isolatestock,isolatestock_name,A human readable name for the isolatestock.,,,,,,,,,,,,,,,,,,,,,,
+Coordinate,0,0,0,lab_isolate,coordinate,The isolate's current position in its given box.,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Plant Organ,0,0,0,lab_isolatestock,plant_organ,"The plant organ that the isolatestock came from, if relevant.",,,,,,,,,,,,,,,,,,,,,,
+IsolateStock Comments,0,0,0,lab_isolatestock,comments,Any additional comments about the isolatestocks.,,,,,,,,,,,,,,,,,,,,,,
+Binomial,0,0,0,lab_taxonomy,Binomial,The binomial of the isolatestock.,,,,,,,,,,,,,,,,,,,,,,
+Alias,0,0,0,lab_taxonomy,alias,The isolatestock's alias.,,,,,,,,,,,,,,,,,,,,,,
+Race,0,0,0,lab_taxonomy,race,The isolatestock's race classification.,,,,,,,,,,,,,,,,,,,,,,
+Subtaxa,0,0,0,lab_taxonomy,subtaxa,The isolatestock's subtaxa classification.,,,,,,,,,,,,,,,,,,,,,,
+Source Row ID,1,0,0,lab_obstracker,obs_row_id = ObsRow(row_id).id,The Row ID from which the isolatestock was collected. Example 08PN0023. Leave blank if isolatestock not collected from a row.,,,,,,,,,,,,,,,,,,,,,,
+Source Plant ID,1,0,0,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,The Plant ID from which the isolatestock was collected. Example 08PN0023_001. Leave blank if isolatestock not collected from a plant.,,,,,,,,,,,,,,,,,,,,,,
+Source Seed ID,1,0,0,lab_obstracker,stock_id=Stock(seed_id).id,The Seed ID from which the isolatestock is associated. Leave blank if not applicable.,,,,,,,,,,,,,,,,,,,,,,
+Source Tissue ID,1,0,0,lab_obstracker,obs_tissue_id = ObsTissue(tissue_id).id,The Tissue ID from which the isolatestock was collected. Leave blank if isolatestock not collected from a tissue.,,,,,,,,,,,,,,,,,,,,,,
+Username,1,0,0,lab_collecting,user_id = User(username).id,The username of the person which collected the isolatestock. Example: firstname_lastname. Leave blank if isolatestock not collected.,,,,,,,,,,,,,,,,,,,,,,
+Collection Date,0,0,0,lab_collecting,collection_date,The date when the isolatestock was collected. Format 2015-01-30. Leave blank if isolatestock not collected,,,,,,,,,,,,,,,,,,,,,,
+Method,0,0,0,lab_collecting,collection_method,The method which isolatestock was collected by. Example: Manual field harvest. Leave blank if isolatestock not collected,,,,,,,,,,,,,,,,,,,,,,
+Collection Comments,0,0,0,lab_collecting,comments,Any additional comments about the collection. Leave blank if isolatestock not collected.,,,,,,,,,,,,,,,,,,,,,,
+Organization,0,0,0,lab_people,organization,The organization from which isolatestock was provided by. Leave blank if isolatestock not sourced from somewhere.,,,,,,,,,,,,,,,,,,,,,,
+First Name,0,0,0,lab_people,first_name,The first name of the person who provided the isolatestock. Leave blank if isolatestock not sourced from somewhere.,,,,,,,,,,,,,,,,,,,,,,
+Last Name,0,0,0,lab_people,last_name,The last name of the person who provided the isolatestock. Leave blank if isolatestock not sourced from somewhere.,,,,,,,,,,,,,,,,,,,,,,
+Phone,0,0,0,lab_people,phone,The phone of the person who provided the isolatestock. Leave blank if isolatestock not sourced from somewhere.,,,,,,,,,,,,,,,,,,,,,,
+Email,0,0,0,lab_people,email,The email of the person who provided the isolatestock. Leave blank if isolatestock not sourced from somewhere.,,,,,,,,,,,,,,,,,,,,,,
+Source Comments,0,0,0,lab_people,comments,Any additional comments about the isolatestock provider. Leave blank if isolatestock not sourced from somewhere.,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+IsolateStock ID,IsolateStock Name,Plant Organ,Box Name,Building Name,Room,Location Name,Coordinate,IsolateStock Comments,Locality ID,Username,Collection Date,Method,Collection Comments,Binomial,Alias,Population,Race,Subtaxa,Organization,First Name,Last Name,Phone,Email,Source Comments,Source Row ID,Source Plant ID,Source Seed ID,Source Tissue ID
