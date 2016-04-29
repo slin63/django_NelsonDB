@@ -922,6 +922,7 @@ def update_isolate_info(request, isolate_id):
 					isolate = Isolate.objects.get(id=isolate_id)
 					isolate.isolate_id = isolate_form.cleaned_data['isolate_id']
 					isolate.location = isolate_form.cleaned_data['location']
+					isolate.locality = isolate_form.cleaned_data['locality']
 					isolate.coordinate = isolate_form.cleaned_data['coordinate']
 					isolate.stock_date = isolate_form.cleaned_data['stock_date']
 					isolate.extract_color = isolate_form.cleaned_data['extract_color']
@@ -934,7 +935,7 @@ def update_isolate_info(request, isolate_id):
 		else:
 			print(isolate_form.errors)
 	else:
-		isolate_data = Isolate.objects.filter(id=isolate_id).values('isolate_id', 'location', 'coordinate', 'stock_date', 'extract_color', 'organism', 'comments')
+		isolate_data = Isolate.objects.filter(id=isolate_id).values('isolate_id', 'location', 'locality', 'coordinate', 'stock_date', 'extract_color', 'organism', 'comments')
 		try:
 			isolate_form = UpdateIsolatesOnlineForm(initial=isolate_data[0])
 		except IndexError:

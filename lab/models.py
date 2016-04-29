@@ -289,15 +289,14 @@ class ObsMicrobe(models.Model):
 class Location(models.Model):
     locality = models.ForeignKey(Locality)
     building_name = models.CharField(max_length=200, blank=True)
-    location_name = models.CharField(max_length=200, unique=True)
+    box_name = models.CharField(max_length=200, blank=True, unique=True)
     room = models.CharField(max_length=200, blank=True)
     shelf = models.CharField(max_length=200, blank=True)
     column = models.CharField(max_length=200, blank=True)
-    box_name = models.CharField(max_length=200, blank=True)
+    location_name = models.CharField(max_length=200)
     comments = models.CharField(max_length=1000, blank=True)
 
     def __unicode__(self):
-        # return self.location_name
         return self.box_name
 
 
@@ -385,7 +384,7 @@ class Isolate(models.Model):
     isolate_id = models.CharField(max_length=200)
     isolatestock = models.ForeignKey(IsolateStock)
     location = models.ForeignKey(Location)
-    coordinate = models.CharField(max_length=200, blank=True)
+    locality = models.ForeignKey(Locality)
     stock_date = models.CharField(max_length=200, blank=True)
     extract_color = models.CharField(max_length=200, blank=True)
     organism = models.CharField(max_length=200, blank=True)

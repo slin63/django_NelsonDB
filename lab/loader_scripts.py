@@ -9,6 +9,8 @@ from django.http import HttpResponseRedirect, HttpResponse
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, Isolate
 from django.db import IntegrityError, transaction
 
+import random
+
 # Pre-defined lists to populate loader_prep_output rows
 COLLECTING_TABLE = ['collecting_id', 'user_id', 'collection_date', 'collection_method', 'comments']
 PEOPLE_TABLE = ['people_id', 'first_name', 'last_name', 'organization', 'phone', 'email', 'comments']
@@ -3592,6 +3594,12 @@ def isolatestock_loader_prep(upload_file, user):
     obs_tracker_new = OrderedDict({})
     #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
+    isolate_new = OrderedDict({})
+    #--- Key (isolate_id, isolatestock, location, locality, stock_date, extract_color, organism, comments, user)
+    #--- Value = (isolate_id)
+    location_new = OrderedDict({})
+    #--- Key (box_name, building_name, room, location_name)
+    #--- Value = (None)
 
     user_hash_table = loader_db_mirror.user_hash_mirror()
     passport_hash_table = loader_db_mirror.passport_hash_mirror()
@@ -3621,6 +3629,9 @@ def isolatestock_loader_prep(upload_file, user):
     disease_name_table = loader_db_mirror.disease_name_mirror()
     locality_id_table = loader_db_mirror.locality_id_mirror()
     location_name_table = loader_db_mirror.location_name_mirror()
+
+    isolate_id_table = loader_db_mirror.isolate_id_mirror()
+    isolate_hash_table = loader_db_mirror.isolatestock_hash_mirror()
 
     error_count = 0
     seed_id_error = OrderedDict({})
@@ -3662,7 +3673,7 @@ def isolatestock_loader_prep(upload_file, user):
         plant_id = row["Source Plant ID"]
         tissue_id = row["Source Tissue ID"]
         collection_username = row["Username"]
-        collection_date = row["Collection Date"]
+        collection_date = row["Stock Date"]
         collection_method = row["Method"]
         collection_comments = row["Collection Comments"]
         organization = row["Organization"]
@@ -3671,8 +3682,23 @@ def isolatestock_loader_prep(upload_file, user):
         phone = row["Phone"]
         email = row["Email"]
         source_comments = row["Source Comments"]
-        locality_id = row["Locality ID"]
         user = user
+
+        # Isolate sub-loading fields
+        box_name = row["Box Name"]
+        isolate_comments = row["Isolate Comments"]
+        stock_date = row["Stock Date"]
+        count = row["Count"]
+
+        # Uncomment and use these later!
+        location_name = row["Location Name"]
+        building_name = row["Building Name"]
+        room = row["Room"]
+
+        # location_name = 'LOCATION'
+        # building_name = 'BUILDING'
+        # room = 'ROOM'
+
 
         # Declaring blank fields
         experiment_name = "No_Experiment"
@@ -3683,7 +3709,6 @@ def isolatestock_loader_prep(upload_file, user):
         plate_id = ''
         well_id = ''
         dna_id = ''
-        location_name = "No Location"
 
         # To populate empty error_tuples later
         ERROR_TUPLE_ISOLATESTOCK = (isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, locality_id)
@@ -3716,8 +3741,11 @@ def isolatestock_loader_prep(upload_file, user):
             else:
                 field_id = 1
 
-            if locality_id != '':
+            if locality_id == '':
                 locality_id = 1
+
+            if box_name == '':
+                box_name = "No Location"
 
             if location_name != '':
                 location_name_fix = location_name + '\r'
@@ -3952,6 +3980,8 @@ def isolatestock_loader_prep(upload_file, user):
                 temp_isolatestock_id = 1
                 error_count = error_count + 1
 
+
+
             obs_tracker_isolatestock_hash = 'isolatestock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(temp_isolatestock_id) + str(1) + str(1)  + str(1) + str(obs_culture_id) + str(obs_dna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_row_id) + str(1) + str(obs_tissue_id) + str(obs_well_id) + str(stock_id) + str(user_hash_table[user.username])
             obs_tracker_isolatestock_hash_fix = obs_tracker_isolatestock_hash + '\r'
             if obs_tracker_isolatestock_hash not in obs_tracker_hash_table and obs_tracker_isolatestock_hash_fix not in obs_tracker_hash_table:
@@ -3961,14 +3991,25 @@ def isolatestock_loader_prep(upload_file, user):
             else:
                 obs_tracker_hash_exists[('isolatestock', experiment_name_table[experiment_name][0], field_id, temp_isolatestock_id, 1, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
+            # Isolate sub-loaders
+            location_new[(box_name, building_name, room, location_name)] = box_name
+
+            for i in xrange(int(count)):
+                isolate_new[(isolatestock_id, temp_isolatestock_id, box_name, locality_id,  stock_date, '', '', isolate_comments, user, i)] = i
+                print 'isolate_new =', isolate_new
+            #--- Key (isolate_id, isolatestock, location, locality, stock_date, extract_color, organism, comments, user)
+
+            # people_new[(people_id, first_name, last_name, organization, phone, email, source_comments)] = people_id
+
     end = time.clock()
     stats = {}
     stats[("Time: %s" % (end-start), "Errors: %s" % (error_count))] = error_count
-
     results_dict = {}
     results_dict['isolatestock_new'] = isolatestock_new
     results_dict['passport_new'] = passport_new
     results_dict['collecting_new'] = collecting_new
+    results_dict['isolate_new'] = isolate_new
+    results_dict['location_new'] = location_new
     results_dict['people_new'] = people_new
     results_dict['taxonomy_new'] = taxonomy_new
     results_dict['obs_tracker_new'] = obs_tracker_new
@@ -4006,6 +4047,16 @@ def isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type)
     writer.writerow(['New IsolateStock Table'])
     writer.writerow(['isolatestock_table_id', 'passport_id', 'locality_id', 'disease_info_id', 'isolatestock_id', 'isolatestock_name', 'plant_organ', 'comments'])
     for key in results_dict['isolatestock_new'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['New Location Table'])
+    writer.writerow(['box_name', 'building_name', 'room', 'location_name'])
+    for key in results_dict['location_new'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['New Isolate Table'])
+    writer.writerow(['IsolateStock', 'IsolateStock ID', 'Box Name', 'Locality ID', 'stock_date', 'extract_color', 'organism', 'comments', 'user'])
+    for key in results_dict['isolate_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Collecting Table'])
@@ -4121,6 +4172,7 @@ def isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type)
     return response
 
 def isolatestock_loader(results_dict):
+    success = True
     try:
         for key in results_dict['collecting_new'].iterkeys():
             try:
@@ -4129,7 +4181,7 @@ def isolatestock_loader(results_dict):
                     new_isolatestock.save()
             except Exception as e:
                 print("Collecting Error: %s %s" % (e.message, e.args))
-                return False
+                success = False
         for key in results_dict['people_new'].iterkeys():
             try:
                 with transaction.atomic():
@@ -4137,7 +4189,7 @@ def isolatestock_loader(results_dict):
                     new_isolatestock.save()
             except Exception as e:
                 print("People Error: %s %s" % (e.message, e.args))
-                return False
+                success = False
         for key in results_dict['taxonomy_new'].iterkeys():
             try:
                 with transaction.atomic():
@@ -4145,7 +4197,7 @@ def isolatestock_loader(results_dict):
                     new_isolatestock.save()
             except Exception as e:
                 print("Taxonomy Error: %s %s" % (e.message, e.args))
-                return False
+                success = False
         for key in results_dict['passport_new'].iterkeys():
             try:
                 with transaction.atomic():
@@ -4153,7 +4205,7 @@ def isolatestock_loader(results_dict):
                     new_isolatestock.save()
             except Exception as e:
                 print("Passport Error: %s %s" % (e.message, e.args))
-                return False
+                success = False
         for key in results_dict['isolatestock_new'].iterkeys():
             try:
                 with transaction.atomic():
@@ -4161,19 +4213,35 @@ def isolatestock_loader(results_dict):
                     new_isolatestock.save()
             except Exception as e:
                 print("IsolateStock Error: %s %s" % (e.message, e.args))
-                return False
+                print key[4]
+                success = False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3],  isolatestock_id=key[4], location_id=key[5], maize_sample_id=key[6], obs_culture_id=key[7], obs_dna_id=key[8], obs_env_id=key[9], obs_extract_id=key[10], obs_microbe_id=key[11], obs_plant_id=key[12], obs_plate_id=key[13], obs_row_id=key[14], obs_sample_id=key[15], obs_tissue_id=key[16], obs_well_id=key[17], stock_id=key[18], user_id=key[19])
-                    new_stock.save()
+                    new_stock, created = ObsTracker.objects.get_or_create(obs_entity_type=key[1], experiment_id=key[2], field_id=key[3],  isolatestock_id=key[4], location_id=key[5], maize_sample_id=key[6], obs_culture_id=key[7], obs_dna_id=key[8], obs_env_id=key[9], obs_extract_id=key[10], obs_microbe_id=key[11], obs_plant_id=key[12], obs_plate_id=key[13], obs_row_id=key[14], obs_sample_id=key[15], obs_tissue_id=key[16], obs_well_id=key[17], stock_id=key[18], user_id=key[19])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
-                return False
+                success = False
+        for key in results_dict['location_new'].iterkeys():
+            try:
+                with transaction.atomic():
+                    new_location = Location.objects.get_or_create(box_name=key[0], building_name=key[1], room=key[2], location_name=key[3], locality_id=1)[0]
+                    new_location.save()
+            except Exception as e:
+                print("Location Error: %s %s" % (e.message, e.args))
+                success = False
+        for key in results_dict['isolate_new'].iterkeys():
+            try:
+                with transaction.atomic():
+                    new_isolate = Isolate.objects.create(isolate_id=key[0], isolatestock_id=key[1], location=Location.objects.get(box_name=key[2]), locality_id=key[3], stock_date=key[4], comments=key[7], user=key[8])
+                    new_isolate.save()
+            except Exception as e:
+                print("Isolate Error: %s %s" % (e.message, e.args))
+                success = False
     except Exception as e:
         print("Error: %s %s" % (e.message, e.args))
-        return False
-    return True
+        success = False
+    return success
 
 def isolate_loader_prep(upload_file, user):
     """Maybe deprecated? Might not have a use for it anymore . . . 03/10/2016"""

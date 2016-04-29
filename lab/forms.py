@@ -682,6 +682,8 @@ class UpdateIsolatesOnlineForm(forms.Form):
         required=True)
     location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Storage Location ---",
                                       help_text="Storage Location:", required=True)
+    locality = forms.ModelChoiceField(queryset=Locality.objects.all(), empty_label="--- Locality ---",
+                                      help_text="Locality:", required=True)
     coordinate = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Coordinate in storage box'}),
                                           help_text="Box Coordinate:", required=False)
     stock_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Stock Date'}),
