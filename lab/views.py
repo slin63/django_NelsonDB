@@ -923,7 +923,6 @@ def update_isolate_info(request, isolate_id):
 					isolate.isolate_id = isolate_form.cleaned_data['isolate_id']
 					isolate.location = isolate_form.cleaned_data['location']
 					isolate.locality = isolate_form.cleaned_data['locality']
-					isolate.coordinate = isolate_form.cleaned_data['coordinate']
 					isolate.stock_date = isolate_form.cleaned_data['stock_date']
 					isolate.extract_color = isolate_form.cleaned_data['extract_color']
 					isolate.organism = isolate_form.cleaned_data['organism']
@@ -935,7 +934,7 @@ def update_isolate_info(request, isolate_id):
 		else:
 			print(isolate_form.errors)
 	else:
-		isolate_data = Isolate.objects.filter(id=isolate_id).values('isolate_id', 'location', 'locality', 'coordinate', 'stock_date', 'extract_color', 'organism', 'comments')
+		isolate_data = Isolate.objects.filter(id=isolate_id).values('isolate_id', 'location', 'locality', 'stock_date', 'extract_color', 'organism', 'comments')
 		try:
 			isolate_form = UpdateIsolatesOnlineForm(initial=isolate_data[0])
 		except IndexError:
@@ -4900,7 +4899,6 @@ def log_data_online(request, data_type):
 						isolate_id = form.cleaned_data['isolate__isolate_id']
 						isolatestock = form.cleaned_data['isolate__isolatestock']
 						location = form.cleaned_data['location']
-						coordinate = form.cleaned_data['isolate__coordinate']
 						stock_date = form.cleaned_data['isolate__stock_date']
 						extract_color = form.cleaned_data['isolate__extract_color']
 						organism = form.cleaned_data['isolate__organism']
@@ -4908,7 +4906,7 @@ def log_data_online(request, data_type):
 						user = request.user
 
 						try:
-							new_isolate, created = Isolate.objects.get_or_create(isolate_id=isolate_id, isolatestock=isolatestock, location=location, coordinate=coordinate, stock_date=stock_date, extract_color=extract_color, organism=organism, comments=isolate_comments, user=user)
+							new_isolate, created = Isolate.objects.get_or_create(isolate_id=isolate_id, isolatestock=isolatestock, location=location, stock_date=stock_date, extract_color=extract_color, organism=organism, comments=isolate_comments, user=user)
 							new_isolate.save()
 
 						except Exception as e:
