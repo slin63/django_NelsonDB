@@ -3595,7 +3595,7 @@ def isolatestock_loader_prep(upload_file, user):
     #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
     isolate_new = OrderedDict({})
-    #--- Key (isolate_id, isolatestock, location, coordinate, stock_date, extract_color, organism, comments, user)
+    #--- Key (isolate_id, isolatestock, location, locality, stock_date, extract_color, organism, comments, user)
     #--- Value = (isolate_id)
     location_new = OrderedDict({})
     #--- Key (box_name, building_name, room, location_name)
@@ -3673,7 +3673,7 @@ def isolatestock_loader_prep(upload_file, user):
         plant_id = row["Source Plant ID"]
         tissue_id = row["Source Tissue ID"]
         collection_username = row["Username"]
-        collection_date = row["Collection Date"]
+        collection_date = row["Stock Date"]
         collection_method = row["Method"]
         collection_comments = row["Collection Comments"]
         organization = row["Organization"]
@@ -3686,11 +3686,19 @@ def isolatestock_loader_prep(upload_file, user):
 
         # Isolate sub-loading fields
         box_name = row["Box Name"]
+        isolate_comments = row["Isolate Comments"]
+        stock_date = row["Stock Date"]
+        count = row["Count"]
+
+        # Uncomment and use these later!
         location_name = row["Location Name"]
         building_name = row["Building Name"]
         room = row["Room"]
 
-        coordinate_set = row["Coordinate"].split(", ")
+        # location_name = 'LOCATION'
+        # building_name = 'BUILDING'
+        # room = 'ROOM'
+
 
         # Declaring blank fields
         experiment_name = "No_Experiment"
@@ -3984,11 +3992,12 @@ def isolatestock_loader_prep(upload_file, user):
                 obs_tracker_hash_exists[('isolatestock', experiment_name_table[experiment_name][0], field_id, temp_isolatestock_id, 1, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
             # Isolate sub-loaders
-
             location_new[(box_name, building_name, room, location_name)] = box_name
 
-            for coord in coordinate_set:
-                isolate_new[(isolatestock_id, temp_isolatestock_id, box_name, locality_id, coord, '', '', '', '', user)] = temp_isolatestock_id
+            for i in xrange(int(count)):
+                isolate_new[(isolatestock_id, temp_isolatestock_id, box_name, locality_id,  stock_date, '', '', isolate_comments, user, i)] = i
+                print 'isolate_new =', isolate_new
+            #--- Key (isolate_id, isolatestock, location, locality, stock_date, extract_color, organism, comments, user)
 
             # people_new[(people_id, first_name, last_name, organization, phone, email, source_comments)] = people_id
 
@@ -4046,7 +4055,7 @@ def isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type)
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Isolate Table'])
-    writer.writerow(['IsolateStock', 'IsolateStock ID', 'Box Name', 'Locality ID', 'Coordinate', 'stock_date', 'extract_color', 'organism', 'comments', 'user'])
+    writer.writerow(['IsolateStock', 'IsolateStock ID', 'Box Name', 'Locality ID', 'stock_date', 'extract_color', 'organism', 'comments', 'user'])
     for key in results_dict['isolate_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -4204,14 +4213,12 @@ def isolatestock_loader(results_dict):
                     new_isolatestock.save()
             except Exception as e:
                 print("IsolateStock Error: %s %s" % (e.message, e.args))
+                print key[4]
                 success = False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
                     new_stock, created = ObsTracker.objects.get_or_create(obs_entity_type=key[1], experiment_id=key[2], field_id=key[3],  isolatestock_id=key[4], location_id=key[5], maize_sample_id=key[6], obs_culture_id=key[7], obs_dna_id=key[8], obs_env_id=key[9], obs_extract_id=key[10], obs_microbe_id=key[11], obs_plant_id=key[12], obs_plate_id=key[13], obs_row_id=key[14], obs_sample_id=key[15], obs_tissue_id=key[16], obs_well_id=key[17], stock_id=key[18], user_id=key[19])
-                    # new_stock, created = ObsTracker.objects.get_or_create(id=1, obs_entity_type=1, experiment_id=1, field_id=1,  isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1], obs_microbe_id=1], obs_plant_id=1], obs_plate_id=1], obs_row_id=1], obs_sample_id=1], obs_tissue_id=1], obs_well_id=1], stock_id=1], user_id=1])
-                    # if created == False:  # If the ObsTracker already exists
-                    #     new_stock.delete()
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 success = False
@@ -4226,7 +4233,7 @@ def isolatestock_loader(results_dict):
         for key in results_dict['isolate_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_isolate = Isolate.objects.get_or_create(isolate_id=key[0], isolatestock_id=key[1], location=Location.objects.get(box_name=key[2]), locality_id=key[3], coordinate=key[4], user=key[9])[0]
+                    new_isolate = Isolate.objects.create(isolate_id=key[0], isolatestock_id=key[1], location=Location.objects.get(box_name=key[2]), locality_id=key[3], stock_date=key[4], comments=key[7], user=key[8])
                     new_isolate.save()
             except Exception as e:
                 print("Isolate Error: %s %s" % (e.message, e.args))
