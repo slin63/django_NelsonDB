@@ -4233,7 +4233,7 @@ def isolatestock_loader(results_dict):
         for key in results_dict['isolate_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_isolate = Isolate.objects.create(isolate_id=key[0], isolatestock_id=key[1], location=Location.objects.get(box_name=key[2]), locality_id=key[3], stock_date=key[4], comments=key[7], user=key[8])
+                    new_isolate = Isolate.objects.create(isolate_id=key[0], isolatestock_id=key[1], location=Location.objects.filter(box_name=key[2])[0], locality_id=key[3], stock_date=key[4], comments=key[7], user=key[8])
                     new_isolate.save()
             except Exception as e:
                 print("Isolate Error: %s %s" % (e.message, e.args))

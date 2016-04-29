@@ -289,7 +289,7 @@ class ObsMicrobe(models.Model):
 class Location(models.Model):
     locality = models.ForeignKey(Locality)
     building_name = models.CharField(max_length=200, blank=True)
-    box_name = models.CharField(max_length=200, blank=True, unique=True)
+    box_name = models.CharField(max_length=200, blank=False)
     room = models.CharField(max_length=200, blank=True)
     shelf = models.CharField(max_length=200, blank=True)
     column = models.CharField(max_length=200, blank=True)
