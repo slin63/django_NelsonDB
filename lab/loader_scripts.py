@@ -3996,7 +3996,7 @@ def isolatestock_loader_prep(upload_file, user):
 
             for i in xrange(int(count)):
                 isolate_new[(isolatestock_id, temp_isolatestock_id, box_name, locality_id,  stock_date, '', '', isolate_comments, user, i)] = i
-                print 'isolate_new =', isolate_new
+                # print 'isolate_new =', isolate_new
             #--- Key (isolate_id, isolatestock, location, locality, stock_date, extract_color, organism, comments, user)
 
             # people_new[(people_id, first_name, last_name, organization, phone, email, source_comments)] = people_id
@@ -4213,7 +4213,7 @@ def isolatestock_loader(results_dict):
                     new_isolatestock.save()
             except Exception as e:
                 print("IsolateStock Error: %s %s" % (e.message, e.args))
-                print key[4]
+                # print key[4]
                 success = False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
