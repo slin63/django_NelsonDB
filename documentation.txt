@@ -97,7 +97,7 @@ The left bar on the screen holds links that are useful for browsing data.
 -Seed Inventory
 -IsolateStock Inventory
 -Find an Experiment
--Row Data
+-Plot Data
 -Plant Data
 -Samples Data
 -Measurement Data
@@ -161,7 +161,7 @@ nelsonlab.cac.cornell.edu/lab/experiment/search/
 	- Seed Packets Planted
 	- Seed Packets Collected
 	- Plant Data
-	- Row Data
+	- Plot Data
 	- Environment Data
 	- Samples Data
 	- Measurements Data
@@ -174,7 +174,7 @@ The Experiment page holds all recorded information for a given experiment.
 *******************
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
-How To Use "Browse Row Data", "Browse Plant Data", "Browse Samples Data", "Browse Measurement Data"
+How To Use "Browse Plot Data", "Browse Plant Data", "Browse Samples Data", "Browse Measurement Data"
 ----------------------------------------------------------------------------------------------------------------------------------------------
 nelsonlab.cac.cornell.edu/lab/data/row/
 nelsonlab.cac.cornell.edu/lab/data/plant/
@@ -220,7 +220,7 @@ Its database is not directly connected with the NelsonLab database tables.
 Future plans are to merge the data from the MetaMaize database into the NelsonLab database tables.
 
 For example:
-	- The MetaMaize Row Data will be merged with the overall Row Data
+	- The MetaMaize Plot Data will be merged with the overall Plot Data
 	- The MetaMaize Tissue Data, Culture Data, and Medium Data will be merged with the overall Tissue Data, Culture Data, and Medium Data
 
 ----------------------------------------------------------------------------------------------------------------------------------------------

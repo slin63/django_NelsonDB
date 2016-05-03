@@ -12,5 +12,5 @@ Experiment Name,1,1,0,lab_obstracker,experiment_id=Experiment(experiment_name).i
 Plant ID,0,1,1,lab_obsplant,plant_id,A unique ID for the plant in the format 08PN0023_001. MUST BE UNIQUE
 Plant Number,0,0,0,lab_obsplant,plant_num,A number or name given to the plant. Example: 002
 Plant Comments,0,0,0,lab_obsplant,comments,Any additional comments about the plant.
-Source Row ID,1,0,0,lab_obstracker,obs_row_id = ObsRow(row_id).id,The row ID that the plant was planted in. The Row ID is a unique ID in the format 08PN0023. Leave blank if not applicable.
+Source Plot ID,1,0,0,lab_obstracker,obs_plot_id = ObsPlot(row_id).id,The row ID that the plant was planted in. The Plot ID is a unique ID in the format 08PN0023. Leave blank if not applicable.
 Source Seed ID,1,0,0,lab_obstracker,stock_id = Stock(seed_id).id,The seed ID for the seed that was planted. The Seed ID is a unique ID in the format 08PN0023_001x. This is the ID that is printed on seed packets. Leave blank if not applicable.

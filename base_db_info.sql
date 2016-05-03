@@ -366,15 +366,15 @@ INSERT INTO `lab_obsplate` (`id`, `plate_id`, `plate_name`, `date`, `contents`, 
 (1, 'No Plate', 'No Plate', 'No Plate', 'No Plate', 'No Plate', 'No Plate', 'No Plate', '');
 
 --
--- Truncate table before insert `lab_obsrow`
+-- Truncate table before insert `lab_obsplot`
 --
 
-TRUNCATE TABLE `lab_obsrow`;
+TRUNCATE TABLE `lab_obsplot`;
 --
--- Dumping data for table `lab_obsrow`
+-- Dumping data for table `lab_obsplot`
 --
 
-INSERT INTO `lab_obsrow` (`id`, `row_id`, `row_name`, `range_num`, `plot`, `block`, `rep`, `kernel_num`, `planting_date`, `harvest_date`, `comments`) VALUES
+INSERT INTO `lab_obsplot` (`id`, `row_id`, `row_name`, `range_num`, `plot`, `block`, `rep`, `kernel_num`, `planting_date`, `harvest_date`, `comments`) VALUES
 (1, 'No Row', 'No Row', 'No Row', 'No Row', 'No Row', 'No Row', 'No Row', 'No Row', 'No Row', '');
 
 --
@@ -410,7 +410,7 @@ TRUNCATE TABLE `lab_obstracker`;
 -- Dumping data for table `lab_obstracker`
 --
 
-INSERT INTO `lab_obstracker` (`id`, `obs_entity_type`, `experiment_id`, `field_id`, `isolate_id`, `isolatestock_id`, `location_id`, `maize_sample_id`, `obs_culture_id`, `obs_dna_id`, `obs_env_id`, `obs_extract_id`, `obs_microbe_id`, `obs_plant_id`, `obs_plate_id`, `obs_row_id`, `obs_sample_id`, `obs_tissue_id`, `obs_well_id`, `stock_id`, `user_id`) VALUES
+INSERT INTO `lab_obstracker` (`id`, `obs_entity_type`, `experiment_id`, `field_id`, `isolate_id`, `isolatestock_id`, `location_id`, `maize_sample_id`, `obs_culture_id`, `obs_dna_id`, `obs_env_id`, `obs_extract_id`, `obs_microbe_id`, `obs_plant_id`, `obs_plate_id`, `obs_plot_id`, `obs_sample_id`, `obs_tissue_id`, `obs_well_id`, `stock_id`, `user_id`) VALUES
 (1, 'No Type', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 
 --

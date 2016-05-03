@@ -37,7 +37,7 @@
             {% if t.obs_plate_id != 1 and t.obs_plate_id != 'NULL' and t.obs_plate_id != None %}
               <td colspan="8"><b>Plate</b></td>
             {% endif %}
-            {% if t.obs_row_id != 1 and t.obs_row_id != 'NULL' and t.obs_row_id != None %}
+            {% if t.obs_plot_id != 1 and t.obs_plot_id != 'NULL' and t.obs_plot_id != None %}
               <td colspan="10"><b>Row</b></td>
             {% endif %}
             {% if t.obs_sample_id != 1 and t.obs_sample_id != 'NULL' and t.obs_sample_id != None %}
@@ -135,9 +135,9 @@
               <td>Status</td>
               <td>Comments</td>
             {% endif %}
-            {% if t.obs_row_id != 1 and t.obs_row_id != 'NULL' and t.obs_row_id != None %}
-              <td>Row ID</td>
-              <td>Row Name</td>
+            {% if t.obs_plot_id != 1 and t.obs_plot_id != 'NULL' and t.obs_plot_id != None %}
+              <td>Plot ID</td>
+              <td>Plot Name</td>
               <td>Range</td>
               <td>Plot</td>
               <td>Block</td>
@@ -264,17 +264,17 @@
             <td>{{t.obs_plate.plate_status}}</td>
             <td>{{t.obs_plate.comments}}</td>
             {% endif %}
-            {% if t.obs_row_id != 1 and t.obs_row_id != 'NULL' and t.obs_row_id != None %}
-            <td><a href='/lab/row/{{t.obs_row_id}}/'>{{t.obs_row.row_id}}</a></td>
-            <td>{{t.obs_row.row_name}}</td>
-            <td>{{t.obs_row.range}}</td>
-            <td>{{t.obs_row.plot}}</td>
-            <td>{{t.obs_row.block}}</td>
-            <td>{{t.obs_row.rep}}</td>
-            <td>{{t.obs_row.kernel_num}}</td>
-            <td>{{t.obs_row.planting_date}}</td>
-            <td>{{t.obs_row.harvest_date}}</td>
-            <td>{{t.obs_row.comments}}</td>
+            {% if t.obs_plot_id != 1 and t.obs_plot_id != 'NULL' and t.obs_plot_id != None %}
+            <td><a href='/lab/row/{{t.obs_plot_id}}/'>{{t.obs_plot.row_id}}</a></td>
+            <td>{{t.obs_plot.row_name}}</td>
+            <td>{{t.obs_plot.range}}</td>
+            <td>{{t.obs_plot.plot}}</td>
+            <td>{{t.obs_plot.block}}</td>
+            <td>{{t.obs_plot.rep}}</td>
+            <td>{{t.obs_plot.kernel_num}}</td>
+            <td>{{t.obs_plot.planting_date}}</td>
+            <td>{{t.obs_plot.harvest_date}}</td>
+            <td>{{t.obs_plot.comments}}</td>
             {% endif %}
             {% if t.obs_sample_id != 1 and t.obs_sample_id != 'NULL' and t.obs_sample_id != None %}
             <td><a href='/lab/sample/{{t.obs_sample_id}}/'>{{t.obs_sample.sample_id}}</a></td>

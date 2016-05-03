@@ -59,7 +59,7 @@ var CalendarNamespace = {
         var tableBody = quickElement('tbody', calTable);
 
         // Draw days-of-week header
-        var tableRow = quickElement('tr', tableBody);
+        var tablePlot = quickElement('tr', tableBody);
         for (var i = 0; i < 7; i++) {
             quickElement('th', tableRow, CalendarNamespace.daysOfWeek[(i + CalendarNamespace.firstDayOfWeek) % 7]);
         }
@@ -68,7 +68,7 @@ var CalendarNamespace = {
         var days = CalendarNamespace.getDaysInMonth(month, year);
 
         // Draw blanks before first of month
-        tableRow = quickElement('tr', tableBody);
+        tablePlot = quickElement('tr', tableBody);
         for (var i = 0; i < startingPos; i++) {
             var _cell = quickElement('td', tableRow, ' ');
             _cell.className = "nonday";
@@ -78,7 +78,7 @@ var CalendarNamespace = {
         var currentDay = 1;
         for (var i = startingPos; currentDay <= days; i++) {
             if (i%7 == 0 && currentDay != 1) {
-                tableRow = quickElement('tr', tableBody);
+                tablePlot = quickElement('tr', tableBody);
             }
             if ((currentDay==todayDay) && (month==todayMonth) && (year==todayYear)) {
                 todayClass='today';
