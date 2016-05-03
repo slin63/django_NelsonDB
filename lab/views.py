@@ -6,7 +6,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.conf import settings
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsPlot, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, Isolate, FileDump
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogRowsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolateStocksOnlineForm, LogSeparationsOnlineForm, LogMaizeSurveyOnlineForm, LogIsolatesOnlineForm, FileDumpForm, UpdateIsolatesOnlineForm, UpdateStockPacketOnlineForm
+from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogPlotsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolateStocksOnlineForm, LogSeparationsOnlineForm, LogMaizeSurveyOnlineForm, LogIsolatesOnlineForm, FileDumpForm, UpdateIsolatesOnlineForm, UpdateStockPacketOnlineForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -3498,7 +3498,7 @@ def make_obs_tracker_info(tracker):
 		try:
 			obs_tracker_id_info = [tracker.obs_plot.row_id, obs_entity_type, tracker.obs_plot_id]
 		except ObsPlot.DoesNotExist:
-			obs_tracker_id_info = ['No Row', obs_entity_type, 1]
+			obs_tracker_id_info = ['No Plot', obs_entity_type, 1]
 	elif obs_entity_type == 'plant':
 		try:
 			obs_tracker_id_info = [tracker.obs_plant.plant_id, obs_entity_type, tracker.obs_plant_id]
@@ -4241,7 +4241,7 @@ def log_data_online(request, data_type):
 
 	if data_type == 'row':
 		data_type_title = 'Load Plot Info'
-		LogDataOnlineFormSet = formset_factory(LogRowsOnlineForm, extra=10)
+		LogDataOnlineFormSet = formset_factory(LogPlotsOnlineForm, extra=10)
 		if request.method == 'POST':
 			log_data_online_form_set = LogDataOnlineFormSet(request.POST)
 			if log_data_online_form_set.is_valid():
@@ -4341,7 +4341,7 @@ def log_data_online(request, data_type):
 						user = request.user
 
 						if source_row_id == '':
-							source_row_id = 'No Row'
+							source_row_id = 'No Plot'
 						if source_plant_id == '':
 							source_plant_id = 'No Plant'
 						if source_seed_id == '':
@@ -4354,7 +4354,7 @@ def log_data_online(request, data_type):
 							new_obs_tracker, new_obs_tracker_created = ObsTracker.objects.get_or_create(obs_entity_type='sample', stock=Stock.objects.get(seed_id=source_seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=ObsPlant.objects.get(plant_id=source_plant_id), obs_plate_id=1, obs_plot=ObsPlot.objects.get(row_id=source_row_id), obs_sample=new_obssample, obs_tissue_id=1, obs_well_id=1)
 							if source_sample_id !='' and source_sample_id !='No Sample':
 								new_source_sample, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='sample', obs_sample__sample_id=source_sample_id), target_obs=new_obs_tracker, relationship='sample_from_sample')
-							if source_row_id !='' and source_row_id != 'No Row':
+							if source_row_id !='' and source_row_id != 'No Plot':
 								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=source_row_id), target_obs=new_obs_tracker, relationship="sample_from_row")
 							if source_plant_id !='' and source_plant_id != 'No Plant':
 								new_source_plant, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='plant', obs_plant__plant_id=source_plant_id), target_obs=new_obs_tracker, relationship="sample_from_plant")
@@ -4394,7 +4394,7 @@ def log_data_online(request, data_type):
 						user = request.user
 
 						if row_id == '':
-							row_id = 'No Row'
+							row_id = 'No Plot'
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
@@ -4405,7 +4405,7 @@ def log_data_online(request, data_type):
 						try:
 							new_obstissue, created = ObsTissue.objects.get_or_create(tissue_id=tissue_id, tissue_name=tissue_name, tissue_type=tissue_type, date_ground=date_ground, comments=tissue_comments)
 							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='tissue', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_plot=ObsPlot.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=new_obstissue, obs_well_id=1)
-							if row_id !='' and row_id !='No Row':
+							if row_id !='' and row_id !='No Plot':
 								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=row_id), target_obs=new_obs_tracker, relationship='tissue_from_row')
 							if culture_id !='' and culture_id !='No Culture':
 								new_source_culture, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='culture', obs_culture__culture_id=culture_id), target_obs=new_obs_tracker, relationship="tissue_from_culture")
@@ -4453,7 +4453,7 @@ def log_data_online(request, data_type):
 						user = request.user
 
 						if row_id == '':
-							row_id = 'No Row'
+							row_id = 'No Plot'
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
@@ -4466,7 +4466,7 @@ def log_data_online(request, data_type):
 						try:
 							new_obsculture, created = ObsCulture.objects.get_or_create(medium=medium, culture_id=culture_id, culture_name=culture_name, microbe_type=microbe_type, plating_cycle=plating_cycle, dilution=dilution, image_filename=image, num_colonies=num_colonies, num_microbes=num_microbes, comments=tissue_comments)
 							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='culture', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=new_obsculture, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_plot=ObsPlot.objects.get(row_id=row_id), obs_sample=new_obssample, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well_id=1)
-							if row_id !='' and row_id !='No Row':
+							if row_id !='' and row_id !='No Plot':
 								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=row_id), target_obs=new_obs_tracker, relationship='culture_from_row')
 							if tissue_id !='' and tissue_id !='No Tissue':
 								new_source_tissue, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue__tissue_id=tissue_id), target_obs=new_obs_tracker, relationship="culture_from_tissue")
@@ -4509,7 +4509,7 @@ def log_data_online(request, data_type):
 						user = request.user
 
 						if row_id == '':
-							row_id = 'No Row'
+							row_id = 'No Plot'
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
@@ -4522,7 +4522,7 @@ def log_data_online(request, data_type):
 						try:
 							new_obsmicrobe, created = ObsMicrobe.objects.get_or_create(microbe_id=microbe_id, microbe_type=microbe_type, comments=microbe_comments)
 							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='microbe', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe=new_obsmicrobe, obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_plot=ObsPlot.objects.get(row_id=row_id), obs_sample=new_obssample, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well_id=1)
-							if row_id !='' and row_id !='No Row':
+							if row_id !='' and row_id !='No Plot':
 								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=row_id), target_obs=new_obs_tracker, relationship='microbe_from_row')
 							if tissue_id !='' and tissue_id !='No Tissue':
 								new_source_tissue, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue__tissue_id=tissue_id), target_obs=new_obs_tracker, relationship="microbe_from_tissue")
@@ -4572,7 +4572,7 @@ def log_data_online(request, data_type):
 						user = request.user
 
 						if row_id == '':
-							row_id = 'No Row'
+							row_id = 'No Plot'
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
@@ -4593,7 +4593,7 @@ def log_data_online(request, data_type):
 						try:
 							new_obsdna, created = ObsDNA.objects.get_or_create(dna_id=dna_id, extraction_method=extraction, date=date, tube_id=tube_id, tube_type=tube_type, comments=dna_comments)
 							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='dna', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=new_obsdna, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_plot=ObsPlot.objects.get(row_id=row_id), obs_sample=ObsSample.objects.get(sample_id=sample_id), obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
-							if row_id !='' and row_id != 'No Row':
+							if row_id !='' and row_id != 'No Plot':
 								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=row_id), target_obs=new_obs_tracker, relationship='dna_from_row')
 							if tissue_id !='' and tissue_id != 'No Tissue':
 								new_source_tissue, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue__tissue_id=tissue_id), target_obs=new_obs_tracker, relationship="dna_from_tissue")
@@ -4684,7 +4684,7 @@ def log_data_online(request, data_type):
 						user = request.user
 
 						if row_id == '':
-							row_id = 'No Row'
+							row_id = 'No Plot'
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
@@ -4701,7 +4701,7 @@ def log_data_online(request, data_type):
 						try:
 							new_obswell, created = ObsWell.objects.get_or_create(well_id=well_id, well=well, date=date, well_inventory=inventory, tube_label=tube_label, comments=well_comments)
 							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='well', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=new_obsdna, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_plot=ObsPlot.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=new_obswell)
-							if row_id !='' and row_id != 'No Row':
+							if row_id !='' and row_id != 'No Plot':
 								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs= ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=row_id), target_obs=new_obs_tracker, relationship='well_from_row')
 							if tissue_id !='' and tissue_id != 'No Tissue':
 								new_source_tissue, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue__tissue_id=tissue_id), target_obs=new_obs_tracker, relationship="well_from_tissue")
@@ -4852,7 +4852,7 @@ def log_data_online(request, data_type):
 						user = request.user
 
 						if row_id == '':
-							row_id = 'No Row'
+							row_id = 'No Plot'
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
@@ -4867,7 +4867,7 @@ def log_data_online(request, data_type):
 							new_passport, created = Passport.objects.get_or_create(taxonomy=new_taxonomy, people=new_people, collecting=new_collecting)
 							new_isolatestock, created = IsolateStock.objects.get_or_create(passport=new_passport, locality=locality, disease_info_id=1, isolatestock_id=isolatestock_id, isolatestock_name=isolatestock_name, plant_organ=plant_organ, comments=isolatestock_comments)
 							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='isolatestock', stock=Stock.objects.get(seed_id=seed_id), experiment_id=1, user=user, field=field, isolate_id=1, isolatestock=new_isolatestock, location_id=1, maize_sample_id=1, obs_env_id=1, obs_extract_id=1,  obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plot=ObsPlot.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id))
-							if row_id !='' and row_id !='No Row':
+							if row_id !='' and row_id !='No Plot':
 								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=row_id), target_obs=new_obs_tracker, relationship='isolatestock_from_row')
 							if tissue_id !='' and tissue_id != 'No Tissue':
 								new_source_tissue, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue__tissue_id=tissue_id), target_obs=new_obs_tracker, relationship="isolatestock_from_tissue")
@@ -5167,7 +5167,7 @@ def sidebar_search_page(request):
 	for result in experiment_results:
 		result.url = "/lab/experiment/%s/" % (result.name)
 	try:
-		row_results = ObsPlot.objects.filter(row_id__icontains=starts_with).exclude(row_id='No Row')
+		row_results = ObsPlot.objects.filter(row_id__icontains=starts_with).exclude(row_id='No Plot')
 	except ObsPlot.DoesNotExist:
 		row_results = None
 	for result in row_results:
@@ -5322,7 +5322,7 @@ def sidebar_search(request):
 		for result in experiment_results:
 			result.url = "/lab/experiment/%s/" % (result.name)
 		try:
-			row_results = ObsPlot.objects.filter(row_id__contains=starts_with).exclude(row_id='No Row')[:10]
+			row_results = ObsPlot.objects.filter(row_id__contains=starts_with).exclude(row_id='No Plot')[:10]
 		except ObsPlot.DoesNotExist:
 			row_results = None
 		for result in row_results:

@@ -196,10 +196,10 @@ The Query Builder allows greater flexibility in querying the database.
 1. Select the Data Types you are interested in by clicking the checkboxes.
 
 	For Example:
-	- If you want measurements of row data for an experiment, you would click Measurements, Experiments, and Rows
+	- If you want measurements of row data for an experiment, you would click Measurements, Experiments, and Plots
 	- If you want measurements that came from seed stocks, you would click Measurements and Seed Stocks
-	- If you want to know what seed stocks were used in what rows in an experiment, you would click Seed Stocks, Rows, and Experiment
-	- If you want measurements of row data (and you want to know what seed stocks were planted in those rows), you would click Seed Stocks, Rows, and Measurements
+	- If you want to know what seed stocks were used in what rows in an experiment, you would click Seed Stocks, Plots, and Experiment
+	- If you want measurements of row data (and you want to know what seed stocks were planted in those rows), you would click Seed Stocks, Plots, and Measurements
 
 2. Select the field names that you are interested in viewing by clicking their checkboxes.
 3. Add any filter sorting options for the fields you selected by selecting a filter from the dropdowns.

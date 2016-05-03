@@ -371,7 +371,7 @@ class UpdateStockPacketOnlineForm(forms.Form):
                                       required=True)
 
 
-class LogRowsOnlineForm(forms.Form):
+class LogPlotsOnlineForm(forms.Form):
     experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---",
                                         required=True)
     row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plot ID'}), required=True)

@@ -61,7 +61,7 @@ var CalendarNamespace = {
         // Draw days-of-week header
         var tablePlot = quickElement('tr', tableBody);
         for (var i = 0; i < 7; i++) {
-            quickElement('th', tableRow, CalendarNamespace.daysOfWeek[(i + CalendarNamespace.firstDayOfWeek) % 7]);
+            quickElement('th', tablePlot, CalendarNamespace.daysOfWeek[(i + CalendarNamespace.firstDayOfWeek) % 7]);
         }
 
         var startingPos = new Date(year, month-1, 1 - CalendarNamespace.firstDayOfWeek).getDay();
@@ -70,7 +70,7 @@ var CalendarNamespace = {
         // Draw blanks before first of month
         tablePlot = quickElement('tr', tableBody);
         for (var i = 0; i < startingPos; i++) {
-            var _cell = quickElement('td', tableRow, ' ');
+            var _cell = quickElement('td', tablePlot, ' ');
             _cell.className = "nonday";
         }
 
@@ -92,15 +92,15 @@ var CalendarNamespace = {
                 todayClass += "selected";
             }
 
-            var cell = quickElement('td', tableRow, '', 'class', todayClass);
+            var cell = quickElement('td', tablePlot, '', 'class', todayClass);
 
             quickElement('a', cell, currentDay, 'href', 'javascript:void(' + callback + '('+year+','+month+','+currentDay+'));');
             currentDay++;
         }
 
         // Draw blanks after end of month (optional, but makes for valid code)
-        while (tableRow.childNodes.length < 7) {
-            var _cell = quickElement('td', tableRow, ' ');
+        while (tablePlot.childNodes.length < 7) {
+            var _cell = quickElement('td', tablePlot, ' ');
             _cell.className = "nonday";
         }
 

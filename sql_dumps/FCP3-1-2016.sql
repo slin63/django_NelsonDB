@@ -1260,7 +1260,7 @@ CREATE TABLE `lab_obsplot` (
 
 LOCK TABLES `lab_obsplot` WRITE;
 /*!40000 ALTER TABLE `lab_obsplot` DISABLE KEYS */;
-INSERT INTO `lab_obsplot` VALUES (1,'No Row','No Row','No Row','No Row','No Row','No Row','No Row','No Row','No Row','');
+INSERT INTO `lab_obsplot` VALUES (1,'No Plot','No Plot','No Plot','No Plot','No Plot','No Plot','No Plot','No Plot','No Plot','');
 /*!40000 ALTER TABLE `lab_obsplot` ENABLE KEYS */;
 UNLOCK TABLES;
 

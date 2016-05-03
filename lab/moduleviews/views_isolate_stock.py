@@ -243,7 +243,7 @@ def update_isolatestock_info(request, isolatestock_id):
                     if obs_tracker_isolatestock_form.cleaned_data['obs_plot__row_id'] != '':
                         obs_tracker.obs_plot = ObsPlot.objects.get(row_id=obs_tracker_isolatestock_form.cleaned_data['obs_plot__row_id'])
                     else:
-                        obs_tracker.obs_plot = ObsPlot.objects.get(row_id='No Row')
+                        obs_tracker.obs_plot = ObsPlot.objects.get(row_id='No Plot')
                     if obs_tracker_isolatestock_form.cleaned_data['stock__seed_id'] != '':
                         obs_tracker.stock = Stock.objects.get(seed_id=obs_tracker_isolatestock_form.cleaned_data['stock__seed_id'])
                     else:

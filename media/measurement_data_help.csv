@@ -13,14 +13,14 @@ Parameter Name,1,1,0,lab_measurement,measurement_parameter_id = MeasurementParam
 Username,1,0,0,lab_measurement,user_id = User(username).id,The username of the user taking the measurement. Example: firstname_lastname
 DateTime,0,0,0,lab_measurement,time_of_measurement,The datetime when the measuremnt was taken. Recommended format: 2015-01-30 14:50
 Value,0,0,0,lab_measurement,value,The actual result or value of the measurement.
-Measurement Comments,0,0,0,lab_measurement,comments,Any additional comments about the measurement. 
+Measurement Comments,0,0,0,lab_measurement,comments,Any additional comments about the measurement.
 ,,,,,,
 DEPENDENCIES,,,,,,
 ,,,,,,
 Measurement Parameter Template,For recording the parameter being measured.,,,,,
 Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
 Parameter Name,0,1,1,lab_measurementparameter,parameter,"A unique name for the parameter being measured. Example: afl.afl, nlb.ds1, dys.ath, 1K CO2, 5K CO2. MSUT BE UNIQUE"
-Parameter Type,0,0,0,lab_measurementparameter,parameter_type,"A descriptor for the type of measurement being done. Example: Respiration, Toxin, Row, Plant, Environmental"
+Parameter Type,0,0,0,lab_measurementparameter,parameter_type,"A descriptor for the type of measurement being done. Example: Respiration, Toxin, Plot, Plant, Environmental"
 Protocol,0,0,0,lab_measurementparameter,protocol,"A detailed description for how the measurement is taken, include the model of any instrument used."
 Unit of Measure,0,0,0,lab_measurementparameter,unit_of_measure,"The unit that is relevant to the measurement. Example: g, kg, ppm, ml"
 Trait ID Buckler,0,0,0,lab_measurementparameter,trait_id_buckler,A unique ID that is used by the Buckler Lab. Leave blank if not applicable.
