@@ -3690,9 +3690,11 @@ def isolatestock_loader_prep(upload_file, user):
         stock_date = row["Stock Date"]
         count = row["Count"]
 
+
         # Uncomment and use these later!
         location_name = row["Location Name"]
         building_name = row["Building Name"]
+        shelf = row["Shelf"]
         room = row["Room"]
 
         # location_name = 'LOCATION'
@@ -3992,14 +3994,12 @@ def isolatestock_loader_prep(upload_file, user):
                 obs_tracker_hash_exists[('isolatestock', experiment_name_table[experiment_name][0], field_id, temp_isolatestock_id, 1, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
             # Isolate sub-loaders
-            location_new[(box_name, building_name, room, location_name)] = box_name
+            location_new[(box_name, building_name, room, location_name, shelf)] = box_name
 
             for i in xrange(int(count)):
                 isolate_new[(isolatestock_id, temp_isolatestock_id, box_name, locality_id,  stock_date, '', '', isolate_comments, user, i)] = i
-                # print 'isolate_new =', isolate_new
-            #--- Key (isolate_id, isolatestock, location, locality, stock_date, extract_color, organism, comments, user)
 
-            # people_new[(people_id, first_name, last_name, organization, phone, email, source_comments)] = people_id
+            #--- Key (isolate_id, isolatestock, location, locality, stock_date, extract_color, organism, comments, user)
 
     end = time.clock()
     stats = {}
@@ -4050,7 +4050,7 @@ def isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type)
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Location Table'])
-    writer.writerow(['box_name', 'building_name', 'room', 'location_name'])
+    writer.writerow(['box_name', 'building_name', 'room', 'location_name', 'shelf'])
     for key in results_dict['location_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -4225,7 +4225,7 @@ def isolatestock_loader(results_dict):
         for key in results_dict['location_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_location = Location.objects.get_or_create(box_name=key[0], building_name=key[1], room=key[2], location_name=key[3], locality_id=1)[0]
+                    new_location = Location.objects.get_or_create(box_name=key[0], building_name=key[1], room=key[2], location_name=key[3], shelf=key[4], locality_id=1)[0]
                     new_location.save()
             except Exception as e:
                 print("Location Error: %s %s" % (e.message, e.args))
