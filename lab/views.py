@@ -4903,10 +4903,11 @@ def log_data_online(request, data_type):
 						extract_color = form.cleaned_data['isolate__extract_color']
 						organism = form.cleaned_data['isolate__organism']
 						isolate_comments = form.cleaned_data['isolate__comments']
+						locality = form.cleaned_data['isolate__locality']
 						user = request.user
 
 						try:
-							new_isolate, created = Isolate.objects.get_or_create(isolate_id=isolate_id, isolatestock=isolatestock, location=location, stock_date=stock_date, extract_color=extract_color, organism=organism, comments=isolate_comments, user=user)
+							new_isolate, created = Isolate.objects.get_or_create(isolate_id=isolate_id, isolatestock=isolatestock, location=location, locality=locality, stock_date=stock_date, extract_color=extract_color, organism=organism, comments=isolate_comments, user=user)
 							new_isolate.save()
 
 						except Exception as e:
