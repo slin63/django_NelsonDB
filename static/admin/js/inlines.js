@@ -141,7 +141,7 @@
   // Tabular inlines ---------------------------------------------------------
   $.fn.tabularFormset = function(options) {
     var $rows = $(this);
-    var alternatingRows = function(row) {
+    var alternatingPlots = function(row) {
       $($rows.selector).not(".add-row").removeClass("row1 row2")
         .filter(":even").addClass("row1").end()
         .filter(":odd").addClass("row2");
@@ -192,12 +192,12 @@
       deleteCssClass: "inline-deletelink",
       deleteText: options.deleteText,
       emptyCssClass: "empty-form",
-      removed: alternatingRows,
+      removed: alternatingPlots,
       added: function(row) {
         initPrepopulatedFields(row);
         reinitDateTimeShortCuts();
         updateSelectFilter();
-        alternatingRows(row);
+        alternatingPlots(row);
       }
     });
 

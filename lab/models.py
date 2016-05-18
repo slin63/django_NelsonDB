@@ -133,7 +133,7 @@ class Medium(models.Model):
         return self.media_name
 
 
-class ObsRow(models.Model):
+class ObsPlot(models.Model):
     row_id = models.CharField(max_length=200, unique=True)
     row_name = models.CharField(max_length=200, blank=True)
     range_num = models.CharField(max_length=200, blank=True)
@@ -446,7 +446,7 @@ class ObsTracker(models.Model):
     obs_microbe = models.ForeignKey(ObsMicrobe, blank=True, null=True)
     obs_plant = models.ForeignKey(ObsPlant, blank=True, null=True)
     obs_plate = models.ForeignKey(ObsPlate, blank=True, null=True)
-    obs_row = models.ForeignKey(ObsRow, blank=True, null=True)
+    obs_plot = models.ForeignKey(ObsPlot, blank=True, null=True)
     obs_sample = models.ForeignKey(ObsSample, blank=True, null=True)
     obs_tissue = models.ForeignKey(ObsTissue, blank=True, null=True)
     obs_well = models.ForeignKey(ObsWell, blank=True, null=True)

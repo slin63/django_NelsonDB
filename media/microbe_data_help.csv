@@ -13,7 +13,7 @@ Microbe ID,0,1,1,lab_obsmicrobe,microbe_id,"A unique ID for the microbe. Formats
 Microbe Type,0,0,0,lab_obsmicrobe,microbe_type,The type of microbe observed.
 Microbe Comments,0,0,0,lab_obsmicrobe,comments,Any additional comments about the microbe.
 Source Seed ID,1,0,0,lab_obstracker,stock_id = Stock(seed_id).id,"If the sample was selected using seed, provide the Seed ID here. If not applicable, leave blank."
-Source Row ID,1,0,0,lab_obstracker,obs_row_id = ObsRow(row_id).id,"If the sample was selected from a row, provide the Row ID here. If not applicable, leave blank."
+Source Plot ID,1,0,0,lab_obstracker,obs_plot_id = ObsPlot(row_id).id,"If the sample was selected from a row, provide the Plot ID here. If not applicable, leave blank."
 Source Plant ID,1,0,0,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,"If the sample was selected from a plant, provide the Plant ID here. If not applicable, leave blank."
 Source Culture ID,1,0,0,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,"If the sample was selected from a separate culture, provide the Culture ID here. If not applicable, leave blank."
 Source Tissue ID,1,0,0,lab_obstracker,obs_tissue_id = ObsTissue(tissue_id).id,"If the sample was selected from a tissue, provide the Tissue ID here. If not applicable, leave blank."

@@ -1,6 +1,6 @@
 from django import forms
 
-from lab.models import UserProfile, Experiment, Field, ObsRow, ObsPlant, Locality, Stock, ObsRow, ObsPlant, ObsSample, IsolateStock, \
+from lab.models import UserProfile, Experiment, Field, ObsPlot, ObsPlant, Locality, Stock, ObsPlot, ObsPlant, ObsSample, IsolateStock, \
   ObsEnv, MeasurementParameter, Citation, Medium, Location, DiseaseInfo, FileDump
 from django.contrib.auth.models import User
 from django.core.validators import EmailValidator
@@ -262,7 +262,7 @@ class UpdateSeedDataOnlineForm(forms.Form):
                                                           help_text="Binomial", required=False)
     stock__passport__taxonomy__population = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Population'}),
                                                             help_text="Population", required=False)
-    obs_row__row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Row ID'}), help_text="Row ID",
+    obs_plot__row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plot ID'}), help_text="Plot ID",
                                       required=False)
     obs_plant__plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plant ID'}),
                                           help_text="Plant ID", required=False)
@@ -320,7 +320,7 @@ class LogSeedDataOnlineForm(forms.Form):
                                                           help_text="Binomial", required=False)
     stock__passport__taxonomy__population = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Population'}),
                                                             help_text="Population", required=False)
-    obs_row__row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Row ID'}), help_text="Row ID",
+    obs_plot__row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plot ID'}), help_text="Plot ID",
                                       required=False)
     obs_plant__plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plant ID'}),
                                           help_text="Plant ID", required=False)
@@ -371,11 +371,11 @@ class UpdateStockPacketOnlineForm(forms.Form):
                                       required=True)
 
 
-class LogRowsOnlineForm(forms.Form):
+class LogPlotsOnlineForm(forms.Form):
     experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---",
                                         required=True)
-    row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Row ID'}), required=True)
-    row_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Row Name'}), required=True)
+    row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plot ID'}), required=True)
+    row_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plot Name'}), required=True)
     seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Seed ID'}), required=True)
     field = forms.ModelChoiceField(queryset=Field.objects.all(), initial=Field.objects.get(id=1),
                                    empty_label="--- Field Name ---", required=True)
@@ -395,7 +395,7 @@ class LogPlantsOnlineForm(forms.Form):
     plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plant ID'}), required=True)
     plant_num = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plant Num'}), required=True)
     seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Seed ID'}), required=True)
-    row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Row ID'}), required=False)
+    row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plot ID'}), required=False)
     plant_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}), required=False)
 
 
@@ -410,8 +410,8 @@ class LogSamplesOnlineForm(forms.Form):
                                               help_text="Sample Name:", required=False)
     stock__seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Seed ID'}),
                                      help_text="Source Seed ID:", required=False)
-    obs_row__row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Row ID'}),
-                                      help_text="Source Row ID:", required=False)
+    obs_plot__row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plot ID'}),
+                                      help_text="Source Plot ID:", required=False)
     obs_plant__plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plant ID'}),
                                           help_text="Source Plant ID:", required=False)
     source_sample_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Sample ID'}),
@@ -445,7 +445,7 @@ class LogTissuesOnlineForm(forms.Form):
     experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---",
                                         required=True)
     tissue_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Tissue ID'}), required=True)
-    row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Row ID'}), required=False)
+    row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plot ID'}), required=False)
     seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Seed ID'}), required=False)
     plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plant ID'}), required=False)
     culture_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Culture ID'}), required=False)
@@ -461,7 +461,7 @@ class LogCulturesOnlineForm(forms.Form):
     culture_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Culture ID'}), required=True)
     medium = forms.ModelChoiceField(queryset=Medium.objects.all(), empty_label="--- Medium ---", required=True)
     location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Location ---", required=True)
-    row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Row ID'}), required=False)
+    row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plot ID'}), required=False)
     seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Seed ID'}), required=False)
     plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plant ID'}), required=False)
     tissue_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Tissue ID'}), required=False)
@@ -480,7 +480,7 @@ class LogMicrobesOnlineForm(forms.Form):
     experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---",
                                         required=True)
     microbe_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Microbe ID'}), required=True)
-    row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Row ID'}), required=False)
+    row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plot ID'}), required=False)
     seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Seed ID'}), required=False)
     plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plant ID'}), required=False)
     tissue_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Tissue ID'}), required=False)
@@ -494,7 +494,7 @@ class LogDNAOnlineForm(forms.Form):
                                         required=True)
     dna_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'DNA ID'}), required=True)
     microbe_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Microbe ID'}), required=False)
-    row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Row ID'}), required=False)
+    row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plot ID'}), required=False)
     seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Seed ID'}), required=False)
     plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plant ID'}), required=False)
     tissue_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Tissue ID'}), required=False)
@@ -514,7 +514,7 @@ class LogWellOnlineForm(forms.Form):
                                         required=True)
     well_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Well ID'}), required=True)
     microbe_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Microbe ID'}), required=False)
-    row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Row ID'}), required=False)
+    row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plot ID'}), required=False)
     seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Seed ID'}), required=False)
     plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plant ID'}), required=False)
     tissue_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Tissue ID'}), required=False)
@@ -645,8 +645,8 @@ class LogIsolateStocksOnlineForm(forms.Form):
         widget=forms.TextInput(attrs={'placeholder': 'Source Comments'}), help_text="Source Comments", required=False)
 
     # ObsTracker Related Fields
-    obs_row__row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Row ID'}),
-                                      help_text="Source Row ID:", required=False)
+    obs_plot__row_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plot ID'}),
+                                      help_text="Source Plot ID:", required=False)
     stock__seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Seed ID'}),
                                      help_text="Source Seed ID:", required=False)
     obs_plant__plant_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Source Plant ID'}),
@@ -664,6 +664,7 @@ class LogIsolatesOnlineForm(forms.Form):
     isolate__isolatestock = forms.ModelChoiceField(queryset=IsolateStock.objects.all(), empty_label="--- Isolate Stock ---", help_text="Source IsolateStock ID:", required=True)
     location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Storage Location ---",
                                       help_text="Storage Location:", required=True)
+    isolate__locality = forms.ModelChoiceField(queryset=Locality.objects.all(), empty_label="--- Locality ---", help_text="Locality of the Isolate:", required=True)
     isolate__stock_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Stock Date'}),
                                           help_text="Stock Date:", required=False)
     isolate__extract_color = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Extract Color'}),
@@ -672,6 +673,7 @@ class LogIsolatesOnlineForm(forms.Form):
                                         help_text="Organism:", required=False)
     isolate__comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}),
                                         help_text="Comments:", required=False)
+
 
 
 class UpdateIsolatesOnlineForm(forms.Form):

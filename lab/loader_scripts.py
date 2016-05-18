@@ -6,7 +6,7 @@ from collections import OrderedDict
 import time
 import loader_db_mirror
 from django.http import HttpResponseRedirect, HttpResponse
-from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, Isolate
+from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsPlot, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, Isolate
 from django.db import IntegrityError, transaction
 
 import random
@@ -16,7 +16,7 @@ COLLECTING_TABLE = ['collecting_id', 'user_id', 'collection_date', 'collection_m
 PEOPLE_TABLE = ['people_id', 'first_name', 'last_name', 'organization', 'phone', 'email', 'comments']
 TAXONOMY_TABLE = ['taxonomy_id', 'binomial', 'population', 'common_name', 'alias', 'race', 'subtaxa']
 PASSPORT_TABLE = ['passport_id', 'collecting_id', 'people_id', 'taxonomy_id']
-OBS_TABLE = ['obs_tracker_id', 'obs_entity_type', 'experiment_id', 'field_id', 'isolatestock_id', 'location_id', 'maize_sample_id', 'obs_culture_id', 'obs_dna_id', 'obs_env_id', 'obs_extract_id', 'obs_microbe_id', 'obs_plant_id', 'obs_plate_id', 'obs_row_id', 'obs_sample_id', 'obs_tissue_id', 'obs_well_id', 'stock_id', 'user_id']
+OBS_TABLE = ['obs_tracker_id', 'obs_entity_type', 'experiment_id', 'field_id', 'isolatestock_id', 'location_id', 'maize_sample_id', 'obs_culture_id', 'obs_dna_id', 'obs_env_id', 'obs_extract_id', 'obs_microbe_id', 'obs_plant_id', 'obs_plate_id', 'obs_plot_id', 'obs_sample_id', 'obs_tissue_id', 'obs_well_id', 'stock_id', 'user_id']
 ERROR_TABLE_ISOLATESTOCK = ['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name']
 
 def seed_stock_loader_prep(upload_file, user):
@@ -39,7 +39,7 @@ def seed_stock_loader_prep(upload_file, user):
     #--- Key = (taxonomy_id, binomial, population, common_name, alias, race, subtaxa)
     #--- Value = (taxonomy_id)
     obs_tracker_new = OrderedDict({})
-    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
     obs_tracker_source_new = OrderedDict({})
     #--- Key = (obs_tracker_source_id, source_obs_id, target_obs_id)
@@ -65,7 +65,7 @@ def seed_stock_loader_prep(upload_file, user):
     seed_id_table = loader_db_mirror.seed_id_mirror()
     obs_tracker_source_hash_table = loader_db_mirror.obs_tracker_source_hash_mirror()
     obs_tracker_source_id = loader_db_mirror.obs_tracker_source_id_mirror()
-    obs_tracker_obs_row_id_table = loader_db_mirror.obs_tracker_obs_row_id_mirror()
+    obs_tracker_obs_plot_id_table = loader_db_mirror.obs_tracker_obs_plot_id_mirror()
 
     error_count = 0
     row_id_error = OrderedDict({})
@@ -95,7 +95,7 @@ def seed_stock_loader_prep(upload_file, user):
         binomial = row["Binomial"]
         species = row["Species"]
         population = row["Population"]
-        row_id = row["Row ID"]
+        row_id = row["Plot ID"]
         field_name = row["Field Name"]
         plant_id = row["Plant ID"]
         collection_username = row["Username"]
@@ -115,15 +115,15 @@ def seed_stock_loader_prep(upload_file, user):
             if row_id != '':
                 row_id_fix = row_id + '\r'
                 if row_id in row_id_table:
-                    obs_row_id = row_id_table[row_id][0]
+                    obs_plot_id = row_id_table[row_id][0]
                 elif row_id_fix in row_id_table:
-                    obs_row_id = row_id_table[row_id_fix][0]
+                    obs_plot_id = row_id_table[row_id_fix][0]
                 else:
                     row_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
                     error_count = error_count + 1
-                    obs_row_id = 1
+                    obs_plot_id = 1
             else:
-                obs_row_id = 1
+                obs_plot_id = 1
 
             if plant_id != '':
                 plant_id_fix = plant_id + '\r'
@@ -251,24 +251,24 @@ def seed_stock_loader_prep(upload_file, user):
                 error_count = error_count + 1
 
             if experiment_used == '1':
-                obs_tracker_stock_hash = 'stock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_row_id) + str(1) + str(1) + str(1) + str(temp_stock_id) + str(user_hash_table[user.username])
+                obs_tracker_stock_hash = 'stock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_plot_id) + str(1) + str(1) + str(1) + str(temp_stock_id) + str(user_hash_table[user.username])
                 obs_tracker_stock_hash_fix = obs_tracker_stock_hash + '\r'
                 if obs_tracker_stock_hash not in obs_tracker_hash_table and obs_tracker_stock_hash_fix not in obs_tracker_hash_table:
                     obs_tracker_hash_table[obs_tracker_stock_hash] = obs_tracker_id
-                    obs_tracker_new[(obs_tracker_id, 'stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
+                    obs_tracker_new[(obs_tracker_id, 'stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_plot_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
                     obs_tracker_id = obs_tracker_id + 1
                 else:
-                    obs_tracker_hash_exists[('stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
+                    obs_tracker_hash_exists[('stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_plot_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
 
             if experiment_collected == '1':
-                obs_tracker_stock_hash = 'stock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_row_id) + str(1) + str(1) + str(1) + str(temp_stock_id) + str(user_hash_table[user.username])
+                obs_tracker_stock_hash = 'stock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_plot_id) + str(1) + str(1) + str(1) + str(temp_stock_id) + str(user_hash_table[user.username])
                 obs_tracker_stock_hash_fix = obs_tracker_stock_hash + '\r'
                 if obs_tracker_stock_hash not in obs_tracker_hash_table and obs_tracker_stock_hash_fix not in obs_tracker_hash_table:
                     obs_tracker_hash_table[obs_tracker_stock_hash] = obs_tracker_id
-                    obs_tracker_new[(obs_tracker_id, 'stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
+                    obs_tracker_new[(obs_tracker_id, 'stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_plot_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
                     obs_tracker_id = obs_tracker_id + 1
                 else:
-                    obs_tracker_hash_exists[('stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
+                    obs_tracker_hash_exists[('stock', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_plot_id, 1, 1, 1, temp_stock_id, user_hash_table[user.username])] = obs_tracker_id
 
                 if obs_tracker_stock_hash in obs_tracker_hash_table:
                     temp_targetobs_id = obs_tracker_hash_table[obs_tracker_stock_hash]
@@ -292,14 +292,14 @@ def seed_stock_loader_prep(upload_file, user):
                 else:
                     obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_hash_table[obs_tracker_exp_hash], temp_targetobs_id, 'stock_from_experiment')] = obs_tracker_source_id
 
-                if obs_row_id != 1:
-                    obs_tracker_source_row_hash = str(obs_tracker_obs_row_id_table[obs_row_id][0]) + str(temp_targetobs_id) + 'stock_from_row'
+                if obs_plot_id != 1:
+                    obs_tracker_source_row_hash = str(obs_tracker_obs_plot_id_table[obs_plot_id][0]) + str(temp_targetobs_id) + 'stock_from_row'
                     if obs_tracker_source_row_hash not in obs_tracker_source_hash_table:
                         obs_tracker_source_hash_table[obs_tracker_source_row_hash] = obs_tracker_source_id
-                        obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], temp_targetobs_id, 'stock_from_row')] = obs_tracker_source_id
+                        obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_plot_id_table[obs_plot_id][0], temp_targetobs_id, 'stock_from_row')] = obs_tracker_source_id
                         obs_tracker_source_id = obs_tracker_source_id + 1
                     else:
-                        obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], temp_targetobs_id, 'stock_from_row')] = obs_tracker_source_id
+                        obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_plot_id_table[obs_plot_id][0], temp_targetobs_id, 'stock_from_row')] = obs_tracker_source_id
 
     end = time.clock()
     stats = {}
@@ -385,7 +385,7 @@ def seed_stock_loader_prep_output(results_dict, new_upload_exp, template_type):
     for key in results_dict['field_name_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
-    writer.writerow(['Row ID Errors'])
+    writer.writerow(['Plot ID Errors'])
     writer.writerow(ERROR_TABLE_SEEDSTOCK)
     for key in results_dict['row_id_error'].iterkeys():
         writer.writerow(key)
@@ -465,7 +465,7 @@ def seed_stock_loader(results_dict):
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolatestock_id=key[4], location_id=key[5], maize_sample_id=key[6], obs_culture_id=key[7], obs_dna_id=key[8], obs_env_id=key[9], obs_extract_id=key[10], obs_microbe_id=key[11], obs_plant_id=key[12], obs_plate_id=key[13], obs_row_id=key[14], obs_sample_id=key[15], obs_tissue_id=key[16], obs_well_id=key[17], stock_id=key[18], user_id=key[19])
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolatestock_id=key[4], location_id=key[5], maize_sample_id=key[6], obs_culture_id=key[7], obs_dna_id=key[8], obs_env_id=key[9], obs_extract_id=key[10], obs_microbe_id=key[11], obs_plant_id=key[12], obs_plate_id=key[13], obs_plot_id=key[14], obs_sample_id=key[15], obs_tissue_id=key[16], obs_well_id=key[17], stock_id=key[18], user_id=key[19])
                     new_stock.save()
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
@@ -678,11 +678,11 @@ def seed_packet_loader(results_dict):
 def row_loader_prep(upload_file, user):
     start = time.clock()
 
-    obs_row_new = OrderedDict({})
-    #--- Key = (obs_row_id, row_id, row_name, range_num, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
-    #--- Value = (obs_row_id)
+    obs_plot_new = OrderedDict({})
+    #--- Key = (obs_plot_id, row_id, row_name, range_num, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
+    #--- Value = (obs_plot_id)
     obs_tracker_new = OrderedDict({})
-    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
 
     obs_tracker_source_new = OrderedDict({})
@@ -690,8 +690,8 @@ def row_loader_prep(upload_file, user):
     #--- Value = (obs_tracker_source_id)
 
     user_hash_table = loader_db_mirror.user_hash_mirror()
-    obs_row_hash_table = loader_db_mirror.obs_row_hash_mirror()
-    obs_row_id = loader_db_mirror.obs_row_id_mirror()
+    obs_plot_hash_table = loader_db_mirror.obs_plot_hash_mirror()
+    obs_plot_id = loader_db_mirror.obs_plot_id_mirror()
     row_id_table = loader_db_mirror.row_id_mirror()
     seed_id_table = loader_db_mirror.seed_id_mirror()
     field_name_table = loader_db_mirror.field_name_mirror()
@@ -711,11 +711,11 @@ def row_loader_prep(upload_file, user):
 
     row_file = csv.DictReader(upload_file)
     for row in row_file:
-        row_id = row["Row ID"]
+        row_id = row["Plot ID"]
         experiment_name = row["Experiment Name"]
         source_seed_id = row["Source Seed ID"]
         field_name = row["Field Name"]
-        row_name = row["Row Name"]
+        row_name = row["Plot Name"]
         row_range = row["Range"]
         plot = row["Plot"]
         block = row["Block"]
@@ -723,7 +723,7 @@ def row_loader_prep(upload_file, user):
         kernel_num = row["Kernel Num"]
         planting_date = row["Planting Date"]
         harvest_date = row["Harvest Date"]
-        comments = row["Row Comments"]
+        comments = row["Plot Comments"]
 
         if source_seed_id != '':
             source_seed_id_fix = source_seed_id + '\r'
@@ -754,36 +754,36 @@ def row_loader_prep(upload_file, user):
         row_hash = row_id + row_name + row_range + plot + block + rep + kernel_num + planting_date + harvest_date + comments
         row_hash_fix = row_hash + '\r'
         if row_id not in row_id_table and row_id + '\r' not in row_id_table:
-            if row_hash not in obs_row_hash_table and row_hash_fix not in obs_row_hash_table:
-                obs_row_hash_table[row_hash] = obs_row_id
-                obs_row_new[(obs_row_id, row_id, row_name, row_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)] = obs_row_id
-                row_id_table[row_id] = (obs_row_id, row_id, row_name, row_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
-                obs_row_id = obs_row_id + 1
+            if row_hash not in obs_plot_hash_table and row_hash_fix not in obs_plot_hash_table:
+                obs_plot_hash_table[row_hash] = obs_plot_id
+                obs_plot_new[(obs_plot_id, row_id, row_name, row_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)] = obs_plot_id
+                row_id_table[row_id] = (obs_plot_id, row_id, row_name, row_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
+                obs_plot_id = obs_plot_id + 1
             else:
-                row_hash_exists[(row_id, row_name, row_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)] = obs_row_id
+                row_hash_exists[(row_id, row_name, row_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)] = obs_plot_id
         else:
-            row_hash_exists[(row_id, row_name, row_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)] = obs_row_id
+            row_hash_exists[(row_id, row_name, row_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)] = obs_plot_id
 
         if row_id in row_id_table:
-            temp_obsrow_id = row_id_table[row_id][0]
+            temp_obsplot_id = row_id_table[row_id][0]
         elif row_id + '\r' in row_id_table:
-            temp_obsrow_id = row_id_table[row_id + '\r'][0]
-        elif row_hash in obs_row_hash_table:
-            temp_obsrow_id = obs_row_hash_table[row_hash]
-        elif row_hash_fix in obs_row_hash_table:
-            temp_obsrow_id = obs_row_hash_table[row_hash_fix]
+            temp_obsplot_id = row_id_table[row_id + '\r'][0]
+        elif row_hash in obs_plot_hash_table:
+            temp_obsplot_id = obs_plot_hash_table[row_hash]
+        elif row_hash_fix in obs_plot_hash_table:
+            temp_obsplot_id = obs_plot_hash_table[row_hash_fix]
         else:
-            temp_obsrow_id = 1
+            temp_obsplot_id = 1
             error_count = error_count + 1
 
-        obs_tracker_row_hash = 'row' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(temp_obsrow_id) + str(1) + str(1) + str(1) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_row_hash = 'row' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(temp_obsplot_id) + str(1) + str(1) + str(1) + str(stock_id) + str(user_hash_table[user.username])
         obs_tracker_row_hash_fix = obs_tracker_row_hash + '\r'
         if obs_tracker_row_hash not in obs_tracker_hash_table and obs_tracker_row_hash_fix not in obs_tracker_hash_table:
             obs_tracker_hash_table[obs_tracker_row_hash] = obs_tracker_id
-            obs_tracker_new[(obs_tracker_id, 'row', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, temp_obsrow_id, 1, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'row', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, temp_obsplot_id, 1, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
             obs_tracker_id = obs_tracker_id + 1
         else:
-            obs_tracker_hash_exists[('row', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, temp_obsrow_id, 1, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_hash_exists[('row', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, temp_obsplot_id, 1, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
         if stock_id != 1:
             obs_tracker_source_stock_hash = str(obs_tracker_stock_id_table[stock_id][0]) + str(obs_tracker_hash_table[obs_tracker_row_hash]) + 'row_from_stock'
@@ -799,7 +799,7 @@ def row_loader_prep(upload_file, user):
     stats[("Time: %s" % (end-start), "Errors: %s" % (error_count))] = error_count
 
     results_dict = {}
-    results_dict['obs_row_new'] = obs_row_new
+    results_dict['obs_plot_new'] = obs_plot_new
     results_dict['obs_tracker_new'] = obs_tracker_new
     results_dict['source_seed_id_error'] = source_seed_id_error
     results_dict['field_name_error'] = field_name_error
@@ -819,9 +819,9 @@ def row_loader_prep_output(results_dict, new_upload_exp, template_type):
     for key in results_dict['stats'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
-    writer.writerow(['New Row Table'])
-    writer.writerow(['obs_row_id', 'row_id', 'row_name', 'range_num', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date', 'comments'])
-    for key in results_dict['obs_row_new'].iterkeys():
+    writer.writerow(['New Plot Table'])
+    writer.writerow(['obs_plot_id', 'row_id', 'row_name', 'range_num', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date', 'comments'])
+    for key in results_dict['obs_plot_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New ObsTracker Table'])
@@ -846,7 +846,7 @@ def row_loader_prep_output(results_dict, new_upload_exp, template_type):
     for key in results_dict['field_name_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
-    writer.writerow(['Row Entry Already Exists'])
+    writer.writerow(['Plot Entry Already Exists'])
     for key in results_dict['row_hash_exists'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -861,17 +861,17 @@ def row_loader_prep_output(results_dict, new_upload_exp, template_type):
 
 def row_loader(results_dict):
     try:
-        for key in results_dict['obs_row_new'].iterkeys():
+        for key in results_dict['obs_plot_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_obsrow = ObsRow.objects.create(id=key[0], row_id=key[1], row_name=key[2], range_num=key[3], plot=key[4], block=key[5], rep=key[6], kernel_num=key[7], planting_date=key[8], harvest_date=key[9], comments=key[10])
+                    new_obsplot = ObsPlot.objects.create(id=key[0], row_id=key[1], row_name=key[2], range_num=key[3], plot=key[4], block=key[5], rep=key[6], kernel_num=key[7], planting_date=key[8], harvest_date=key[9], comments=key[10])
             except Exception as e:
-                print("ObsRow Error: %s %s" % (e.message, e.args))
+                print("ObsPlot Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -894,7 +894,7 @@ def plant_loader_prep(upload_file, user):
     #--- Key = (obs_plant_id, plant_id, plant_num, comments)
     #--- Value = (obs_plant_id)
     obs_tracker_new = OrderedDict({})
-    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
 
     obs_tracker_source_new = OrderedDict({})
@@ -909,7 +909,7 @@ def plant_loader_prep(upload_file, user):
     plant_id_table = loader_db_mirror.plant_id_mirror()
     obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
     obs_tracker_stock_id_table = loader_db_mirror.obs_tracker_stock_id_mirror()
-    obs_tracker_obs_row_id_table = loader_db_mirror.obs_tracker_obs_row_id_mirror()
+    obs_tracker_obs_plot_id_table = loader_db_mirror.obs_tracker_obs_plot_id_mirror()
     obs_tracker_source_hash_table = loader_db_mirror.obs_tracker_source_hash_mirror()
     obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
     obs_tracker_source_id = loader_db_mirror.obs_tracker_source_id_mirror()
@@ -926,7 +926,7 @@ def plant_loader_prep(upload_file, user):
     for row in plant_file:
         plant_id = row["Plant ID"]
         experiment_name = row["Experiment Name"]
-        row_id = row["Source Row ID"]
+        row_id = row["Source Plot ID"]
         seed_id = row["Source Seed ID"]
         plant_num = row["Plant Number"]
         comments = row["Plant Comments"]
@@ -948,15 +948,15 @@ def plant_loader_prep(upload_file, user):
         if row_id != '':
             row_id_fix = row_id + '\r'
             if row_id in row_id_table:
-                obs_row_id = row_id_table[row_id][0]
+                obs_plot_id = row_id_table[row_id][0]
             elif row_id_fix in row_id_table:
-                obs_row_id = row_id_table[row_id_fix][0]
+                obs_plot_id = row_id_table[row_id_fix][0]
             else:
                 row_id_error[(plant_id, experiment_name, row_id, seed_id, plant_num, comments)] = error_count
                 error_count = error_count + 1
-                obs_row_id = 1
+                obs_plot_id = 1
         else:
-            obs_row_id = 1
+            obs_plot_id = 1
 
         plant_hash = plant_id + plant_num + comments
         plant_hash_fix = plant_hash + '\r'
@@ -983,14 +983,14 @@ def plant_loader_prep(upload_file, user):
             temp_obsplant_id = 1
             error_count = error_count + 1
 
-        obs_tracker_plant_hash = 'plant' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(temp_obsplant_id) + str(1) + str(obs_row_id) + str(1) + str(1) + str(1) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_plant_hash = 'plant' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(temp_obsplant_id) + str(1) + str(obs_plot_id) + str(1) + str(1) + str(1) + str(stock_id) + str(user_hash_table[user.username])
         obs_tracker_plant_hash_fix = obs_tracker_plant_hash + '\r'
         if obs_tracker_plant_hash not in obs_tracker_hash_table and obs_tracker_plant_hash_fix not in obs_tracker_hash_table:
             obs_tracker_hash_table[obs_tracker_plant_hash] = obs_tracker_id
-            obs_tracker_new[(obs_tracker_id, 'plant', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, temp_obsplant_id, 1, obs_row_id, 1, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'plant', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, temp_obsplant_id, 1, obs_plot_id, 1, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
             obs_tracker_id = obs_tracker_id + 1
         else:
-            obs_tracker_hash_exists[('plant', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, temp_obsplant_id, 1, obs_row_id, 1, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_hash_exists[('plant', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, temp_obsplant_id, 1, obs_plot_id, 1, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
         if stock_id != 1:
             obs_tracker_source_stock_hash = str(obs_tracker_stock_id_table[stock_id][0]) + str(obs_tracker_hash_table[obs_tracker_plant_hash]) + 'plant_from_stock'
@@ -1001,14 +1001,14 @@ def plant_loader_prep(upload_file, user):
             else:
                 obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_stock_id_table[stock_id][0], obs_tracker_hash_table[obs_tracker_plant_hash], 'plant_from_stock')] = obs_tracker_source_id
 
-        if obs_row_id != 1:
-            obs_tracker_source_row_hash = str(obs_tracker_obs_row_id_table[obs_row_id][0]) + str(obs_tracker_hash_table[obs_tracker_plant_hash]) + 'plant_from_row'
+        if obs_plot_id != 1:
+            obs_tracker_source_row_hash = str(obs_tracker_obs_plot_id_table[obs_plot_id][0]) + str(obs_tracker_hash_table[obs_tracker_plant_hash]) + 'plant_from_row'
             if obs_tracker_source_row_hash not in obs_tracker_source_hash_table:
                 obs_tracker_source_hash_table[obs_tracker_source_row_hash] = obs_tracker_source_id
-                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], obs_tracker_hash_table[obs_tracker_plant_hash], 'plant_from_row')] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_plot_id_table[obs_plot_id][0], obs_tracker_hash_table[obs_tracker_plant_hash], 'plant_from_row')] = obs_tracker_source_id
                 obs_tracker_source_id = obs_tracker_source_id + 1
             else:
-                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], obs_tracker_hash_table[obs_tracker_plant_hash], 'plant_from_row')] = obs_tracker_source_id
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_plot_id_table[obs_plot_id][0], obs_tracker_hash_table[obs_tracker_plant_hash], 'plant_from_row')] = obs_tracker_source_id
 
 
     end = time.clock()
@@ -1058,7 +1058,7 @@ def plant_loader_prep_output(results_dict, new_upload_exp, template_type):
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
-    writer.writerow(['Row ID Errors'])
+    writer.writerow(['Plot ID Errors'])
     writer.writerow(['plant_id', 'experiment_name', 'row_id', 'seed_id', 'plant_num', 'comments'])
     for key in results_dict['row_id_error'].iterkeys():
         writer.writerow(key)
@@ -1081,14 +1081,14 @@ def plant_loader(results_dict):
         for key in results_dict['obs_plant_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_obsrow = ObsPlant.objects.create(id=key[0], plant_id=key[1], plant_num=key[2], comments=key[3])
+                    new_obsplot = ObsPlant.objects.create(id=key[0], plant_id=key[1], plant_num=key[2], comments=key[3])
             except Exception as e:
                 print("ObsPlant Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -1111,7 +1111,7 @@ def tissue_loader_prep(upload_file, user):
     #--- Key = (obs_tissue_id, tissue_id, tissue_type, tissue_name, date_ground, comments)
     #--- Value = (obs_tissue_id)
     obs_tracker_new = OrderedDict({})
-    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
     obs_tracker_source_new = OrderedDict({})
     #--- Key = (obs_tracker_source_id, source_obs_id, target_obs_id, relationship)
@@ -1128,7 +1128,7 @@ def tissue_loader_prep(upload_file, user):
     obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
     obs_tracker_source_hash_table = loader_db_mirror.obs_tracker_source_hash_mirror()
     obs_tracker_stock_id_table = loader_db_mirror.obs_tracker_stock_id_mirror()
-    obs_tracker_obs_row_id_table = loader_db_mirror.obs_tracker_obs_row_id_mirror()
+    obs_tracker_obs_plot_id_table = loader_db_mirror.obs_tracker_obs_plot_id_mirror()
     obs_tracker_obs_plant_id_table = loader_db_mirror.obs_tracker_obs_plant_id_mirror()
     obs_tracker_obs_culture_id_table = loader_db_mirror.obs_tracker_obs_culture_id_mirror()
     obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
@@ -1152,7 +1152,7 @@ def tissue_loader_prep(upload_file, user):
         tissue_type = row["Tissue Type"]
         date_ground = row["Date Ground"]
         tissue_comments = row["Tissue Comments"]
-        row_id = row["Source Row ID"]
+        row_id = row["Source Plot ID"]
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
         culture_id = row["Source Culture ID"]
@@ -1174,15 +1174,15 @@ def tissue_loader_prep(upload_file, user):
         if row_id != '':
             row_id_fix = row_id + '\r'
             if row_id in row_id_table:
-                obs_row_id = row_id_table[row_id][0]
+                obs_plot_id = row_id_table[row_id][0]
             elif row_id_fix in row_id_table:
-                obs_row_id = row_id_table[row_id_fix][0]
+                obs_plot_id = row_id_table[row_id_fix][0]
             else:
                 row_id_error[(tissue_id, experiment_name, tissue_name, tissue_type, date_ground, row_id, seed_id, plant_id, culture_id, tissue_comments)] = error_count
                 error_count = error_count + 1
-                obs_row_id = 1
+                obs_plot_id = 1
         else:
-            obs_row_id = 1
+            obs_plot_id = 1
 
         if plant_id != '':
             plant_id_fix = plant_id + '\r'
@@ -1235,14 +1235,14 @@ def tissue_loader_prep(upload_file, user):
             temp_obstissue_id = 1
             error_count = error_count + 1
 
-        obs_tracker_tissue_hash = 'tissue' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_culture_id) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_row_id) + str(1) + str(temp_obstissue_id) + str(1) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_tissue_hash = 'tissue' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_culture_id) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_plot_id) + str(1) + str(temp_obstissue_id) + str(1) + str(stock_id) + str(user_hash_table[user.username])
         obs_tracker_tissue_hash_fix = obs_tracker_tissue_hash + '\r'
         if obs_tracker_tissue_hash not in obs_tracker_hash_table and obs_tracker_tissue_hash_fix not in obs_tracker_hash_table:
             obs_tracker_hash_table[obs_tracker_tissue_hash] = obs_tracker_id
-            obs_tracker_new[(obs_tracker_id, 'tissue', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, temp_obstissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'tissue', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, 1, obs_plant_id, 1, obs_plot_id, 1, temp_obstissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
             obs_tracker_id = obs_tracker_id + 1
         else:
-            obs_tracker_hash_exists[('tissue', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, 1, temp_obstissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_hash_exists[('tissue', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, 1, obs_plant_id, 1, obs_plot_id, 1, temp_obstissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
         if stock_id != 1:
             obs_tracker_source_stock_hash = str(obs_tracker_stock_id_table[stock_id][0]) + str(obs_tracker_hash_table[obs_tracker_tissue_hash]) + 'tissue_from_stock'
@@ -1253,14 +1253,14 @@ def tissue_loader_prep(upload_file, user):
             else:
                 obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_stock_id_table[stock_id][0], obs_tracker_hash_table[obs_tracker_tissue_hash], 'tissue_from_stock')] = obs_tracker_source_id
 
-        if obs_row_id != 1:
-            obs_tracker_source_row_hash = str(obs_tracker_obs_row_id_table[obs_row_id][0]) + str(obs_tracker_hash_table[obs_tracker_tissue_hash]) + 'tissue_from_row'
+        if obs_plot_id != 1:
+            obs_tracker_source_row_hash = str(obs_tracker_obs_plot_id_table[obs_plot_id][0]) + str(obs_tracker_hash_table[obs_tracker_tissue_hash]) + 'tissue_from_row'
             if obs_tracker_source_row_hash not in obs_tracker_source_hash_table:
                 obs_tracker_source_hash_table[obs_tracker_source_row_hash] = obs_tracker_source_id
-                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], obs_tracker_hash_table[obs_tracker_tissue_hash], 'tissue_from_row')] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_plot_id_table[obs_plot_id][0], obs_tracker_hash_table[obs_tracker_tissue_hash], 'tissue_from_row')] = obs_tracker_source_id
                 obs_tracker_source_id = obs_tracker_source_id + 1
             else:
-                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], obs_tracker_hash_table[obs_tracker_tissue_hash], 'tissue_from_row')] = obs_tracker_source_id
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_plot_id_table[obs_plot_id][0], obs_tracker_hash_table[obs_tracker_tissue_hash], 'tissue_from_row')] = obs_tracker_source_id
 
         if obs_plant_id != 1:
             obs_tracker_source_plant_hash = str(obs_tracker_obs_plant_id_table[obs_plant_id][0]) + str(obs_tracker_hash_table[obs_tracker_tissue_hash]) + 'tissue_from_plant'
@@ -1330,7 +1330,7 @@ def tissue_loader_prep_output(results_dict, new_upload_exp, template_type):
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
-    writer.writerow(['Row ID Errors'])
+    writer.writerow(['Plot ID Errors'])
     writer.writerow(['tissue_id', 'experiment_name', 'tissue_name', 'tissue_type', 'date_ground', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_culture_id', 'tissue_comments'])
     for key in results_dict['row_id_error'].iterkeys():
         writer.writerow(key)
@@ -1370,7 +1370,7 @@ def tissue_loader(results_dict):
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -1393,7 +1393,7 @@ def culture_loader_prep(upload_file, user):
     #--- Key = (obs_culture_id, medium_id, culture_id, culture_name, microbe_type, plating_cycle, dilution, image_filename, comments, num_colonies, num_microbes)
     #--- Value = (obs_culture_id)
     obs_tracker_new = OrderedDict({})
-    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
     obs_tracker_source_new = OrderedDict({})
     #--- Key = (obs_tracker_source_id, source_obs_id, target_obs_id, relationship)
@@ -1410,7 +1410,7 @@ def culture_loader_prep(upload_file, user):
     culture_id_table = loader_db_mirror.culture_id_mirror()
     obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
     obs_tracker_stock_id_table = loader_db_mirror.obs_tracker_stock_id_mirror()
-    obs_tracker_obs_row_id_table = loader_db_mirror.obs_tracker_obs_row_id_mirror()
+    obs_tracker_obs_plot_id_table = loader_db_mirror.obs_tracker_obs_plot_id_mirror()
     obs_tracker_obs_plant_id_table = loader_db_mirror.obs_tracker_obs_plant_id_mirror()
     obs_tracker_obs_tissue_id_table = loader_db_mirror.obs_tracker_obs_tissue_id_mirror()
     obs_tracker_obs_microbe_id_table = loader_db_mirror.obs_tracker_obs_microbe_id_mirror()
@@ -1447,7 +1447,7 @@ def culture_loader_prep(upload_file, user):
         culture_comments = row["Culture Comments"]
         num_colonies = row["Num Colonies"]
         num_microbes = row["Num Microbes"]
-        row_id = row["Source Row ID"]
+        row_id = row["Source Plot ID"]
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
         tissue_id = row["Source Tissue ID"]
@@ -1470,15 +1470,15 @@ def culture_loader_prep(upload_file, user):
         if row_id != '':
             row_id_fix = row_id + '\r'
             if row_id in row_id_table:
-                obs_row_id = row_id_table[row_id][0]
+                obs_plot_id = row_id_table[row_id][0]
             elif row_id_fix in row_id_table:
-                obs_row_id = row_id_table[row_id_fix][0]
+                obs_plot_id = row_id_table[row_id_fix][0]
             else:
                 row_id_error[(culture_id, experiment_name, media_name, location_name, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, row_id, seed_id, plant_id, tissue_id, microbe_id)] = error_count
                 error_count = error_count + 1
-                obs_row_id = 1
+                obs_plot_id = 1
         else:
-            obs_row_id = 1
+            obs_plot_id = 1
 
         if plant_id != '':
             plant_id_fix = plant_id + '\r'
@@ -1570,14 +1570,14 @@ def culture_loader_prep(upload_file, user):
             temp_obsculture_id = 1
             error_count = error_count + 1
 
-        obs_tracker_culture_hash = 'culture' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(temp_obsculture_id) + str(1) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(1) + str(obs_row_id) + str(1) + str(obs_tissue_id) + str(1) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_culture_hash = 'culture' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(temp_obsculture_id) + str(1) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(1) + str(obs_plot_id) + str(1) + str(obs_tissue_id) + str(1) + str(stock_id) + str(user_hash_table[user.username])
         obs_tracker_culture_hash_fix = obs_tracker_culture_hash + '\r'
         if obs_tracker_culture_hash not in obs_tracker_hash_table and obs_tracker_culture_hash_fix not in obs_tracker_hash_table:
             obs_tracker_hash_table[obs_tracker_culture_hash] = obs_tracker_id
-            obs_tracker_new[(obs_tracker_id, 'culture', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, temp_obsculture_id, 1, 1, 1, obs_microbe_id, obs_plant_id, 1, obs_row_id, 1, obs_tissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'culture', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, temp_obsculture_id, 1, 1, 1, obs_microbe_id, obs_plant_id, 1, obs_plot_id, 1, obs_tissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
             obs_tracker_id = obs_tracker_id + 1
         else:
-            obs_tracker_hash_exists[('culture', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, temp_obsculture_id, 1, 1, 1, obs_microbe_id, obs_plant_id, 1, obs_row_id, 1, obs_tissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_hash_exists[('culture', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, temp_obsculture_id, 1, 1, 1, obs_microbe_id, obs_plant_id, 1, obs_plot_id, 1, obs_tissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
         if stock_id != 1:
             obs_tracker_source_stock_hash = str(obs_tracker_stock_id_table[stock_id][0]) + str(obs_tracker_hash_table[obs_tracker_culture_hash]) + 'culture_from_stock'
@@ -1588,14 +1588,14 @@ def culture_loader_prep(upload_file, user):
             else:
                 obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_stock_id_table[stock_id][0], obs_tracker_hash_table[obs_tracker_culture_hash], 'culture_from_stock')] = obs_tracker_source_id
 
-        if obs_row_id != 1:
-            obs_tracker_source_row_hash = str(obs_tracker_obs_row_id_table[obs_row_id][0]) + str(obs_tracker_hash_table[obs_tracker_culture_hash]) + 'culture_from_row'
+        if obs_plot_id != 1:
+            obs_tracker_source_row_hash = str(obs_tracker_obs_plot_id_table[obs_plot_id][0]) + str(obs_tracker_hash_table[obs_tracker_culture_hash]) + 'culture_from_row'
             if obs_tracker_source_row_hash not in obs_tracker_source_hash_table:
                 obs_tracker_source_hash_table[obs_tracker_source_row_hash] = obs_tracker_source_id
-                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], obs_tracker_hash_table[obs_tracker_culture_hash], 'culture_from_row')] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_plot_id_table[obs_plot_id][0], obs_tracker_hash_table[obs_tracker_culture_hash], 'culture_from_row')] = obs_tracker_source_id
                 obs_tracker_source_id = obs_tracker_source_id + 1
             else:
-                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], obs_tracker_hash_table[obs_tracker_culture_hash], 'culture_from_row')] = obs_tracker_source_id
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_plot_id_table[obs_plot_id][0], obs_tracker_hash_table[obs_tracker_culture_hash], 'culture_from_row')] = obs_tracker_source_id
 
         if obs_plant_id != 1:
             obs_tracker_source_plant_hash = str(obs_tracker_obs_plant_id_table[obs_plant_id][0]) + str(obs_tracker_hash_table[obs_tracker_culture_hash]) + 'culture_from_plant'
@@ -1676,7 +1676,7 @@ def culture_loader_prep_output(results_dict, new_upload_exp, template_type):
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
-    writer.writerow(['Row ID Errors'])
+    writer.writerow(['Plot ID Errors'])
     writer.writerow(['culture_id', 'experiment_name', 'media_name', 'location_name', 'culture_name', 'microbe_type', 'plating_cycle', 'dilution', 'image_filename', 'culture_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id'])
     for key in results_dict['row_id_error'].iterkeys():
         writer.writerow(key)
@@ -1721,7 +1721,7 @@ def culture_loader(results_dict):
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -1744,7 +1744,7 @@ def dna_loader_prep(upload_file, user):
     #--- Key = (obs_dna_id, dna_id, extraction_method, date, tube_id, tube_type, comments)
     #--- Value = (obs_dna_id)
     obs_tracker_new = OrderedDict({})
-    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
     obs_tracker_source_new = OrderedDict({})
     #--- Key = (obs_tracker_source_id, source_obs_id, target_obs_id, relationship)
@@ -1767,7 +1767,7 @@ def dna_loader_prep(upload_file, user):
     obs_tracker_stock_id_table = loader_db_mirror.obs_tracker_stock_id_mirror()
     obs_tracker_obs_sample_id_table = loader_db_mirror.obs_tracker_obs_sample_id_mirror()
     obs_tracker_obs_well_id_table = loader_db_mirror.obs_tracker_obs_well_id_mirror()
-    obs_tracker_obs_row_id_table = loader_db_mirror.obs_tracker_obs_row_id_mirror()
+    obs_tracker_obs_plot_id_table = loader_db_mirror.obs_tracker_obs_plot_id_mirror()
     obs_tracker_obs_plant_id_table = loader_db_mirror.obs_tracker_obs_plant_id_mirror()
     obs_tracker_obs_tissue_id_table = loader_db_mirror.obs_tracker_obs_tissue_id_mirror()
     obs_tracker_obs_microbe_id_table = loader_db_mirror.obs_tracker_obs_microbe_id_mirror()
@@ -1801,7 +1801,7 @@ def dna_loader_prep(upload_file, user):
         tube_id = row["Tube ID"]
         tube_type = row["Tube Type"]
         dna_comments = row["DNA Comments"]
-        row_id = row["Source Row ID"]
+        row_id = row["Source Plot ID"]
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
         tissue_id = row["Source Tissue ID"]
@@ -1841,15 +1841,15 @@ def dna_loader_prep(upload_file, user):
         if row_id != '':
             row_id_fix = row_id + '\r'
             if row_id in row_id_table:
-                obs_row_id = row_id_table[row_id][0]
+                obs_plot_id = row_id_table[row_id][0]
             elif row_id_fix in row_id_table:
-                obs_row_id = row_id_table[row_id_fix][0]
+                obs_plot_id = row_id_table[row_id_fix][0]
             else:
                 row_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, row_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
                 error_count = error_count + 1
-                obs_row_id = 1
+                obs_plot_id = 1
         else:
-            obs_row_id = 1
+            obs_plot_id = 1
 
         if plant_id != '':
             plant_id_fix = plant_id + '\r'
@@ -1954,14 +1954,14 @@ def dna_loader_prep(upload_file, user):
             temp_obsdna_id = 1
             error_count = error_count + 1
 
-        obs_tracker_dna_hash = 'dna' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_culture_id) + str(temp_obsdna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_row_id) + str(obs_sample_id) + str(obs_tissue_id) + str(1) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_dna_hash = 'dna' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_culture_id) + str(temp_obsdna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_plot_id) + str(obs_sample_id) + str(obs_tissue_id) + str(1) + str(stock_id) + str(user_hash_table[user.username])
         obs_tracker_dna_hash_fix = obs_tracker_dna_hash + '\r'
         if obs_tracker_dna_hash not in obs_tracker_hash_table and obs_tracker_dna_hash_fix not in obs_tracker_hash_table:
             obs_tracker_hash_table[obs_tracker_dna_hash] = obs_tracker_id
-            obs_tracker_new[(obs_tracker_id, 'dna', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, temp_obsdna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'dna', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, temp_obsdna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
             obs_tracker_id = obs_tracker_id + 1
         else:
-            obs_tracker_hash_exists[('dna', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, temp_obsdna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_hash_exists[('dna', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, temp_obsdna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
         if stock_id != 1:
             obs_tracker_source_stock_hash = str(obs_tracker_stock_id_table[stock_id][0]) + str(obs_tracker_hash_table[obs_tracker_dna_hash]) + 'culture_from_stock'
@@ -1972,14 +1972,14 @@ def dna_loader_prep(upload_file, user):
             else:
                 obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_stock_id_table[stock_id][0], obs_tracker_hash_table[obs_tracker_dna_hash], 'culture_from_stock')] = obs_tracker_source_id
 
-        if obs_row_id != 1:
-            obs_tracker_source_row_hash = str(obs_tracker_obs_row_id_table[obs_row_id][0]) + str(obs_tracker_hash_table[obs_tracker_dna_hash]) + 'dna_from_row'
+        if obs_plot_id != 1:
+            obs_tracker_source_row_hash = str(obs_tracker_obs_plot_id_table[obs_plot_id][0]) + str(obs_tracker_hash_table[obs_tracker_dna_hash]) + 'dna_from_row'
             if obs_tracker_source_row_hash not in obs_tracker_source_hash_table:
                 obs_tracker_source_hash_table[obs_tracker_source_row_hash] = obs_tracker_source_id
-                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], obs_tracker_hash_table[obs_tracker_dna_hash], 'dna_from_row')] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_plot_id_table[obs_plot_id][0], obs_tracker_hash_table[obs_tracker_dna_hash], 'dna_from_row')] = obs_tracker_source_id
                 obs_tracker_source_id = obs_tracker_source_id + 1
             else:
-                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], obs_tracker_hash_table[obs_tracker_dna_hash], 'dna_from_row')] = obs_tracker_source_id
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_plot_id_table[obs_plot_id][0], obs_tracker_hash_table[obs_tracker_dna_hash], 'dna_from_row')] = obs_tracker_source_id
 
         if obs_plant_id != 1:
             obs_tracker_source_plant_hash = str(obs_tracker_obs_plant_id_table[obs_plant_id][0]) + str(obs_tracker_hash_table[obs_tracker_dna_hash]) + 'dna_from_plant'
@@ -2099,7 +2099,7 @@ def dna_loader_prep_output(results_dict, new_upload_exp, template_type):
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
-    writer.writerow(['Row ID Errors'])
+    writer.writerow(['Plot ID Errors'])
     writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
     for key in results_dict['row_id_error'].iterkeys():
         writer.writerow(key)
@@ -2164,7 +2164,7 @@ def dna_loader(results_dict):
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -2187,7 +2187,7 @@ def microbe_loader_prep(upload_file, user):
     #--- Key = (obs_microbe_id, microbe_id, microbe_type, comments)
     #--- Value = (obs_microbe_id)
     obs_tracker_new = OrderedDict({})
-    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
     obs_tracker_source_new = OrderedDict({})
     #--- Key = (obs_tracker_source_id, source_obs_id, target_obs_id, relationship)
@@ -2207,7 +2207,7 @@ def microbe_loader_prep(upload_file, user):
     obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
     obs_tracker_source_id = loader_db_mirror.obs_tracker_source_id_mirror()
     obs_tracker_stock_id_table = loader_db_mirror.obs_tracker_stock_id_mirror()
-    obs_tracker_obs_row_id_table = loader_db_mirror.obs_tracker_obs_row_id_mirror()
+    obs_tracker_obs_plot_id_table = loader_db_mirror.obs_tracker_obs_plot_id_mirror()
     obs_tracker_obs_plant_id_table = loader_db_mirror.obs_tracker_obs_plant_id_mirror()
     obs_tracker_obs_tissue_id_table = loader_db_mirror.obs_tracker_obs_tissue_id_mirror()
     obs_tracker_obs_culture_id_table = loader_db_mirror.obs_tracker_obs_culture_id_mirror()
@@ -2229,7 +2229,7 @@ def microbe_loader_prep(upload_file, user):
         experiment_name = row["Experiment Name"]
         microbe_type = row["Microbe Type"]
         microbe_comments = row["Microbe Comments"]
-        row_id = row["Source Row ID"]
+        row_id = row["Source Plot ID"]
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
         tissue_id = row["Source Tissue ID"]
@@ -2252,15 +2252,15 @@ def microbe_loader_prep(upload_file, user):
         if row_id != '':
             row_id_fix = row_id + '\r'
             if row_id in row_id_table:
-                obs_row_id = row_id_table[row_id][0]
+                obs_plot_id = row_id_table[row_id][0]
             elif row_id_fix in row_id_table:
-                obs_row_id = row_id_table[row_id_fix][0]
+                obs_plot_id = row_id_table[row_id_fix][0]
             else:
                 row_id_error[(microbe_id, experiment_name, microbe_type, microbe_comments, row_id, seed_id, plant_id, tissue_id, culture_id)] = error_count
                 error_count = error_count + 1
-                obs_row_id = 1
+                obs_plot_id = 1
         else:
-            obs_row_id = 1
+            obs_plot_id = 1
 
         if plant_id != '':
             plant_id_fix = plant_id + '\r'
@@ -2326,14 +2326,14 @@ def microbe_loader_prep(upload_file, user):
             temp_obsmicrobe_id = 1
             error_count = error_count + 1
 
-        obs_tracker_microbe_hash = 'microbe' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_culture_id) + str(1) + str(1) + str(1) + str(temp_obsmicrobe_id) + str(obs_plant_id) + str(1) + str(obs_row_id) + str(1) + str(obs_tissue_id) + str(1) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_microbe_hash = 'microbe' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_culture_id) + str(1) + str(1) + str(1) + str(temp_obsmicrobe_id) + str(obs_plant_id) + str(1) + str(obs_plot_id) + str(1) + str(obs_tissue_id) + str(1) + str(stock_id) + str(user_hash_table[user.username])
         obs_tracker_microbe_hash_fix = obs_tracker_microbe_hash + '\r'
         if obs_tracker_microbe_hash not in obs_tracker_hash_table and obs_tracker_microbe_hash_fix not in obs_tracker_hash_table:
             obs_tracker_hash_table[obs_tracker_microbe_hash] = obs_tracker_id
-            obs_tracker_new[(obs_tracker_id, 'microbe', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, temp_obsmicrobe_id, obs_plant_id, 1, obs_row_id, 1, obs_tissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'microbe', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, temp_obsmicrobe_id, obs_plant_id, 1, obs_plot_id, 1, obs_tissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
             obs_tracker_id = obs_tracker_id + 1
         else:
-            obs_tracker_hash_exists[('microbe', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, temp_obsmicrobe_id, obs_plant_id, 1, obs_row_id, 1, obs_tissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_hash_exists[('microbe', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, temp_obsmicrobe_id, obs_plant_id, 1, obs_plot_id, 1, obs_tissue_id, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
         if stock_id != 1:
             obs_tracker_source_stock_hash = str(obs_tracker_stock_id_table[stock_id][0]) + str(obs_tracker_hash_table[obs_tracker_microbe_hash]) + 'microbe_from_stock'
@@ -2344,14 +2344,14 @@ def microbe_loader_prep(upload_file, user):
             else:
                 obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_stock_id_table[stock_id][0], obs_tracker_hash_table[obs_tracker_microbe_hash], 'microbe_from_stock')] = obs_tracker_source_id
 
-        if obs_row_id != 1:
-            obs_tracker_source_row_hash = str(obs_tracker_obs_row_id_table[obs_row_id][0]) + str(obs_tracker_hash_table[obs_tracker_microbe_hash]) + 'microbe_from_row'
+        if obs_plot_id != 1:
+            obs_tracker_source_row_hash = str(obs_tracker_obs_plot_id_table[obs_plot_id][0]) + str(obs_tracker_hash_table[obs_tracker_microbe_hash]) + 'microbe_from_row'
             if obs_tracker_source_row_hash not in obs_tracker_source_hash_table:
                 obs_tracker_source_hash_table[obs_tracker_source_row_hash] = obs_tracker_source_id
-                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], obs_tracker_hash_table[obs_tracker_microbe_hash], 'microbe_from_row')] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_obs_plot_id_table[obs_plot_id][0], obs_tracker_hash_table[obs_tracker_microbe_hash], 'microbe_from_row')] = obs_tracker_source_id
                 obs_tracker_source_id = obs_tracker_source_id + 1
             else:
-                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_row_id_table[obs_row_id][0], obs_tracker_hash_table[obs_tracker_microbe_hash], 'microbe_from_row')] = obs_tracker_source_id
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_obs_plot_id_table[obs_plot_id][0], obs_tracker_hash_table[obs_tracker_microbe_hash], 'microbe_from_row')] = obs_tracker_source_id
 
         if obs_plant_id != 1:
             obs_tracker_source_plant_hash = str(obs_tracker_obs_plant_id_table[obs_plant_id][0]) + str(obs_tracker_hash_table[obs_tracker_microbe_hash]) + 'microbe_from_plant'
@@ -2430,7 +2430,7 @@ def microbe_loader_prep_output(results_dict, new_upload_exp, template_type):
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
-    writer.writerow(['Row ID Errors'])
+    writer.writerow(['Plot ID Errors'])
     writer.writerow(['microbe_id', 'experiment_name', 'microbe_type', 'microbe_comments','source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id'])
     for key in results_dict['row_id_error'].iterkeys():
         writer.writerow(key)
@@ -2475,7 +2475,7 @@ def microbe_loader(results_dict):
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -2498,7 +2498,7 @@ def plate_loader_prep(upload_file, user):
     #--- Key = (obs_plate_id, plate_id, plate_name, date, contents, rep, plate_type, plate_status, comments)
     #--- Value = (obs_plate_id)
     obs_tracker_new = OrderedDict({})
-    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
 
     user_hash_table = loader_db_mirror.user_hash_mirror()
@@ -2636,7 +2636,7 @@ def plate_loader(results_dict):
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -2652,7 +2652,7 @@ def env_loader_prep(upload_file, user):
     #--- Key = (obs_env_id, environment_id, longitude, latitude, comments)
     #--- Value = (obs_env_id)
     obs_tracker_new = OrderedDict({})
-    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
 
     user_hash_table = loader_db_mirror.user_hash_mirror()
@@ -2786,7 +2786,7 @@ def env_loader(results_dict):
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -2802,7 +2802,7 @@ def well_loader_prep(upload_file, user):
     #--- Key = (obs_well_id, well_id, well, well_inventory, tube_label, comments)
     #--- Value = (obs_well_id)
     obs_tracker_new = OrderedDict({})
-    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
 
     user_hash_table = loader_db_mirror.user_hash_mirror()
@@ -2838,7 +2838,7 @@ def well_loader_prep(upload_file, user):
         inventory = row["Inventory"]
         tube_label = row["Tube Label"]
         well_comments = row["Well Comments"]
-        row_id = row["Source Row ID"]
+        row_id = row["Source Plot ID"]
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
         tissue_id = row["Source Tissue ID"]
@@ -2863,15 +2863,15 @@ def well_loader_prep(upload_file, user):
         if row_id != '':
             row_id_fix = row_id + '\r'
             if row_id in row_id_table:
-                obs_row_id = row_id_table[row_id][0]
+                obs_plot_id = row_id_table[row_id][0]
             elif row_id_fix in row_id_table:
-                obs_row_id = row_id_table[row_id_fix][0]
+                obs_plot_id = row_id_table[row_id_fix][0]
             else:
                 row_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, row_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
                 error_count = error_count + 1
-                obs_row_id = 1
+                obs_plot_id = 1
         else:
-            obs_row_id = 1
+            obs_plot_id = 1
 
         if plant_id != '':
             plant_id_fix = plant_id + '\r'
@@ -2963,14 +2963,14 @@ def well_loader_prep(upload_file, user):
             temp_obswell_id = 1
             error_count = error_count + 1
 
-        obs_tracker_well_hash = 'well' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_culture_id) + str(1) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_row_id) + str(1) + str(obs_tissue_id) + str(temp_obswell_id) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_well_hash = 'well' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_culture_id) + str(1) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_plot_id) + str(1) + str(obs_tissue_id) + str(temp_obswell_id) + str(stock_id) + str(user_hash_table[user.username])
         obs_tracker_well_hash_fix = obs_tracker_well_hash + '\r'
         if obs_tracker_well_hash not in obs_tracker_hash_table and obs_tracker_well_hash_fix not in obs_tracker_hash_table:
             obs_tracker_hash_table[obs_tracker_well_hash] = obs_tracker_id
-            obs_tracker_new[(obs_tracker_id, 'well', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, temp_obswell_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'well', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, 1, obs_tissue_id, temp_obswell_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
             obs_tracker_id = obs_tracker_id + 1
         else:
-            obs_tracker_hash_exists[('well', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, temp_obswell_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_hash_exists[('well', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, obs_culture_id, 1, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, 1, obs_tissue_id, temp_obswell_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
     end = time.clock()
     stats = {}
@@ -3017,7 +3017,7 @@ def well_loader_prep_output(results_dict, new_upload_exp, template_type):
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
-    writer.writerow(['Row ID Errors'])
+    writer.writerow(['Plot ID Errors'])
     writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
     for key in results_dict['row_id_error'].iterkeys():
         writer.writerow(key)
@@ -3068,7 +3068,7 @@ def well_loader(results_dict):
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -3084,7 +3084,7 @@ def samples_loader_prep(upload_file, user):
     #--- Key = (obs_sample_id, sample_id, sample_type, sample_name, weight, volume, density, kernel_num, photo, comments)
     #--- Value = (obs_sample_id)
     obs_tracker_new = OrderedDict({})
-    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
     obs_tracker_source_new = OrderedDict({})
     #--- Key = (obs_tracker_source_id, source_obs_id, target_obs_id)
@@ -3125,7 +3125,7 @@ def samples_loader_prep(upload_file, user):
         density = row["Density"]
         photo = row["Photo"]
         sample_comments = row["Sample Comments"]
-        row_id = row["Source Row ID"]
+        row_id = row["Source Plot ID"]
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
         source_sample_id = row["Source Sample ID"]
@@ -3147,15 +3147,15 @@ def samples_loader_prep(upload_file, user):
         if row_id != '':
             row_id_fix = row_id + '\r'
             if row_id in row_id_table:
-                obs_row_id = row_id_table[row_id][0]
+                obs_plot_id = row_id_table[row_id][0]
             elif row_id_fix in row_id_table:
-                obs_row_id = row_id_table[row_id_fix][0]
+                obs_plot_id = row_id_table[row_id_fix][0]
             else:
                 row_id_error[(sample_id, experiment_name, sample_type, sample_name, kernel_num, weight, volume, density, photo, sample_comments, row_id, seed_id, plant_id)] = error_count
                 error_count = error_count + 1
-                obs_row_id = 1
+                obs_plot_id = 1
         else:
-            obs_row_id = 1
+            obs_plot_id = 1
 
         if plant_id != '':
             plant_id_fix = plant_id + '\r'
@@ -3195,15 +3195,15 @@ def samples_loader_prep(upload_file, user):
             temp_obssample_id = 1
             error_count = error_count + 1
 
-        obs_tracker_sample_hash = 'sample' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_row_id) + str(temp_obssample_id) + str(1) + str(1) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_sample_hash = 'sample' + str(experiment_name_table[experiment_name][0]) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(obs_plant_id) + str(1) + str(obs_plot_id) + str(temp_obssample_id) + str(1) + str(1) + str(stock_id) + str(user_hash_table[user.username])
         obs_tracker_sample_hash_fix = obs_tracker_sample_hash + '\r'
         if obs_tracker_sample_hash not in obs_tracker_hash_table and obs_tracker_sample_hash_fix not in obs_tracker_hash_table:
             obs_tracker_hash_table[obs_tracker_sample_hash] = obs_tracker_id
-            obs_tracker_new[(obs_tracker_id, 'sample', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, temp_obssample_id, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
-            obs_tracker_sample_id_table[(sample_id)] = (obs_tracker_id, 'sample', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, temp_obssample_id, 1, 1, stock_id, user_hash_table[user.username])
+            obs_tracker_new[(obs_tracker_id, 'sample', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_plot_id, temp_obssample_id, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_sample_id_table[(sample_id)] = (obs_tracker_id, 'sample', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_plot_id, temp_obssample_id, 1, 1, stock_id, user_hash_table[user.username])
             obs_tracker_id = obs_tracker_id + 1
         else:
-            obs_tracker_hash_exists[('sample', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_row_id, temp_obssample_id, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_hash_exists[('sample', experiment_name_table[experiment_name][0], 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, obs_plant_id, 1, obs_plot_id, temp_obssample_id, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
         if source_sample_id != '':
             source_sample_id_fix = source_sample_id + '\r'
@@ -3270,7 +3270,7 @@ def samples_loader_prep_output(results_dict, new_upload_exp, template_type):
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
-    writer.writerow(['Row ID Errors'])
+    writer.writerow(['Plot ID Errors'])
     writer.writerow(['sample_id', 'experiment_name', 'sample_type', 'sample_name', 'kernel_num', 'weight', 'volume', 'density', 'photo', 'sample_comments', 'source_row_id', 'source_seed_id', 'source_plant_id'])
     for key in results_dict['row_id_error'].iterkeys():
         writer.writerow(key)
@@ -3310,7 +3310,7 @@ def samples_loader(results_dict):
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_obstracker = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                    new_obstracker = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -3333,7 +3333,7 @@ def maize_loader_prep(upload_file, user):
     #--- Key = (maize_sample_id, maize_id, gps_altitude, county, weight, appearance, photo, gps_accuracy, gps_latitude, gps_longitude, harvest_date, maize_variety, moisture_content, seed_source, source_type, storage_conditions, storage_months, sub_location, village)
     #--- Value = (maize_sample_id)
     obs_tracker_new = OrderedDict({})
-    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
 
     user_hash_table = loader_db_mirror.user_hash_mirror()
@@ -3459,7 +3459,7 @@ def maize_loader(results_dict):
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -3592,7 +3592,7 @@ def isolatestock_loader_prep(upload_file, user):
     #--- Key = (taxonomy_id, binomial, population, common_name, alias, race, subtaxa)
     #--- Value = (taxonomy_id)
     obs_tracker_new = OrderedDict({})
-    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
     isolate_new = OrderedDict({})
     #--- Key (isolate_id, isolatestock, location, locality, stock_date, extract_color, organism, comments, user)
@@ -3668,7 +3668,7 @@ def isolatestock_loader_prep(upload_file, user):
         alias = row["Alias"]
         race = row["Race"]
         subtaxa = row["Subtaxa"]
-        row_id = row["Source Row ID"]
+        row_id = row["Source Plot ID"]
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
         tissue_id = row["Source Tissue ID"]
@@ -3689,10 +3689,13 @@ def isolatestock_loader_prep(upload_file, user):
         isolate_comments = row["Isolate Comments"]
         stock_date = row["Stock Date"]
         count = row["Count"]
+        isolate_id = row["Isolate ID"]
+
 
         # Uncomment and use these later!
         location_name = row["Location Name"]
         building_name = row["Building Name"]
+        shelf = row["Shelf"]
         room = row["Room"]
 
         # location_name = 'LOCATION'
@@ -3727,6 +3730,9 @@ def isolatestock_loader_prep(upload_file, user):
                     stock_id = 1
             else:
                 stock_id = 1
+
+            if isolate_id == '':
+                isolate_id = isolatestock_id
 
             if field_name != '':
                 field_name_fix = field_name + '\r'
@@ -3763,15 +3769,15 @@ def isolatestock_loader_prep(upload_file, user):
             if row_id != '':
                 row_id_fix = row_id + '\r'
                 if row_id in row_id_table:
-                    obs_row_id = row_id_table[row_id][0]
+                    obs_plot_id = row_id_table[row_id][0]
                 elif row_id_fix in row_id_table:
-                    obs_row_id = row_id_table[row_id_fix][0]
+                    obs_plot_id = row_id_table[row_id_fix][0]
                 else:
                     row_id_error[ERROR_TUPLE_ISOLATESTOCK] = error_count
                     error_count = error_count + 1
-                    obs_row_id = 1
+                    obs_plot_id = 1
             else:
-                obs_row_id = 1
+                obs_plot_id = 1
 
             if plant_id != '':
                 plant_id_fix = plant_id + '\r'
@@ -3982,24 +3988,22 @@ def isolatestock_loader_prep(upload_file, user):
 
 
 
-            obs_tracker_isolatestock_hash = 'isolatestock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(temp_isolatestock_id) + str(1) + str(1)  + str(1) + str(obs_culture_id) + str(obs_dna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_row_id) + str(1) + str(obs_tissue_id) + str(obs_well_id) + str(stock_id) + str(user_hash_table[user.username])
+            obs_tracker_isolatestock_hash = 'isolatestock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(temp_isolatestock_id) + str(1) + str(1)  + str(1) + str(obs_culture_id) + str(obs_dna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_plot_id) + str(1) + str(obs_tissue_id) + str(obs_well_id) + str(stock_id) + str(user_hash_table[user.username])
             obs_tracker_isolatestock_hash_fix = obs_tracker_isolatestock_hash + '\r'
             if obs_tracker_isolatestock_hash not in obs_tracker_hash_table and obs_tracker_isolatestock_hash_fix not in obs_tracker_hash_table:
                 obs_tracker_hash_table[obs_tracker_isolatestock_hash] = obs_tracker_id
-                obs_tracker_new[(obs_tracker_id, 'isolatestock', experiment_name_table[experiment_name][0], field_id, temp_isolatestock_id, 1, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
+                obs_tracker_new[(obs_tracker_id, 'isolatestock', experiment_name_table[experiment_name][0], field_id, temp_isolatestock_id, 1, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
                 obs_tracker_id = obs_tracker_id + 1
             else:
-                obs_tracker_hash_exists[('isolatestock', experiment_name_table[experiment_name][0], field_id, temp_isolatestock_id, 1, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
+                obs_tracker_hash_exists[('isolatestock', experiment_name_table[experiment_name][0], field_id, temp_isolatestock_id, 1, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, 1, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
             # Isolate sub-loaders
-            location_new[(box_name, building_name, room, location_name)] = box_name
+            location_new[(box_name, building_name, room, location_name, shelf)] = box_name
 
             for i in xrange(int(count)):
-                isolate_new[(isolatestock_id, temp_isolatestock_id, box_name, locality_id,  stock_date, '', '', isolate_comments, user, i)] = i
-                # print 'isolate_new =', isolate_new
-            #--- Key (isolate_id, isolatestock, location, locality, stock_date, extract_color, organism, comments, user)
+                isolate_new[(isolate_id, temp_isolatestock_id, box_name, locality_id,  stock_date, '', '', isolate_comments, user, i)] = i
 
-            # people_new[(people_id, first_name, last_name, organization, phone, email, source_comments)] = people_id
+            #--- Key (isolate_id, isolatestock, location, locality, stock_date, extract_color, organism, comments, user)
 
     end = time.clock()
     stats = {}
@@ -4050,12 +4054,12 @@ def isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type)
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Location Table'])
-    writer.writerow(['box_name', 'building_name', 'room', 'location_name'])
+    writer.writerow(['box_name', 'building_name', 'room', 'location_name', 'shelf'])
     for key in results_dict['location_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Isolate Table'])
-    writer.writerow(['IsolateStock', 'IsolateStock ID', 'Box Name', 'Locality ID', 'stock_date', 'extract_color', 'organism', 'comments', 'user'])
+    writer.writerow(['Isolate ID', 'IsolateStock ID', 'Box Name', 'Locality ID', 'stock_date', 'extract_color', 'organism', 'comments', 'user'])
     for key in results_dict['isolate_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -4091,7 +4095,7 @@ def isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type)
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
-    writer.writerow(['Row ID Errors'])
+    writer.writerow(['Plot ID Errors'])
     writer.writerow(ERROR_TABLE_ISOLATESTOCK)
     for key in results_dict['row_id_error'].iterkeys():
         writer.writerow(key)
@@ -4213,19 +4217,18 @@ def isolatestock_loader(results_dict):
                     new_isolatestock.save()
             except Exception as e:
                 print("IsolateStock Error: %s %s" % (e.message, e.args))
-                # print key[4]
                 success = False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock, created = ObsTracker.objects.get_or_create(obs_entity_type=key[1], experiment_id=key[2], field_id=key[3],  isolatestock_id=key[4], location_id=key[5], maize_sample_id=key[6], obs_culture_id=key[7], obs_dna_id=key[8], obs_env_id=key[9], obs_extract_id=key[10], obs_microbe_id=key[11], obs_plant_id=key[12], obs_plate_id=key[13], obs_row_id=key[14], obs_sample_id=key[15], obs_tissue_id=key[16], obs_well_id=key[17], stock_id=key[18], user_id=key[19])
+                    new_stock, created = ObsTracker.objects.get_or_create(obs_entity_type=key[1], experiment_id=key[2], field_id=key[3],  isolatestock_id=key[4], location_id=key[5], maize_sample_id=key[6], obs_culture_id=key[7], obs_dna_id=key[8], obs_env_id=key[9], obs_extract_id=key[10], obs_microbe_id=key[11], obs_plant_id=key[12], obs_plate_id=key[13], obs_plot_id=key[14], obs_sample_id=key[15], obs_tissue_id=key[16], obs_well_id=key[17], stock_id=key[18], user_id=key[19])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 success = False
         for key in results_dict['location_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_location = Location.objects.get_or_create(box_name=key[0], building_name=key[1], room=key[2], location_name=key[3], locality_id=1)[0]
+                    new_location = Location.objects.get_or_create(box_name=key[0], building_name=key[1], room=key[2], location_name=key[3], shelf=key[4], locality_id=1)[0]
                     new_location.save()
             except Exception as e:
                 print("Location Error: %s %s" % (e.message, e.args))
@@ -4256,7 +4259,7 @@ def isolate_loader_prep(upload_file, user):
     #--- Key = (id, isolate_id, stock_date, extract_color, organism, comments)
     #--- Value = (id)
     obs_tracker_new = OrderedDict({})
-    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
 
     user_hash_table = loader_db_mirror.user_hash_mirror()
@@ -4306,7 +4309,7 @@ def isolate_loader_prep(upload_file, user):
         organism = row["Organism"]
         comments = row["Isolate Comments"]
         field_name = row["Source Field Name"]
-        row_id = row["Source Row ID"]
+        row_id = row["Source Plot ID"]
         sample_id = row["Source Sample ID"]
         isolatestock_id = row["Source IsolateStock ID"]
         seed_id = row["Source Seed ID"]
@@ -4348,15 +4351,15 @@ def isolate_loader_prep(upload_file, user):
         if row_id != '':
             row_id_fix = row_id + '\r'
             if row_id in row_id_table:
-                obs_row_id = row_id_table[row_id][0]
+                obs_plot_id = row_id_table[row_id][0]
             elif row_id_fix in row_id_table:
-                obs_row_id = row_id_table[row_id_fix][0]
+                obs_plot_id = row_id_table[row_id_fix][0]
             else:
                 row_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, row_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
                 error_count = error_count + 1
-                obs_row_id = 1
+                obs_plot_id = 1
         else:
-            obs_row_id = 1
+            obs_plot_id = 1
 
         if plant_id != '':
             plant_id_fix = plant_id + '\r'
@@ -4513,14 +4516,14 @@ def isolate_loader_prep(upload_file, user):
             temp_isolate_id = 1
             error_count = error_count + 1
 
-        obs_tracker_isolate_hash = 'isolate' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(temp_isolate_id) + str(isolatestock_table_id) + str(location_id) + str(1) + str(obs_culture_id) + str(obs_dna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_row_id) + str(obs_sample_id) + str(obs_tissue_id) + str(obs_well_id) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_isolate_hash = 'isolate' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(temp_isolate_id) + str(isolatestock_table_id) + str(location_id) + str(1) + str(obs_culture_id) + str(obs_dna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_plot_id) + str(obs_sample_id) + str(obs_tissue_id) + str(obs_well_id) + str(stock_id) + str(user_hash_table[user.username])
         obs_tracker_isolate_hash_fix = obs_tracker_isolate_hash + '\r'
         if obs_tracker_isolate_hash not in obs_tracker_hash_table and obs_tracker_isolate_hash_fix not in obs_tracker_hash_table:
             obs_tracker_hash_table[obs_tracker_isolate_hash] = obs_tracker_id
-            obs_tracker_new[(obs_tracker_id, 'isolate', experiment_name_table[experiment_name][0], field_id, temp_isolate_id, isolatestock_table_id, location_id, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'isolate', experiment_name_table[experiment_name][0], field_id, temp_isolate_id, isolatestock_table_id, location_id, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
             obs_tracker_id = obs_tracker_id + 1
         else:
-            obs_tracker_hash_exists[('isolate', experiment_name_table[experiment_name][0], field_id, temp_isolate_id, isolatestock_table_id, location_id, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_hash_exists[('isolate', experiment_name_table[experiment_name][0], field_id, temp_isolate_id, isolatestock_table_id, location_id, 1, obs_culture_id, obs_dna_id, 1, 1, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
     end = time.clock()
     stats = {}
@@ -4573,7 +4576,7 @@ def isolate_loader_prep_output(results_dict, new_upload_exp, template_type):
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
-    writer.writerow(['Row ID Errors'])
+    writer.writerow(['Plot ID Errors'])
     writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_row_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
     for key in results_dict['row_id_error'].iterkeys():
         writer.writerow(key)
@@ -4649,7 +4652,7 @@ def isolate_loader(results_dict):
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_row_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False

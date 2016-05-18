@@ -9,7 +9,7 @@ sys.path.append('C:/Users/Nicolas/Documents/GitHub/django_NelsonDB')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
 import django
 django.setup()
-from lab.models import User, Experiment, Locality, MaizeSample, ObsTracker, ObsTrackerSource, ObsSample, Separation, ObsExtract, MeasurementParameter, Measurement, Medium, Citation, ObsRow, ObsPlant, ObsSample, ObsEnv, ObsMicrobe, ObsCulture, ObsDNA, ObsExtract, ObsPlate, ObsWell, ObsTissue, Stock, Location, Locality, Field, Collecting, IsolateStock, Passport, People, Taxonomy, DiseaseInfo, Isolate, StockPacket, ObsTrackerSource
+from lab.models import User, Experiment, Locality, MaizeSample, ObsTracker, ObsTrackerSource, ObsSample, Separation, ObsExtract, MeasurementParameter, Measurement, Medium, Citation, ObsPlot, ObsPlant, ObsSample, ObsEnv, ObsMicrobe, ObsCulture, ObsDNA, ObsExtract, ObsPlate, ObsWell, ObsTissue, Stock, Location, Locality, Field, Collecting, IsolateStock, Passport, People, Taxonomy, DiseaseInfo, Isolate, StockPacket, ObsTrackerSource
 
 def user_id_mirror():
     user_id = User.objects.latest('id').id + 1
@@ -122,51 +122,51 @@ def obs_tracker_id_mirror():
 
 def obs_tracker_table_mirror():
     obs_tracker_table = OrderedDict({})
-    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     #--- Value = (obs_tracker_id)
 
     obs_tracker_file = ObsTracker.objects.all()
     for row in obs_tracker_file:
-        obs_tracker_table[(row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)] = (row.id)
+        obs_tracker_table[(row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)] = (row.id)
     return obs_tracker_table
 
 def obs_tracker_hash_mirror():
     obs_tracker_hash_table = OrderedDict({})
-    #--- Key = (obs_entity_type + experiment_id + field_id + isolate_id + isolatestock_id + location_id + maize_sample_id + obs_culture_id + obs_dna_id + obs_env_id + obs_extract_id + obs_microbe_id + obs_plant_id + obs_plate_id + obs_row_id + obs_sample_id + obs_tissue_id + obs_well_id + stock_id + user_id)
+    #--- Key = (obs_entity_type + experiment_id + field_id + isolate_id + isolatestock_id + location_id + maize_sample_id + obs_culture_id + obs_dna_id + obs_env_id + obs_extract_id + obs_microbe_id + obs_plant_id + obs_plate_id + obs_plot_id + obs_sample_id + obs_tissue_id + obs_well_id + stock_id + user_id)
     #--- Value = (obs_tracker_id)
 
     obs_tracker_file = ObsTracker.objects.all()
     for row in obs_tracker_file:
-        tracker_hash = row.obs_entity_type + str(row.experiment_id) + str(row.field_id) + str(row.isolate_id) + str(row.isolatestock_id) + str(row.location_id) + str(row.maize_sample_id) + str(row.obs_culture_id) + str(row.obs_dna_id) + str(row.obs_env_id) + str(row.obs_extract_id) + str(row.obs_microbe_id) + str(row.obs_plant_id) + str(row.obs_plate_id) + str(row.obs_row_id) + str(row.obs_sample_id) + str(row.obs_tissue_id) + str(row.obs_well_id) + str(row.stock_id) + str(row.user_id)
+        tracker_hash = row.obs_entity_type + str(row.experiment_id) + str(row.field_id) + str(row.isolate_id) + str(row.isolatestock_id) + str(row.location_id) + str(row.maize_sample_id) + str(row.obs_culture_id) + str(row.obs_dna_id) + str(row.obs_env_id) + str(row.obs_extract_id) + str(row.obs_microbe_id) + str(row.obs_plant_id) + str(row.obs_plate_id) + str(row.obs_plot_id) + str(row.obs_sample_id) + str(row.obs_tissue_id) + str(row.obs_well_id) + str(row.stock_id) + str(row.user_id)
         obs_tracker_hash_table[tracker_hash] = row.id
     return obs_tracker_hash_table
 
 def obs_tracker_row_id_mirror():
     obs_tracker_row_id_table = OrderedDict({})
     #--- Key = (row_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     ot = OrderedDict({})
-    #--- Key = (obs_row_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Key = (obs_plot_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
-    obs_row_file = ObsRow.objects.all()
-    obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='row').order_by('obs_row_id')
+    obs_plot_file = ObsPlot.objects.all()
+    obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='row').order_by('obs_plot_id')
     for row in obs_tracker_file:
-        ot[row.obs_row_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
-    for row in obs_row_file:
+        ot[row.obs_plot_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+    for row in obs_plot_file:
         if row.id in ot:
             obs_tracker_row_id_table[row.row_id] = (ot[row.id][0], ot[row.id][1], ot[row.id][2], ot[row.id][3], ot[row.id][4], ot[row.id][5], ot[row.id][6], ot[row.id][7], ot[row.id][8], ot[row.id][9], ot[row.id][10], ot[row.id][11], ot[row.id][12], ot[row.id][13], ot[row.id][14], ot[row.id][15], ot[row.id][16], ot[row.id][17], ot[row.id][18], ot[row.id][19], ot[row.id][20])
     return obs_tracker_row_id_table
 
-def obs_tracker_obs_row_id_mirror():
-    obs_tracker_obs_row_id_table = OrderedDict({})
-    #--- Key = (obs_row_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+def obs_tracker_obs_plot_id_mirror():
+    obs_tracker_obs_plot_id_table = OrderedDict({})
+    #--- Key = (obs_plot_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='row')
     for row in obs_tracker_file:
-        obs_tracker_obs_row_id_table[row.obs_row_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
-    return obs_tracker_obs_row_id_table
+        obs_tracker_obs_plot_id_table[row.obs_plot_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+    return obs_tracker_obs_plot_id_table
 
 def obs_tracker_plant_id_mirror():
     obs_tracker_plant_id_table = OrderedDict({})
@@ -174,12 +174,12 @@ def obs_tracker_plant_id_mirror():
     #--- Value = (obs_tracker_id)
     ot = OrderedDict({})
     #--- Key = (obs_plant_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_plant_file = ObsPlant.objects.all()
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='plant').order_by('obs_plant_id')
     for row in obs_tracker_file:
-        ot[row.obs_plant_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        ot[row.obs_plant_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     for row in obs_plant_file:
         if row.id in ot:
             obs_tracker_plant_id_table[row.plant_id] = (ot[row.id][0], ot[row.id][1], ot[row.id][2], ot[row.id][3], ot[row.id][4], ot[row.id][5], ot[row.id][6], ot[row.id][7], ot[row.id][8], ot[row.id][9], ot[row.id][10], ot[row.id][11], ot[row.id][12], ot[row.id][13], ot[row.id][14], ot[row.id][15], ot[row.id][16], ot[row.id][17], ot[row.id][18], ot[row.id][19], ot[row.id][20])
@@ -188,11 +188,11 @@ def obs_tracker_plant_id_mirror():
 def obs_tracker_obs_plant_id_mirror():
     obs_tracker_obs_plant_id_table = OrderedDict({})
     #--- Key = (obs_plant_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='plant')
     for row in obs_tracker_file:
-        obs_tracker_obs_plant_id_table[row.obs_plant_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        obs_tracker_obs_plant_id_table[row.obs_plant_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     return obs_tracker_obs_plant_id_table
 
 def obs_tracker_env_id_mirror():
@@ -201,12 +201,12 @@ def obs_tracker_env_id_mirror():
     #--- Value = (obs_tracker_id)
     ot = OrderedDict({})
     #--- Key = (obs_env_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_env_file = ObsEnv.objects.all()
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='env').order_by('obs_env_id')
     for row in obs_tracker_file:
-        ot[row.obs_env_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        ot[row.obs_env_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     for row in obs_env_file:
         if row.id in ot:
             obs_tracker_env_id_table[row.environment_id] = (ot[row.id][0], ot[row.id][1], ot[row.id][2], ot[row.id][3], ot[row.id][4], ot[row.id][5], ot[row.id][6], ot[row.id][7], ot[row.id][8], ot[row.id][9], ot[row.id][10], ot[row.id][11], ot[row.id][12], ot[row.id][13], ot[row.id][14], ot[row.id][15], ot[row.id][16], ot[row.id][17], ot[row.id][18], ot[row.id][19], ot[row.id][20])
@@ -218,12 +218,12 @@ def obs_tracker_sample_id_mirror():
     #--- Value = (obs_tracker_id)
     ot = OrderedDict({})
     #--- Key = (obs_sample_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_sample_file = ObsSample.objects.all()
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='sample').order_by('obs_sample_id')
     for row in obs_tracker_file:
-        ot[row.obs_sample_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        ot[row.obs_sample_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     for row in obs_sample_file:
         if row.id in ot:
             obs_tracker_sample_id_table[row.sample_id] = (ot[row.id][0], ot[row.id][1], ot[row.id][2], ot[row.id][3], ot[row.id][4], ot[row.id][5], ot[row.id][6], ot[row.id][7], ot[row.id][8], ot[row.id][9], ot[row.id][10], ot[row.id][11], ot[row.id][12], ot[row.id][13], ot[row.id][14], ot[row.id][15], ot[row.id][16], ot[row.id][17], ot[row.id][18], ot[row.id][19], ot[row.id][20])
@@ -232,11 +232,11 @@ def obs_tracker_sample_id_mirror():
 def obs_tracker_obs_sample_id_mirror():
     obs_tracker_obs_sample_id_table = OrderedDict({})
     #--- Key = (obs_sample_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='sample')
     for row in obs_tracker_file:
-        obs_tracker_obs_sample_id_table[row.obs_sample_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        obs_tracker_obs_sample_id_table[row.obs_sample_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     return obs_tracker_obs_sample_id_table
 
 def obs_tracker_microbe_id_mirror():
@@ -245,12 +245,12 @@ def obs_tracker_microbe_id_mirror():
     #--- Value = (obs_tracker_id)
     ot = OrderedDict({})
     #--- Key = (obs_microbe_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_microbe_file = ObsMicrobe.objects.all()
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='microbe').order_by('obs_microbe_id')
     for row in obs_tracker_file:
-        ot[row.obs_microbe_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        ot[row.obs_microbe_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     for row in obs_microbe_file:
         if row.id in ot:
             obs_tracker_microbe_id_table[row.microbe_id] = (ot[row.id][0], ot[row.id][1], ot[row.id][2], ot[row.id][3], ot[row.id][4], ot[row.id][5], ot[row.id][6], ot[row.id][7], ot[row.id][8], ot[row.id][9], ot[row.id][10], ot[row.id][11], ot[row.id][12], ot[row.id][13], ot[row.id][14], ot[row.id][15], ot[row.id][16], ot[row.id][17], ot[row.id][18], ot[row.id][19], ot[row.id][20])
@@ -259,11 +259,11 @@ def obs_tracker_microbe_id_mirror():
 def obs_tracker_obs_microbe_id_mirror():
     obs_tracker_obs_microbe_id_table = OrderedDict({})
     #--- Key = (obs_microbe_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='microbe')
     for row in obs_tracker_file:
-        obs_tracker_obs_microbe_id_table[row.obs_microbe_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        obs_tracker_obs_microbe_id_table[row.obs_microbe_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     return obs_tracker_obs_microbe_id_table
 
 def obs_tracker_well_id_mirror():
@@ -272,12 +272,12 @@ def obs_tracker_well_id_mirror():
     #--- Value = (obs_tracker_id)
     ot = OrderedDict({})
     #--- Key = (obs_well_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_well_file = ObsWell.objects.all()
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='well').order_by('obs_well_id')
     for row in obs_tracker_file:
-        ot[row.obs_well_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        ot[row.obs_well_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     for row in obs_well_file:
         if row.id in ot:
             obs_tracker_well_id_table[row.well_id] = (ot[row.id][0], ot[row.id][1], ot[row.id][2], ot[row.id][3], ot[row.id][4], ot[row.id][5], ot[row.id][6], ot[row.id][7], ot[row.id][8], ot[row.id][9], ot[row.id][10], ot[row.id][11], ot[row.id][12], ot[row.id][13], ot[row.id][14], ot[row.id][15], ot[row.id][16], ot[row.id][17], ot[row.id][18], ot[row.id][19], ot[row.id][20])
@@ -286,25 +286,25 @@ def obs_tracker_well_id_mirror():
 def obs_tracker_obs_well_id_mirror():
     obs_tracker_obs_well_id_table = OrderedDict({})
     #--- Key = (obs_well_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='well')
     for row in obs_tracker_file:
-        obs_tracker_obs_well_id_table[row.obs_well_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        obs_tracker_obs_well_id_table[row.obs_well_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     return obs_tracker_obs_well_id_table
 
 def obs_tracker_plate_id_mirror():
     obs_tracker_plate_id_table = OrderedDict({})
     #--- Key = (plate_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     ot = OrderedDict({})
     #--- Key = (obs_plate_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_plate_file = ObsPlate.objects.all()
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='plate').order_by('obs_plate_id')
     for row in obs_tracker_file:
-        ot[row.obs_plate_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        ot[row.obs_plate_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     for row in obs_plate_file:
         if row.id in ot:
             obs_tracker_plate_id_table[row.plate_id] = (ot[row.id][0], ot[row.id][1], ot[row.id][2], ot[row.id][3], ot[row.id][4], ot[row.id][5], ot[row.id][6], ot[row.id][7], ot[row.id][8], ot[row.id][9], ot[row.id][10], ot[row.id][11], ot[row.id][12], ot[row.id][13], ot[row.id][14], ot[row.id][15], ot[row.id][16], ot[row.id][17], ot[row.id][18], ot[row.id][19], ot[row.id][20])
@@ -313,25 +313,25 @@ def obs_tracker_plate_id_mirror():
 def obs_tracker_obs_plate_id_mirror():
     obs_tracker_obs_plate_id_table = OrderedDict({})
     #--- Key = (obs_plate_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='plate')
     for row in obs_tracker_file:
-        obs_tracker_obs_plate_id_table[row.obs_plate_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        obs_tracker_obs_plate_id_table[row.obs_plate_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     return obs_tracker_obs_plate_id_table
 
 def obs_tracker_seed_id_mirror():
     obs_tracker_seed_id_table = OrderedDict({})
     #--- Key = (seed_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     ot = OrderedDict({})
     #--- Key = (stock_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     stock_file = Stock.objects.all()
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='stock').order_by('stock_id')
     for row in obs_tracker_file:
-        ot[row.stock_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        ot[row.stock_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     for row in stock_file:
         if row.id in ot:
             obs_tracker_seed_id_table[row.seed_id] = (ot[row.id][0], ot[row.id][1], ot[row.id][2], ot[row.id][3], ot[row.id][4], ot[row.id][5], ot[row.id][6], ot[row.id][7], ot[row.id][8], ot[row.id][9], ot[row.id][10], ot[row.id][11], ot[row.id][12], ot[row.id][13], ot[row.id][14], ot[row.id][15], ot[row.id][16], ot[row.id][17], ot[row.id][18], ot[row.id][19], ot[row.id][20])
@@ -340,11 +340,11 @@ def obs_tracker_seed_id_mirror():
 def obs_tracker_stock_id_mirror():
     obs_tracker_stock_id_table = OrderedDict({})
     #--- Key = (stock_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='stock')
     for row in obs_tracker_file:
-        obs_tracker_stock_id_table[row.stock_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        obs_tracker_stock_id_table[row.stock_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     return obs_tracker_stock_id_table
 
 def obs_tracker_dna_id_mirror():
@@ -353,12 +353,12 @@ def obs_tracker_dna_id_mirror():
     #--- Value = (obs_tracker_id)
     ot = OrderedDict({})
     #--- Key = (obs_dna_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_dna_file = ObsDNA.objects.all()
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='dna').order_by('obs_dna_id')
     for row in obs_tracker_file:
-        ot[row.obs_dna_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        ot[row.obs_dna_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     for row in obs_dna_file:
         if row.id in ot:
             obs_tracker_dna_id_table[row.dna_id] = (ot[row.id][0], ot[row.id][1], ot[row.id][2], ot[row.id][3], ot[row.id][4], ot[row.id][5], ot[row.id][6], ot[row.id][7], ot[row.id][8], ot[row.id][9], ot[row.id][10], ot[row.id][11], ot[row.id][12], ot[row.id][13], ot[row.id][14], ot[row.id][15], ot[row.id][16], ot[row.id][17], ot[row.id][18], ot[row.id][19], ot[row.id][20])
@@ -370,12 +370,12 @@ def obs_tracker_tissue_id_mirror():
     #--- Value = (obs_tracker_id)
     ot = OrderedDict({})
     #--- Key = (obs_tissue_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_tissue_file = ObsTissue.objects.all()
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='tissue').order_by('obs_tissue_id')
     for row in obs_tracker_file:
-        ot[row.obs_tissue_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        ot[row.obs_tissue_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     for row in obs_tissue_file:
         if row.id in ot:
             obs_tracker_tissue_id_table[row.tissue_id] = (ot[row.id][0], ot[row.id][1], ot[row.id][2], ot[row.id][3], ot[row.id][4], ot[row.id][5], ot[row.id][6], ot[row.id][7], ot[row.id][8], ot[row.id][9], ot[row.id][10], ot[row.id][11], ot[row.id][12], ot[row.id][13], ot[row.id][14], ot[row.id][15], ot[row.id][16], ot[row.id][17], ot[row.id][18], ot[row.id][19], ot[row.id][20])
@@ -384,11 +384,11 @@ def obs_tracker_tissue_id_mirror():
 def obs_tracker_obs_tissue_id_mirror():
     obs_tracker_obs_tissue_id_table = OrderedDict({})
     #--- Key = (obs_tissue_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='tissue')
     for row in obs_tracker_file:
-        obs_tracker_obs_tissue_id_table[row.obs_tissue_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        obs_tracker_obs_tissue_id_table[row.obs_tissue_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     return obs_tracker_obs_tissue_id_table
 
 def obs_tracker_culture_id_mirror():
@@ -402,7 +402,7 @@ def obs_tracker_culture_id_mirror():
     obs_culture_file = ObsCulture.objects.all()
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='culture').order_by('obs_culture_id')
     for row in obs_tracker_file:
-        ot[row.obs_culture_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        ot[row.obs_culture_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     for row in obs_culture_file:
         if row.id in ot:
             obs_tracker_culture_id_table[row.culture_id] = (ot[row.id][0], ot[row.id][1], ot[row.id][2], ot[row.id][3], ot[row.id][4], ot[row.id][5], ot[row.id][6], ot[row.id][7], ot[row.id][8], ot[row.id][9], ot[row.id][10], ot[row.id][11], ot[row.id][12], ot[row.id][13], ot[row.id][14], ot[row.id][15], ot[row.id][16], ot[row.id][17], ot[row.id][18], ot[row.id][19], ot[row.id][20])
@@ -411,11 +411,11 @@ def obs_tracker_culture_id_mirror():
 def obs_tracker_obs_culture_id_mirror():
     obs_tracker_obs_culture_id_table = OrderedDict({})
     #--- Key = (obs_culture_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='culture')
     for row in obs_tracker_file:
-        obs_tracker_obs_culture_id_table[row.obs_culture_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        obs_tracker_obs_culture_id_table[row.obs_culture_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     return obs_tracker_obs_culture_id_table
 
 def obs_tracker_extract_id_mirror():
@@ -424,12 +424,12 @@ def obs_tracker_extract_id_mirror():
     #--- Value = (obs_tracker_id)
     ot = OrderedDict({})
     #--- Key = (obs_extract_id)
-    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_row_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
+    #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_extract_file = ObsExtract.objects.all()
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='extract').order_by('obs_extract_id')
     for row in obs_tracker_file:
-        ot[row.obs_extract_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_row_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
+        ot[row.obs_extract_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     for row in obs_extract_file:
         if row.id in ot:
             obs_tracker_extract_id_table[row.extract_id] = (ot[row.id][0], ot[row.id][1], ot[row.id][2], ot[row.id][3], ot[row.id][4], ot[row.id][5], ot[row.id][6], ot[row.id][7], ot[row.id][8], ot[row.id][9], ot[row.id][10], ot[row.id][11], ot[row.id][12], ot[row.id][13], ot[row.id][14], ot[row.id][15], ot[row.id][16], ot[row.id][17], ot[row.id][18], ot[row.id][19], ot[row.id][20])
@@ -518,10 +518,10 @@ def sample_id_mirror():
 def row_id_mirror():
     row_id_table = OrderedDict({})
     #--- Key = (row_id)
-    #--- Value = (obs_row_id, row_id, row_name, range_num, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
+    #--- Value = (obs_plot_id, row_id, row_name, range_num, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
 
-    obs_row_file = ObsRow.objects.all()
-    for row in obs_row_file:
+    obs_plot_file = ObsPlot.objects.all()
+    for row in obs_plot_file:
         row_id_table[row.row_id] = (row.id, row.row_id, row.row_name, row.range_num, row.plot, row.block, row.rep, row.kernel_num, row.planting_date, row.harvest_date, row.comments)
     return row_id_table
 
@@ -569,60 +569,60 @@ def row_id_seed_id_mirror():
     row_id_seed_id_table = OrderedDict({})
     #--- Key = (row_id)
     #--- Value = (seed_id)
-    obs_tracker_obs_row_id_table = OrderedDict({})
-    #--- Key = (obs_row_id)
+    obs_tracker_obs_plot_id_table = OrderedDict({})
+    #--- Key = (obs_plot_id)
     #--- Value = (seed_id)
 
-    obs_row_file = ObsRow.objects.all()
+    obs_plot_file = ObsPlot.objects.all()
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='row')
     for obs_tracker in obs_tracker_file:
-        obs_tracker_obs_row_id_table[(obs_tracker.obs_row_id)] = (obs_tracker.stock.seed_id)
-    for obs_row in obs_row_file:
-        if (obs_row.id) in obs_tracker_obs_row_id_table:
-            row_id = obs_row.row_id
+        obs_tracker_obs_plot_id_table[(obs_tracker.obs_plot_id)] = (obs_tracker.stock.seed_id)
+    for obs_plot in obs_plot_file:
+        if (obs_plot.id) in obs_tracker_obs_plot_id_table:
+            row_id = obs_plot.row_id
             row_id.rstrip('\r')
             row_id.rstrip('\n')
-            row_id_seed_id_table[row_id] = (obs_tracker_obs_row_id_table[(obs_row.id)])
+            row_id_seed_id_table[row_id] = (obs_tracker_obs_plot_id_table[(obs_plot.id)])
     return row_id_seed_id_table
 
 def row_id_stock_id_mirror():
     row_id_stock_id_table = OrderedDict({})
     #--- Key = (row_id)
     #--- Value = (stock_id)
-    obs_tracker_obs_row_id_table = OrderedDict({})
-    #--- Key = (obs_row_id)
+    obs_tracker_obs_plot_id_table = OrderedDict({})
+    #--- Key = (obs_plot_id)
     #--- Value = (stock_id)
 
-    obs_row_file = ObsRow.objects.all()
+    obs_plot_file = ObsPlot.objects.all()
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='row')
     for obs_tracker in obs_tracker_file:
-        obs_tracker_obs_row_id_table[(obs_tracker.obs_row_id)] = (obs_tracker.stock_id)
-    for obs_row in obs_row_file:
-        if (obs_row.id) in obs_tracker_obs_row_id_table:
-            row_id = obs_row.row_id
+        obs_tracker_obs_plot_id_table[(obs_tracker.obs_plot_id)] = (obs_tracker.stock_id)
+    for obs_plot in obs_plot_file:
+        if (obs_plot.id) in obs_tracker_obs_plot_id_table:
+            row_id = obs_plot.row_id
             row_id.rstrip('\r')
             row_id.rstrip('\n')
-            row_id_stock_id_table[row_id] = (obs_tracker_obs_row_id_table[(obs_row.id)])
+            row_id_stock_id_table[row_id] = (obs_tracker_obs_plot_id_table[(obs_plot.id)])
     return row_id_stock_id_table
 
 def row_id_field_id_mirror():
     row_id_field_id_table = OrderedDict({})
     #--- Key = (row_id)
     #--- Value = (field_id)
-    obs_tracker_obs_row_id_table = OrderedDict({})
-    #--- Key = (obs_row_id)
+    obs_tracker_obs_plot_id_table = OrderedDict({})
+    #--- Key = (obs_plot_id)
     #--- Value = (field_id)
 
-    obs_row_file = ObsRow.objects.all()
+    obs_plot_file = ObsPlot.objects.all()
     obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='row')
     for obs_tracker in obs_tracker_file:
-        obs_tracker_obs_row_id_table[(obs_tracker.obs_row_id)] = (obs_tracker.field_id)
-    for obs_row in obs_row_file:
-        if (obs_row.id) in obs_tracker_obs_row_id_table:
-            row_id = obs_row.row_id
+        obs_tracker_obs_plot_id_table[(obs_tracker.obs_plot_id)] = (obs_tracker.field_id)
+    for obs_plot in obs_plot_file:
+        if (obs_plot.id) in obs_tracker_obs_plot_id_table:
+            row_id = obs_plot.row_id
             row_id.rstrip('\r')
             row_id.rstrip('\n')
-            row_id_field_id_table[row_id] = (obs_tracker_obs_row_id_table[(obs_row.id)])
+            row_id_field_id_table[row_id] = (obs_tracker_obs_plot_id_table[(obs_plot.id)])
     return row_id_field_id_table
 
 def seed_id_mirror():
@@ -1036,20 +1036,20 @@ def stock_id_mirror():
     stock_id = Stock.objects.latest('id').id + 1
     return stock_id
 
-def obs_row_hash_mirror():
-    obs_row_hash_table = OrderedDict({})
+def obs_plot_hash_mirror():
+    obs_plot_hash_table = OrderedDict({})
     #--- Key = (row_id + row_name + range_num + plot + block + rep + kernel_num + planting_date + harvest_date + comments)
-    #--- Value = (obs_row_id)
+    #--- Value = (obs_plot_id)
 
-    row_file = ObsRow.objects.all()
+    row_file = ObsPlot.objects.all()
     for row in row_file:
-        obs_row_hash = row.row_id + row.row_name + row.range_num + row.plot + row.block + row.rep + row.kernel_num + row.planting_date + row.harvest_date + row.comments
-        obs_row_hash_table[obs_row_hash] = row.id
-    return obs_row_hash_table
+        obs_plot_hash = row.row_id + row.row_name + row.range_num + row.plot + row.block + row.rep + row.kernel_num + row.planting_date + row.harvest_date + row.comments
+        obs_plot_hash_table[obs_plot_hash] = row.id
+    return obs_plot_hash_table
 
-def obs_row_id_mirror():
-    obs_row_id = ObsRow.objects.latest('id').id + 1
-    return obs_row_id
+def obs_plot_id_mirror():
+    obs_plot_id = ObsPlot.objects.latest('id').id + 1
+    return obs_plot_id
 
 def obs_well_hash_mirror():
     obs_well_hash_table = OrderedDict({})
@@ -1084,7 +1084,7 @@ def obs_env_id_mirror():
 def obs_plant_hash_mirror():
     obs_plant_hash_table = OrderedDict({})
     #--- Key = (row_id + row_name + range_num + plot + block + rep + kernel_num + planting_date + harvest_date + comments)
-    #--- Value = (obs_row_id)
+    #--- Value = (obs_plot_id)
 
     row_file = ObsPlant.objects.all()
     for row in row_file:

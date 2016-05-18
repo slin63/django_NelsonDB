@@ -22,7 +22,7 @@ Stock Comments,0,0,0,lab_stock,comments,Any additional comments about the seed.
 binomial,0,0,0,lab_taxonomy,binomial,The binomial of the seed. Example: Zea
 Species,0,0,0,lab_taxonomy,species,The species of the seed. Example: Mays
 Population,0,0,0,lab_taxonomy,population,A more general classification of the seed's genotype. Example: NAM
-Row ID,1,0,0,lab_obstracker,obs_row_id = ObsRow(row_id).id,The Row ID from which the seed was collected. Example 08PN0023. Leave blank if seed not collected from a row.
+Plot ID,1,0,0,lab_obstracker,obs_plot_id = ObsPlot(row_id).id,The Plot ID from which the seed was collected. Example 08PN0023. Leave blank if seed not collected from a row.
 Field Name,1,0,0,lab_obstracker,field_id = Field(field_name).id,The Field Name from which the seed was collected. Example Aurora NY. Leave blank if not relevant.
 Plant ID,1,0,0,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,The Plant ID from which the seed was collected. Example 08PN0023_001. Leave blank if seed not collected from a plant.
 Username,1,0,0,lab_collecting,user_id = User(username).id,The username of the person which collected the seed. Example: firstname_lastname. Leave blank if seed not collected.
