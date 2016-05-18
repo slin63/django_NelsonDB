@@ -4177,6 +4177,7 @@ def isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type)
 
 def isolatestock_loader(results_dict):
     success = True
+    create_obs = True
     try:
         for key in results_dict['collecting_new'].iterkeys():
             try:
@@ -4218,13 +4219,15 @@ def isolatestock_loader(results_dict):
             except Exception as e:
                 print("IsolateStock Error: %s %s" % (e.message, e.args))
                 success = False
-        for key in results_dict['obs_tracker_new'].iterkeys():
-            try:
-                with transaction.atomic():
-                    new_stock, created = ObsTracker.objects.get_or_create(obs_entity_type=key[1], experiment_id=key[2], field_id=key[3],  isolatestock_id=key[4], location_id=key[5], maize_sample_id=key[6], obs_culture_id=key[7], obs_dna_id=key[8], obs_env_id=key[9], obs_extract_id=key[10], obs_microbe_id=key[11], obs_plant_id=key[12], obs_plate_id=key[13], obs_plot_id=key[14], obs_sample_id=key[15], obs_tissue_id=key[16], obs_well_id=key[17], stock_id=key[18], user_id=key[19])
-            except Exception as e:
-                print("ObsTracker Error: %s %s" % (e.message, e.args))
-                success = False
+                create_obs = False
+        if create_obs = True:
+            for key in results_dict['obs_tracker_new'].iterkeys():
+                try:
+                    with transaction.atomic():
+                        new_stock, created = ObsTracker.objects.get_or_create(obs_entity_type=key[1], experiment_id=key[2], field_id=key[3],  isolatestock_id=key[4], location_id=key[5], maize_sample_id=key[6], obs_culture_id=key[7], obs_dna_id=key[8], obs_env_id=key[9], obs_extract_id=key[10], obs_microbe_id=key[11], obs_plant_id=key[12], obs_plate_id=key[13], obs_plot_id=key[14], obs_sample_id=key[15], obs_tissue_id=key[16], obs_well_id=key[17], stock_id=key[18], user_id=key[19])
+                except Exception as e:
+                    print("ObsTracker Error: %s %s" % (e.message, e.args))
+                    success = False
         for key in results_dict['location_new'].iterkeys():
             try:
                 with transaction.atomic():
