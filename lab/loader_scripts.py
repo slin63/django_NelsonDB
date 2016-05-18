@@ -3689,6 +3689,7 @@ def isolatestock_loader_prep(upload_file, user):
         isolate_comments = row["Isolate Comments"]
         stock_date = row["Stock Date"]
         count = row["Count"]
+        isolate_id = row["Isolate ID"]
 
 
         # Uncomment and use these later!
@@ -3729,6 +3730,9 @@ def isolatestock_loader_prep(upload_file, user):
                     stock_id = 1
             else:
                 stock_id = 1
+
+            if isolate_id == '':
+                isolate_id = isolatestock_id
 
             if field_name != '':
                 field_name_fix = field_name + '\r'
@@ -3997,7 +4001,7 @@ def isolatestock_loader_prep(upload_file, user):
             location_new[(box_name, building_name, room, location_name, shelf)] = box_name
 
             for i in xrange(int(count)):
-                isolate_new[(isolatestock_id, temp_isolatestock_id, box_name, locality_id,  stock_date, '', '', isolate_comments, user, i)] = i
+                isolate_new[(isolate_id, temp_isolatestock_id, box_name, locality_id,  stock_date, '', '', isolate_comments, user, i)] = i
 
             #--- Key (isolate_id, isolatestock, location, locality, stock_date, extract_color, organism, comments, user)
 
@@ -4055,7 +4059,7 @@ def isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type)
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Isolate Table'])
-    writer.writerow(['IsolateStock', 'IsolateStock ID', 'Box Name', 'Locality ID', 'stock_date', 'extract_color', 'organism', 'comments', 'user'])
+    writer.writerow(['Isolate ID', 'IsolateStock ID', 'Box Name', 'Locality ID', 'stock_date', 'extract_color', 'organism', 'comments', 'user'])
     for key in results_dict['isolate_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -4213,7 +4217,6 @@ def isolatestock_loader(results_dict):
                     new_isolatestock.save()
             except Exception as e:
                 print("IsolateStock Error: %s %s" % (e.message, e.args))
-                # print key[4]
                 success = False
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
