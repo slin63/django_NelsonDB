@@ -4220,7 +4220,7 @@ def isolatestock_loader(results_dict):
                 print("IsolateStock Error: %s %s" % (e.message, e.args))
                 success = False
                 create_obs = False
-        if create_obs = True:
+        if create_obs is True:
             for key in results_dict['obs_tracker_new'].iterkeys():
                 try:
                     with transaction.atomic():
