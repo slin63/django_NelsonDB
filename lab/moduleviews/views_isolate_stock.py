@@ -91,7 +91,7 @@ def checkbox_isolatestock_sort(request):
                 isolatestocks = IsolateStock.objects.filter(disease_info__id=disease_id)
                 selected_isolatestocks = list(chain(selected_isolatestocks, isolatestocks))
         else:
-            selected_isolatestocks = list(IsolateStock.objects.all().exclude(id=1))[:2000]
+            selected_isolatestocks = list(IsolateStock.objects.all().exclude(id=1))[:3500]
     return selected_isolatestocks
 
 
@@ -348,7 +348,7 @@ def isolatestock_id_search(request):
         starts_with = request.POST['suggestion']
     if starts_with:
         # __icontains method calls for case insensitive search
-        isolatestock_id_list = IsolateStock.objects.filter(isolatestock_id__icontains=starts_with)[:2000]
+        isolatestock_id_list = IsolateStock.objects.filter(isolatestock_id__icontains=starts_with)[:3500]
     else:
         isolatestock_id_list = None
         context_dict = checkbox_session_variable_check(request)

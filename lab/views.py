@@ -1342,7 +1342,7 @@ def checkbox_isolatestock_sort(request):
 				isolatestocks = IsolateStock.objects.filter(disease_info__id=disease_id)
 				selected_isolatestocks = list(chain(selected_isolatestocks, isolatestocks))
 		else:
-			selected_isolatestocks = list(IsolateStock.objects.all().exclude(id=1))[:2000]
+			selected_isolatestocks = list(IsolateStock.objects.all().exclude(id=1))[:4000]
 	return selected_isolatestocks
 
 def show_all_isolatestock_disease(request):
