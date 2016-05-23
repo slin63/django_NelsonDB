@@ -450,7 +450,6 @@ $('#show_all_isolatestock_taxonomy').click(function(){
 		"deferRender": true,
 		"aoColumns": [
 		{ "mData": "input"},
-		{ "mData": "disease_info__common_name"},
 		{ "mData": "passport__taxonomy__binomial"},
 		{ "mData": "passport__taxonomy__alias"},
 		{ "mData": "passport__taxonomy__race"},

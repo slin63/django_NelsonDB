@@ -199,6 +199,26 @@ def show_all_isolatestock_taxonomy(request):
             t['passport__taxonomy__subtaxa'] = t['subtaxa']
     return JsonResponse({'data':isolatestock_taxonomy_list})
 
+def suggest_isolatestock_taxonomy(request):
+    """Searches for a given string in both taxonomy binomials and aliases."""
+    isolatestock_taxonomy_list = []
+    starts_with = ''
+    if request.method == 'GET':
+        starts_with = request.GET['suggestion']
+    else:
+        starts_with = request.POST['suggestion']
+    if starts_with:
+        isolatestock_taxonomy_list = list(Taxonomy.objects.filter(binomial__icontains=starts_with, common_name='IsolateStock').values('id', 'binomial', 'alias', 'race', 'subtaxa').distinct())
+        isolatestock_taxonomy_list += list(Taxonomy.objects.filter(alias__icontains=starts_with, common_name='IsolateStock').values('id', 'binomial', 'alias', 'race', 'subtaxa').distinct())
+
+        for t in isolatestock_taxonomy_list:
+            t['input'] = '<input type="checkbox" name="checkbox_isolatestock_taxonomy_id" value="%s">' % (t['id'])
+            t['disease_info__common_name'] = ''
+            t['passport__taxonomy__binomial'] = t['binomial']
+            t['passport__taxonomy__alias'] = t['alias']
+            t['passport__taxonomy__race'] = t['race']
+            t['passport__taxonomy__subtaxa'] = t['subtaxa']
+    return JsonResponse({'data':isolatestock_taxonomy_list})
 
 def isolatestock_data_from_experiment(request, experiment_name):
     context = RequestContext(request)

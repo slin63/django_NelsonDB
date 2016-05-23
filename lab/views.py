@@ -1345,26 +1345,6 @@ def checkbox_isolatestock_sort(request):
 			selected_isolatestocks = list(IsolateStock.objects.all().exclude(id=1))[:2000]
 	return selected_isolatestocks
 
-def show_all_isolatestock_taxonomy(request):
-	isolatestock_taxonomy_list = []
-	if request.session.get('checkbox_isolatestock_disease', None):
-		checkbox_isolatestock_disease = request.session.get('checkbox_isolatestock_disease')
-		for disease_id in checkbox_isolatestock_disease:
-			taxonomy = IsolateStock.objects.filter(disease_info__id=disease_id).values('passport__taxonomy__id', 'disease_info__common_name', 'passport__taxonomy__binomial', 'passport__taxonomy__alias', 'passport__taxonomy__race', 'passport__taxonomy__subtaxa').distinct()
-			isolatestock_taxonomy_list = list(chain(taxonomy, isolatestock_taxonomy_list))
-		for p in isolatestock_taxonomy_list:
-			p['input'] = '<input type="checkbox" name="checkbox_isolatestock_taxonomy_id" value="%s">' % (p['passport__taxonomy__id'])
-	else:
-		isolatestock_taxonomy_list = list(Taxonomy.objects.filter(common_name='IsolateStock').values('id', 'binomial', 'alias', 'race', 'subtaxa').distinct())
-		for t in isolatestock_taxonomy_list:
-			t['input'] = '<input type="checkbox" name="checkbox_isolatestock_taxonomy_id" value="%s">' % (t['id'])
-			t['disease_info__common_name'] = ''
-			t['passport__taxonomy__binomial'] = t['binomial']
-			t['passport__taxonomy__alias'] = t['alias']
-			t['passport__taxonomy__race'] = t['race']
-			t['passport__taxonomy__subtaxa'] = t['subtaxa']
-	return JsonResponse({'data':isolatestock_taxonomy_list})
-
 def show_all_isolatestock_disease(request):
 	isolatestock_disease_list = []
 	if request.session.get('checkbox_isolatestock_taxonomy', None):

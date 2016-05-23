@@ -95,7 +95,7 @@ class Taxonomy(models.Model):
     subtaxa = models.CharField(max_length=200, blank=True)
 
     def __unicode__(self):
-        return self.genus
+        return self.binomial
 
 
 class People(models.Model):
