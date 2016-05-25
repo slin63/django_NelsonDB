@@ -725,13 +725,6 @@ def plot_loader_prep(upload_file, user):
         comments = plot["Plot Comments"]
         plot = plot["Plot Name"]
 
-        if source_seed_id != '':
-            try:
-                stock_id = Stock.objects.get(seed_id=source_seed_id).id
-            except Stock.DoesNotExist:
-                stock_id = Stock.objects.get_or_create(seed_id=source_seed_id, pedigree=pedigree, passport_id=1)[0].id
-                stock_obs = ObsTracker.objects.get_or_create(experiment_id=1, obs_entity_type='stock', stock_id=stock_id, user=user)
-
         try:
             experiment = Experiment.objects.get(name=experiment_name)
         except Experiment.DoesNotExist:
@@ -740,6 +733,15 @@ def plot_loader_prep(upload_file, user):
             except Field.DoesNotExist:
                 field = Field.objects.get_or_create(locality_id=1, field_name=field_name)[0]
             experiment = Experiment.objects.create(name=experiment_name, user=user, field=field, start_date=planting_date)
+
+
+        if source_seed_id != '':
+            try:
+                stock_id = Stock.objects.get(seed_id=source_seed_id).id
+            except Stock.DoesNotExist:
+                stock_id = Stock.objects.get_or_create(seed_id=source_seed_id, pedigree=pedigree, passport_id=1)[0].id
+                stock_obs = ObsTracker.objects.get_or_create(experiment=experiment, obs_entity_type='stock', stock_id=stock_id, user=user)
+
 
         obs_tracker_stock_id_table = loader_db_mirror.obs_tracker_stock_id_mirror()
         experiment_name_table = loader_db_mirror.experiment_name_mirror()
