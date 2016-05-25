@@ -151,7 +151,7 @@ def select_plot_experiment(request):
   context_dict = checkbox_session_variable_check(request)
   context_dict['plot_loader'] = plot_loader
   context_dict['logged_in_user'] = request.user.username
-  return render_to_response('lab/plot/plot_loader.html', context_dict, context)
+  return render_to_response('lab/plot/plot_data.html', context_dict, context)
 
 def checkbox_plot_loader_clear(request):
   context = RequestContext(request)
@@ -162,7 +162,7 @@ def checkbox_plot_loader_clear(request):
   context_dict = checkbox_session_variable_check(request)
   context_dict['plot_loader'] = plot_loader
   context_dict['logged_in_user'] = request.user.username
-  return render_to_response('lab/plot/plot_loader.html', context_dict, context)
+  return render_to_response('lab/plot/plot_data.html', context_dict, context)
 
 def show_all_plot_experiment(request):
   context = RequestContext(request)
