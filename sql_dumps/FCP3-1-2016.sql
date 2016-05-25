@@ -1239,8 +1239,8 @@ DROP TABLE IF EXISTS `lab_obsplot`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lab_obsplot` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `row_id` varchar(200) NOT NULL,
-  `row_name` varchar(200) NOT NULL,
+  `plot_id` varchar(200) NOT NULL,
+  `plot_name` varchar(200) NOT NULL,
   `range_num` varchar(200) NOT NULL,
   `plot` varchar(200) NOT NULL,
   `block` varchar(200) NOT NULL,
@@ -1250,7 +1250,7 @@ CREATE TABLE `lab_obsplot` (
   `harvest_date` varchar(200) NOT NULL,
   `comments` varchar(3000) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `row_id` (`row_id`)
+  UNIQUE KEY `plot_id` (`plot_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

@@ -16,7 +16,7 @@ Tube ID,0,0,0,lab_obsdna,tube_id,"The ID given to the storage tube. Should be th
 Tube Type,0,0,0,lab_obsdna,tube_type,The type of tube in which the DNA is stored. Example: 1ml Test Tube
 DNA Comments,0,0,0,lab_obsdna,comments,Any additional comments about the DNA.
 Source Seed ID,1,0,0,lab_obstracker,stock_id = Stock(seed_id).id,"If the sample was selected using seed, provide the Seed ID here. If not applicable, leave blank."
-Source Plot ID,1,0,0,lab_obstracker,obs_plot_id = ObsPlot(row_id).id,"If the sample was selected from a row, provide the Plot ID here. If not applicable, leave blank."
+Source Plot ID,1,0,0,lab_obstracker,obs_plot_id = ObsPlot(plot_id).id,"If the sample was selected from a row, provide the Plot ID here. If not applicable, leave blank."
 Source Plant ID,1,0,0,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,"If the sample was selected from a plant, provide the Plant ID here. If not applicable, leave blank."
 Source Well ID,1,0,0,lab_obstracker,obs_well_id = ObsWell(well_id).id,"If the sample was selected from a specific well, provide the Well ID here. If not applicable, leave blank."
 Source Microbe ID,1,0,0,lab_obstracker,obs_microbe_id = ObsMicrobe(microbe_id).id,"If the sample was selected from a microbe, provide the Microbe ID here. If not applicable, leave blank."

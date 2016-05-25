@@ -15,7 +15,7 @@ Inventory,0,0,0,lab_obswell,well_inventory,"A brief description of the amount in
 Tube Label,0,0,0,lab_obswell,tube_label,"The label given to the tube, if the well contents were transferred to a separate tube. Leave blank if not applicable."
 Well Comments,0,0,0,lab_obswell,comments,Any additional comments about the well.
 Source Seed ID,1,0,0,lab_obstracker,stock_id = Stock(seed_id).id,"If the sample was selected using seed, provide the Seed ID here. If not applicable, leave blank."
-Source Plot ID,1,0,0,lab_obstracker,obs_plot_id = ObsPlot(row_id).id,"If the sample was selected from a row, provide the Plot ID here. If not applicable, leave blank."
+Source Plot ID,1,0,0,lab_obstracker,obs_plot_id = ObsPlot(plot_id).id,"If the sample was selected from a row, provide the Plot ID here. If not applicable, leave blank."
 Source Plant ID,1,0,0,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,"If the sample was selected from a plant, provide the Plant ID here. If not applicable, leave blank."
 Source Microbe ID,1,0,0,lab_obstracker,obs_microbe_id = ObsMicrobe(microbe_id).id,"If the sample was selected from a microbe, provide the Microbe ID here. If not applicable, leave blank."
 Source Culture ID,1,0,0,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,"If the sample was selected from a separate culture, provide the Culture ID here. If not applicable, leave blank."

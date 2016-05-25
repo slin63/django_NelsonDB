@@ -587,12 +587,12 @@ $('#select_isolatestock_taxonomy_form_submit').click(function(){
 	});
 });
 
-$('#row_experimentsuggestion').keyup(function(){
+$('#plot_experimentsuggestion').keyup(function(){
 	var query;
 	query = $(this).val();
-	$.get('/lab/data/row/suggest_row_experiment/', {suggestion: query}, function(data){
-		$('#row_experiment').html(data);
-		$('#selected_row_experiment').dataTable({
+	$.get('/lab/data/plot/suggest_plot_experiment/', {suggestion: query}, function(data){
+		$('#plot_experiment').html(data);
+		$('#selected_plot_experiment').dataTable({
 			"searching": false,
 			"scrollY": "300px",
 			"scrollCollapse": true,
@@ -601,10 +601,10 @@ $('#row_experimentsuggestion').keyup(function(){
 	});
 });
 
-$('#show_all_row_experiment').click(function(){
-	$.get('/lab/data/row/show_all_experiment/', {}, function(data){
-		$('#row_experiment').html(data);
-		$('#selected_row_experiment').dataTable({
+$('#show_all_plot_experiment').click(function(){
+	$.get('/lab/data/plot/show_all_experiment/', {}, function(data){
+		$('#plot_experiment').html(data);
+		$('#selected_plot_experiment').dataTable({
 			"searching": false,
 			"scrollY": "300px",
 			"scrollCollapse": true,
@@ -1059,8 +1059,8 @@ $('#clear_plant_experiment').click(function(){
 	});
 });
 
-$('#clear_row_experiment').click(function(){
-	$.get('/lab/data/row/checkbox_clear/', {}, function(data){
+$('#clear_plot_experiment').click(function(){
+	$.get('/lab/data/plot/checkbox_clear/', {}, function(data){
 		$('body').html(data);
 	});
 });
