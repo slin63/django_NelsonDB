@@ -675,7 +675,7 @@ def seed_packet_loader(results_dict):
         return False
     return True
 
-def row_loader_prep(upload_file, user):
+def plot_loader_prep(upload_file, user):
     start = time.clock()
 
     obs_plot_new = OrderedDict({})
@@ -810,7 +810,7 @@ def row_loader_prep(upload_file, user):
     results_dict['stats'] = stats
     return results_dict
 
-def row_loader_prep_output(results_dict, new_upload_exp, template_type):
+def plot_loader_prep_output(results_dict, new_upload_exp, template_type):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="%s_%s_prep.csv"' % (new_upload_exp, template_type)
     writer = csv.writer(response)
@@ -859,7 +859,7 @@ def row_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     return response
 
-def row_loader(results_dict):
+def plot_loader(results_dict):
     try:
         for key in results_dict['obs_plot_new'].iterkeys():
             try:

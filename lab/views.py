@@ -5732,7 +5732,7 @@ def upload_online(request, template_type):
 			elif template_type == 'seed_packet':
 				results_dict = loader_scripts.seed_packet_loader_prep(request.FILES['file_name'], new_upload_user)
 			elif template_type == 'row_data':
-				results_dict = loader_scripts.row_loader_prep(request.FILES['file_name'], new_upload_user)
+				results_dict = loader_scripts.plot_loader_prep(request.FILES['file_name'], new_upload_user)
 			elif template_type == 'measurement_data':
 				results_dict = loader_scripts.measurement_loader_prep(request.FILES['file_name'], new_upload_user)
 			elif template_type == 'plant_data':
@@ -5772,7 +5772,7 @@ def upload_online(request, template_type):
 					elif template_type == 'seed_packet':
 						output = loader_scripts.seed_packet_loader_prep_output(results_dict, new_upload_exp, template_type)
 					elif template_type == 'row_data':
-						output = loader_scripts.row_loader_prep_output(results_dict, new_upload_exp, template_type)
+						output = loader_scripts.plot_loader_prep_output(results_dict, new_upload_exp, template_type)
 					elif template_type == 'measurement_data':
 						output = loader_scripts.measurement_loader_prep_output(results_dict, new_upload_exp, template_type)
 					elif template_type == 'plant_data':
@@ -5811,7 +5811,7 @@ def upload_online(request, template_type):
 					elif template_type == 'seed_packet':
 						uploaded = loader_scripts.seed_packet_loader(results_dict)
 					elif template_type == 'row_data':
-						uploaded = loader_scripts.row_loader(results_dict)
+						uploaded = loader_scripts.plot_loader(results_dict)
 					elif template_type == 'measurement_data':
 						uploaded = loader_scripts.measurement_loader(results_dict)
 					elif template_type == 'plant_data':
