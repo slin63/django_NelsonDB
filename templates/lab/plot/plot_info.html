@@ -4,7 +4,7 @@
 
 {% if row_info %}
   <div class="hero-unit">
-    <h1>Plot Info: <a href='/lab/row/{{row_info.id}}/'>{{row_info.row_id}}</a></h1>
+    <h1>Plot Info: <a href='/lab/row/{{row_info.id}}/'>{{row_info.plot_id}}</a></h1>
   </div>
 
   <div class="well well-sm">
@@ -26,8 +26,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a href='/lab/row/{{row_info.id}}/'>{{ row_info.row_id }}</a></td>
-        <td>{{ row_info.row_name }}</td>
+        <td><a href='/lab/row/{{row_info.id}}/'>{{ row_info.plot_id }}</a></td>
+        <td>{{ row_info.plot_name }}</td>
         <td>{{ row_info.range_num }}</td>
         <td>{{ row_info.plot }}</td>
         <td>{{ row_info.block }}</td>

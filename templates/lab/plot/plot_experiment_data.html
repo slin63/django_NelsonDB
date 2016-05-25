@@ -29,10 +29,10 @@
           </tr>
           </thead>
           <tbody>
-          {% for data in row_data %}
+          {% for data in plot_loader %}
           <tr>
-            <td><a href='/lab/row/{{data.obs_plot_id}}/'>{{data.obs_plot.row_id}}</a></td>
-            <td>{{data.obs_plot.row_name}}</td>
+            <td><a href='/lab/row/{{data.obs_plot_id}}/'>{{data.obs_plot.plot_id}}</a></td>
+            <td>{{data.obs_plot.plot_name}}</td>
             <td><a href='/lab/field/{{data.field.id}}/'>{{data.field.field_name}}</a></td>
             <td><a href='/lab/stock/{{data.stock.id}}/'>{{data.stock.seed_id}}</a></td>
             <td>{{data.stock.pedigree}}</td>
