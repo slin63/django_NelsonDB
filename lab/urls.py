@@ -3,6 +3,7 @@ from django.conf.urls import patterns, url
 from lab import views
 from lab.moduleviews import views_genotype, views_about
 from lab.moduleviews import views_isolate_stock as views_is
+from lab.moduleviews import views_plot
 
 urlpatterns = patterns('',
                        url(r'^$', views.index, name='index'),
@@ -173,12 +174,12 @@ urlpatterns = patterns('',
                        url(r'^data/separation/$', views.separation_data_browse, name='separation_data_browse'),
                        url(r'^data/separation/(?P<experiment_name>\w+)/$', views.separation_data_from_experiment, name='separation_data_from_experiment'),
 
-                       url(r'^data/row/$', views.row_data_browse, name='row_data_browse'),
-                       url(r'^data/row/suggest_row_experiment/$', views.suggest_row_experiment, name='suggest_row_experiment'),
-                       url(r'^data/row/select_row_experiment/$', views.select_row_experiment, name='select_row_experiment'),
-                       url(r'^data/row/show_all_experiment/$', views.show_all_row_experiment, name='show_all_row_experiment'),
-                       url(r'^data/row/checkbox_clear/$', views.checkbox_row_data_clear, name='checkbox_row_data_clear'),
-                       url(r'^data/row/(?P<experiment_name>\w+)/$', views.row_data_from_experiment, name='row_data_from_experiment'),
+                       url(r'^data/plot/$', views_plot.plot_loader_browse, name='plot_loader_browse'),
+                       url(r'^data/plot/suggest_plot_experiment/$', views_plot.suggest_plot_experiment, name='suggest_plot_experiment'),
+                       url(r'^data/plot/select_plot_experiment/$', views_plot.select_plot_experiment, name='select_plot_experiment'),
+                       url(r'^data/plot/show_all_experiment/$', views_plot.show_all_plot_experiment, name='show_all_plot_experiment'),
+                       url(r'^data/plot/checkbox_clear/$', views_plot.checkbox_plot_loader_clear, name='checkbox_plot_loader_clear'),
+                       url(r'^data/plot/(?P<experiment_name>\w+)/$', views_plot.plot_loader_from_experiment, name='plot_loader_from_experiment'),
 
                        url(r'^data/genotype/$', views_genotype.genotype_data_browse, name='genotype_data_browse'),
                        url(r'^data/genotype/browse/plot/$', views_genotype.genotype_data_browse_plot, name='genotype_data_browse_plot'),
@@ -233,7 +234,7 @@ urlpatterns = patterns('',
                        url(r'^download/isolatestocks/(?P<experiment_name>\w+)/', views.download_isolatestocks_experiment, name='download_isolatestocks_experiment'),
                        url(r'^download/isolate/(?P<experiment_name>\w+)/', views.download_isolates_experiment, name='download_isolates_experiment'),
 
-                       url(r'^download/data/row/$', views.download_row_data, name='download_row_data'),
+                       url(r'^download/data/row/$', views.download_plot_loader, name='download_plot_loader'),
                        url(r'^download/data/tissue/$', views.download_tissue_data, name='download_tissue_data'),
                        url(r'^download/data/plant/$', views.download_plant_data, name='download_plant_data'),
                        url(r'^download/data/plate/$', views.download_plate_data, name='download_plate_data'),

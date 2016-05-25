@@ -141,9 +141,9 @@ def obs_tracker_hash_mirror():
         obs_tracker_hash_table[tracker_hash] = row.id
     return obs_tracker_hash_table
 
-def obs_tracker_row_id_mirror():
-    obs_tracker_row_id_table = OrderedDict({})
-    #--- Key = (row_id)
+def obs_tracker_plot_id_mirror():
+    obs_tracker_plot_id_table = OrderedDict({})
+    #--- Key = (plot_id)
     #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
     ot = OrderedDict({})
     #--- Key = (obs_plot_id)
@@ -155,8 +155,8 @@ def obs_tracker_row_id_mirror():
         ot[row.obs_plot_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     for row in obs_plot_file:
         if row.id in ot:
-            obs_tracker_row_id_table[row.row_id] = (ot[row.id][0], ot[row.id][1], ot[row.id][2], ot[row.id][3], ot[row.id][4], ot[row.id][5], ot[row.id][6], ot[row.id][7], ot[row.id][8], ot[row.id][9], ot[row.id][10], ot[row.id][11], ot[row.id][12], ot[row.id][13], ot[row.id][14], ot[row.id][15], ot[row.id][16], ot[row.id][17], ot[row.id][18], ot[row.id][19], ot[row.id][20])
-    return obs_tracker_row_id_table
+            obs_tracker_plot_id_table[row.plot_id] = (ot[row.id][0], ot[row.id][1], ot[row.id][2], ot[row.id][3], ot[row.id][4], ot[row.id][5], ot[row.id][6], ot[row.id][7], ot[row.id][8], ot[row.id][9], ot[row.id][10], ot[row.id][11], ot[row.id][12], ot[row.id][13], ot[row.id][14], ot[row.id][15], ot[row.id][16], ot[row.id][17], ot[row.id][18], ot[row.id][19], ot[row.id][20])
+    return obs_tracker_plot_id_table
 
 def obs_tracker_obs_plot_id_mirror():
     obs_tracker_obs_plot_id_table = OrderedDict({})
@@ -437,7 +437,7 @@ def obs_tracker_extract_id_mirror():
 
 def plant_id_mirror():
     plant_id_table = OrderedDict({})
-    #--- Key = (row_id)
+    #--- Key = (plot_id)
     #--- Value = (obs_plant_id, plant_id, plant_num, comments)
 
     obs_plant_file = ObsPlant.objects.all()
@@ -515,15 +515,15 @@ def sample_id_mirror():
         sample_id_table[row.sample_id] = (row.id, row.sample_id, row.sample_type, row.sample_name, row.weight, row.volume, row.density, row.kernel_num, row.photo, row.comments)
     return sample_id_table
 
-def row_id_mirror():
-    row_id_table = OrderedDict({})
-    #--- Key = (row_id)
-    #--- Value = (obs_plot_id, row_id, row_name, range_num, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
+def plot_id_mirror():
+    plot_id_table = OrderedDict({})
+    #--- Key = (plot_id)
+    #--- Value = (obs_plot_id, plot_id, plot_name, range_num, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
 
     obs_plot_file = ObsPlot.objects.all()
     for row in obs_plot_file:
-        row_id_table[row.row_id] = (row.id, row.row_id, row.row_name, row.range_num, row.plot, row.block, row.rep, row.kernel_num, row.planting_date, row.harvest_date, row.comments)
-    return row_id_table
+        plot_id_table[row.plot_id] = (row.id, row.plot_id, row.plot_name, row.range_num, row.plot, row.block, row.rep, row.kernel_num, row.planting_date, row.harvest_date, row.comments)
+    return plot_id_table
 
 def env_id_mirror():
     env_id_table = OrderedDict({})
@@ -565,9 +565,9 @@ def disease_name_mirror():
         disease_name_table[row.common_name] = (row.id, row.common_name, row.abbrev, row.comments)
     return disease_name_table
 
-def row_id_seed_id_mirror():
-    row_id_seed_id_table = OrderedDict({})
-    #--- Key = (row_id)
+def plot_id_seed_id_mirror():
+    plot_id_seed_id_table = OrderedDict({})
+    #--- Key = (plot_id)
     #--- Value = (seed_id)
     obs_tracker_obs_plot_id_table = OrderedDict({})
     #--- Key = (obs_plot_id)
@@ -579,15 +579,15 @@ def row_id_seed_id_mirror():
         obs_tracker_obs_plot_id_table[(obs_tracker.obs_plot_id)] = (obs_tracker.stock.seed_id)
     for obs_plot in obs_plot_file:
         if (obs_plot.id) in obs_tracker_obs_plot_id_table:
-            row_id = obs_plot.row_id
-            row_id.rstrip('\r')
-            row_id.rstrip('\n')
-            row_id_seed_id_table[row_id] = (obs_tracker_obs_plot_id_table[(obs_plot.id)])
-    return row_id_seed_id_table
+            plot_id = obs_plot.plot_id
+            plot_id.rstrip('\r')
+            plot_id.rstrip('\n')
+            plot_id_seed_id_table[plot_id] = (obs_tracker_obs_plot_id_table[(obs_plot.id)])
+    return plot_id_seed_id_table
 
-def row_id_stock_id_mirror():
-    row_id_stock_id_table = OrderedDict({})
-    #--- Key = (row_id)
+def plot_id_stock_id_mirror():
+    plot_id_stock_id_table = OrderedDict({})
+    #--- Key = (plot_id)
     #--- Value = (stock_id)
     obs_tracker_obs_plot_id_table = OrderedDict({})
     #--- Key = (obs_plot_id)
@@ -599,15 +599,15 @@ def row_id_stock_id_mirror():
         obs_tracker_obs_plot_id_table[(obs_tracker.obs_plot_id)] = (obs_tracker.stock_id)
     for obs_plot in obs_plot_file:
         if (obs_plot.id) in obs_tracker_obs_plot_id_table:
-            row_id = obs_plot.row_id
-            row_id.rstrip('\r')
-            row_id.rstrip('\n')
-            row_id_stock_id_table[row_id] = (obs_tracker_obs_plot_id_table[(obs_plot.id)])
-    return row_id_stock_id_table
+            plot_id = obs_plot.plot_id
+            plot_id.rstrip('\r')
+            plot_id.rstrip('\n')
+            plot_id_stock_id_table[plot_id] = (obs_tracker_obs_plot_id_table[(obs_plot.id)])
+    return plot_id_stock_id_table
 
-def row_id_field_id_mirror():
-    row_id_field_id_table = OrderedDict({})
-    #--- Key = (row_id)
+def plot_id_field_id_mirror():
+    plot_id_field_id_table = OrderedDict({})
+    #--- Key = (plot_id)
     #--- Value = (field_id)
     obs_tracker_obs_plot_id_table = OrderedDict({})
     #--- Key = (obs_plot_id)
@@ -619,11 +619,11 @@ def row_id_field_id_mirror():
         obs_tracker_obs_plot_id_table[(obs_tracker.obs_plot_id)] = (obs_tracker.field_id)
     for obs_plot in obs_plot_file:
         if (obs_plot.id) in obs_tracker_obs_plot_id_table:
-            row_id = obs_plot.row_id
-            row_id.rstrip('\r')
-            row_id.rstrip('\n')
-            row_id_field_id_table[row_id] = (obs_tracker_obs_plot_id_table[(obs_plot.id)])
-    return row_id_field_id_table
+            plot_id = obs_plot.plot_id
+            plot_id.rstrip('\r')
+            plot_id.rstrip('\n')
+            plot_id_field_id_table[plot_id] = (obs_tracker_obs_plot_id_table[(obs_plot.id)])
+    return plot_id_field_id_table
 
 def seed_id_mirror():
     seed_id_table = OrderedDict({})
@@ -1038,12 +1038,12 @@ def stock_id_mirror():
 
 def obs_plot_hash_mirror():
     obs_plot_hash_table = OrderedDict({})
-    #--- Key = (row_id + row_name + range_num + plot + block + rep + kernel_num + planting_date + harvest_date + comments)
+    #--- Key = (plot_id + plot_name + range_num + plot + block + rep + kernel_num + planting_date + harvest_date + comments)
     #--- Value = (obs_plot_id)
 
     row_file = ObsPlot.objects.all()
     for row in row_file:
-        obs_plot_hash = row.row_id + row.row_name + row.range_num + row.plot + row.block + row.rep + row.kernel_num + row.planting_date + row.harvest_date + row.comments
+        obs_plot_hash = row.plot_id + row.plot_name + row.range_num + row.plot + row.block + row.rep + row.kernel_num + row.planting_date + row.harvest_date + row.comments
         obs_plot_hash_table[obs_plot_hash] = row.id
     return obs_plot_hash_table
 
@@ -1083,7 +1083,7 @@ def obs_env_id_mirror():
 
 def obs_plant_hash_mirror():
     obs_plant_hash_table = OrderedDict({})
-    #--- Key = (row_id + row_name + range_num + plot + block + rep + kernel_num + planting_date + harvest_date + comments)
+    #--- Key = (plot_id + plot_name + range_num + plot + block + rep + kernel_num + planting_date + harvest_date + comments)
     #--- Value = (obs_plot_id)
 
     row_file = ObsPlant.objects.all()

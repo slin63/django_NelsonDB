@@ -15,6 +15,6 @@ Tissue Type,0,0,0,lab_obstissue,tissue_type,"The type of tissue. Example: Leaf, 
 Date Ground,0,0,0,lab_obstissue,date_ground,The date the tissue was ground. Recommended format: 2015-01-30
 Tissue Comments,0,0,0,lab_obstissue,comments,Any additional comments about the Tissue.
 Source Seed ID,1,0,0,lab_obstracker,stock_id = Stock(seed_id).id,"If the sample was selected using seed, provide the Seed ID here. If not applicable, leave blank."
-Source Plot ID,1,0,0,lab_obstracker,obs_plot_id = ObsPlot(row_id).id,"If the sample was selected from a row, provide the Plot ID here. If not applicable, leave blank."
+Source Plot ID,1,0,0,lab_obstracker,obs_plot_id = ObsPlot(plot_id).id,"If the sample was selected from a row, provide the Plot ID here. If not applicable, leave blank."
 Source Plant ID,1,0,0,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,"If the sample was selected from a plant, provide the Plant ID here. If not applicable, leave blank."
 Source Culture ID,1,0,0,lab_obstracker,obs_culture_id = ObsCulture(culture_id).id,"If the sample was selected from a separate culture, provide the Culture ID here. If not applicable, leave blank."

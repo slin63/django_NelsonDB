@@ -19,6 +19,6 @@ Kernel Number,0,0,0,lab_obssample,kernel_num,"The number of seed kernels in the 
 Photo,0,0,0,lab_obssample,photo,The image filename of the sample. Leave blank if not applicable.
 Sample Comments,0,0,0,lab_obssample,comments,Any additional comments about the sample.
 Source Seed ID,1,0,0,lab_obstracker,stock_id = Stock(seed_id).id,"If the sample was selected using seed, provide the Seed ID here. If not applicable, leave blank."
-Source Plot ID,1,0,0,lab_obstracker,obs_plot_id = ObsPlot(row_id).id,"If the sample was selected from a row, provide the Plot ID here. If not applicable, leave blank."
+Source Plot ID,1,0,0,lab_obstracker,obs_plot_id = ObsPlot(plot_id).id,"If the sample was selected from a row, provide the Plot ID here. If not applicable, leave blank."
 Source Plant ID,1,0,0,lab_obstracker,obs_plant_id = ObsPlant(plant_id).id,"If the sample was selected from a plant, provide the Plant ID here. If not applicable, leave blank."
 Source Sample ID,1,0,0,lab_obstrackersource,source_obs=Obstracker(ObsSource(source_id)),"If the sample was selected from another sample, provide the Sample ID here. If not applicable, leave blank. "

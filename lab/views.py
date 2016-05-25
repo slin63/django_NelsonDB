@@ -26,7 +26,6 @@ from django.http import JsonResponse
 from django.utils.encoding import smart_str
 from django.core.servers.basehttp import FileWrapper
 from django.conf import settings
-from github3 import login as gitlogin
 import mimetypes
 import json
 
@@ -787,8 +786,8 @@ def update_seed_info(request, stock_id):
 					obs_tracker.isolate_id = 1
 					obs_tracker.maize_sample_id = 1
 					obs_tracker.obs_extract_id = 1
-					if obs_tracker_stock_form.cleaned_data['obs_plot__row_id'] != '':
-						obs_tracker.obs_plot = ObsPlot.objects.get(row_id=obs_tracker_stock_form.cleaned_data['obs_plot__row_id'])
+					if obs_tracker_stock_form.cleaned_data['obs_plot__plot_id'] != '':
+						obs_tracker.obs_plot = ObsPlot.objects.get(plot_id=obs_tracker_stock_form.cleaned_data['obs_plot__plot_id'])
 					else:
 						obs_tracker.obs_plot = ObsPlot.objects.get(id=1)
 					if obs_tracker_stock_form.cleaned_data['obs_plant__plant_id']:
@@ -819,7 +818,7 @@ def update_seed_info(request, stock_id):
 		else:
 			print(obs_tracker_stock_form.errors)
 	else:
-		stock_data = ObsTracker.objects.filter(obs_entity_type='stock', stock_id=stock_id).values('experiment', 'stock__seed_id', 'stock__seed_name', 'stock__cross_type', 'stock__pedigree', 'stock__stock_status', 'stock__stock_date', 'stock__inoculated', 'stock__comments', 'stock__passport__collecting__user', 'stock__passport__collecting__collection_date', 'stock__passport__collecting__collection_method', 'stock__passport__collecting__comments', 'stock__passport__people__first_name', 'stock__passport__people__last_name', 'stock__passport__people__organization', 'stock__passport__people__phone', 'stock__passport__people__email', 'stock__passport__people__comments', 'stock__passport__taxonomy__binomial', 'stock__passport__taxonomy__population', 'obs_plot__row_id', 'obs_plant__plant_id', 'field')
+		stock_data = ObsTracker.objects.filter(obs_entity_type='stock', stock_id=stock_id).values('experiment', 'stock__seed_id', 'stock__seed_name', 'stock__cross_type', 'stock__pedigree', 'stock__stock_status', 'stock__stock_date', 'stock__inoculated', 'stock__comments', 'stock__passport__collecting__user', 'stock__passport__collecting__collection_date', 'stock__passport__collecting__collection_method', 'stock__passport__collecting__comments', 'stock__passport__people__first_name', 'stock__passport__people__last_name', 'stock__passport__people__organization', 'stock__passport__people__phone', 'stock__passport__people__email', 'stock__passport__people__comments', 'stock__passport__taxonomy__binomial', 'stock__passport__taxonomy__population', 'obs_plot__plot_id', 'obs_plant__plant_id', 'field')
 		obs_tracker_stock_form = UpdateSeedDataOnlineForm(initial=stock_data[0])
 	context_dict['stock_id'] = stock_id
 	context_dict['obs_tracker_stock_form'] = obs_tracker_stock_form
@@ -1197,31 +1196,31 @@ def download_stock_collected_experiment(request, experiment_name):
 
 def find_row_from_experiment(experiment_name):
 	try:
-		row_data = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='row')
+		plot_loader = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='row')
 	except ObsTracker.DoesNotExist:
-		row_data = None
-	return row_data
+		plot_loader = None
+	return plot_loader
 
 @login_required
-def row_data_from_experiment(request, experiment_name):
+def plot_loader_from_experiment(request, experiment_name):
 	context = RequestContext(request)
 	context_dict = {}
 	context_dict = checkbox_session_variable_check(request)
-	row_data = find_row_from_experiment(experiment_name)
-	context_dict['row_data'] = row_data
+	plot_loader = find_row_from_experiment(experiment_name)
+	context_dict['plot_loader'] = plot_loader
 	context_dict['experiment_name'] = experiment_name
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/row_experiment_data.html', context_dict, context)
+	return render_to_response('lab//plot/plot_experiment_data.html', context_dict, context)
 
 @login_required
 def download_row_experiment(request, experiment_name):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="%s_rows.csv"' % (experiment_name)
-	row_data = find_row_from_experiment(experiment_name)
+	plot_loader = find_row_from_experiment(experiment_name)
 	writer = csv.writer(response)
 	writer.writerow(['Plot ID', 'Plot Name', 'Field', 'Source Stock', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
-	for row in row_data:
-		writer.writerow([row.obs_plot.row_id, row.obs_plot.row_name, row.field.field_name, row.stock.seed_id, row.obs_plot.range_num, row.obs_plot.plot, row.obs_plot.block, row.obs_plot.rep, row.obs_plot.kernel_num, row.obs_plot.planting_date, row.obs_plot.harvest_date, row.obs_plot.comments])
+	for row in plot_loader:
+		writer.writerow([row.obs_plot.plot_id, row.obs_plot.plot_name, row.field.field_name, row.stock.seed_id, row.obs_plot.range_num, row.obs_plot.plot, row.obs_plot.block, row.obs_plot.rep, row.obs_plot.kernel_num, row.obs_plot.planting_date, row.obs_plot.harvest_date, row.obs_plot.comments])
 	return response
 
 
@@ -1800,7 +1799,7 @@ def download_isolates_experiment(request, experiment_name):
 	writer = csv.writer(response)
 	writer.writerow(['Isolate ID', 'Stock Date', 'Extract Color', 'Organism', 'Location Name', 'Source Seed ID', 'Source Plot ID', 'Source Culture ID', 'Source IsolateStock ID', 'Comments'])
 	for row in isolate_data:
-		writer.writerow([row.isolate.isolate_id, row.isolate.stock_date, row.isolate.extract_color, row.isolate.organism, row.location, row.stock.seed_id, row.obs_plot.row_id, row.obs_culture.culture_id, row.isolatestock.isolatestock_id, row.isolate.comments])
+		writer.writerow([row.isolate.isolate_id, row.isolate.stock_date, row.isolate.extract_color, row.isolate.organism, row.location, row.stock.seed_id, row.obs_plot.plot_id, row.obs_culture.culture_id, row.isolatestock.isolatestock_id, row.isolate.comments])
 	return response
 
 @login_required
@@ -1832,7 +1831,7 @@ def download_microbe_data(request):
 	writer = csv.writer(response)
 	writer.writerow(['Exp ID', 'Microbe ID', 'Microbe Type', 'Comments', 'Source Plot ID', 'Source Seed ID', 'Source Plant ID', 'Source Tissue ID', 'Source Culture ID'])
 	for row in microbe_data:
-		writer.writerow([row.experiment.name, row.obs_microbe.microbe_id, row.obs_microbe.microbe_type, row.obs_microbe.comments, row.obs_plot.row_id, row.stock.seed_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.obs_culture.culture_id])
+		writer.writerow([row.experiment.name, row.obs_microbe.microbe_id, row.obs_microbe.microbe_type, row.obs_microbe.comments, row.obs_plot.plot_id, row.stock.seed_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.obs_culture.culture_id])
 	return response
 
 def suggest_microbe_experiment(request):
@@ -1915,7 +1914,7 @@ def download_microbe_experiment(request, experiment_name):
 	writer = csv.writer(response)
 	writer.writerow(['Microbe ID', 'Microbe Type', 'Comments', 'Source Plot ID', 'Source Seed ID', 'Source Plant ID', 'Source Tissue ID', 'Source Culture ID'])
 	for row in microbe_data:
-		writer.writerow([row.obs_microbe.microbe_id, row.obs_microbe.microbe_type, row.obs_microbe.comments, row.obs_plot.row_id, row.stock.seed_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.obs_culture.culture_id])
+		writer.writerow([row.obs_microbe.microbe_id, row.obs_microbe.microbe_type, row.obs_microbe.comments, row.obs_plot.plot_id, row.stock.seed_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.obs_culture.culture_id])
 	return response
 
 @login_required
@@ -2034,35 +2033,35 @@ def download_env_experiment(request, experiment_name):
 	return response
 
 @login_required
-def row_data_browse(request):
+def plot_loader_browse(request):
 	context = RequestContext(request)
 	context_dict = {}
-	row_data = sort_row_data(request)
+	plot_loader = sort_plot_loader(request)
 	context_dict = checkbox_session_variable_check(request)
-	context_dict['row_data'] = row_data
+	context_dict['plot_loader'] = plot_loader
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/row_data.html', context_dict, context)
+	return render_to_response('lab/plot/plot_loader.html', context_dict, context)
 
-def sort_row_data(request):
-	row_data = {}
+def sort_plot_loader(request):
+	plot_loader = {}
 	if request.session.get('checkbox_row_experiment_id_list', None):
 		checkbox_row_experiment_id_list = request.session.get('checkbox_row_experiment_id_list')
 		for row_experiment in checkbox_row_experiment_id_list:
 			rows = ObsTracker.objects.filter(obs_entity_type='row', experiment__id=row_experiment)
-			row_data = list(chain(rows, row_data))
+			plot_loader = list(chain(rows, plot_loader))
 	else:
-		row_data = ObsTracker.objects.filter(obs_entity_type='row').exclude(stock__seed_id=0).exclude(stock__seed_id='YW').exclude(stock__seed_id='135sib').exclude(stock__seed_id='R. Wisser').exclude(stock__seed_id='R_Wisser')[:2000]
-	return row_data
+		plot_loader = ObsTracker.objects.filter(obs_entity_type='row').exclude(stock__seed_id=0).exclude(stock__seed_id='YW').exclude(stock__seed_id='135sib').exclude(stock__seed_id='R. Wisser').exclude(stock__seed_id='R_Wisser')[:2000]
+	return plot_loader
 
 @login_required
-def download_row_data(request):
+def download_plot_loader(request):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="selected_experiment_rows.csv"'
-	row_data = sort_row_data(request)
+	plot_loader = sort_plot_loader(request)
 	writer = csv.writer(response)
 	writer.writerow(['Exp ID', 'Plot ID', 'Plot Name', 'Field', 'Source Stock', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
-	for row in row_data:
-		writer.writerow([row.experiment.name, row.obs_plot.row_id, row.obs_plot.row_name, row.field.field_name, row.stock.seed_id, row.obs_plot.range_num, row.obs_plot.plot, row.obs_plot.block, row.obs_plot.rep, row.obs_plot.kernel_num, row.obs_plot.planting_date, row.obs_plot.harvest_date, row.obs_plot.comments])
+	for row in plot_loader:
+		writer.writerow([row.experiment.name, row.obs_plot.plot_id, row.obs_plot.plot_name, row.field.field_name, row.stock.seed_id, row.obs_plot.range_num, row.obs_plot.plot, row.obs_plot.block, row.obs_plot.rep, row.obs_plot.kernel_num, row.obs_plot.planting_date, row.obs_plot.harvest_date, row.obs_plot.comments])
 	return response
 
 def suggest_row_experiment(request):
@@ -2080,37 +2079,37 @@ def suggest_row_experiment(request):
 		row_experiment_list = None
 	context_dict = checkbox_session_variable_check(request)
 	context_dict['row_experiment_list'] = row_experiment_list
-	return render_to_response('lab/row_experiment_list.html', context_dict, context)
+	return render_to_response('lab/plot/plot_experiment_list.html', context_dict, context)
 
 def select_row_experiment(request):
 	context = RequestContext(request)
 	context_dict = {}
-	row_data = []
+	plot_loader = []
 	checkbox_row_experiment_name_list = []
 	checkbox_row_experiment_list = request.POST.getlist('checkbox_row_experiment')
 	for row_experiment in checkbox_row_experiment_list:
 		rows = ObsTracker.objects.filter(obs_entity_type='row', experiment__id=row_experiment)
-		row_data = list(chain(rows, row_data))
+		plot_loader = list(chain(rows, plot_loader))
 	for experiment_id in checkbox_row_experiment_list:
 		experiment_name = Experiment.objects.filter(id=experiment_id).values('name')
 		checkbox_row_experiment_name_list = list(chain(experiment_name, checkbox_row_experiment_name_list))
 	request.session['checkbox_row_experiment'] = checkbox_row_experiment_name_list
 	request.session['checkbox_row_experiment_id_list'] = checkbox_row_experiment_list
 	context_dict = checkbox_session_variable_check(request)
-	context_dict['row_data'] = row_data
+	context_dict['plot_loader'] = plot_loader
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/row_data.html', context_dict, context)
+	return render_to_response('lab/plot/plot_loader.html', context_dict, context)
 
-def checkbox_row_data_clear(request):
+def checkbox_plot_loader_clear(request):
 	context = RequestContext(request)
 	context_dict = {}
 	del request.session['checkbox_row_experiment']
 	del request.session['checkbox_row_experiment_id_list']
-	row_data = sort_row_data(request)
+	plot_loader = sort_plot_loader(request)
 	context_dict = checkbox_session_variable_check(request)
-	context_dict['row_data'] = row_data
+	context_dict['plot_loader'] = plot_loader
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/row_data.html', context_dict, context)
+	return render_to_response('lab/plot/plot_loader.html', context_dict, context)
 
 def show_all_row_experiment(request):
 	context = RequestContext(request)
@@ -2149,7 +2148,7 @@ def download_sample_data(request):
 	writer = csv.writer(response)
 	writer.writerow(['Exp ID', 'Sample ID', 'Sample Type', 'Sample Name', 'Source Seed ID', 'Source Plot ID', 'Source Plant ID', 'Weight', 'Volume', 'Density', 'Num Kernels', 'Photo', 'Comments'])
 	for row in sample_data:
-		writer.writerow([row.experiment, row.obs_sample.sample_id, row.obs_sample.sample_type, row.obs_sample.sample_name, row.stock.seed_id, row.obs_plot.row_id, row.obs_plant.plant_id, row.obs_sample.weight, row.obs_sample.volume, row.obs_sample.density, row.obs_sample.kernel_num, row.obs_sample.photo, row.obs_sample.comments])
+		writer.writerow([row.experiment, row.obs_sample.sample_id, row.obs_sample.sample_type, row.obs_sample.sample_name, row.stock.seed_id, row.obs_plot.plot_id, row.obs_plant.plant_id, row.obs_sample.weight, row.obs_sample.volume, row.obs_sample.density, row.obs_sample.kernel_num, row.obs_sample.photo, row.obs_sample.comments])
 	return response
 
 def suggest_sample_experiment(request):
@@ -2230,7 +2229,7 @@ def download_sample_experiment(request, experiment_name):
 	writer = csv.writer(response)
 	writer.writerow(['Sample ID', 'Sample Type', 'Sample Name', 'Source Seed ID', 'Source Plot ID', 'Source Plant ID', 'Weight', 'Volume', 'Density', 'Num Kernels', 'Photo', 'Comments'])
 	for row in sample_data:
-		writer.writerow([row.obs_sample.sample_id, row.obs_sample.sample_type, row.obs_sample.sample_name, row.stock.seed_id, row.obs_plot.row_id, row.obs_plant.plant_id, row.obs_sample.weight, row.obs_sample.volume, row.obs_sample.density, row.obs_sample.kernel_num, row.obs_sample.photo, row.obs_sample.comments])
+		writer.writerow([row.obs_sample.sample_id, row.obs_sample.sample_type, row.obs_sample.sample_name, row.stock.seed_id, row.obs_plot.plot_id, row.obs_plant.plant_id, row.obs_sample.weight, row.obs_sample.volume, row.obs_sample.density, row.obs_sample.kernel_num, row.obs_sample.photo, row.obs_sample.comments])
 	return response
 
 @login_required
@@ -2256,14 +2255,14 @@ def update_sample_info(request, obs_sample_id):
 							new_source_stock = ObsTrackerSource.objects.create(source_obs = ObsTracker.objects.get(obs_entity_type='stock', stock__seed_id=obs_tracker_samples_form.cleaned_data['stock__seed_id']), target_obs=obs_tracker, relationship="sample_from_stock")
 					else:
 						obs_tracker.stock = Stock.objects.get(id=1)
-					if obs_tracker_samples_form.cleaned_data['obs_plot__row_id'] != '':
-						obs_tracker.obs_plot = ObsPlot.objects.get(row_id=obs_tracker_samples_form.cleaned_data['obs_plot__row_id'])
+					if obs_tracker_samples_form.cleaned_data['obs_plot__plot_id'] != '':
+						obs_tracker.obs_plot = ObsPlot.objects.get(plot_id=obs_tracker_samples_form.cleaned_data['obs_plot__plot_id'])
 						try:
 							obs_tracker_source_row = ObsTrackerSource.objects.get(target_obs=obs_tracker, source_obs__obs_entity_type='row', relationship='sample_from_row')
-							obs_tracker_source_row.source_obs = ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=obs_tracker_samples_form.cleaned_data['obs_plot__row_id'])
+							obs_tracker_source_row.source_obs = ObsTracker.objects.get(obs_entity_type='row', obs_plot__plot_id=obs_tracker_samples_form.cleaned_data['obs_plot__plot_id'])
 							obs_tracker_source_row.save()
 						except ObsTrackerSource.DoesNotExist:
-							new_source_row = ObsTrackerSource.objects.create(source_obs = ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=obs_tracker_samples_form.cleaned_data['obs_plot__row_id']), target_obs=obs_tracker, relationship="sample_from_row")
+							new_source_row = ObsTrackerSource.objects.create(source_obs = ObsTracker.objects.get(obs_entity_type='row', obs_plot__plot_id=obs_tracker_samples_form.cleaned_data['obs_plot__plot_id']), target_obs=obs_tracker, relationship="sample_from_row")
 					else:
 						obs_tracker.obs_plot = ObsPlot.objects.get(id=1)
 					if obs_tracker_samples_form.cleaned_data['obs_plant__plant_id'] != '':
@@ -2310,7 +2309,7 @@ def update_sample_info(request, obs_sample_id):
 		else:
 			print(obs_tracker_samples_form.errors)
 	else:
-		samples_data = ObsTracker.objects.filter(obs_entity_type='sample', obs_sample_id=obs_sample_id).values('experiment', 'obs_sample__sample_id', 'obs_sample__sample_type', 'obs_sample__sample_name', 'stock__seed_id', 'obs_plot__row_id', 'obs_plant__plant_id', 'obs_sample__weight', 'obs_sample__volume', 'obs_sample__density', 'obs_sample__kernel_num', 'obs_sample__photo', 'obs_sample__comments')
+		samples_data = ObsTracker.objects.filter(obs_entity_type='sample', obs_sample_id=obs_sample_id).values('experiment', 'obs_sample__sample_id', 'obs_sample__sample_type', 'obs_sample__sample_name', 'stock__seed_id', 'obs_plot__plot_id', 'obs_plant__plant_id', 'obs_sample__weight', 'obs_sample__volume', 'obs_sample__density', 'obs_sample__kernel_num', 'obs_sample__photo', 'obs_sample__comments')
 		obs_tracker_samples_form = LogSamplesOnlineForm(initial=samples_data[0])
 	context_dict['obs_sample_id'] = obs_sample_id
 	context_dict['obs_tracker_samples_form'] = obs_tracker_samples_form
@@ -2346,7 +2345,7 @@ def download_tissue_data(request):
 	writer = csv.writer(response)
 	writer.writerow(['Exp ID', 'Tissue ID', 'Tissue Type', 'Tissue Name', 'Date Ground', 'Comments', 'Plot ID', 'Plant ID', 'Plate ID', 'Seed ID'])
 	for row in tissue_data:
-		writer.writerow([row.experiment, row.obs_tissue.tissue_id, row.obs_tissue.tissue_type, row.obs_tissue.tissue_name, row.obs_tissue.date_ground, row.obs_tissue.comments, row.obs_plot.row_id, row.obs_plant.plant_id, row.obs_plate.plate_id, row.stock.seed_id])
+		writer.writerow([row.experiment, row.obs_tissue.tissue_id, row.obs_tissue.tissue_type, row.obs_tissue.tissue_name, row.obs_tissue.date_ground, row.obs_tissue.comments, row.obs_plot.plot_id, row.obs_plant.plant_id, row.obs_plate.plate_id, row.stock.seed_id])
 	return response
 
 def suggest_tissue_experiment(request):
@@ -2427,7 +2426,7 @@ def download_tissue_experiment(request, experiment_name):
 	writer = csv.writer(response)
 	writer.writerow(['Tissue ID', 'Tissue Type', 'Tissue Name', 'Date Ground', 'Comments', 'Plot ID', 'Plant ID', 'Plate ID', 'Seed ID'])
 	for row in tissue_data:
-		writer.writerow([row.obs_tissue.tissue_id, row.obs_tissue.tissue_type, row.obs_tissue.tissue_name, row.obs_tissue.date_ground, row.obs_tissue.comments, row.obs_plot.row_id, row.obs_plant.plant_id, row.obs_plate.plate_id, row.stock.seed_id])
+		writer.writerow([row.obs_tissue.tissue_id, row.obs_tissue.tissue_type, row.obs_tissue.tissue_name, row.obs_tissue.date_ground, row.obs_tissue.comments, row.obs_plot.plot_id, row.obs_plant.plant_id, row.obs_plate.plate_id, row.stock.seed_id])
 	return response
 
 @login_required
@@ -2650,7 +2649,7 @@ def download_well_data(request):
 	writer = csv.writer(response)
 	writer.writerow(['Exp ID', 'Well ID', 'Well', 'Well Inventory', 'Tube Label', 'Comments', 'Plate ID', 'Plot ID', 'Plant ID', 'Tissue ID', 'Seed ID'])
 	for row in well_data:
-		writer.writerow([row.experiment, row.obs_well.well_id, row.obs_well.well, row.obs_well.well_inventory, row.obs_well.tube_label, row.obs_well.comments, row.obs_plate.plate_id, row.obs_plot.row_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.stock.seed_id])
+		writer.writerow([row.experiment, row.obs_well.well_id, row.obs_well.well, row.obs_well.well_inventory, row.obs_well.tube_label, row.obs_well.comments, row.obs_plate.plate_id, row.obs_plot.plot_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.stock.seed_id])
 	return response
 
 def suggest_well_experiment(request):
@@ -2731,7 +2730,7 @@ def download_well_experiment(request, experiment_name):
 	writer = csv.writer(response)
 	writer.writerow(['Well ID', 'Well', 'Well Inventory', 'Tube Label', 'Comments', 'Plate ID', 'Plot ID', 'Plant ID', 'Tissue ID', 'Seed ID'])
 	for row in well_data:
-		writer.writerow([row.obs_well.well_id, row.obs_well.well, row.obs_well.well_inventory, row.obs_well.tube_label, row.obs_well.comments, row.obs_plate.plate_id, row.obs_plot.row_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.stock.seed_id])
+		writer.writerow([row.obs_well.well_id, row.obs_well.well, row.obs_well.well_inventory, row.obs_well.tube_label, row.obs_well.comments, row.obs_plate.plate_id, row.obs_plot.plot_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.stock.seed_id])
 	return response
 
 @login_required
@@ -2844,7 +2843,7 @@ def download_plant_experiment(request, experiment_name):
 	writer = csv.writer(response)
 	writer.writerow(['Plant ID', 'Plant Num', 'Plot ID', 'Stock ID', 'Comments'])
 	for row in plant_data:
-		writer.writerow([row.obs_plant.plant_id, row.obs_plant.plant_num, row.obs_plot.row_id, row.stock.seed_id, row.obs_plant.comments])
+		writer.writerow([row.obs_plant.plant_id, row.obs_plant.plant_num, row.obs_plot.plot_id, row.stock.seed_id, row.obs_plant.comments])
 	return response
 
 @login_required
@@ -2876,7 +2875,7 @@ def download_culture_data(request):
 	writer = csv.writer(response)
 	writer.writerow(['Exp ID', 'Culture ID', 'Culture Name', 'Microbe Type', 'Plating Cycle', 'Dilution', 'Image', 'Comments', 'Medium ID', 'Tissue ID', 'Plant ID', 'Plot ID', 'Seed ID', 'Username'])
 	for row in culture_data:
-		writer.writerow([row.experiment, row.obs_culture.culture_id, row.obs_culture.culture_name, row.obs_culture.microbe_type, row.obs_culture.plating_cycle, row.obs_culture.dilution, row.obs_culture.image_filename, row.obs_culture.comments, row.medium.medium_id, row.obs_tissue.tissue_id, row.obs_plot.row_id, row.stock.seed_id, row.user])
+		writer.writerow([row.experiment, row.obs_culture.culture_id, row.obs_culture.culture_name, row.obs_culture.microbe_type, row.obs_culture.plating_cycle, row.obs_culture.dilution, row.obs_culture.image_filename, row.obs_culture.comments, row.medium.medium_id, row.obs_tissue.tissue_id, row.obs_plot.plot_id, row.stock.seed_id, row.user])
 	return response
 
 def suggest_culture_experiment(request):
@@ -2957,7 +2956,7 @@ def download_culture_experiment(request, experiment_name):
 	writer = csv.writer(response)
 	writer.writerow(['Culture ID', 'Culture Name', 'Microbe Type', 'Plating Cycle', 'Dilution', 'Image', 'Comments', 'Medium ID', 'Tissue ID', 'Plant ID', 'Plot ID', 'Seed ID', 'Username'])
 	for row in culture_data:
-		writer.writerow([row.obs_culture.culture_id, row.obs_culture.culture_name, row.obs_culture.microbe_type, row.obs_culture.plating_cycle, row.obs_culture.dilution, row.obs_culture.image_filename, row.obs_culture.comments, row.medium.medium_id, row.obs_tissue.tissue_id, row.obs_plant.plant_id, row.obs_plot.row_id, row.stock.seed_id, row.user])
+		writer.writerow([row.obs_culture.culture_id, row.obs_culture.culture_name, row.obs_culture.microbe_type, row.obs_culture.plating_cycle, row.obs_culture.dilution, row.obs_culture.image_filename, row.obs_culture.comments, row.medium.medium_id, row.obs_tissue.tissue_id, row.obs_plant.plant_id, row.obs_plot.plot_id, row.stock.seed_id, row.user])
 	return response
 
 @login_required
@@ -2989,7 +2988,7 @@ def download_dna_data(request):
 	writer = csv.writer(response)
 	writer.writerow(['Exp ID', 'DNA ID', 'Extraction Method', 'Date', 'Tube ID', 'Tube Type', 'Comments', 'Well ID', 'Plate ID', 'Plant ID', 'Tissue ID', 'Plot ID', 'Seed ID', 'Username'])
 	for row in dna_data:
-		writer.writerow([row.experiment, row.obs_dna.dna_id, row.obs_dna.extraction_method, row.obs_dna.date, row.obs_dna.tube_id, row.obs_dna.tube_type, row.obs_dna.comments, row.obs_well.well_id, row.obs_plate.plate_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.obs_plot.row_id, row.stock.seed_id, row.user])
+		writer.writerow([row.experiment, row.obs_dna.dna_id, row.obs_dna.extraction_method, row.obs_dna.date, row.obs_dna.tube_id, row.obs_dna.tube_type, row.obs_dna.comments, row.obs_well.well_id, row.obs_plate.plate_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.obs_plot.plot_id, row.stock.seed_id, row.user])
 	return response
 
 def suggest_dna_experiment(request):
@@ -3070,7 +3069,7 @@ def download_dna_experiment(request, experiment_name):
 	writer = csv.writer(response)
 	writer.writerow(['DNA ID', 'Extraction Method', 'Date', 'Tube ID', 'Tube Type', 'Comments', 'Well ID', 'Plate ID', 'Plant ID', 'Tissue ID', 'Plot ID', 'Seed ID', 'Username'])
 	for row in dna_data:
-		writer.writerow([row.obs_dna.dna_id, row.obs_dna.extraction_method, row.obs_dna.date, row.obs_dna.tube_id, row.obs_dna.tube_type, row.obs_dna.comments, row.obs_well.well_id, row.obs_plate.plate_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.obs_plot.row_id, row.stock.seed_id, row.user])
+		writer.writerow([row.obs_dna.dna_id, row.obs_dna.extraction_method, row.obs_dna.date, row.obs_dna.tube_id, row.obs_dna.tube_type, row.obs_dna.comments, row.obs_well.well_id, row.obs_plate.plate_id, row.obs_plant.plant_id, row.obs_tissue.tissue_id, row.obs_plot.plot_id, row.stock.seed_id, row.user])
 	return response
 
 def datatable_measurement_data(request):
@@ -3476,7 +3475,7 @@ def make_obs_tracker_info(tracker):
 			obs_tracker_id_info = ['No Maize Sample', obs_entity_type, 1]
 	elif obs_entity_type == 'row':
 		try:
-			obs_tracker_id_info = [tracker.obs_plot.row_id, obs_entity_type, tracker.obs_plot_id]
+			obs_tracker_id_info = [tracker.obs_plot.plot_id, obs_entity_type, tracker.obs_plot_id]
 		except ObsPlot.DoesNotExist:
 			obs_tracker_id_info = ['No Plot', obs_entity_type, 1]
 	elif obs_entity_type == 'plant':
@@ -3660,7 +3659,7 @@ def single_row_info(request, obs_plot_id):
 	if row_info is not None:
 		obs_tracker = get_obs_tracker('obs_plot_id', obs_plot_id)
 		for t in obs_tracker:
-			if t.obs_id != row_info.row_id:
+			if t.obs_id != row_info.plot_id:
 				obs_tracker_row.append(t)
 		obs_source = get_seed_collected_from_row('obs_plot_id', obs_plot_id)
 		obs_measurements = get_obs_measurements('obs_plot_id', obs_plot_id)
@@ -3672,7 +3671,7 @@ def single_row_info(request, obs_plot_id):
 	context_dict['obs_source'] = obs_source
 	context_dict['obs_measurements'] = obs_measurements
 	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/row_info.html', context_dict, context)
+	return render_to_response('lab/plot/plot_info.html', context_dict, context)
 
 @login_required
 def single_isolatestock_info(request, isolatestock_table_id):
@@ -3880,7 +3879,7 @@ def log_data_online(request, data_type):
 								stock_comments = form.cleaned_data['stock__comments']
 								binomial = form.cleaned_data['stock__passport__taxonomy__binomial']
 								population = form.cleaned_data['stock__passport__taxonomy__population']
-								row_id = form.cleaned_data['obs_plot__row_id']
+								plot_id = form.cleaned_data['obs_plot__plot_id']
 								plant_id = form.cleaned_data['obs_plant__plant_id']
 								field = form.cleaned_data['field']
 								collection_user = form.cleaned_data['stock__passport__collecting__user']
@@ -3899,8 +3898,8 @@ def log_data_online(request, data_type):
 								new_collecting, created = Collecting.objects.get_or_create(user=collection_user, collection_date=collection_date, collection_method=collection_method, comments=collection_comments)
 								new_passport, created = Passport.objects.get_or_create(collecting=new_collecting, taxonomy=new_taxonomy, people=new_people)
 								new_stock, created = Stock.objects.get_or_create(passport=new_passport, seed_id=seed_id, seed_name=seed_name, cross_type=cross_type, pedigree=pedigree, stock_status=stock_status, stock_date=stock_date, inoculated=inoculated, comments=stock_comments)
-								if row_id != '':
-									obs_plot = ObsPlot.objects.get(row_id=row_id)
+								if plot_id != '':
+									obs_plot = ObsPlot.objects.get(plot_id=plot_id)
 								else:
 									obs_plot = ObsPlot.objects.get(id=1)
 								if plant_id != '':
@@ -3913,7 +3912,7 @@ def log_data_online(request, data_type):
 									new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='stock', stock=new_stock, experiment=experiment, user=user, field=field, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=obs_plant, obs_plate_id=1, obs_plot=obs_plot, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 									new_obs_tracker_exp, created = ObsTracker.objects.get_or_create(obs_entity_type='experiment', stock_id=1, experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_plot_id=1, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 									new_obs_tracker_source, created = ObsTrackerSource.objects.get_or_create(source_obs=new_obs_tracker_exp, target_obs=new_obs_tracker, relationship='stock_from_experiment')
-									if row_id != '':
+									if plot_id != '':
 										source_row, created = ObsTracker.objects.get_or_create(obs_entity_type='row', obs_plot=obs_plot)
 										new_obs_tracker_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=source_row, target_obs=new_obs_tracker, relationship='stock_from_row')
 									if plant_id != '':
@@ -4183,13 +4182,13 @@ def log_data_online(request, data_type):
 						plant_id = form.cleaned_data['plant_id']
 						plant_num = form.cleaned_data['plant_num']
 						seed_id = form.cleaned_data['seed_id']
-						row_id = form.cleaned_data['row_id']
+						plot_id = form.cleaned_data['plot_id']
 						plant_comments = form.cleaned_data['plant_comments']
 						user = request.user
 
-						if row_id != '':
+						if plot_id != '':
 							try:
-								obs_tracker = ObsTracker.objects.get(obs_entity_type='row', obs_plot=ObsPlot.objects.get(row_id=row_id))
+								obs_tracker = ObsTracker.objects.get(obs_entity_type='row', obs_plot=ObsPlot.objects.get(plot_id=plot_id))
 								field_id = obs_tracker.field_id
 								obs_plot_id = obs_tracker.obs_plot_id
 
@@ -4205,8 +4204,8 @@ def log_data_online(request, data_type):
 						try:
 							new_obsplant, created = ObsPlant.objects.get_or_create(plant_id=plant_id, plant_num=plant_num, comments=plant_comments)
 							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='plant', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=field_id, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=new_obsplant, obs_plate_id=1, obs_plot_id=obs_plot_id, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
-							if row_id !='':
-								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=row_id), target_obs=new_obs_tracker, relationship="plant_from_row")
+							if plot_id !='':
+								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='row', obs_plot__plot_id=plot_id), target_obs=new_obs_tracker, relationship="plant_from_row")
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
@@ -4219,7 +4218,7 @@ def log_data_online(request, data_type):
 			sent = False
 			log_data_online_form_set = LogDataOnlineFormSet
 
-	if data_type == 'row':
+	if data_type == 'plot':
 		data_type_title = 'Load Plot Info'
 		LogDataOnlineFormSet = formset_factory(LogPlotsOnlineForm, extra=10)
 		if request.method == 'POST':
@@ -4229,8 +4228,8 @@ def log_data_online(request, data_type):
 				for form in log_data_online_form_set:
 					try:
 						experiment = form.cleaned_data['experiment']
-						row_id = form.cleaned_data['row_id']
-						row_name = form.cleaned_data['row_name']
+						plot_id = form.cleaned_data['plot_id']
+						plot_name = form.cleaned_data['plot_name']
 						seed_id = form.cleaned_data['seed_id']
 						field = form.cleaned_data['field']
 						range_num = form.cleaned_data['range_num']
@@ -4247,8 +4246,8 @@ def log_data_online(request, data_type):
 							seed_id = 'No Stock'
 
 						try:
-							new_obsplot, created = ObsPlot.objects.get_or_create(row_id=row_id, row_name=row_name, range_num=range_num, plot=plot, block=block, rep=rep, kernel_num=kernel_num, planting_date=planting_date, harvest_date=harvest_date, comments=row_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='row', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_plot=new_obsplot, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
+							new_obsplot, created = ObsPlot.objects.get_or_create(plot_id=plot_id, plot_name=plot_name, range_num=range_num, plot=plot, block=block, rep=rep, kernel_num=kernel_num, planting_date=planting_date, harvest_date=harvest_date, comments=row_comments)
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='plot', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_plot=new_obsplot, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 							if seed_id !='' and seed_id !='No Stock':
 								new_source_stock, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='stock', stock__seed_id=seed_id), target_obs=new_obs_tracker, relationship="row_from_stock")
 						except Exception as e:
@@ -4309,7 +4308,7 @@ def log_data_online(request, data_type):
 						sample_type = form.cleaned_data['obs_sample__sample_type']
 						sample_name = form.cleaned_data['obs_sample__sample_name']
 						source_seed_id = form.cleaned_data['stock__seed_id']
-						source_row_id = form.cleaned_data['obs_plot__row_id']
+						source_plot_id = form.cleaned_data['obs_plot__plot_id']
 						source_plant_id = form.cleaned_data['obs_plant__plant_id']
 						source_sample_id = form.cleaned_data['source_sample_id']
 						weight = form.cleaned_data['obs_sample__weight']
@@ -4320,8 +4319,8 @@ def log_data_online(request, data_type):
 						sample_comments = form.cleaned_data['obs_sample__comments']
 						user = request.user
 
-						if source_row_id == '':
-							source_row_id = 'No Plot'
+						if source_plot_id == '':
+							source_plot_id = 'No Plot'
 						if source_plant_id == '':
 							source_plant_id = 'No Plant'
 						if source_seed_id == '':
@@ -4331,11 +4330,11 @@ def log_data_online(request, data_type):
 
 						try:
 							new_obssample, created = ObsSample.objects.get_or_create(sample_id=sample_id, sample_type=sample_type, sample_name=sample_name, weight=weight, volume=volume, density=density, kernel_num=kernel_num, photo=photo, comments=sample_comments)
-							new_obs_tracker, new_obs_tracker_created = ObsTracker.objects.get_or_create(obs_entity_type='sample', stock=Stock.objects.get(seed_id=source_seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=ObsPlant.objects.get(plant_id=source_plant_id), obs_plate_id=1, obs_plot=ObsPlot.objects.get(row_id=source_row_id), obs_sample=new_obssample, obs_tissue_id=1, obs_well_id=1)
+							new_obs_tracker, new_obs_tracker_created = ObsTracker.objects.get_or_create(obs_entity_type='sample', stock=Stock.objects.get(seed_id=source_seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=ObsPlant.objects.get(plant_id=source_plant_id), obs_plate_id=1, obs_plot=ObsPlot.objects.get(plot_id=source_plot_id), obs_sample=new_obssample, obs_tissue_id=1, obs_well_id=1)
 							if source_sample_id !='' and source_sample_id !='No Sample':
 								new_source_sample, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='sample', obs_sample__sample_id=source_sample_id), target_obs=new_obs_tracker, relationship='sample_from_sample')
-							if source_row_id !='' and source_row_id != 'No Plot':
-								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=source_row_id), target_obs=new_obs_tracker, relationship="sample_from_row")
+							if source_plot_id !='' and source_plot_id != 'No Plot':
+								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='row', obs_plot__plot_id=source_plot_id), target_obs=new_obs_tracker, relationship="sample_from_row")
 							if source_plant_id !='' and source_plant_id != 'No Plant':
 								new_source_plant, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='plant', obs_plant__plant_id=source_plant_id), target_obs=new_obs_tracker, relationship="sample_from_plant")
 							if source_seed_id !='' and source_seed_id != 'No Stock':
@@ -4363,7 +4362,7 @@ def log_data_online(request, data_type):
 					try:
 						experiment = form.cleaned_data['experiment']
 						tissue_id = form.cleaned_data['tissue_id']
-						row_id = form.cleaned_data['row_id']
+						plot_id = form.cleaned_data['plot_id']
 						seed_id = form.cleaned_data['seed_id']
 						plant_id = form.cleaned_data['plant_id']
 						culture_id = form.cleaned_data['culture_id']
@@ -4373,8 +4372,8 @@ def log_data_online(request, data_type):
 						tissue_comments = form.cleaned_data['tissue_comments']
 						user = request.user
 
-						if row_id == '':
-							row_id = 'No Plot'
+						if plot_id == '':
+							plot_id = 'No Plot'
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
@@ -4384,9 +4383,9 @@ def log_data_online(request, data_type):
 
 						try:
 							new_obstissue, created = ObsTissue.objects.get_or_create(tissue_id=tissue_id, tissue_name=tissue_name, tissue_type=tissue_type, date_ground=date_ground, comments=tissue_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='tissue', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_plot=ObsPlot.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=new_obstissue, obs_well_id=1)
-							if row_id !='' and row_id !='No Plot':
-								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=row_id), target_obs=new_obs_tracker, relationship='tissue_from_row')
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='tissue', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_plot=ObsPlot.objects.get(plot_id=plot_id), obs_sample_id=1, obs_tissue=new_obstissue, obs_well_id=1)
+							if plot_id !='' and plot_id !='No Plot':
+								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_plot__plot_id=plot_id), target_obs=new_obs_tracker, relationship='tissue_from_row')
 							if culture_id !='' and culture_id !='No Culture':
 								new_source_culture, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='culture', obs_culture__culture_id=culture_id), target_obs=new_obs_tracker, relationship="tissue_from_culture")
 							if plant_id !='' and plant_id != 'No Plant':
@@ -4417,7 +4416,7 @@ def log_data_online(request, data_type):
 						experiment = form.cleaned_data['experiment']
 						culture_id = form.cleaned_data['culture_id']
 						medium = form.cleaned_data['medium']
-						row_id = form.cleaned_data['row_id']
+						plot_id = form.cleaned_data['plot_id']
 						plant_id = form.cleaned_data['plant_id']
 						seed_id = form.cleaned_data['seed_id']
 						tissue_id = form.cleaned_data['tissue_id']
@@ -4432,8 +4431,8 @@ def log_data_online(request, data_type):
 						culture_comments = form.cleaned_data['culture_comments']
 						user = request.user
 
-						if row_id == '':
-							row_id = 'No Plot'
+						if plot_id == '':
+							plot_id = 'No Plot'
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
@@ -4445,9 +4444,9 @@ def log_data_online(request, data_type):
 
 						try:
 							new_obsculture, created = ObsCulture.objects.get_or_create(medium=medium, culture_id=culture_id, culture_name=culture_name, microbe_type=microbe_type, plating_cycle=plating_cycle, dilution=dilution, image_filename=image, num_colonies=num_colonies, num_microbes=num_microbes, comments=tissue_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='culture', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=new_obsculture, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_plot=ObsPlot.objects.get(row_id=row_id), obs_sample=new_obssample, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well_id=1)
-							if row_id !='' and row_id !='No Plot':
-								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=row_id), target_obs=new_obs_tracker, relationship='culture_from_row')
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='culture', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=new_obsculture, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_plot=ObsPlot.objects.get(plot_id=plot_id), obs_sample=new_obssample, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well_id=1)
+							if plot_id !='' and plot_id !='No Plot':
+								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_plot__plot_id=plot_id), target_obs=new_obs_tracker, relationship='culture_from_row')
 							if tissue_id !='' and tissue_id !='No Tissue':
 								new_source_tissue, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue__tissue_id=tissue_id), target_obs=new_obs_tracker, relationship="culture_from_tissue")
 							if plant_id !='' and plant_id !='No Plant':
@@ -4479,7 +4478,7 @@ def log_data_online(request, data_type):
 					try:
 						experiment = form.cleaned_data['experiment']
 						microbe_id = form.cleaned_data['microbe_id']
-						row_id = form.cleaned_data['row_id']
+						plot_id = form.cleaned_data['plot_id']
 						plant_id = form.cleaned_data['plant_id']
 						seed_id = form.cleaned_data['seed_id']
 						tissue_id = form.cleaned_data['tissue_id']
@@ -4488,8 +4487,8 @@ def log_data_online(request, data_type):
 						microbe_comments = form.cleaned_data['microbe_comments']
 						user = request.user
 
-						if row_id == '':
-							row_id = 'No Plot'
+						if plot_id == '':
+							plot_id = 'No Plot'
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
@@ -4501,9 +4500,9 @@ def log_data_online(request, data_type):
 
 						try:
 							new_obsmicrobe, created = ObsMicrobe.objects.get_or_create(microbe_id=microbe_id, microbe_type=microbe_type, comments=microbe_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='microbe', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe=new_obsmicrobe, obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_plot=ObsPlot.objects.get(row_id=row_id), obs_sample=new_obssample, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well_id=1)
-							if row_id !='' and row_id !='No Plot':
-								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=row_id), target_obs=new_obs_tracker, relationship='microbe_from_row')
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='microbe', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe=new_obsmicrobe, obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate_id=1, obs_plot=ObsPlot.objects.get(plot_id=plot_id), obs_sample=new_obssample, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well_id=1)
+							if plot_id !='' and plot_id !='No Plot':
+								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_plot__plot_id=plot_id), target_obs=new_obs_tracker, relationship='microbe_from_row')
 							if tissue_id !='' and tissue_id !='No Tissue':
 								new_source_tissue, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue__tissue_id=tissue_id), target_obs=new_obs_tracker, relationship="microbe_from_tissue")
 							if plant_id !='' and plant_id !='No Plant':
@@ -4536,7 +4535,7 @@ def log_data_online(request, data_type):
 						experiment = form.cleaned_data['experiment']
 						dna_id = form.cleaned_data['dna_id']
 						microbe_id = form.cleaned_data['microbe_id']
-						row_id = form.cleaned_data['row_id']
+						plot_id = form.cleaned_data['plot_id']
 						plant_id = form.cleaned_data['plant_id']
 						seed_id = form.cleaned_data['seed_id']
 						tissue_id = form.cleaned_data['tissue_id']
@@ -4551,8 +4550,8 @@ def log_data_online(request, data_type):
 						dna_comments = form.cleaned_data['dna_comments']
 						user = request.user
 
-						if row_id == '':
-							row_id = 'No Plot'
+						if plot_id == '':
+							plot_id = 'No Plot'
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
@@ -4572,9 +4571,9 @@ def log_data_online(request, data_type):
 
 						try:
 							new_obsdna, created = ObsDNA.objects.get_or_create(dna_id=dna_id, extraction_method=extraction, date=date, tube_id=tube_id, tube_type=tube_type, comments=dna_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='dna', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=new_obsdna, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_plot=ObsPlot.objects.get(row_id=row_id), obs_sample=ObsSample.objects.get(sample_id=sample_id), obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
-							if row_id !='' and row_id != 'No Plot':
-								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=row_id), target_obs=new_obs_tracker, relationship='dna_from_row')
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='dna', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=new_obsdna, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_plot=ObsPlot.objects.get(plot_id=plot_id), obs_sample=ObsSample.objects.get(sample_id=sample_id), obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=ObsWell.objects.get(well_id=well_id))
+							if plot_id !='' and plot_id != 'No Plot':
+								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_plot__plot_id=plot_id), target_obs=new_obs_tracker, relationship='dna_from_row')
 							if tissue_id !='' and tissue_id != 'No Tissue':
 								new_source_tissue, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue__tissue_id=tissue_id), target_obs=new_obs_tracker, relationship="dna_from_tissue")
 							if plant_id !='' and plant_id != 'No Plant':
@@ -4651,7 +4650,7 @@ def log_data_online(request, data_type):
 						experiment = form.cleaned_data['experiment']
 						well_id = form.cleaned_data['well_id']
 						microbe_id = form.cleaned_data['microbe_id']
-						row_id = form.cleaned_data['row_id']
+						plot_id = form.cleaned_data['plot_id']
 						plant_id = form.cleaned_data['plant_id']
 						seed_id = form.cleaned_data['seed_id']
 						tissue_id = form.cleaned_data['tissue_id']
@@ -4663,8 +4662,8 @@ def log_data_online(request, data_type):
 						well_comments = form.cleaned_data['dna_comments']
 						user = request.user
 
-						if row_id == '':
-							row_id = 'No Plot'
+						if plot_id == '':
+							plot_id = 'No Plot'
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
@@ -4680,9 +4679,9 @@ def log_data_online(request, data_type):
 
 						try:
 							new_obswell, created = ObsWell.objects.get_or_create(well_id=well_id, well=well, date=date, well_inventory=inventory, tube_label=tube_label, comments=well_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='well', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=new_obsdna, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_plot=ObsPlot.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=new_obswell)
-							if row_id !='' and row_id != 'No Plot':
-								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs= ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=row_id), target_obs=new_obs_tracker, relationship='well_from_row')
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='well', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field_id=1, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture=ObsCulture.objects.get(culture_id=culture_id), obs_dna=new_obsdna, obs_env_id=1, obs_extract_id=1, obs_microbe=ObsMicrobe.objects.get(microbe_id=microbe_id), obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plate=ObsPlate.objects.get(plate_id=plate_id), obs_plot=ObsPlot.objects.get(plot_id=plot_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id), obs_well=new_obswell)
+							if plot_id !='' and plot_id != 'No Plot':
+								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs= ObsTracker.objects.get(obs_entity_type='row', obs_plot__plot_id=plot_id), target_obs=new_obs_tracker, relationship='well_from_row')
 							if tissue_id !='' and tissue_id != 'No Tissue':
 								new_source_tissue, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue__tissue_id=tissue_id), target_obs=new_obs_tracker, relationship="well_from_tissue")
 							if plant_id !='' and plant_id != 'No Plant':
@@ -4805,7 +4804,7 @@ def log_data_online(request, data_type):
 						# Temporarily disabled `Field` from isolatestocks form
 						field = Field.objects.get(id=1)
 
-						row_id = form.cleaned_data['obs_plot__row_id']
+						plot_id = form.cleaned_data['obs_plot__plot_id']
 						plant_id = form.cleaned_data['obs_plant__plant_id']
 						seed_id = form.cleaned_data['stock__seed_id']
 						tissue_id = form.cleaned_data['obs_tissue__tissue_id']
@@ -4831,8 +4830,8 @@ def log_data_online(request, data_type):
 						source_comments = form.cleaned_data['isolatestock__passport__people__comments']
 						user = request.user
 
-						if row_id == '':
-							row_id = 'No Plot'
+						if plot_id == '':
+							plot_id = 'No Plot'
 						if plant_id == '':
 							plant_id = 'No Plant'
 						if seed_id == '':
@@ -4846,9 +4845,9 @@ def log_data_online(request, data_type):
 							new_taxonomy, created = Taxonomy.objects.get_or_create(binomial=binomial, common_name='IsolateStock', alias=alias, race=race, subtaxa=subtaxa)
 							new_passport, created = Passport.objects.get_or_create(taxonomy=new_taxonomy, people=new_people, collecting=new_collecting)
 							new_isolatestock, created = IsolateStock.objects.get_or_create(passport=new_passport, locality=locality, disease_info_id=1, isolatestock_id=isolatestock_id, isolatestock_name=isolatestock_name, plant_organ=plant_organ, comments=isolatestock_comments)
-							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='isolatestock', stock=Stock.objects.get(seed_id=seed_id), experiment_id=1, user=user, field=field, isolate_id=1, isolatestock=new_isolatestock, location_id=1, maize_sample_id=1, obs_env_id=1, obs_extract_id=1,  obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plot=ObsPlot.objects.get(row_id=row_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id))
-							if row_id !='' and row_id !='No Plot':
-								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_plot__row_id=row_id), target_obs=new_obs_tracker, relationship='isolatestock_from_row')
+							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='isolatestock', stock=Stock.objects.get(seed_id=seed_id), experiment_id=1, user=user, field=field, isolate_id=1, isolatestock=new_isolatestock, location_id=1, maize_sample_id=1, obs_env_id=1, obs_extract_id=1,  obs_plant=ObsPlant.objects.get(plant_id=plant_id), obs_plot=ObsPlot.objects.get(plot_id=plot_id), obs_sample_id=1, obs_tissue=ObsTissue.objects.get(tissue_id=tissue_id))
+							if plot_id !='' and plot_id !='No Plot':
+								new_source_row, created = ObsTrackerSource.objects.get_or_create(source_obs=ObsTracker.objects.get(obs_entity_type='row', obs_plot__plot_id=plot_id), target_obs=new_obs_tracker, relationship='isolatestock_from_row')
 							if tissue_id !='' and tissue_id != 'No Tissue':
 								new_source_tissue, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='tissue', obs_tissue__tissue_id=tissue_id), target_obs=new_obs_tracker, relationship="isolatestock_from_tissue")
 							if plant_id !='' and plant_id != 'No Plant':
@@ -4920,7 +4919,7 @@ def log_data_online(request, data_type):
 						value = form.cleaned_data['value']
 						measurement_comments = form.cleaned_data['measurement_comments']
 						try:
-							obs_unit = ObsPlot.objects.get(row_id=observation_id)
+							obs_unit = ObsPlot.objects.get(plot_id=observation_id)
 							obs_tracker = ObsTracker.objects.get(obs_entity_type='row', obs_plot=obs_unit)
 							obs_tracker_found = True
 						except (ObsPlot.DoesNotExist, ObsTracker.DoesNotExist):
@@ -5148,7 +5147,7 @@ def sidebar_search_page(request):
 	for result in experiment_results:
 		result.url = "/lab/experiment/%s/" % (result.name)
 	try:
-		row_results = ObsPlot.objects.filter(row_id__icontains=starts_with).exclude(row_id='No Plot')
+		row_results = ObsPlot.objects.filter(plot_id__icontains=starts_with).exclude(plot_id='No Plot')
 	except ObsPlot.DoesNotExist:
 		row_results = None
 	for result in row_results:
@@ -5303,7 +5302,7 @@ def sidebar_search(request):
 		for result in experiment_results:
 			result.url = "/lab/experiment/%s/" % (result.name)
 		try:
-			row_results = ObsPlot.objects.filter(row_id__contains=starts_with).exclude(row_id='No Plot')[:10]
+			row_results = ObsPlot.objects.filter(plot_id__contains=starts_with).exclude(plot_id='No Plot')[:10]
 		except ObsPlot.DoesNotExist:
 			row_results = None
 		for result in row_results:
@@ -5467,7 +5466,7 @@ def query_builder_options(request):
 		treatments_fields_list = [('treatment_id', "<select name='qb_treatment_id_choice'><option value='' >None</option><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_treatment_id" placeholder="Type a Treatment ID"/>', 'checkbox_qb_treatment'), ('treatment_type', "<select name='qb_treatment_type_choice'><option value='' >None</option><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_treatment_type" placeholder="Type a Treatment Type"/>', 'checkbox_qb_treatment'), ('treatment_date', "<select name='qb_treatment_date_choice'><option value='' >None</option><option value='ascending'>Ascending</option><option value='descending'>Descending</option></select>", '<input class="search-query" type="text" name="qb_treatment_date" placeholder="Type Treatment Date"/>', 'checkbox_qb_treatment'), ('treatment_comments', "<select name='qb_treatment_comments_choice'><option value='' >None</option><option value='alphabetical'>A to Z</option><option value='revalphabetical'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_treatment_comments" placeholder="Type Treatment Comments"/>', 'checkbox_qb_treatment')]
 		query_builder_fields_list = list(chain(treatments_fields_list, query_builder_fields_list))
 	if 'ObsPlot' in selected_options:
-		row_fields_list = [('row_id', "<select name='qb_row_id_choice'><option value='' >None</option><option value='obs_plot__row_id'>Ascending</option><option value='-obs_plot__row_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_id" placeholder="Type a Plot ID"/>', 'checkbox_qb_row'), ('row_name', "<select name='qb_row_name_choice'><option value='' >None</option><option value='obs_plot__row_name'>A to Z</option><option value='-obs_plot__row_name'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_name" placeholder="Type a Plot Name"/>', 'checkbox_qb_row'), ('row_field_name', "<select name='qb_row_field_name_choice'><option value='' >None</option><option value='field__field_name'>A to Z</option><option value='-field__field_name'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_field_name" placeholder="Type a Field Name"/>', 'checkbox_qb_row'), ('row_field_locality_city', "<select name='qb_row_field_locality_city_choice'><option value='' >None</option><option value='field__locality__city'>A to Z</option><option value='-field__locality__city'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_field_locality_city" placeholder="Type a Locality City"/>', 'checkbox_qb_row'), ('row_range_num', "<select name='qb_row_range_choice'><option value='' >None</option><option value='obs_plot__range_num'>Ascending</option><option value='-obs_plot__range_num'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_range" placeholder="Type a Range Num"/>', 'checkbox_qb_row'), ('row_plot', "<select name='qb_row_plot_choice'><option value='' >None</option><option value='obs_plot__plot'>A to Z</option><option value='-obs_plot__plot'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_plot" placeholder="Type a Plot"/>', 'checkbox_qb_row'), ('row_block', "<select name='qb_row_block_choice'><option value='' >None</option><option value='obs_plot__block'>A to Z</option><option value='-obs_plot__block'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_block" placeholder="Type a Block"/>', 'checkbox_qb_row'), ('row_rep', "<select name='qb_row_rep_choice'><option value='' >None</option><option value='obs_plot__rep'>A to Z</option><option value='-obs_plot__rep'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_rep" placeholder="Type a Rep"/>', 'checkbox_qb_row'), ('row_kernel_num', "<select name='qb_row_kernel_num_choice'><option value='' >None</option><option value='obs_plot__kernel_num'>Ascending</option><option value='-obs_plot__kernel_num'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_kernel_num" placeholder="Type Kernel Num"/>', 'checkbox_qb_row'), ('row_planting_date', "<select name='qb_row_planting_date_choice'><option value='' >None</option><option value='obs_plot__planting_date'>Ascending</option><option value='-obs_plot__planting_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_planting_date" placeholder="Type a Planting Date"/>', 'checkbox_qb_row'), ('row_harvest_date', "<select name='qb_row_harvest_date_choice'><option value='' >None</option><option value='obs_plot__harvest_date'>Ascending</option><option value='-obs_plot__harvest_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_harvest_date" placeholder="Type a Harvest Date"/>', 'checkbox_qb_row'), ('row_comments', "<select name='qb_row_comments_choice'><option value='' >None</option><option value='obs_plot__comments'>A to Z</option><option value='-obs_plot__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_comments" placeholder="Type a Plot Comment"/>', 'checkbox_qb_row')]
+		row_fields_list = [('plot_id', "<select name='qb_plot_id_choice'><option value='' >None</option><option value='obs_plot__plot_id'>Ascending</option><option value='-obs_plot__plot_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_plot_id" placeholder="Type a Plot ID"/>', 'checkbox_qb_row'), ('plot_name', "<select name='qb_plot_name_choice'><option value='' >None</option><option value='obs_plot__plot_name'>A to Z</option><option value='-obs_plot__plot_name'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_plot_name" placeholder="Type a Plot Name"/>', 'checkbox_qb_row'), ('row_field_name', "<select name='qb_row_field_name_choice'><option value='' >None</option><option value='field__field_name'>A to Z</option><option value='-field__field_name'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_field_name" placeholder="Type a Field Name"/>', 'checkbox_qb_row'), ('row_field_locality_city', "<select name='qb_row_field_locality_city_choice'><option value='' >None</option><option value='field__locality__city'>A to Z</option><option value='-field__locality__city'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_field_locality_city" placeholder="Type a Locality City"/>', 'checkbox_qb_row'), ('row_range_num', "<select name='qb_row_range_choice'><option value='' >None</option><option value='obs_plot__range_num'>Ascending</option><option value='-obs_plot__range_num'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_range" placeholder="Type a Range Num"/>', 'checkbox_qb_row'), ('row_plot', "<select name='qb_row_plot_choice'><option value='' >None</option><option value='obs_plot__plot'>A to Z</option><option value='-obs_plot__plot'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_plot" placeholder="Type a Plot"/>', 'checkbox_qb_row'), ('row_block', "<select name='qb_row_block_choice'><option value='' >None</option><option value='obs_plot__block'>A to Z</option><option value='-obs_plot__block'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_block" placeholder="Type a Block"/>', 'checkbox_qb_row'), ('row_rep', "<select name='qb_row_rep_choice'><option value='' >None</option><option value='obs_plot__rep'>A to Z</option><option value='-obs_plot__rep'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_rep" placeholder="Type a Rep"/>', 'checkbox_qb_row'), ('row_kernel_num', "<select name='qb_row_kernel_num_choice'><option value='' >None</option><option value='obs_plot__kernel_num'>Ascending</option><option value='-obs_plot__kernel_num'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_kernel_num" placeholder="Type Kernel Num"/>', 'checkbox_qb_row'), ('row_planting_date', "<select name='qb_row_planting_date_choice'><option value='' >None</option><option value='obs_plot__planting_date'>Ascending</option><option value='-obs_plot__planting_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_planting_date" placeholder="Type a Planting Date"/>', 'checkbox_qb_row'), ('row_harvest_date', "<select name='qb_row_harvest_date_choice'><option value='' >None</option><option value='obs_plot__harvest_date'>Ascending</option><option value='-obs_plot__harvest_date'>Descending</option></select>", '<input class="search-query" type="text" name="qb_row_harvest_date" placeholder="Type a Harvest Date"/>', 'checkbox_qb_row'), ('row_comments', "<select name='qb_row_comments_choice'><option value='' >None</option><option value='obs_plot__comments'>A to Z</option><option value='-obs_plot__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_row_comments" placeholder="Type a Plot Comment"/>', 'checkbox_qb_row')]
 		query_builder_fields_list = list(chain(row_fields_list, query_builder_fields_list))
 	if 'ObsPlant' in selected_options:
 		plant_fields_list = [('plant_id', "<select name='qb_plant_id_choice'><option value='' >None</option><option value='obs_plant__plant_id'>Ascending</option><option value='-obs_plant__plant_id'>Descending</option></select>", '<input class="search-query" type="text" name="qb_plant_id" placeholder="Type a Plant ID"/>', 'checkbox_qb_plant'), ('plant_num', "<select name='qb_plant_num_choice'><option value=''>None</option><option value='obs_plant__plant_num'>Ascending</option><option value='-obs_plant__plant_num'>Descending</option></select>", '<input class="search-query" type="text" name="qb_plant_num" placeholder="Type a Plant Num"/>', 'checkbox_qb_plant'), ('plant_comments', "<select name='qb_plant_comments_choice'><option value='' >None</option><option value='obs_plant__comments'>A to Z</option><option value='-obs_plant__comments'>Z to A</option></select>", '<input class="search-query" type="text" name="qb_plant_comments" placeholder="Type a Plant Comment"/>', 'checkbox_qb_plant')]
@@ -5540,7 +5539,7 @@ def query_builder_fields(request):
 	if request.POST.getlist('checkbox_qb_row', False):
 		obs_tracker_fields = list(chain(obs_tracker_fields, request.POST.getlist('checkbox_qb_row')))
 		display_fields = list(chain(display_fields, request.POST.getlist('checkbox_qb_row')))
-		row_args = [('row_id', 'qb_row_id', 'qb_row_id_choice', 'obs_plot__row_id__contains'), ('row_name', 'qb_row_name', 'qb_row_name_choice', 'obs_plot__row_name__contains'), ('row_field_name', 'qb_row_field_name', 'qb_row_field_name_choice', 'field__field_name__contains'), ('row_field_locality_city', 'qb_row_field_locality_city', 'qb_row_field_locality_city_choice', 'field__locality__city__contains'), ('row_range_num', 'qb_row_range', 'qb_row_range_choice', 'obs_plot__range_num__contains'), ('row_plot', 'qb_row_plot', 'qb_row_plot_choice', 'obs_plot__plot__contains'), ('row_block', 'qb_row_block', 'qb_row_block_choice', 'obs_plot__block__contains'), ('row_rep', 'qb_row_rep', 'qb_row_rep_choice', 'obs_plot__rep__contains'), ('row_kernel_num', 'qb_row_kernel_num', 'qb_row_kernel_num_choice', 'obs_plot__kernel_num__contains'), ('row_planting_date', 'qb_row_planting_date', 'qb_row_planting_date_choice', 'obs_plot__planting_date__contains'), ('row_harvest_date', 'qb_row_harvest_date', 'qb_row_harvest_date_choice', 'obs_plot__harvest_date__contains'), ('row_comments', 'qb_row_comments', 'qb_row_comments_choice', 'obs_plot__comments__contains')]
+		row_args = [('plot_id', 'qb_plot_id', 'qb_plot_id_choice', 'obs_plot__plot_id__contains'), ('plot_name', 'qb_plot_name', 'qb_plot_name_choice', 'obs_plot__plot_name__contains'), ('row_field_name', 'qb_row_field_name', 'qb_row_field_name_choice', 'field__field_name__contains'), ('row_field_locality_city', 'qb_row_field_locality_city', 'qb_row_field_locality_city_choice', 'field__locality__city__contains'), ('row_range_num', 'qb_row_range', 'qb_row_range_choice', 'obs_plot__range_num__contains'), ('row_plot', 'qb_row_plot', 'qb_row_plot_choice', 'obs_plot__plot__contains'), ('row_block', 'qb_row_block', 'qb_row_block_choice', 'obs_plot__block__contains'), ('row_rep', 'qb_row_rep', 'qb_row_rep_choice', 'obs_plot__rep__contains'), ('row_kernel_num', 'qb_row_kernel_num', 'qb_row_kernel_num_choice', 'obs_plot__kernel_num__contains'), ('row_planting_date', 'qb_row_planting_date', 'qb_row_planting_date_choice', 'obs_plot__planting_date__contains'), ('row_harvest_date', 'qb_row_harvest_date', 'qb_row_harvest_date_choice', 'obs_plot__harvest_date__contains'), ('row_comments', 'qb_row_comments', 'qb_row_comments_choice', 'obs_plot__comments__contains')]
 		obs_tracker_args.extend(row_args)
 
 	if request.POST.getlist('checkbox_qb_plant', False):
@@ -5591,7 +5590,7 @@ def query_builder_fields(request):
 		stock_args = [('stock_seed_id', 'qb_stock_seed_id', 'qb_stock_seed_id_choice', 'stock__seed_id__contains'), ('stock_seed_name', 'qb_stock_seed_name', 'qb_stock_seed_name_choice', 'stock__seed_name__contains'), ('stock_cross_type', 'qb_stock_cross', 'qb_stock_cross_choice', 'stock__cross_type__contains'), ('stock_pedigree', 'qb_stock_pedigree', 'qb_stock_pedigree_choice', 'stock__pedigree__contains'), ('stock_status', 'qb_stock_status', 'qb_stock_status_choice', 'stock__stock_status__contains'), ('stock_date', 'qb_stock_date', 'qb_stock_date_choice', 'stock__stock_date__contains'), ('stock_inoculated', 'qb_stock_inoculated', '', 'stock__inoculated'), ('stock_comments', 'qb_stock_comments', 'qb_stock_comments_choice', 'stock__comments__contains'), ('stock_binomial', 'qb_stock_binomial', 'qb_stock_binomial_choice', 'stock__passport__taxonomy__binomial__contains'), ('stock_population', 'qb_stock_population', 'qb_stock_population_choice', 'stock__passport__taxonomy__population__contains'), ('stock_collection_date', 'qb_stock_collecting_date', 'qb_stock_collecting_date_choice', 'stock__passport__collecting__collection_date__contains'), ('stock_collection_method', 'qb_collecting_method', 'qb_collecting_method_choice', 'stock__passport__collecting__collection_method__contains'), ('stock_collection_comments', 'qb_stock_collecting_comments', 'qb_stock_collecting_comments_choice', 'stock__passport__collecting__comments__contains'), ('stock_source_organization', 'qb_stock_people_org', 'qb_stock_people_org_choice', 'stock__passport__people__organization__contains')]
 		obs_tracker_args.extend(stock_args)
 
-	model_field_mapper = {'measurement_time':'time_of_measurement', 'measurement_value': 'value', 'measurement_comments': 'comments', 'measurement_parameter': 'measurement_parameter__parameter', 'measurement_parameter_type': 'measurement_parameter__parameter_type', 'measurement_protocol': 'measurement_parameter__protocol', 'measurement_unit_of_measure': 'measurement_parameter__unit_of_measure', 'measurement_trait_id_buckler': 'measurement_parameter__trait_id_buckler', 'experiment_name': 'experiment__name', 'experiment_field_name': 'experiment__field__field_name', 'experiment_field_locality_city': 'experiment__field__locality__city', 'experiment_start_date': 'experiment__start_date', 'experiment_purpose': 'experiment__purpose', 'experiment_comments': 'experiment__comments', 'row_id': 'obs_plot__row_id', 'row_name': 'obs_plot__row_name', 'row_field_name': 'field__field_name', 'row_field_locality_city': 'field__locality__city', 'row_range_num': 'obs_plot__range_num', 'row_plot': 'obs_plot__plot', 'row_block': 'obs_plot__block', 'row_rep': 'obs_plot__rep', 'row_kernel_num': 'obs_plot__kernel_num', 'row_planting_date': 'obs_plot__planting_date', 'row_harvest_date': 'obs_plot__harvest_date', 'row_comments': 'obs_plot__comments', 'plant_id': 'obs_plant__plant_id', 'plant_num': 'obs_plant__plant_num', 'plant_comments': 'obs_plant__comments', 'stock_seed_id': 'stock__seed_id', 'stock_seed_name': 'stock__seed_name', 'stock_cross_type': 'stock__cross_type', 'stock_pedigree': 'stock__pedigree', 'stock_status': 'stock__stock_status', 'stock_date': 'stock__stock_date', 'stock_inoculated': 'stock__inoculated', 'stock_comments': 'stock__comments', 'stock_binomial': 'stock__passport__taxonomy__binomial', 'stock_population': 'stock__passport__taxonomy__population', 'stock_collection_date': 'stock__passport__collecting__collection_date', 'stock_collection_method': 'stock__passport__collecting__collection_method', 'stock_collection_comments': 'stock__passport__collecting__comments', 'stock_source_organization': 'stock__passport__people__organization', 'tissue_id': 'obs_tissue__tissue_id', 'tissue_type': 'obs_tissue__tissue_type', 'tissue_name': 'obs_tissue__tissue_name', 'tissue_date_ground': 'obs_tissue__date_ground', 'tissue_comments': 'obs_tissue__comments', 'plate_id': 'obs_plate__plate_id', 'plate_name': 'obs_plate__plate_name', 'plate_date': 'obs_plate__date', 'plate_contents': 'obs_plate__contents', 'plate_rep': 'obs_plate__rep', 'plate_type': 'obs_plate__plate_type', 'plate_status': 'obs_plate__plate_status', 'plate_comments': 'obs_plate__comments', 'well_id': 'obs_well__well_id', 'well_well': 'obs_well__well', 'well_inventory': 'obs_well__well_inventory', 'well_tube_label': 'obs_well__tube_label', 'well_comments': 'obs_well__comments', 'culture_id': 'obs_culture__culture_id', 'culture_name': 'obs_culture__culture_name', 'culture_microbe_type': 'obs_culture__microbe_type', 'culture_plating_cycle': 'obs_culture__plating_cycle', 'culture_dilution': 'obs_culture__dilution', 'culture_image_filename': 'obs_culture__image_filename', 'culture_comments': 'obs_culture__comments', 'culture_medium_type': 'obs_culture__medium__media_type', 'culture_medium_name': 'obs_culture__medium__media_name', 'culture_medium_description': 'obs_culture__medium__media_description', 'culture_medium_preparation': 'obs_culture__medium__media_preparation', 'culture_medium_comments': 'obs_culture__medium__comments', 'culture_medium_citation_type': 'obs_culture__medium__citation__citation_type', 'culture_medium_citation_title': 'obs_culture__medium__citation__title', 'culture_medium_citation_url': 'obs_culture__medium__citation__url', 'culture_medium_citation_pubmed': 'obs_culture__medium__citation__pubmed_id', 'culture_medium_citation_comments': 'obs_culture__medium__citation__comments', 'dna_id': 'obs_dna__dna_id', 'dna_extraction_method': 'obs_dna__extraction_method', 'dna_date': 'obs_dna__date', 'dna_tube_id': 'obs_dna__tube_id', 'dna_tube_type': 'obs_dna__tube_type', 'dna_comments': 'obs_dna__comments'}
+	model_field_mapper = {'measurement_time':'time_of_measurement', 'measurement_value': 'value', 'measurement_comments': 'comments', 'measurement_parameter': 'measurement_parameter__parameter', 'measurement_parameter_type': 'measurement_parameter__parameter_type', 'measurement_protocol': 'measurement_parameter__protocol', 'measurement_unit_of_measure': 'measurement_parameter__unit_of_measure', 'measurement_trait_id_buckler': 'measurement_parameter__trait_id_buckler', 'experiment_name': 'experiment__name', 'experiment_field_name': 'experiment__field__field_name', 'experiment_field_locality_city': 'experiment__field__locality__city', 'experiment_start_date': 'experiment__start_date', 'experiment_purpose': 'experiment__purpose', 'experiment_comments': 'experiment__comments', 'plot_id': 'obs_plot__plot_id', 'plot_name': 'obs_plot__plot_name', 'row_field_name': 'field__field_name', 'row_field_locality_city': 'field__locality__city', 'row_range_num': 'obs_plot__range_num', 'row_plot': 'obs_plot__plot', 'row_block': 'obs_plot__block', 'row_rep': 'obs_plot__rep', 'row_kernel_num': 'obs_plot__kernel_num', 'row_planting_date': 'obs_plot__planting_date', 'row_harvest_date': 'obs_plot__harvest_date', 'row_comments': 'obs_plot__comments', 'plant_id': 'obs_plant__plant_id', 'plant_num': 'obs_plant__plant_num', 'plant_comments': 'obs_plant__comments', 'stock_seed_id': 'stock__seed_id', 'stock_seed_name': 'stock__seed_name', 'stock_cross_type': 'stock__cross_type', 'stock_pedigree': 'stock__pedigree', 'stock_status': 'stock__stock_status', 'stock_date': 'stock__stock_date', 'stock_inoculated': 'stock__inoculated', 'stock_comments': 'stock__comments', 'stock_binomial': 'stock__passport__taxonomy__binomial', 'stock_population': 'stock__passport__taxonomy__population', 'stock_collection_date': 'stock__passport__collecting__collection_date', 'stock_collection_method': 'stock__passport__collecting__collection_method', 'stock_collection_comments': 'stock__passport__collecting__comments', 'stock_source_organization': 'stock__passport__people__organization', 'tissue_id': 'obs_tissue__tissue_id', 'tissue_type': 'obs_tissue__tissue_type', 'tissue_name': 'obs_tissue__tissue_name', 'tissue_date_ground': 'obs_tissue__date_ground', 'tissue_comments': 'obs_tissue__comments', 'plate_id': 'obs_plate__plate_id', 'plate_name': 'obs_plate__plate_name', 'plate_date': 'obs_plate__date', 'plate_contents': 'obs_plate__contents', 'plate_rep': 'obs_plate__rep', 'plate_type': 'obs_plate__plate_type', 'plate_status': 'obs_plate__plate_status', 'plate_comments': 'obs_plate__comments', 'well_id': 'obs_well__well_id', 'well_well': 'obs_well__well', 'well_inventory': 'obs_well__well_inventory', 'well_tube_label': 'obs_well__tube_label', 'well_comments': 'obs_well__comments', 'culture_id': 'obs_culture__culture_id', 'culture_name': 'obs_culture__culture_name', 'culture_microbe_type': 'obs_culture__microbe_type', 'culture_plating_cycle': 'obs_culture__plating_cycle', 'culture_dilution': 'obs_culture__dilution', 'culture_image_filename': 'obs_culture__image_filename', 'culture_comments': 'obs_culture__comments', 'culture_medium_type': 'obs_culture__medium__media_type', 'culture_medium_name': 'obs_culture__medium__media_name', 'culture_medium_description': 'obs_culture__medium__media_description', 'culture_medium_preparation': 'obs_culture__medium__media_preparation', 'culture_medium_comments': 'obs_culture__medium__comments', 'culture_medium_citation_type': 'obs_culture__medium__citation__citation_type', 'culture_medium_citation_title': 'obs_culture__medium__citation__title', 'culture_medium_citation_url': 'obs_culture__medium__citation__url', 'culture_medium_citation_pubmed': 'obs_culture__medium__citation__pubmed_id', 'culture_medium_citation_comments': 'obs_culture__medium__citation__comments', 'dna_id': 'obs_dna__dna_id', 'dna_extraction_method': 'obs_dna__extraction_method', 'dna_date': 'obs_dna__date', 'dna_tube_id': 'obs_dna__tube_id', 'dna_tube_type': 'obs_dna__tube_type', 'dna_comments': 'obs_dna__comments'}
 
 	obs_tracker_model_fields = ['id']
 	for w,x,y,z in obs_tracker_args:
@@ -5731,7 +5730,7 @@ def upload_online(request, template_type):
 				results_dict = loader_scripts.seed_stock_loader_prep(request.FILES['file_name'], new_upload_user)
 			elif template_type == 'seed_packet':
 				results_dict = loader_scripts.seed_packet_loader_prep(request.FILES['file_name'], new_upload_user)
-			elif template_type == 'row_data':
+			elif template_type == 'plot_loader':
 				results_dict = loader_scripts.plot_loader_prep(request.FILES['file_name'], new_upload_user)
 			elif template_type == 'measurement_data':
 				results_dict = loader_scripts.measurement_loader_prep(request.FILES['file_name'], new_upload_user)
@@ -5771,7 +5770,7 @@ def upload_online(request, template_type):
 						output = loader_scripts.seed_stock_loader_prep_output(results_dict, new_upload_exp, template_type)
 					elif template_type == 'seed_packet':
 						output = loader_scripts.seed_packet_loader_prep_output(results_dict, new_upload_exp, template_type)
-					elif template_type == 'row_data':
+					elif template_type == 'plot_loader':
 						output = loader_scripts.plot_loader_prep_output(results_dict, new_upload_exp, template_type)
 					elif template_type == 'measurement_data':
 						output = loader_scripts.measurement_loader_prep_output(results_dict, new_upload_exp, template_type)
@@ -5810,7 +5809,7 @@ def upload_online(request, template_type):
 						uploaded = loader_scripts.seed_stock_loader(results_dict)
 					elif template_type == 'seed_packet':
 						uploaded = loader_scripts.seed_packet_loader(results_dict)
-					elif template_type == 'row_data':
+					elif template_type == 'plot_loader':
 						uploaded = loader_scripts.plot_loader(results_dict)
 					elif template_type == 'measurement_data':
 						uploaded = loader_scripts.measurement_loader(results_dict)

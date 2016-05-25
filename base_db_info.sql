@@ -374,7 +374,7 @@ TRUNCATE TABLE `lab_obsplot`;
 -- Dumping data for table `lab_obsplot`
 --
 
-INSERT INTO `lab_obsplot` (`id`, `row_id`, `row_name`, `range_num`, `plot`, `block`, `rep`, `kernel_num`, `planting_date`, `harvest_date`, `comments`) VALUES
+INSERT INTO `lab_obsplot` (`id`, `plot_id`, `plot_name`, `range_num`, `plot`, `block`, `rep`, `kernel_num`, `planting_date`, `harvest_date`, `comments`) VALUES
 (1, 'No Plot', 'No Plot', 'No Plot', 'No Plot', 'No Plot', 'No Plot', 'No Plot', 'No Plot', 'No Plot', '');
 
 --

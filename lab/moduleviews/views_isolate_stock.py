@@ -260,10 +260,10 @@ def update_isolatestock_info(request, isolatestock_id):
                     # Temporarily disabling the field form
                     # obs_tracker.field = obs_tracker_isolatestock_form.cleaned_data['field']
 
-                    if obs_tracker_isolatestock_form.cleaned_data['obs_plot__row_id'] != '':
-                        obs_tracker.obs_plot = ObsPlot.objects.get(row_id=obs_tracker_isolatestock_form.cleaned_data['obs_plot__row_id'])
+                    if obs_tracker_isolatestock_form.cleaned_data['obs_plot__plot_id'] != '':
+                        obs_tracker.obs_plot = ObsPlot.objects.get(plot_id=obs_tracker_isolatestock_form.cleaned_data['obs_plot__plot_id'])
                     else:
-                        obs_tracker.obs_plot = ObsPlot.objects.get(row_id='No Plot')
+                        obs_tracker.obs_plot = ObsPlot.objects.get(plot_id='No Plot')
                     if obs_tracker_isolatestock_form.cleaned_data['stock__seed_id'] != '':
                         obs_tracker.stock = Stock.objects.get(seed_id=obs_tracker_isolatestock_form.cleaned_data['stock__seed_id'])
                     else:
@@ -298,7 +298,7 @@ def update_isolatestock_info(request, isolatestock_id):
             print(obs_tracker_isolatestock_form.errors)
     # If user is accessing the update model form
     else:
-        isolatestock_data = ObsTracker.objects.filter(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id).values('isolatestock__isolatestock_id', 'isolatestock__locality', 'field', 'obs_plot__row_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'isolatestock__isolatestock_name', 'isolatestock__plant_organ', 'isolatestock__passport__taxonomy__binomial', 'isolatestock__passport__taxonomy__alias', 'isolatestock__passport__taxonomy__race', 'isolatestock__passport__taxonomy__subtaxa', 'isolatestock__comments', 'isolatestock__passport__people__first_name', 'isolatestock__passport__people__last_name', 'isolatestock__passport__people__organization', 'isolatestock__passport__people__phone', 'isolatestock__passport__people__email', 'isolatestock__passport__people__comments', 'isolatestock__passport__collecting__collection_date', 'isolatestock__passport__collecting__collection_method', 'isolatestock__passport__collecting__comments', 'isolatestock__passport__collecting__user')
+        isolatestock_data = ObsTracker.objects.filter(obs_entity_type='isolatestock', isolatestock_id=isolatestock_id).values('isolatestock__isolatestock_id', 'isolatestock__locality', 'field', 'obs_plot__plot_id', 'stock__seed_id', 'obs_plant__plant_id', 'obs_tissue__tissue_id', 'isolatestock__isolatestock_name', 'isolatestock__plant_organ', 'isolatestock__passport__taxonomy__binomial', 'isolatestock__passport__taxonomy__alias', 'isolatestock__passport__taxonomy__race', 'isolatestock__passport__taxonomy__subtaxa', 'isolatestock__comments', 'isolatestock__passport__people__first_name', 'isolatestock__passport__people__last_name', 'isolatestock__passport__people__organization', 'isolatestock__passport__people__phone', 'isolatestock__passport__people__email', 'isolatestock__passport__people__comments', 'isolatestock__passport__collecting__collection_date', 'isolatestock__passport__collecting__collection_method', 'isolatestock__passport__collecting__comments', 'isolatestock__passport__collecting__user')
         obs_tracker_isolatestock_form = LogIsolateStocksOnlineForm(initial=isolatestock_data[0])
     context_dict['isolatestock_id'] = isolatestock_id
     context_dict['obs_tracker_isolatestock_form'] = obs_tracker_isolatestock_form

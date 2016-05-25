@@ -17,7 +17,7 @@ PEOPLE_TABLE = ['people_id', 'first_name', 'last_name', 'organization', 'phone',
 TAXONOMY_TABLE = ['taxonomy_id', 'binomial', 'population', 'common_name', 'alias', 'race', 'subtaxa']
 PASSPORT_TABLE = ['passport_id', 'collecting_id', 'people_id', 'taxonomy_id']
 OBS_TABLE = ['obs_tracker_id', 'obs_entity_type', 'experiment_id', 'field_id', 'isolatestock_id', 'location_id', 'maize_sample_id', 'obs_culture_id', 'obs_dna_id', 'obs_env_id', 'obs_extract_id', 'obs_microbe_id', 'obs_plant_id', 'obs_plate_id', 'obs_plot_id', 'obs_sample_id', 'obs_tissue_id', 'obs_well_id', 'stock_id', 'user_id']
-ERROR_TABLE_ISOLATESTOCK = ['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_row_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name']
+ERROR_TABLE_ISOLATESTOCK = ['isolatestock_id', 'experiment_name', 'isolatestock_name', 'plant_organ', 'isolatestock_comments', 'binomial', 'species', 'population', 'alias', 'race', 'subtaxa', 'source_plot_id', 'source_field_name', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'firat_name', 'last_name', 'phone', 'email', 'source_comments', 'location_name']
 
 def seed_stock_loader_prep(upload_file, user):
     start = time.clock()
@@ -48,7 +48,7 @@ def seed_stock_loader_prep(upload_file, user):
     user_hash_table = loader_db_mirror.user_hash_mirror()
     stock_hash_table = loader_db_mirror.stock_hash_mirror()
     stock_id = loader_db_mirror.stock_id_mirror()
-    row_id_table = loader_db_mirror.row_id_mirror()
+    plot_id_table = loader_db_mirror.plot_id_mirror()
     plant_id_table = loader_db_mirror.plant_id_mirror()
     obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
     obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
@@ -68,7 +68,7 @@ def seed_stock_loader_prep(upload_file, user):
     obs_tracker_obs_plot_id_table = loader_db_mirror.obs_tracker_obs_plot_id_mirror()
 
     error_count = 0
-    row_id_error = OrderedDict({})
+    plot_id_error = OrderedDict({})
     plant_id_error = OrderedDict({})
     field_name_error = OrderedDict({})
     collecting_hash_exists = OrderedDict({})
@@ -95,7 +95,7 @@ def seed_stock_loader_prep(upload_file, user):
         binomial = row["Binomial"]
         species = row["Species"]
         population = row["Population"]
-        row_id = row["Plot ID"]
+        plot_id = row["Plot ID"]
         field_name = row["Field Name"]
         plant_id = row["Plant ID"]
         collection_username = row["Username"]
@@ -112,14 +112,14 @@ def seed_stock_loader_prep(upload_file, user):
         # Catches empty rows
 
         if seed_id != '':
-            if row_id != '':
-                row_id_fix = row_id + '\r'
-                if row_id in row_id_table:
-                    obs_plot_id = row_id_table[row_id][0]
-                elif row_id_fix in row_id_table:
-                    obs_plot_id = row_id_table[row_id_fix][0]
+            if plot_id != '':
+                plot_id_fix = plot_id + '\r'
+                if plot_id in plot_id_table:
+                    obs_plot_id = plot_id_table[plot_id][0]
+                elif plot_id_fix in plot_id_table:
+                    obs_plot_id = plot_id_table[plot_id_fix][0]
                 else:
-                    row_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
+                    plot_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, plot_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
                     error_count = error_count + 1
                     obs_plot_id = 1
             else:
@@ -132,7 +132,7 @@ def seed_stock_loader_prep(upload_file, user):
                 elif plant_id_fix in plant_id_table:
                     obs_plant_id = plant_id_table[plant_id_fix][0]
                 else:
-                    plant_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
+                    plant_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, plot_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
                     error_count = error_count + 1
                     obs_plant_id = 1
             else:
@@ -145,7 +145,7 @@ def seed_stock_loader_prep(upload_file, user):
                 elif field_name_fix in field_name_table:
                     field_id = field_name_table[field_name_fix][0]
                 else:
-                    field_name_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
+                    field_name_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, plot_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
                     error_count = error_count + 1
                     field_id = 1
             else:
@@ -314,7 +314,7 @@ def seed_stock_loader_prep(upload_file, user):
     results_dict['obs_tracker_new'] = obs_tracker_new
     results_dict['obs_tracker_source_new'] = obs_tracker_source_new
     results_dict['plant_id_error'] = plant_id_error
-    results_dict['row_id_error'] = row_id_error
+    results_dict['plot_id_error'] = plot_id_error
     results_dict['field_name_error'] = field_name_error
     results_dict['collecting_hash_exists'] = collecting_hash_exists
     results_dict['people_hash_exists'] = people_hash_exists
@@ -330,7 +330,7 @@ def seed_stock_loader_prep_output(results_dict, new_upload_exp, template_type):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="%s_%s_prep.csv"' % (new_upload_exp, template_type)
 
-    ERROR_TABLE_SEEDSTOCK = ['seed_id', 'seed_name', 'cross_type', 'pedigree', 'stock_status', 'stock_date', 'inoculated', 'stock_comments', 'binomial', 'species', 'population', 'row_id', 'field_name', 'plant_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'first_name', 'last_name', 'phone', 'email', 'source_comments']
+    ERROR_TABLE_SEEDSTOCK = ['seed_id', 'seed_name', 'cross_type', 'pedigree', 'stock_status', 'stock_date', 'inoculated', 'stock_comments', 'binomial', 'species', 'population', 'plot_id', 'field_name', 'plant_id', 'collection_username', 'collection_date', 'collection_method', 'collection_comments', 'organization', 'first_name', 'last_name', 'phone', 'email', 'source_comments']
 
     writer = csv.writer(response)
     writer.writerow(['Stats'])
@@ -387,7 +387,7 @@ def seed_stock_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow([''])
     writer.writerow(['Plot ID Errors'])
     writer.writerow(ERROR_TABLE_SEEDSTOCK)
-    for key in results_dict['row_id_error'].iterkeys():
+    for key in results_dict['plot_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Collecting Entries Already Exist'])
@@ -540,7 +540,7 @@ def seed_packet_loader_prep(upload_file, user):
                 error_count = error_count + 1
                 stock_id = 1
         else:
-            seed_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, row_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
+            seed_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, plot_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
             error_count = error_count + 1
             stock_id = 1
 
@@ -679,7 +679,7 @@ def plot_loader_prep(upload_file, user):
     start = time.clock()
 
     obs_plot_new = OrderedDict({})
-    #--- Key = (obs_plot_id, row_id, row_name, range_num, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
+    #--- Key = (obs_plot_id, plot_id, plot_name, range_num, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
     #--- Value = (obs_plot_id)
     obs_tracker_new = OrderedDict({})
     #--- Key = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
@@ -692,51 +692,54 @@ def plot_loader_prep(upload_file, user):
     user_hash_table = loader_db_mirror.user_hash_mirror()
     obs_plot_hash_table = loader_db_mirror.obs_plot_hash_mirror()
     obs_plot_id = loader_db_mirror.obs_plot_id_mirror()
-    row_id_table = loader_db_mirror.row_id_mirror()
+    plot_id_table = loader_db_mirror.plot_id_mirror()
     seed_id_table = loader_db_mirror.seed_id_mirror()
     field_name_table = loader_db_mirror.field_name_mirror()
     obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
     obs_tracker_source_hash_table = loader_db_mirror.obs_tracker_source_hash_mirror()
-    obs_tracker_stock_id_table = loader_db_mirror.obs_tracker_stock_id_mirror()
     obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
     obs_tracker_source_id = loader_db_mirror.obs_tracker_source_id_mirror()
-    experiment_name_table = loader_db_mirror.experiment_name_mirror()
 
     error_count = 0
     source_seed_id_error = OrderedDict({})
     field_name_error = OrderedDict({})
-    row_hash_exists = OrderedDict({})
+    plot_hash_exists = OrderedDict({})
     obs_tracker_hash_exists = OrderedDict({})
     obs_tracker_source_hash_exists = OrderedDict({})
 
-    row_file = csv.DictReader(upload_file)
-    for row in row_file:
-        row_id = row["Plot ID"]
-        experiment_name = row["Experiment Name"]
-        source_seed_id = row["Source Seed ID"]
-        field_name = row["Field Name"]
-        row_name = row["Plot Name"]
-        row_range = row["Range"]
-        plot = row["Plot"]
-        block = row["Block"]
-        rep = row["Rep"]
-        kernel_num = row["Kernel Num"]
-        planting_date = row["Planting Date"]
-        harvest_date = row["Harvest Date"]
-        comments = row["Plot Comments"]
+    plot_file = csv.DictReader(upload_file)
+    for plot in plot_file:
+        plot_id = plot["Plot ID"]
+        experiment_name = plot["Experiment Name"]
+        source_seed_id = plot["Source Seed ID"]
+        pedigree = plot["Pedigree"]
+        field_name = plot["Field Name"]
+        plot_name = plot["Plot Name"]
+        plot_range = plot["Range"]
+        block = plot["Block"]
+        rep = plot["Rep"]
+        kernel_num = plot["Kernel Num"]
+        planting_date = plot["Planting Date"]
+        harvest_date = plot["Harvest Date"]
+        comments = plot["Plot Comments"]
+        plot = plot["Plot Name"]
 
         if source_seed_id != '':
-            source_seed_id_fix = source_seed_id + '\r'
-            if source_seed_id in seed_id_table:
-                stock_id = seed_id_table[source_seed_id][0]
-            elif source_seed_id_fix in seed_id_table:
-                stock_id = seed_id_table[source_seed_id_fix][0]
-            else:
-                source_seed_id_error[(row_id, source_seed_id, field_name, row_name, row_range, plot, block,rep, kernel_num, planting_date, harvest_date, comments)] = error_count
-                error_count = error_count + 1
-                stock_id = 1
-        else:
-            stock_id = 1
+            try:
+                stock_id = Stock.objects.get(seed_id=source_seed_id).id
+            except Stock.DoesNotExist:
+                stock_id = Stock.objects.get_or_create(seed_id=source_seed_id, pedigree=pedigree, passport_id=1)[0].id
+                stock_obs = ObsTracker.objects.get_or_create(experiment_id=1, obs_entity_type='stock', stock_id=stock_id, user=user)
+
+        try:
+            experiment = Experiment.objects.get(name=experiment_name)
+        except Experiment.DoesNotExist:
+            field = Field.objects.get_or_create(locality_id=1, field_name=field_name)[0]
+            experiment = Experiment.objects.create(name=experiment_name, user=user, field=field, start_date=planting_date)
+
+        obs_tracker_stock_id_table = loader_db_mirror.obs_tracker_stock_id_mirror()
+        experiment_name_table = loader_db_mirror.experiment_name_mirror()
+
 
         if field_name != '':
             field_name_fix = field_name + '\r'
@@ -745,54 +748,54 @@ def plot_loader_prep(upload_file, user):
             elif field_name_fix in field_name_table:
                 field_id = field_name_table[field_name_fix][0]
             else:
-                field_name_error[(row_id, source_seed_id, field_name, row_name, row_range, plot, block,rep, kernel_num, planting_date, harvest_date, comments)] = error_count
+                field_name_error[(plot_id, source_seed_id, field_name, plot_name, plot_range, plot, block,rep, kernel_num, planting_date, harvest_date, comments)] = error_count
                 error_count = error_count + 1
                 field_id = 1
         else:
             field_id = 1
 
-        row_hash = row_id + row_name + row_range + plot + block + rep + kernel_num + planting_date + harvest_date + comments
-        row_hash_fix = row_hash + '\r'
-        if row_id not in row_id_table and row_id + '\r' not in row_id_table:
-            if row_hash not in obs_plot_hash_table and row_hash_fix not in obs_plot_hash_table:
-                obs_plot_hash_table[row_hash] = obs_plot_id
-                obs_plot_new[(obs_plot_id, row_id, row_name, row_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)] = obs_plot_id
-                row_id_table[row_id] = (obs_plot_id, row_id, row_name, row_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
+        plot_hash = plot_id + plot_name + plot_range + plot + block + rep + kernel_num + planting_date + harvest_date + comments
+        plot_hash_fix = plot_hash + '\r'
+        if plot_id not in plot_id_table and plot_id + '\r' not in plot_id_table:
+            if plot_hash not in obs_plot_hash_table and plot_hash_fix not in obs_plot_hash_table:
+                obs_plot_hash_table[plot_hash] = obs_plot_id
+                obs_plot_new[(obs_plot_id, plot_id, plot_name, plot_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)] = obs_plot_id
+                plot_id_table[plot_id] = (obs_plot_id, plot_id, plot_name, plot_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
                 obs_plot_id = obs_plot_id + 1
             else:
-                row_hash_exists[(row_id, row_name, row_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)] = obs_plot_id
+                plot_hash_exists[(plot_id, plot_name, plot_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)] = obs_plot_id
         else:
-            row_hash_exists[(row_id, row_name, row_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)] = obs_plot_id
+            plot_hash_exists[(plot_id, plot_name, plot_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)] = obs_plot_id
 
-        if row_id in row_id_table:
-            temp_obsplot_id = row_id_table[row_id][0]
-        elif row_id + '\r' in row_id_table:
-            temp_obsplot_id = row_id_table[row_id + '\r'][0]
-        elif row_hash in obs_plot_hash_table:
-            temp_obsplot_id = obs_plot_hash_table[row_hash]
-        elif row_hash_fix in obs_plot_hash_table:
-            temp_obsplot_id = obs_plot_hash_table[row_hash_fix]
+        if plot_id in plot_id_table:
+            temp_obsplot_id = plot_id_table[plot_id][0]
+        elif plot_id + '\r' in plot_id_table:
+            temp_obsplot_id = plot_id_table[plot_id + '\r'][0]
+        elif plot_hash in obs_plot_hash_table:
+            temp_obsplot_id = obs_plot_hash_table[plot_hash]
+        elif plot_hash_fix in obs_plot_hash_table:
+            temp_obsplot_id = obs_plot_hash_table[plot_hash_fix]
         else:
             temp_obsplot_id = 1
             error_count = error_count + 1
 
-        obs_tracker_row_hash = 'row' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(temp_obsplot_id) + str(1) + str(1) + str(1) + str(stock_id) + str(user_hash_table[user.username])
-        obs_tracker_row_hash_fix = obs_tracker_row_hash + '\r'
-        if obs_tracker_row_hash not in obs_tracker_hash_table and obs_tracker_row_hash_fix not in obs_tracker_hash_table:
-            obs_tracker_hash_table[obs_tracker_row_hash] = obs_tracker_id
-            obs_tracker_new[(obs_tracker_id, 'row', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, temp_obsplot_id, 1, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+        obs_tracker_plot_hash = 'plot' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(1) + str(temp_obsplot_id) + str(1) + str(1) + str(1) + str(stock_id) + str(user_hash_table[user.username])
+        obs_tracker_plot_hash_fix = obs_tracker_plot_hash + '\r'
+        if obs_tracker_plot_hash not in obs_tracker_hash_table and obs_tracker_plot_hash_fix not in obs_tracker_hash_table:
+            obs_tracker_hash_table[obs_tracker_plot_hash] = obs_tracker_id
+            obs_tracker_new[(obs_tracker_id, 'plot', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, temp_obsplot_id, 1, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
             obs_tracker_id = obs_tracker_id + 1
         else:
-            obs_tracker_hash_exists[('row', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, temp_obsplot_id, 1, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
+            obs_tracker_hash_exists[('plot', experiment_name_table[experiment_name][0], field_id, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, temp_obsplot_id, 1, 1, 1, stock_id, user_hash_table[user.username])] = obs_tracker_id
 
         if stock_id != 1:
-            obs_tracker_source_stock_hash = str(obs_tracker_stock_id_table[stock_id][0]) + str(obs_tracker_hash_table[obs_tracker_row_hash]) + 'row_from_stock'
+            obs_tracker_source_stock_hash = str(obs_tracker_stock_id_table[stock_id][0]) + str(obs_tracker_hash_table[obs_tracker_plot_hash]) + 'plot_from_stock'
             if obs_tracker_source_stock_hash not in obs_tracker_source_hash_table:
                 obs_tracker_source_hash_table[obs_tracker_source_stock_hash] = obs_tracker_source_id
-                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_stock_id_table[stock_id][0], obs_tracker_hash_table[obs_tracker_row_hash], 'row_from_stock')] = obs_tracker_source_id
+                obs_tracker_source_new[(obs_tracker_source_id, obs_tracker_stock_id_table[stock_id][0], obs_tracker_hash_table[obs_tracker_plot_hash], 'plot_from_stock')] = obs_tracker_source_id
                 obs_tracker_source_id = obs_tracker_source_id + 1
             else:
-                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_stock_id_table[stock_id][0], obs_tracker_hash_table[obs_tracker_row_hash], 'row_from_stock')] = obs_tracker_source_id
+                obs_tracker_source_hash_exists[(obs_tracker_source_id, obs_tracker_stock_id_table[stock_id][0], obs_tracker_hash_table[obs_tracker_plot_hash], 'plot_from_stock')] = obs_tracker_source_id
 
     end = time.clock()
     stats = {}
@@ -803,7 +806,7 @@ def plot_loader_prep(upload_file, user):
     results_dict['obs_tracker_new'] = obs_tracker_new
     results_dict['source_seed_id_error'] = source_seed_id_error
     results_dict['field_name_error'] = field_name_error
-    results_dict['row_hash_exists'] = row_hash_exists
+    results_dict['plot_hash_exists'] = plot_hash_exists
     results_dict['obs_tracker_hash_exists'] = obs_tracker_hash_exists
     results_dict['obs_tracker_source_new'] = obs_tracker_source_new
     results_dict['obs_tracker_source_hash_exists'] = obs_tracker_source_hash_exists
@@ -820,7 +823,7 @@ def plot_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Plot Table'])
-    writer.writerow(['obs_plot_id', 'row_id', 'row_name', 'range_num', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date', 'comments'])
+    writer.writerow(['obs_plot_id', 'plot_id', 'plot_name', 'range_num', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date', 'comments'])
     for key in results_dict['obs_plot_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -837,17 +840,17 @@ def plot_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['---------------------------------------------------------------------------------------------------'])
     writer.writerow([''])
     writer.writerow(['Source Seed ID Errors'])
-    writer.writerow(['row_id', 'source_seed_id', 'field_name', 'row_name', 'range', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date', 'comments'])
+    writer.writerow(['plot_id', 'source_seed_id', 'field_name', 'plot_name', 'range', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date', 'comments'])
     for key in results_dict['source_seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Field Name Errors'])
-    writer.writerow(['row_id', 'source_seed_id', 'field_name', 'row_name', 'range', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date', 'comments'])
+    writer.writerow(['plot_id', 'source_seed_id', 'field_name', 'plot_name', 'range', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date', 'comments'])
     for key in results_dict['field_name_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plot Entry Already Exists'])
-    for key in results_dict['row_hash_exists'].iterkeys():
+    for key in results_dict['plot_hash_exists'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['ObsTracker Entry Already Exists'])
@@ -864,7 +867,8 @@ def plot_loader(results_dict):
         for key in results_dict['obs_plot_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_obsplot = ObsPlot.objects.create(id=key[0], row_id=key[1], row_name=key[2], range_num=key[3], plot=key[4], block=key[5], rep=key[6], kernel_num=key[7], planting_date=key[8], harvest_date=key[9], comments=key[10])
+                    new_obsplot = ObsPlot.objects.create(id=key[0], plot_id=key[1], plot_name=key[2], range_num=key[3], plot=key[4], block=key[5], rep=key[6], kernel_num=key[7], planting_date=key[8], harvest_date=key[9], comments=key[10])
+                    new_obsplot.save()
             except Exception as e:
                 print("ObsPlot Error: %s %s" % (e.message, e.args))
                 return False
@@ -872,6 +876,7 @@ def plot_loader(results_dict):
             try:
                 with transaction.atomic():
                     new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                    new_stock.save()
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
@@ -879,6 +884,7 @@ def plot_loader(results_dict):
             try:
                 with transaction.atomic():
                     new_stock = ObsTrackerSource.objects.create(id=key[0], source_obs_id=key[1], target_obs_id=key[2], relationship=key[3])
+                    new_stock.save()
             except Exception as e:
                 print("ObsTrackerSource Error: %s %s" % (e.message, e.args))
                 return False
@@ -904,7 +910,7 @@ def plant_loader_prep(upload_file, user):
     user_hash_table = loader_db_mirror.user_hash_mirror()
     obs_plant_hash_table = loader_db_mirror.obs_plant_hash_mirror()
     obs_plant_id = loader_db_mirror.obs_plant_id_mirror()
-    row_id_table = loader_db_mirror.row_id_mirror()
+    plot_id_table = loader_db_mirror.plot_id_mirror()
     seed_id_table = loader_db_mirror.seed_id_mirror()
     plant_id_table = loader_db_mirror.plant_id_mirror()
     obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
@@ -917,7 +923,7 @@ def plant_loader_prep(upload_file, user):
 
     error_count = 0
     seed_id_error = OrderedDict({})
-    row_id_error = OrderedDict({})
+    plot_id_error = OrderedDict({})
     plant_hash_exists = OrderedDict({})
     obs_tracker_hash_exists = OrderedDict({})
     obs_tracker_source_hash_exists = OrderedDict({})
@@ -926,7 +932,7 @@ def plant_loader_prep(upload_file, user):
     for row in plant_file:
         plant_id = row["Plant ID"]
         experiment_name = row["Experiment Name"]
-        row_id = row["Source Plot ID"]
+        plot_id = row["Source Plot ID"]
         seed_id = row["Source Seed ID"]
         plant_num = row["Plant Number"]
         comments = row["Plant Comments"]
@@ -939,20 +945,20 @@ def plant_loader_prep(upload_file, user):
             elif seed_id_fix in seed_id_table:
                 stock_id = seed_id_table[seed_id_fix][0]
             else:
-                seed_id_error[(plant_id, experiment_name, row_id, seed_id, plant_num, comments)] = error_count
+                seed_id_error[(plant_id, experiment_name, plot_id, seed_id, plant_num, comments)] = error_count
                 error_count = error_count + 1
                 stock_id = 1
         else:
             stock_id = 1
 
-        if row_id != '':
-            row_id_fix = row_id + '\r'
-            if row_id in row_id_table:
-                obs_plot_id = row_id_table[row_id][0]
-            elif row_id_fix in row_id_table:
-                obs_plot_id = row_id_table[row_id_fix][0]
+        if plot_id != '':
+            plot_id_fix = plot_id + '\r'
+            if plot_id in plot_id_table:
+                obs_plot_id = plot_id_table[plot_id][0]
+            elif plot_id_fix in plot_id_table:
+                obs_plot_id = plot_id_table[plot_id_fix][0]
             else:
-                row_id_error[(plant_id, experiment_name, row_id, seed_id, plant_num, comments)] = error_count
+                plot_id_error[(plant_id, experiment_name, plot_id, seed_id, plant_num, comments)] = error_count
                 error_count = error_count + 1
                 obs_plot_id = 1
         else:
@@ -1020,7 +1026,7 @@ def plant_loader_prep(upload_file, user):
     results_dict['obs_tracker_new'] = obs_tracker_new
     results_dict['obs_tracker_source_new'] = obs_tracker_source_new
     results_dict['seed_id_error'] = seed_id_error
-    results_dict['row_id_error'] = row_id_error
+    results_dict['plot_id_error'] = plot_id_error
     results_dict['plant_hash_exists'] = plant_hash_exists
     results_dict['obs_tracker_hash_exists'] = obs_tracker_hash_exists
     results_dict['obs_tracker_source_hash_exists'] = obs_tracker_source_hash_exists
@@ -1054,13 +1060,13 @@ def plant_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['---------------------------------------------------------------------------------------------------'])
     writer.writerow([''])
     writer.writerow(['Seed ID Errors'])
-    writer.writerow(['plant_id', 'experiment_name', 'row_id', 'seed_id', 'plant_num', 'comments'])
+    writer.writerow(['plant_id', 'experiment_name', 'plot_id', 'seed_id', 'plant_num', 'comments'])
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plot ID Errors'])
-    writer.writerow(['plant_id', 'experiment_name', 'row_id', 'seed_id', 'plant_num', 'comments'])
-    for key in results_dict['row_id_error'].iterkeys():
+    writer.writerow(['plant_id', 'experiment_name', 'plot_id', 'seed_id', 'plant_num', 'comments'])
+    for key in results_dict['plot_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plant Entry Already Exists'])
@@ -1120,7 +1126,7 @@ def tissue_loader_prep(upload_file, user):
     user_hash_table = loader_db_mirror.user_hash_mirror()
     obs_tissue_hash_table = loader_db_mirror.obs_tissue_hash_mirror()
     obs_tissue_id = loader_db_mirror.obs_tissue_id_mirror()
-    row_id_table = loader_db_mirror.row_id_mirror()
+    plot_id_table = loader_db_mirror.plot_id_mirror()
     seed_id_table = loader_db_mirror.seed_id_mirror()
     plant_id_table = loader_db_mirror.plant_id_mirror()
     culture_id_table = loader_db_mirror.culture_id_mirror()
@@ -1137,7 +1143,7 @@ def tissue_loader_prep(upload_file, user):
 
     error_count = 0
     seed_id_error = OrderedDict({})
-    row_id_error = OrderedDict({})
+    plot_id_error = OrderedDict({})
     plant_id_error = OrderedDict({})
     culture_id_error = OrderedDict({})
     tissue_hash_exists = OrderedDict({})
@@ -1152,7 +1158,7 @@ def tissue_loader_prep(upload_file, user):
         tissue_type = row["Tissue Type"]
         date_ground = row["Date Ground"]
         tissue_comments = row["Tissue Comments"]
-        row_id = row["Source Plot ID"]
+        plot_id = row["Source Plot ID"]
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
         culture_id = row["Source Culture ID"]
@@ -1165,20 +1171,20 @@ def tissue_loader_prep(upload_file, user):
             elif seed_id_fix in seed_id_table:
                 stock_id = seed_id_table[seed_id_fix][0]
             else:
-                seed_id_error[(tissue_id, experiment_name, tissue_name, tissue_type, date_ground, row_id, seed_id, plant_id, culture_id, tissue_comments)] = error_count
+                seed_id_error[(tissue_id, experiment_name, tissue_name, tissue_type, date_ground, plot_id, seed_id, plant_id, culture_id, tissue_comments)] = error_count
                 error_count = error_count + 1
                 stock_id = 1
         else:
             stock_id = 1
 
-        if row_id != '':
-            row_id_fix = row_id + '\r'
-            if row_id in row_id_table:
-                obs_plot_id = row_id_table[row_id][0]
-            elif row_id_fix in row_id_table:
-                obs_plot_id = row_id_table[row_id_fix][0]
+        if plot_id != '':
+            plot_id_fix = plot_id + '\r'
+            if plot_id in plot_id_table:
+                obs_plot_id = plot_id_table[plot_id][0]
+            elif plot_id_fix in plot_id_table:
+                obs_plot_id = plot_id_table[plot_id_fix][0]
             else:
-                row_id_error[(tissue_id, experiment_name, tissue_name, tissue_type, date_ground, row_id, seed_id, plant_id, culture_id, tissue_comments)] = error_count
+                plot_id_error[(tissue_id, experiment_name, tissue_name, tissue_type, date_ground, plot_id, seed_id, plant_id, culture_id, tissue_comments)] = error_count
                 error_count = error_count + 1
                 obs_plot_id = 1
         else:
@@ -1191,7 +1197,7 @@ def tissue_loader_prep(upload_file, user):
             elif plant_id_fix in plant_id_table:
                 obs_plant_id = plant_id_table[plant_id_fix][0]
             else:
-                plant_id_error[(tissue_id, experiment_name, tissue_name, tissue_type, date_ground, row_id, seed_id, plant_id, culture_id, tissue_comments)] = error_count
+                plant_id_error[(tissue_id, experiment_name, tissue_name, tissue_type, date_ground, plot_id, seed_id, plant_id, culture_id, tissue_comments)] = error_count
                 error_count = error_count + 1
                 obs_plant_id = 1
         else:
@@ -1204,7 +1210,7 @@ def tissue_loader_prep(upload_file, user):
             elif culture_id_fix in culture_id_table:
                 obs_culture_id = culture_id_table[culture_id_fix][0]
             else:
-                culture_id_error[(tissue_id, experiment_name, tissue_name, tissue_type, date_ground, row_id, seed_id, plant_id, culture_id, tissue_comments)] = error_count
+                culture_id_error[(tissue_id, experiment_name, tissue_name, tissue_type, date_ground, plot_id, seed_id, plant_id, culture_id, tissue_comments)] = error_count
                 error_count = error_count + 1
                 obs_culture_id = 1
         else:
@@ -1290,7 +1296,7 @@ def tissue_loader_prep(upload_file, user):
     results_dict['obs_tracker_new'] = obs_tracker_new
     results_dict['obs_tracker_source_new'] = obs_tracker_source_new
     results_dict['seed_id_error'] = seed_id_error
-    results_dict['row_id_error'] = row_id_error
+    results_dict['plot_id_error'] = plot_id_error
     results_dict['plant_id_error'] = plant_id_error
     results_dict['culture_id_error'] = culture_id_error
     results_dict['tissue_hash_exists'] = tissue_hash_exists
@@ -1326,22 +1332,22 @@ def tissue_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['---------------------------------------------------------------------------------------------------'])
     writer.writerow([''])
     writer.writerow(['Seed ID Errors'])
-    writer.writerow(['tissue_id', 'experiment_name', 'tissue_name', 'tissue_type', 'date_ground', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_culture_id', 'tissue_comments'])
+    writer.writerow(['tissue_id', 'experiment_name', 'tissue_name', 'tissue_type', 'date_ground', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_culture_id', 'tissue_comments'])
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plot ID Errors'])
-    writer.writerow(['tissue_id', 'experiment_name', 'tissue_name', 'tissue_type', 'date_ground', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_culture_id', 'tissue_comments'])
-    for key in results_dict['row_id_error'].iterkeys():
+    writer.writerow(['tissue_id', 'experiment_name', 'tissue_name', 'tissue_type', 'date_ground', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_culture_id', 'tissue_comments'])
+    for key in results_dict['plot_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plant ID Errors'])
-    writer.writerow(['tissue_id', 'experiment_name', 'tissue_name', 'tissue_type', 'date_ground', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_culture_id', 'tissue_comments'])
+    writer.writerow(['tissue_id', 'experiment_name', 'tissue_name', 'tissue_type', 'date_ground', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_culture_id', 'tissue_comments'])
     for key in results_dict['plant_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Culture ID Errors'])
-    writer.writerow(['tissue_id', 'experiment_name', 'tissue_name', 'tissue_type', 'date_ground', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_culture_id', 'tissue_comments'])
+    writer.writerow(['tissue_id', 'experiment_name', 'tissue_name', 'tissue_type', 'date_ground', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_culture_id', 'tissue_comments'])
     for key in results_dict['culture_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -1402,7 +1408,7 @@ def culture_loader_prep(upload_file, user):
     user_hash_table = loader_db_mirror.user_hash_mirror()
     obs_culture_hash_table = loader_db_mirror.obs_culture_hash_mirror()
     obs_culture_id = loader_db_mirror.obs_culture_id_mirror()
-    row_id_table = loader_db_mirror.row_id_mirror()
+    plot_id_table = loader_db_mirror.plot_id_mirror()
     seed_id_table = loader_db_mirror.seed_id_mirror()
     plant_id_table = loader_db_mirror.plant_id_mirror()
     tissue_id_table = loader_db_mirror.tissue_id_mirror()
@@ -1423,7 +1429,7 @@ def culture_loader_prep(upload_file, user):
 
     error_count = 0
     seed_id_error = OrderedDict({})
-    row_id_error = OrderedDict({})
+    plot_id_error = OrderedDict({})
     plant_id_error = OrderedDict({})
     tissue_id_error = OrderedDict({})
     microbe_id_error = OrderedDict({})
@@ -1447,7 +1453,7 @@ def culture_loader_prep(upload_file, user):
         culture_comments = row["Culture Comments"]
         num_colonies = row["Num Colonies"]
         num_microbes = row["Num Microbes"]
-        row_id = row["Source Plot ID"]
+        plot_id = row["Source Plot ID"]
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
         tissue_id = row["Source Tissue ID"]
@@ -1461,20 +1467,20 @@ def culture_loader_prep(upload_file, user):
             elif seed_id_fix in seed_id_table:
                 stock_id = seed_id_table[seed_id_fix][0]
             else:
-                seed_id_error[(culture_id, experiment_name, media_name, location_name, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, row_id, seed_id, plant_id, tissue_id, microbe_id)] = error_count
+                seed_id_error[(culture_id, experiment_name, media_name, location_name, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, plot_id, seed_id, plant_id, tissue_id, microbe_id)] = error_count
                 error_count = error_count + 1
                 stock_id = 1
         else:
             stock_id = 1
 
-        if row_id != '':
-            row_id_fix = row_id + '\r'
-            if row_id in row_id_table:
-                obs_plot_id = row_id_table[row_id][0]
-            elif row_id_fix in row_id_table:
-                obs_plot_id = row_id_table[row_id_fix][0]
+        if plot_id != '':
+            plot_id_fix = plot_id + '\r'
+            if plot_id in plot_id_table:
+                obs_plot_id = plot_id_table[plot_id][0]
+            elif plot_id_fix in plot_id_table:
+                obs_plot_id = plot_id_table[plot_id_fix][0]
             else:
-                row_id_error[(culture_id, experiment_name, media_name, location_name, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, row_id, seed_id, plant_id, tissue_id, microbe_id)] = error_count
+                plot_id_error[(culture_id, experiment_name, media_name, location_name, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, plot_id, seed_id, plant_id, tissue_id, microbe_id)] = error_count
                 error_count = error_count + 1
                 obs_plot_id = 1
         else:
@@ -1487,7 +1493,7 @@ def culture_loader_prep(upload_file, user):
             elif plant_id_fix in plant_id_table:
                 obs_plant_id = plant_id_table[plant_id_fix][0]
             else:
-                plant_id_error[(culture_id, experiment_name, media_name, location_name, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, row_id, seed_id, plant_id, tissue_id, microbe_id)] = error_count
+                plant_id_error[(culture_id, experiment_name, media_name, location_name, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, plot_id, seed_id, plant_id, tissue_id, microbe_id)] = error_count
                 error_count = error_count + 1
                 obs_plant_id = 1
         else:
@@ -1500,7 +1506,7 @@ def culture_loader_prep(upload_file, user):
             elif tissue_id_fix in tissue_id_table:
                 obs_tissue_id = tissue_id_table[tissue_id_fix][0]
             else:
-                tissue_id_error[(culture_id, experiment_name, media_name, location_name, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, row_id, seed_id, plant_id, tissue_id, microbe_id)] = error_count
+                tissue_id_error[(culture_id, experiment_name, media_name, location_name, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, plot_id, seed_id, plant_id, tissue_id, microbe_id)] = error_count
                 error_count = error_count + 1
                 obs_tissue_id = 1
         else:
@@ -1513,7 +1519,7 @@ def culture_loader_prep(upload_file, user):
             elif microbe_id_fix in microbe_id_table:
                 obs_microbe_id = microbe_id_table[microbe_id_fix][0]
             else:
-                microbe_id_error[(culture_id, experiment_name, media_name, location_name, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, row_id, seed_id, plant_id, tissue_id, microbe_id)] = error_count
+                microbe_id_error[(culture_id, experiment_name, media_name, location_name, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, plot_id, seed_id, plant_id, tissue_id, microbe_id)] = error_count
                 error_count = error_count + 1
                 obs_microbe_id = 1
         else:
@@ -1526,7 +1532,7 @@ def culture_loader_prep(upload_file, user):
             elif media_name_fix in media_name_table:
                 medium_id = media_name_table[media_name_fix][0]
             else:
-                media_name_error[(culture_id, experiment_name, media_name, location_name, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, row_id, seed_id, plant_id, tissue_id, microbe_id)] = error_count
+                media_name_error[(culture_id, experiment_name, media_name, location_name, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, plot_id, seed_id, plant_id, tissue_id, microbe_id)] = error_count
                 error_count = error_count + 1
                 medium_id = 1
         else:
@@ -1539,7 +1545,7 @@ def culture_loader_prep(upload_file, user):
             elif location_name_fix in location_name_table:
                 location_id = location_name_table[location_name_fix][0]
             else:
-                location_name_error[(culture_id, experiment_name, media_name, location_name, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, row_id, seed_id, plant_id, tissue_id, microbe_id)] = error_count
+                location_name_error[(culture_id, experiment_name, media_name, location_name, culture_name, microbe_type, plating_cycle, dilution, image_filename, culture_comments, plot_id, seed_id, plant_id, tissue_id, microbe_id)] = error_count
                 error_count = error_count + 1
                 location_id = 1
         else:
@@ -1633,7 +1639,7 @@ def culture_loader_prep(upload_file, user):
     results_dict['obs_tracker_new'] = obs_tracker_new
     results_dict['obs_tracker_source_new'] = obs_tracker_source_new
     results_dict['seed_id_error'] = seed_id_error
-    results_dict['row_id_error'] = row_id_error
+    results_dict['plot_id_error'] = plot_id_error
     results_dict['plant_id_error'] = plant_id_error
     results_dict['tissue_id_error'] = tissue_id_error
     results_dict['microbe_id_error'] = microbe_id_error
@@ -1672,27 +1678,27 @@ def culture_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['---------------------------------------------------------------------------------------------------'])
     writer.writerow([''])
     writer.writerow(['Seed ID Errors'])
-    writer.writerow(['culture_id', 'experiment_name', 'media_name', 'location_name', 'culture_name', 'microbe_type', 'plating_cycle', 'dilution', 'image_filename', 'culture_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id'])
+    writer.writerow(['culture_id', 'experiment_name', 'media_name', 'location_name', 'culture_name', 'microbe_type', 'plating_cycle', 'dilution', 'image_filename', 'culture_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id'])
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plot ID Errors'])
-    writer.writerow(['culture_id', 'experiment_name', 'media_name', 'location_name', 'culture_name', 'microbe_type', 'plating_cycle', 'dilution', 'image_filename', 'culture_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id'])
-    for key in results_dict['row_id_error'].iterkeys():
+    writer.writerow(['culture_id', 'experiment_name', 'media_name', 'location_name', 'culture_name', 'microbe_type', 'plating_cycle', 'dilution', 'image_filename', 'culture_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id'])
+    for key in results_dict['plot_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plant ID Errors'])
-    writer.writerow(['culture_id', 'experiment_name', 'media_name', 'location_name', 'culture_name', 'microbe_type', 'plating_cycle', 'dilution', 'image_filename', 'culture_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id'])
+    writer.writerow(['culture_id', 'experiment_name', 'media_name', 'location_name', 'culture_name', 'microbe_type', 'plating_cycle', 'dilution', 'image_filename', 'culture_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id'])
     for key in results_dict['plant_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Tissue ID Errors'])
-    writer.writerow(['culture_id', 'experiment_name', 'media_name', 'location_name', 'culture_name', 'microbe_type', 'plating_cycle', 'dilution', 'image_filename', 'culture_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id'])
+    writer.writerow(['culture_id', 'experiment_name', 'media_name', 'location_name', 'culture_name', 'microbe_type', 'plating_cycle', 'dilution', 'image_filename', 'culture_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id'])
     for key in results_dict['tissue_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Microbe ID Errors'])
-    writer.writerow(['culture_id', 'experiment_name', 'media_name', 'location_name', 'culture_name', 'microbe_type', 'plating_cycle', 'dilution', 'image_filename', 'culture_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id'])
+    writer.writerow(['culture_id', 'experiment_name', 'media_name', 'location_name', 'culture_name', 'microbe_type', 'plating_cycle', 'dilution', 'image_filename', 'culture_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id'])
     for key in results_dict['microbe_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -1753,7 +1759,7 @@ def dna_loader_prep(upload_file, user):
     user_hash_table = loader_db_mirror.user_hash_mirror()
     obs_dna_hash_table = loader_db_mirror.obs_dna_hash_mirror()
     obs_dna_id = loader_db_mirror.obs_dna_id_mirror()
-    row_id_table = loader_db_mirror.row_id_mirror()
+    plot_id_table = loader_db_mirror.plot_id_mirror()
     seed_id_table = loader_db_mirror.seed_id_mirror()
     plant_id_table = loader_db_mirror.plant_id_mirror()
     tissue_id_table = loader_db_mirror.tissue_id_mirror()
@@ -1780,7 +1786,7 @@ def dna_loader_prep(upload_file, user):
 
     error_count = 0
     seed_id_error = OrderedDict({})
-    row_id_error = OrderedDict({})
+    plot_id_error = OrderedDict({})
     plant_id_error = OrderedDict({})
     tissue_id_error = OrderedDict({})
     microbe_id_error = OrderedDict({})
@@ -1801,7 +1807,7 @@ def dna_loader_prep(upload_file, user):
         tube_id = row["Tube ID"]
         tube_type = row["Tube Type"]
         dna_comments = row["DNA Comments"]
-        row_id = row["Source Plot ID"]
+        plot_id = row["Source Plot ID"]
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
         tissue_id = row["Source Tissue ID"]
@@ -1819,7 +1825,7 @@ def dna_loader_prep(upload_file, user):
             elif seed_id_fix in seed_id_table:
                 stock_id = seed_id_table[seed_id_fix][0]
             else:
-                seed_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, row_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
+                seed_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, plot_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
                 error_count = error_count + 1
                 stock_id = 1
         else:
@@ -1832,20 +1838,20 @@ def dna_loader_prep(upload_file, user):
             elif sample_id_fix in sample_id_table:
                 obs_sample_id = sample_id_table[sample_id_fix][0]
             else:
-                sample_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, row_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
+                sample_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, plot_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
                 error_count = error_count + 1
                 obs_sample_id = 1
         else:
             obs_sample_id = 1
 
-        if row_id != '':
-            row_id_fix = row_id + '\r'
-            if row_id in row_id_table:
-                obs_plot_id = row_id_table[row_id][0]
-            elif row_id_fix in row_id_table:
-                obs_plot_id = row_id_table[row_id_fix][0]
+        if plot_id != '':
+            plot_id_fix = plot_id + '\r'
+            if plot_id in plot_id_table:
+                obs_plot_id = plot_id_table[plot_id][0]
+            elif plot_id_fix in plot_id_table:
+                obs_plot_id = plot_id_table[plot_id_fix][0]
             else:
-                row_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, row_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
+                plot_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, plot_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
                 error_count = error_count + 1
                 obs_plot_id = 1
         else:
@@ -1858,7 +1864,7 @@ def dna_loader_prep(upload_file, user):
             elif plant_id_fix in plant_id_table:
                 obs_plant_id = plant_id_table[plant_id_fix][0]
             else:
-                plant_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, row_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
+                plant_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, plot_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
                 error_count = error_count + 1
                 obs_plant_id = 1
         else:
@@ -1871,7 +1877,7 @@ def dna_loader_prep(upload_file, user):
             elif tissue_id_fix in tissue_id_table:
                 obs_tissue_id = tissue_id_table[tissue_id_fix][0]
             else:
-                tissue_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, row_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
+                tissue_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, plot_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
                 error_count = error_count + 1
                 obs_tissue_id = 1
         else:
@@ -1884,7 +1890,7 @@ def dna_loader_prep(upload_file, user):
             elif microbe_id_fix in microbe_id_table:
                 obs_microbe_id = microbe_id_table[microbe_id_fix][0]
             else:
-                microbe_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, row_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
+                microbe_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, plot_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
                 error_count = error_count + 1
                 obs_microbe_id = 1
         else:
@@ -1897,7 +1903,7 @@ def dna_loader_prep(upload_file, user):
             elif well_id_fix in well_id_table:
                 obs_well_id = well_id_table[well_id_fix][0]
             else:
-                well_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, row_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
+                well_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, plot_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
                 error_count = error_count + 1
                 obs_well_id = 1
         else:
@@ -1910,7 +1916,7 @@ def dna_loader_prep(upload_file, user):
             elif culture_id_fix in culture_id_table:
                 obs_culture_id = culture_id_table[culture_id_fix][0]
             else:
-                culture_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, row_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
+                culture_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, plot_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
                 error_count = error_count + 1
                 obs_culture_id = 1
         else:
@@ -1923,7 +1929,7 @@ def dna_loader_prep(upload_file, user):
             elif plate_id_fix in plate_id_table:
                 obs_plate_id = plate_id_table[plate_id_fix][0]
             else:
-                plate_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, row_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
+                plate_id_error[(dna_id, experiment_name, extraction, date, tube_id, tube_type, dna_comments, plot_id, seed_id, plant_id, tissue_id, microbe_id, well_id, culture_id, plate_id)] = error_count
                 error_count = error_count + 1
                 obs_plate_id = 1
         else:
@@ -2054,7 +2060,7 @@ def dna_loader_prep(upload_file, user):
     results_dict['obs_tracker_new'] = obs_tracker_new
     results_dict['obs_tracker_source_new'] = obs_tracker_source_new
     results_dict['seed_id_error'] = seed_id_error
-    results_dict['row_id_error'] = row_id_error
+    results_dict['plot_id_error'] = plot_id_error
     results_dict['plant_id_error'] = plant_id_error
     results_dict['tissue_id_error'] = tissue_id_error
     results_dict['microbe_id_error'] = microbe_id_error
@@ -2095,47 +2101,47 @@ def dna_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['---------------------------------------------------------------------------------------------------'])
     writer.writerow([''])
     writer.writerow(['Seed ID Errors'])
-    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
+    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plot ID Errors'])
-    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
-    for key in results_dict['row_id_error'].iterkeys():
+    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
+    for key in results_dict['plot_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plant ID Errors'])
-    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
+    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
     for key in results_dict['plant_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Tissue ID Errors'])
-    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
+    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
     for key in results_dict['tissue_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Microbe ID Errors'])
-    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
+    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
     for key in results_dict['microbe_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Culture ID Errors'])
-    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
+    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
     for key in results_dict['culture_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plate ID Errors'])
-    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
+    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
     for key in results_dict['plate_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Well ID Errors'])
-    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
+    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
     for key in results_dict['well_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Sample ID Errors'])
-    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
+    writer.writerow(['dna_id', 'experiment_name', 'extraction', 'date', 'tube_id', 'tube_type', 'dna_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_culture_id', 'source_plate_id'])
     for key in results_dict['sample_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -2196,7 +2202,7 @@ def microbe_loader_prep(upload_file, user):
     user_hash_table = loader_db_mirror.user_hash_mirror()
     obs_microbe_hash_table = loader_db_mirror.obs_microbe_hash_mirror()
     obs_microbe_id = loader_db_mirror.obs_microbe_id_mirror()
-    row_id_table = loader_db_mirror.row_id_mirror()
+    plot_id_table = loader_db_mirror.plot_id_mirror()
     seed_id_table = loader_db_mirror.seed_id_mirror()
     plant_id_table = loader_db_mirror.plant_id_mirror()
     tissue_id_table = loader_db_mirror.tissue_id_mirror()
@@ -2215,7 +2221,7 @@ def microbe_loader_prep(upload_file, user):
 
     error_count = 0
     seed_id_error = OrderedDict({})
-    row_id_error = OrderedDict({})
+    plot_id_error = OrderedDict({})
     plant_id_error = OrderedDict({})
     tissue_id_error = OrderedDict({})
     culture_id_error = OrderedDict({})
@@ -2229,7 +2235,7 @@ def microbe_loader_prep(upload_file, user):
         experiment_name = row["Experiment Name"]
         microbe_type = row["Microbe Type"]
         microbe_comments = row["Microbe Comments"]
-        row_id = row["Source Plot ID"]
+        plot_id = row["Source Plot ID"]
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
         tissue_id = row["Source Tissue ID"]
@@ -2243,20 +2249,20 @@ def microbe_loader_prep(upload_file, user):
             elif seed_id_fix in seed_id_table:
                 stock_id = seed_id_table[seed_id_fix][0]
             else:
-                seed_id_error[(microbe_id, experiment_name, microbe_type, microbe_comments, row_id, seed_id, plant_id, tissue_id, culture_id)] = error_count
+                seed_id_error[(microbe_id, experiment_name, microbe_type, microbe_comments, plot_id, seed_id, plant_id, tissue_id, culture_id)] = error_count
                 error_count = error_count + 1
                 stock_id = 1
         else:
             stock_id = 1
 
-        if row_id != '':
-            row_id_fix = row_id + '\r'
-            if row_id in row_id_table:
-                obs_plot_id = row_id_table[row_id][0]
-            elif row_id_fix in row_id_table:
-                obs_plot_id = row_id_table[row_id_fix][0]
+        if plot_id != '':
+            plot_id_fix = plot_id + '\r'
+            if plot_id in plot_id_table:
+                obs_plot_id = plot_id_table[plot_id][0]
+            elif plot_id_fix in plot_id_table:
+                obs_plot_id = plot_id_table[plot_id_fix][0]
             else:
-                row_id_error[(microbe_id, experiment_name, microbe_type, microbe_comments, row_id, seed_id, plant_id, tissue_id, culture_id)] = error_count
+                plot_id_error[(microbe_id, experiment_name, microbe_type, microbe_comments, plot_id, seed_id, plant_id, tissue_id, culture_id)] = error_count
                 error_count = error_count + 1
                 obs_plot_id = 1
         else:
@@ -2269,7 +2275,7 @@ def microbe_loader_prep(upload_file, user):
             elif plant_id_fix in plant_id_table:
                 obs_plant_id = plant_id_table[plant_id_fix][0]
             else:
-                plant_id_error[(microbe_id, experiment_name, microbe_type, microbe_comments, row_id, seed_id, plant_id, tissue_id, culture_id)] = error_count
+                plant_id_error[(microbe_id, experiment_name, microbe_type, microbe_comments, plot_id, seed_id, plant_id, tissue_id, culture_id)] = error_count
                 error_count = error_count + 1
                 obs_plant_id = 1
         else:
@@ -2282,7 +2288,7 @@ def microbe_loader_prep(upload_file, user):
             elif tissue_id_fix in tissue_id_table:
                 obs_tissue_id = tissue_id_table[tissue_id_fix][0]
             else:
-                tissue_id_error[(microbe_id, experiment_name, microbe_type, microbe_comments, row_id, seed_id, plant_id, tissue_id, culture_id)] = error_count
+                tissue_id_error[(microbe_id, experiment_name, microbe_type, microbe_comments, plot_id, seed_id, plant_id, tissue_id, culture_id)] = error_count
                 error_count = error_count + 1
                 obs_tissue_id = 1
         else:
@@ -2295,7 +2301,7 @@ def microbe_loader_prep(upload_file, user):
             elif culture_id_fix in culture_id_table:
                 obs_culture_id = culture_id_table[culture_id_fix][0]
             else:
-                culture_id_error[(microbe_id, experiment_name, microbe_type, microbe_comments, row_id, seed_id, plant_id, tissue_id, culture_id)] = error_count
+                culture_id_error[(microbe_id, experiment_name, microbe_type, microbe_comments, plot_id, seed_id, plant_id, tissue_id, culture_id)] = error_count
                 error_count = error_count + 1
                 obs_culture_id = 1
         else:
@@ -2389,7 +2395,7 @@ def microbe_loader_prep(upload_file, user):
     results_dict['obs_tracker_new'] = obs_tracker_new
     results_dict['obs_tracker_source_new'] = obs_tracker_source_new
     results_dict['seed_id_error'] = seed_id_error
-    results_dict['row_id_error'] = row_id_error
+    results_dict['plot_id_error'] = plot_id_error
     results_dict['plant_id_error'] = plant_id_error
     results_dict['tissue_id_error'] = tissue_id_error
     results_dict['culture_id_error'] = culture_id_error
@@ -2426,27 +2432,27 @@ def microbe_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['---------------------------------------------------------------------------------------------------'])
     writer.writerow([''])
     writer.writerow(['Seed ID Errors'])
-    writer.writerow(['microbe_id', 'experiment_name', 'microbe_type', 'microbe_comments','source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id'])
+    writer.writerow(['microbe_id', 'experiment_name', 'microbe_type', 'microbe_comments','source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id'])
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plot ID Errors'])
-    writer.writerow(['microbe_id', 'experiment_name', 'microbe_type', 'microbe_comments','source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id'])
-    for key in results_dict['row_id_error'].iterkeys():
+    writer.writerow(['microbe_id', 'experiment_name', 'microbe_type', 'microbe_comments','source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id'])
+    for key in results_dict['plot_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plant ID Errors'])
-    writer.writerow(['microbe_id', 'experiment_name', 'microbe_type', 'microbe_comments','source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id'])
+    writer.writerow(['microbe_id', 'experiment_name', 'microbe_type', 'microbe_comments','source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id'])
     for key in results_dict['plant_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Tissue ID Errors'])
-    writer.writerow(['microbe_id', 'experiment_name', 'microbe_type', 'microbe_comments','source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id'])
+    writer.writerow(['microbe_id', 'experiment_name', 'microbe_type', 'microbe_comments','source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id'])
     for key in results_dict['tissue_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Culture ID Errors'])
-    writer.writerow(['microbe_id', 'experiment_name', 'microbe_type', 'microbe_comments','source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id'])
+    writer.writerow(['microbe_id', 'experiment_name', 'microbe_type', 'microbe_comments','source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id'])
     for key in results_dict['culture_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -2808,7 +2814,7 @@ def well_loader_prep(upload_file, user):
     user_hash_table = loader_db_mirror.user_hash_mirror()
     obs_well_hash_table = loader_db_mirror.obs_well_hash_mirror()
     obs_well_id = loader_db_mirror.obs_well_id_mirror()
-    row_id_table = loader_db_mirror.row_id_mirror()
+    plot_id_table = loader_db_mirror.plot_id_mirror()
     seed_id_table = loader_db_mirror.seed_id_mirror()
     plant_id_table = loader_db_mirror.plant_id_mirror()
     tissue_id_table = loader_db_mirror.tissue_id_mirror()
@@ -2822,7 +2828,7 @@ def well_loader_prep(upload_file, user):
 
     error_count = 0
     seed_id_error = OrderedDict({})
-    row_id_error = OrderedDict({})
+    plot_id_error = OrderedDict({})
     plant_id_error = OrderedDict({})
     tissue_id_error = OrderedDict({})
     culture_id_error = OrderedDict({})
@@ -2838,7 +2844,7 @@ def well_loader_prep(upload_file, user):
         inventory = row["Inventory"]
         tube_label = row["Tube Label"]
         well_comments = row["Well Comments"]
-        row_id = row["Source Plot ID"]
+        plot_id = row["Source Plot ID"]
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
         tissue_id = row["Source Tissue ID"]
@@ -2854,20 +2860,20 @@ def well_loader_prep(upload_file, user):
             elif seed_id_fix in seed_id_table:
                 stock_id = seed_id_table[seed_id_fix][0]
             else:
-                seed_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, row_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
+                seed_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, plot_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
                 error_count = error_count + 1
                 stock_id = 1
         else:
             stock_id = 1
 
-        if row_id != '':
-            row_id_fix = row_id + '\r'
-            if row_id in row_id_table:
-                obs_plot_id = row_id_table[row_id][0]
-            elif row_id_fix in row_id_table:
-                obs_plot_id = row_id_table[row_id_fix][0]
+        if plot_id != '':
+            plot_id_fix = plot_id + '\r'
+            if plot_id in plot_id_table:
+                obs_plot_id = plot_id_table[plot_id][0]
+            elif plot_id_fix in plot_id_table:
+                obs_plot_id = plot_id_table[plot_id_fix][0]
             else:
-                row_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, row_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
+                plot_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, plot_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
                 error_count = error_count + 1
                 obs_plot_id = 1
         else:
@@ -2880,7 +2886,7 @@ def well_loader_prep(upload_file, user):
             elif plant_id_fix in plant_id_table:
                 obs_plant_id = plant_id_table[plant_id_fix][0]
             else:
-                plant_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, row_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
+                plant_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, plot_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
                 error_count = error_count + 1
                 obs_plant_id = 1
         else:
@@ -2893,7 +2899,7 @@ def well_loader_prep(upload_file, user):
             elif tissue_id_fix in tissue_id_table:
                 obs_tissue_id = tissue_id_table[tissue_id_fix][0]
             else:
-                tissue_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, row_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
+                tissue_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, plot_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
                 error_count = error_count + 1
                 obs_tissue_id = 1
         else:
@@ -2906,7 +2912,7 @@ def well_loader_prep(upload_file, user):
             elif culture_id_fix in culture_id_table:
                 obs_culture_id = culture_id_table[culture_id_fix][0]
             else:
-                culture_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, row_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
+                culture_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, plot_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
                 error_count = error_count + 1
                 obs_culture_id = 1
         else:
@@ -2919,7 +2925,7 @@ def well_loader_prep(upload_file, user):
             elif plate_id_fix in plate_id_table:
                 obs_plate_id = plate_id_table[plate_id_fix][0]
             else:
-                plate_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, row_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
+                plate_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, plot_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
                 error_count = error_count + 1
                 obs_plate_id = 1
         else:
@@ -2932,7 +2938,7 @@ def well_loader_prep(upload_file, user):
             elif microbe_id_fix in microbe_id_table:
                 obs_microbe_id = microbe_id_table[microbe_id_fix][0]
             else:
-                microbe_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, row_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
+                microbe_id_error[(well_id, experiment_name, well, inventory, tube_label, well_comments, plot_id, seed_id, plant_id, tissue_id, culture_id, microbe_id, plate_id)] = error_count
                 error_count = error_count + 1
                 obs_microbe_id = 1
         else:
@@ -2980,7 +2986,7 @@ def well_loader_prep(upload_file, user):
     results_dict['obs_well_new'] = obs_well_new
     results_dict['obs_tracker_new'] = obs_tracker_new
     results_dict['seed_id_error'] = seed_id_error
-    results_dict['row_id_error'] = row_id_error
+    results_dict['plot_id_error'] = plot_id_error
     results_dict['plant_id_error'] = plant_id_error
     results_dict['tissue_id_error'] = tissue_id_error
     results_dict['culture_id_error'] = culture_id_error
@@ -3013,37 +3019,37 @@ def well_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['---------------------------------------------------------------------------------------------------'])
     writer.writerow([''])
     writer.writerow(['Seed ID Errors'])
-    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plot ID Errors'])
-    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
-    for key in results_dict['row_id_error'].iterkeys():
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    for key in results_dict['plot_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plant ID Errors'])
-    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
     for key in results_dict['plant_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Tissue ID Errors'])
-    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
     for key in results_dict['tissue_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Culture ID Errors'])
-    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
     for key in results_dict['culture_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Microbe ID Errors'])
-    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
     for key in results_dict['microbe_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plate ID Errors'])
-    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
+    writer.writerow(['well_id', 'experiment_name', 'well', 'inventory', 'tube_label', 'well_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_tissue_id', 'source_culture_id', 'source_microbe_id', 'source_plate_id'])
     for key in results_dict['plate_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -3093,7 +3099,7 @@ def samples_loader_prep(upload_file, user):
     user_hash_table = loader_db_mirror.user_hash_mirror()
     obs_sample_hash_table = loader_db_mirror.obs_sample_hash_mirror()
     obs_sample_id = loader_db_mirror.obs_sample_id_mirror()
-    row_id_table = loader_db_mirror.row_id_mirror()
+    plot_id_table = loader_db_mirror.plot_id_mirror()
     seed_id_table = loader_db_mirror.seed_id_mirror()
     plant_id_table = loader_db_mirror.plant_id_mirror()
     sample_id_table = loader_db_mirror.sample_id_mirror()
@@ -3106,7 +3112,7 @@ def samples_loader_prep(upload_file, user):
 
     error_count = 0
     seed_id_error = OrderedDict({})
-    row_id_error = OrderedDict({})
+    plot_id_error = OrderedDict({})
     plant_id_error = OrderedDict({})
     source_sample_id_error = OrderedDict({})
     sample_hash_exists = OrderedDict({})
@@ -3125,7 +3131,7 @@ def samples_loader_prep(upload_file, user):
         density = row["Density"]
         photo = row["Photo"]
         sample_comments = row["Sample Comments"]
-        row_id = row["Source Plot ID"]
+        plot_id = row["Source Plot ID"]
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
         source_sample_id = row["Source Sample ID"]
@@ -3138,20 +3144,20 @@ def samples_loader_prep(upload_file, user):
             elif seed_id_fix in seed_id_table:
                 stock_id = seed_id_table[seed_id_fix][0]
             else:
-                seed_id_error[(sample_id, experiment_name, sample_type, sample_name, kernel_num, weight, volume, density, photo, sample_comments, row_id, seed_id, plant_id)] = error_count
+                seed_id_error[(sample_id, experiment_name, sample_type, sample_name, kernel_num, weight, volume, density, photo, sample_comments, plot_id, seed_id, plant_id)] = error_count
                 error_count = error_count + 1
                 stock_id = 1
         else:
             stock_id = 1
 
-        if row_id != '':
-            row_id_fix = row_id + '\r'
-            if row_id in row_id_table:
-                obs_plot_id = row_id_table[row_id][0]
-            elif row_id_fix in row_id_table:
-                obs_plot_id = row_id_table[row_id_fix][0]
+        if plot_id != '':
+            plot_id_fix = plot_id + '\r'
+            if plot_id in plot_id_table:
+                obs_plot_id = plot_id_table[plot_id][0]
+            elif plot_id_fix in plot_id_table:
+                obs_plot_id = plot_id_table[plot_id_fix][0]
             else:
-                row_id_error[(sample_id, experiment_name, sample_type, sample_name, kernel_num, weight, volume, density, photo, sample_comments, row_id, seed_id, plant_id)] = error_count
+                plot_id_error[(sample_id, experiment_name, sample_type, sample_name, kernel_num, weight, volume, density, photo, sample_comments, plot_id, seed_id, plant_id)] = error_count
                 error_count = error_count + 1
                 obs_plot_id = 1
         else:
@@ -3164,7 +3170,7 @@ def samples_loader_prep(upload_file, user):
             elif plant_id_fix in plant_id_table:
                 obs_plant_id = plant_id_table[plant_id_fix][0]
             else:
-                plant_id_error[(sample_id, experiment_name, sample_type, sample_name, kernel_num, weight, volume, density, photo, sample_comments, row_id, seed_id, plant_id)] = error_count
+                plant_id_error[(sample_id, experiment_name, sample_type, sample_name, kernel_num, weight, volume, density, photo, sample_comments, plot_id, seed_id, plant_id)] = error_count
                 error_count = error_count + 1
                 obs_plant_id = 1
         else:
@@ -3218,7 +3224,7 @@ def samples_loader_prep(upload_file, user):
                 else:
                     obs_tracker_source_hash_exists[(obs_tracker_source_sample_id, obs_tracker_target_sample_id)] = obs_tracker_source_id
             else:
-                source_sample_id_error[(sample_id, experiment_name, sample_type, sample_name, kernel_num, weight, volume, density, photo, sample_comments, row_id, seed_id, plant_id, source_sample_id)] = error_count
+                source_sample_id_error[(sample_id, experiment_name, sample_type, sample_name, kernel_num, weight, volume, density, photo, sample_comments, plot_id, seed_id, plant_id, source_sample_id)] = error_count
                 error_count = error_count + 1
 
     end = time.clock()
@@ -3230,7 +3236,7 @@ def samples_loader_prep(upload_file, user):
     results_dict['obs_tracker_new'] = obs_tracker_new
     results_dict['obs_tracker_source_new'] = obs_tracker_source_new
     results_dict['seed_id_error'] = seed_id_error
-    results_dict['row_id_error'] = row_id_error
+    results_dict['plot_id_error'] = plot_id_error
     results_dict['plant_id_error'] = plant_id_error
     results_dict['source_sample_id_error'] = source_sample_id_error
     results_dict['sample_hash_exists'] = sample_hash_exists
@@ -3266,22 +3272,22 @@ def samples_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['---------------------------------------------------------------------------------------------------'])
     writer.writerow([''])
     writer.writerow(['Seed ID Errors'])
-    writer.writerow(['sample_id', 'experiment_name', 'sample_type', 'sample_name', 'kernel_num', 'weight', 'volume', 'density', 'photo', 'sample_comments', 'source_row_id', 'source_seed_id', 'source_plant_id'])
+    writer.writerow(['sample_id', 'experiment_name', 'sample_type', 'sample_name', 'kernel_num', 'weight', 'volume', 'density', 'photo', 'sample_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id'])
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plot ID Errors'])
-    writer.writerow(['sample_id', 'experiment_name', 'sample_type', 'sample_name', 'kernel_num', 'weight', 'volume', 'density', 'photo', 'sample_comments', 'source_row_id', 'source_seed_id', 'source_plant_id'])
-    for key in results_dict['row_id_error'].iterkeys():
+    writer.writerow(['sample_id', 'experiment_name', 'sample_type', 'sample_name', 'kernel_num', 'weight', 'volume', 'density', 'photo', 'sample_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id'])
+    for key in results_dict['plot_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plant ID Errors'])
-    writer.writerow(['sample_id', 'experiment_name', 'sample_type', 'sample_name', 'kernel_num', 'weight', 'volume', 'density', 'photo', 'sample_comments', 'source_row_id', 'source_seed_id', 'source_plant_id'])
+    writer.writerow(['sample_id', 'experiment_name', 'sample_type', 'sample_name', 'kernel_num', 'weight', 'volume', 'density', 'photo', 'sample_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id'])
     for key in results_dict['plant_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Source Sample ID Errors'])
-    writer.writerow(['sample_id', 'experiment_name', 'sample_type', 'sample_name', 'kernel_num', 'weight', 'volume', 'density', 'photo', 'sample_comments', 'source_row_id', 'source_seed_id', 'source_plant_id', 'source_sample_id'])
+    writer.writerow(['sample_id', 'experiment_name', 'sample_type', 'sample_name', 'kernel_num', 'weight', 'volume', 'density', 'photo', 'sample_comments', 'source_plot_id', 'source_seed_id', 'source_plant_id', 'source_sample_id'])
     for key in results_dict['source_sample_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -3612,7 +3618,7 @@ def isolatestock_loader_prep(upload_file, user):
     people_id = loader_db_mirror.people_id_mirror()
     isolatestock_hash_table = loader_db_mirror.isolatestock_hash_mirror()
     isolatestock_table_id = loader_db_mirror.isolatestock_table_id_mirror()
-    row_id_table = loader_db_mirror.row_id_mirror()
+    plot_id_table = loader_db_mirror.plot_id_mirror()
     seed_id_table = loader_db_mirror.seed_id_mirror()
     plant_id_table = loader_db_mirror.plant_id_mirror()
     tissue_id_table = loader_db_mirror.tissue_id_mirror()
@@ -3635,7 +3641,7 @@ def isolatestock_loader_prep(upload_file, user):
 
     error_count = 0
     seed_id_error = OrderedDict({})
-    row_id_error = OrderedDict({})
+    plot_id_error = OrderedDict({})
     plant_id_error = OrderedDict({})
     tissue_id_error = OrderedDict({})
     culture_id_error = OrderedDict({})
@@ -3668,7 +3674,7 @@ def isolatestock_loader_prep(upload_file, user):
         alias = row["Alias"]
         race = row["Race"]
         subtaxa = row["Subtaxa"]
-        row_id = row["Source Plot ID"]
+        plot_id = row["Source Plot ID"]
         seed_id = row["Source Seed ID"]
         plant_id = row["Source Plant ID"]
         tissue_id = row["Source Tissue ID"]
@@ -3714,7 +3720,7 @@ def isolatestock_loader_prep(upload_file, user):
         dna_id = ''
 
         # To populate empty error_tuples later
-        ERROR_TUPLE_ISOLATESTOCK = (isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, population, alias, race, subtaxa, row_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, locality_id)
+        ERROR_TUPLE_ISOLATESTOCK = (isolatestock_id, experiment_name, isolatestock_name, plant_organ, isolatestock_comments, binomial, population, alias, race, subtaxa, plot_id, field_name, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments, locality_id)
 
         # Catches empty row errors
         if isolatestock_id != '':
@@ -3766,14 +3772,14 @@ def isolatestock_loader_prep(upload_file, user):
             else:
                 location_id = 1
 
-            if row_id != '':
-                row_id_fix = row_id + '\r'
-                if row_id in row_id_table:
-                    obs_plot_id = row_id_table[row_id][0]
-                elif row_id_fix in row_id_table:
-                    obs_plot_id = row_id_table[row_id_fix][0]
+            if plot_id != '':
+                plot_id_fix = plot_id + '\r'
+                if plot_id in plot_id_table:
+                    obs_plot_id = plot_id_table[plot_id][0]
+                elif plot_id_fix in plot_id_table:
+                    obs_plot_id = plot_id_table[plot_id_fix][0]
                 else:
-                    row_id_error[ERROR_TUPLE_ISOLATESTOCK] = error_count
+                    plot_id_error[ERROR_TUPLE_ISOLATESTOCK] = error_count
                     error_count = error_count + 1
                     obs_plot_id = 1
             else:
@@ -4020,7 +4026,7 @@ def isolatestock_loader_prep(upload_file, user):
     results_dict['field_name_error'] = field_name_error
     results_dict['disease_common_name_error'] = disease_common_name_error
     results_dict['seed_id_error'] = seed_id_error
-    results_dict['row_id_error'] = row_id_error
+    results_dict['plot_id_error'] = plot_id_error
     results_dict['plant_id_error'] = plant_id_error
     results_dict['tissue_id_error'] = tissue_id_error
     results_dict['culture_id_error'] = culture_id_error
@@ -4097,7 +4103,7 @@ def isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type)
     writer.writerow([''])
     writer.writerow(['Plot ID Errors'])
     writer.writerow(ERROR_TABLE_ISOLATESTOCK)
-    for key in results_dict['row_id_error'].iterkeys():
+    for key in results_dict['plot_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plant ID Errors'])
@@ -4269,7 +4275,7 @@ def isolate_loader_prep(upload_file, user):
     isolate_hash_table = loader_db_mirror.isolate_hash_mirror()
     isolate_table_id = loader_db_mirror.isolate_table_id_mirror()
     isolate_id_table = loader_db_mirror.isolate_id_mirror()
-    row_id_table = loader_db_mirror.row_id_mirror()
+    plot_id_table = loader_db_mirror.plot_id_mirror()
     seed_id_table = loader_db_mirror.seed_id_mirror()
     plant_id_table = loader_db_mirror.plant_id_mirror()
     tissue_id_table = loader_db_mirror.tissue_id_mirror()
@@ -4287,7 +4293,7 @@ def isolate_loader_prep(upload_file, user):
 
     error_count = 0
     seed_id_error = OrderedDict({})
-    row_id_error = OrderedDict({})
+    plot_id_error = OrderedDict({})
     plant_id_error = OrderedDict({})
     tissue_id_error = OrderedDict({})
     culture_id_error = OrderedDict({})
@@ -4312,7 +4318,7 @@ def isolate_loader_prep(upload_file, user):
         organism = row["Organism"]
         comments = row["Isolate Comments"]
         field_name = row["Source Field Name"]
-        row_id = row["Source Plot ID"]
+        plot_id = row["Source Plot ID"]
         sample_id = row["Source Sample ID"]
         isolatestock_id = row["Source IsolateStock ID"]
         seed_id = row["Source Seed ID"]
@@ -4332,7 +4338,7 @@ def isolate_loader_prep(upload_file, user):
             elif seed_id_fix in seed_id_table:
                 stock_id = seed_id_table[seed_id_fix][0]
             else:
-                seed_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, row_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
+                seed_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, plot_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
                 error_count = error_count + 1
                 stock_id = 1
         else:
@@ -4345,20 +4351,20 @@ def isolate_loader_prep(upload_file, user):
             elif field_name_fix in field_name_table:
                 field_id = field_name_table[field_name_fix][0]
             else:
-                field_name_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, row_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
+                field_name_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, plot_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
                 error_count = error_count + 1
                 field_id = 1
         else:
             field_id = 1
 
-        if row_id != '':
-            row_id_fix = row_id + '\r'
-            if row_id in row_id_table:
-                obs_plot_id = row_id_table[row_id][0]
-            elif row_id_fix in row_id_table:
-                obs_plot_id = row_id_table[row_id_fix][0]
+        if plot_id != '':
+            plot_id_fix = plot_id + '\r'
+            if plot_id in plot_id_table:
+                obs_plot_id = plot_id_table[plot_id][0]
+            elif plot_id_fix in plot_id_table:
+                obs_plot_id = plot_id_table[plot_id_fix][0]
             else:
-                row_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, row_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
+                plot_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, plot_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
                 error_count = error_count + 1
                 obs_plot_id = 1
         else:
@@ -4371,7 +4377,7 @@ def isolate_loader_prep(upload_file, user):
             elif plant_id_fix in plant_id_table:
                 obs_plant_id = plant_id_table[plant_id_fix][0]
             else:
-                plant_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, row_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
+                plant_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, plot_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
                 error_count = error_count + 1
                 obs_plant_id = 1
         else:
@@ -4384,7 +4390,7 @@ def isolate_loader_prep(upload_file, user):
             elif tissue_id_fix in tissue_id_table:
                 obs_tissue_id = tissue_id_table[tissue_id_fix][0]
             else:
-                tissue_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, row_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
+                tissue_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, plot_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
                 error_count = error_count + 1
                 obs_tissue_id = 1
         else:
@@ -4397,7 +4403,7 @@ def isolate_loader_prep(upload_file, user):
             elif culture_id_fix in culture_id_table:
                 obs_culture_id = culture_id_table[culture_id_fix][0]
             else:
-                culture_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, row_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
+                culture_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, plot_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
                 error_count = error_count + 1
                 obs_culture_id = 1
         else:
@@ -4410,7 +4416,7 @@ def isolate_loader_prep(upload_file, user):
             elif plate_id_fix in plate_id_table:
                 obs_plate_id = plate_id_table[plate_id_fix][0]
             else:
-                plate_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, row_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
+                plate_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, plot_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
                 error_count = error_count + 1
                 obs_plate_id = 1
         else:
@@ -4423,7 +4429,7 @@ def isolate_loader_prep(upload_file, user):
             elif microbe_id_fix in microbe_id_table:
                 obs_microbe_id = microbe_id_table[microbe_id_fix][0]
             else:
-                microbe_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, row_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
+                microbe_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, plot_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
                 error_count = error_count + 1
                 obs_microbe_id = 1
         else:
@@ -4436,7 +4442,7 @@ def isolate_loader_prep(upload_file, user):
             elif well_id_fix in well_id_table:
                 obs_well_id = well_id_table[well_id_fix][0]
             else:
-                well_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, row_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
+                well_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, plot_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
                 error_count = error_count + 1
                 obs_well_id = 1
         else:
@@ -4449,7 +4455,7 @@ def isolate_loader_prep(upload_file, user):
             elif dna_id_fix in dna_id_table:
                 obs_dna_id = dna_id_table[dna_id_fix][0]
             else:
-                dna_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, row_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
+                dna_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, plot_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
                 error_count = error_count + 1
                 obs_dna_id = 1
         else:
@@ -4462,7 +4468,7 @@ def isolate_loader_prep(upload_file, user):
             elif sample_id_fix in sample_id_table:
                 obs_sample_id = sample_id_table[sample_id_fix][0]
             else:
-                sample_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, row_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
+                sample_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, plot_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
                 error_count = error_count + 1
                 obs_sample_id = 1
         else:
@@ -4475,7 +4481,7 @@ def isolate_loader_prep(upload_file, user):
             elif isolatestock_id_fix in isolatestock_id_table:
                 isolatestock_table_id = isolatestock_id_table[isolatestock_id_fix][0]
             else:
-                isolatestock_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, row_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
+                isolatestock_id_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, plot_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
                 error_count = error_count + 1
                 isolatestock_table_id = 1
         else:
@@ -4488,7 +4494,7 @@ def isolate_loader_prep(upload_file, user):
             elif location_name_fix in location_name_table:
                 location_id = location_name_table[location_name_fix][0]
             else:
-                location_name_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, row_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
+                location_name_error[(isolate_id, experiment_name, location_name, date, extract_color, organism, comments, field_name, plot_id, plant_id, seed_id, tissue_id, microbe_id, well_id, plate_id, dna_id, culture_id, sample_id, isolatestock_id)] = error_count
                 error_count = error_count + 1
                 location_id = 1
         else:
@@ -4539,7 +4545,7 @@ def isolate_loader_prep(upload_file, user):
     results_dict['sample_id_error'] = sample_id_error
     results_dict['isolatestock_id_error'] = isolatestock_id_error
     results_dict['seed_id_error'] = seed_id_error
-    results_dict['row_id_error'] = row_id_error
+    results_dict['plot_id_error'] = plot_id_error
     results_dict['plant_id_error'] = plant_id_error
     results_dict['tissue_id_error'] = tissue_id_error
     results_dict['culture_id_error'] = culture_id_error
@@ -4575,62 +4581,62 @@ def isolate_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['---------------------------------------------------------------------------------------------------'])
     writer.writerow([''])
     writer.writerow(['Seed ID Errors'])
-    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_row_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
+    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_plot_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
     for key in results_dict['seed_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plot ID Errors'])
-    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_row_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
-    for key in results_dict['row_id_error'].iterkeys():
+    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_plot_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
+    for key in results_dict['plot_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plant ID Errors'])
-    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_row_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
+    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_plot_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
     for key in results_dict['plant_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Tissue ID Errors'])
-    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_row_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
+    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_plot_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
     for key in results_dict['tissue_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Culture ID Errors'])
-    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_row_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
+    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_plot_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
     for key in results_dict['culture_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Microbe ID Errors'])
-    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_row_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
+    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_plot_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
     for key in results_dict['microbe_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Plate ID Errors'])
-    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_row_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
+    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_plot_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
     for key in results_dict['plate_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Well ID Errors'])
-    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_row_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
+    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_plot_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
     for key in results_dict['well_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['DNA ID Errors'])
-    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_row_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
+    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_plot_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
     for key in results_dict['dna_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['IsolateStock ID Errors'])
-    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_row_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
+    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_plot_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
     for key in results_dict['isolatestock_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Sample ID Errors'])
-    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_row_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
+    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_plot_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
     for key in results_dict['sample_id_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Location Name Errors'])
-    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_row_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
+    writer.writerow(['isolate_id', 'experiment_name', 'location_name', 'date', 'extract_color', 'organism', 'comments', 'source_field_name', 'source_plot_id', 'source_plant_id', 'source_seed_id', 'source_tissue_id', 'source_microbe_id', 'source_well_id', 'source_plate_id', 'source_dna_id', 'source_culture_id', 'source_sample_id', 'source_isolatestock_id'])
     for key in results_dict['location_name_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -4674,7 +4680,7 @@ def measurement_loader_prep(upload_file, user):
 
     measurement_hash_table = loader_db_mirror.measurement_hash_mirror()
     measurement_id = loader_db_mirror.measurement_id_mirror()
-    obs_tracker_row_id_table = loader_db_mirror.obs_tracker_row_id_mirror()
+    obs_tracker_plot_id_table = loader_db_mirror.obs_tracker_plot_id_mirror()
     obs_tracker_plant_id_table = loader_db_mirror.obs_tracker_plant_id_mirror()
     obs_tracker_env_id_table = loader_db_mirror.obs_tracker_env_id_mirror()
     obs_tracker_sample_id_table = loader_db_mirror.obs_tracker_sample_id_mirror()
@@ -4704,8 +4710,8 @@ def measurement_loader_prep(upload_file, user):
         value = row["Value"]
         comments = row["Measurement Comments"]
 
-        if obs_id in obs_tracker_row_id_table:
-            obs_tracker_id = obs_tracker_row_id_table[obs_id][0]
+        if obs_id in obs_tracker_plot_id_table:
+            obs_tracker_id = obs_tracker_plot_id_table[obs_id][0]
         elif obs_id in obs_tracker_plant_id_table:
             obs_tracker_id = obs_tracker_plant_id_table[obs_id][0]
         elif obs_id in obs_tracker_env_id_table:

@@ -134,8 +134,8 @@ class Medium(models.Model):
 
 
 class ObsPlot(models.Model):
-    row_id = models.CharField(max_length=200, unique=True)
-    row_name = models.CharField(max_length=200, blank=True)
+    plot_id = models.CharField(max_length=200, unique=True)
+    plot_name = models.CharField(max_length=200, blank=True)
     range_num = models.CharField(max_length=200, blank=True)
     plot = models.CharField(max_length=200, blank=True)
     block = models.CharField(max_length=200, blank=True)
@@ -146,7 +146,7 @@ class ObsPlot(models.Model):
     comments = models.CharField(max_length=3000, blank=True)
 
     def __unicode__(self):
-        return self.row_id
+        return self.plot_id
 
 
 class ObsPlant(models.Model):
