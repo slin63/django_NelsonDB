@@ -4231,6 +4231,7 @@ def log_data_online(request, data_type):
 						plot_name = form.cleaned_data['plot_name']
 						seed_id = form.cleaned_data['seed_id']
 						field = form.cleaned_data['field']
+						row_num = form.cleaned_data['row_num']
 						range_num = form.cleaned_data['range_num']
 						plot = form.cleaned_data['plot']
 						block = form.cleaned_data['block']
@@ -4245,7 +4246,7 @@ def log_data_online(request, data_type):
 							seed_id = 'No Stock'
 
 						try:
-							new_obsplot, created = ObsPlot.objects.get_or_create(plot_id=plot_id, plot_name=plot_name, range_num=range_num, plot=plot, block=block, rep=rep, kernel_num=kernel_num, planting_date=planting_date, harvest_date=harvest_date, comments=row_comments)
+							new_obsplot, created = ObsPlot.objects.get_or_create(plot_id=plot_id, plot_name=plot_name, row_num=row_num, range_num=range_num, plot=plot, block=block, rep=rep, kernel_num=kernel_num, planting_date=planting_date, harvest_date=harvest_date, comments=row_comments)
 							new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='plot', stock=Stock.objects.get(seed_id=seed_id), experiment=experiment, user=user, field=field, isolate_id=1, isolatestock_id=1, location_id=1, maize_sample_id=1, obs_culture_id=1, obs_dna_id=1, obs_env_id=1, obs_extract_id=1, obs_microbe_id=1, obs_plant_id=1, obs_plate_id=1, obs_plot=new_obsplot, obs_sample_id=1, obs_tissue_id=1, obs_well_id=1)
 							if seed_id !='' and seed_id !='No Stock':
 								new_source_stock, created = ObsTrackerSource.objects.get_or_create(source_obs = ObsTracker.objects.get(obs_entity_type='stock', stock__seed_id=seed_id), target_obs=new_obs_tracker, relationship="row_from_stock")

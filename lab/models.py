@@ -136,6 +136,7 @@ class Medium(models.Model):
 class ObsPlot(models.Model):
     plot_id = models.CharField(max_length=200, unique=True)
     plot_name = models.CharField(max_length=200, blank=True)
+    row_num = models.CharField(max_length=200, blank=True)
     range_num = models.CharField(max_length=200, blank=True)
     plot = models.CharField(max_length=200, blank=True)
     block = models.CharField(max_length=200, blank=True)

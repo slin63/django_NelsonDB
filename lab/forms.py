@@ -379,6 +379,7 @@ class LogPlotsOnlineForm(forms.Form):
     seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Seed ID'}), required=True)
     field = forms.ModelChoiceField(queryset=Field.objects.all(), initial=Field.objects.get(id=1),
                                    empty_label="--- Field Name ---", required=True)
+    row_num = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Row'}), required=False)
     range_num = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Range'}), required=False)
     plot = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plot'}), required=False)
     block = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Block'}), required=False)
