@@ -65,7 +65,7 @@ def plot_loader_from_experiment(request, experiment_name):
   context_dict['plot_loader'] = plot_loader
   context_dict['experiment_name'] = experiment_name
   context_dict['logged_in_user'] = request.user.username
-  return render_to_response('lab//plot/plot_experiment_data.html', context_dict, context)
+  return render_to_response('lab/plot/plot_experiment_data.html', context_dict, context)
 
 @login_required
 def download_plot_experiment(request, experiment_name):
@@ -73,9 +73,9 @@ def download_plot_experiment(request, experiment_name):
   response['Content-Disposition'] = 'attachment; filename="%s_plots.csv"' % (experiment_name)
   plot_loader = find_plot_from_experiment(experiment_name)
   writer = csv.writer(response)
-  writer.writerow(['Plot ID', 'Plot Name', 'Field', 'Source Stock', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
+  writer.writerow(['Plot ID', 'Plot Name', 'Field', 'Source Stock', 'Row', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
   for row in plot_loader:
-    writer.writerow([row.obs_plot.plot_id, row.obs_plot.plot_name, row.field.field_name, row.stock.seed_id, row.obs_plot.range_num, row.obs_plot.plot, row.obs_plot.block, row.obs_plot.rep, row.obs_plot.kernel_num, row.obs_plot.planting_date, row.obs_plot.harvest_date, row.obs_plot.comments])
+    writer.writerow([row.obs_plot.plot_id, row.obs_plot.plot_name, row.field.field_name, row.stock.seed_id, row.obs_plot.row_num, row.obs_plot.range_num, row.obs_plot.plot, row.obs_plot.block, row.obs_plot.rep, row.obs_plot.kernel_num, row.obs_plot.planting_date, row.obs_plot.harvest_date, row.obs_plot.comments])
   return response
 
 def find_plot_from_experiment(experiment_name):
@@ -112,7 +112,7 @@ def download_plot_loader(request):
   response['Content-Disposition'] = 'attachment; filename="selected_experiment_plots.csv"'
   plot_loader = sort_plot_loader(request)
   writer = csv.writer(response)
-  writer.writerow(['Exp ID', 'Plot ID', 'Plot Name', 'Field', 'Source Stock', 'Row', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
+  writer.writerow(['Exp ID', 'Plot ID', 'Plot Name', 'Field_Name', 'Source Stock', 'Row', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
   for row in plot_loader:
     writer.writerow([row.experiment.name, row.obs_plot.plot_id, row.obs_plot.plot_name, row.field.field_name, row.stock.seed_id, row.obs_plot.row_num, row.obs_plot.range_num, row.obs_plot.plot, row.obs_plot.block, row.obs_plot.rep, row.obs_plot.kernel_num, row.obs_plot.planting_date, row.obs_plot.harvest_date, row.obs_plot.comments])
   return response

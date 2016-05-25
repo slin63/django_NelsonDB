@@ -18,6 +18,7 @@
             <th>Field</th>
             <th>Source Stock</th>
             <th>Pedigree</th>
+            <th>Row</th>
             <th>Range</th>
             <th>Plot</th>
             <th>Block</th>
@@ -36,6 +37,7 @@
             <td><a href='/lab/field/{{data.field.id}}/'>{{data.field.field_name}}</a></td>
             <td><a href='/lab/stock/{{data.stock.id}}/'>{{data.stock.seed_id}}</a></td>
             <td>{{data.stock.pedigree}}</td>
+            <td>{{data.obs_plot.row_num}}</td>
             <td>{{data.obs_plot.range_num}}</td>
             <td>{{data.obs_plot.plot}}</td>
             <td>{{data.obs_plot.block}}</td>
@@ -49,7 +51,7 @@
           </tbody>
         </table>
         <br/>
-        <form action='/lab/download/row/{{experiment_name}}/'>
+        <form action='/lab/download/plot/{{experiment_name}}/'>
           <input type='submit' class="btn btn-primary" name='submit' value='Download Data'/>
         </form>
       {% endif %}
