@@ -734,7 +734,10 @@ def plot_loader_prep(upload_file, user):
         try:
             experiment = Experiment.objects.get(name=experiment_name)
         except Experiment.DoesNotExist:
-            field = Field.objects.get_or_create(locality_id=1, field_name=field_name)[0]
+            try:
+                field = Field.objects.get(field_name=field_name)
+            except Field.DoesNotExist:
+                field = Field.objects.get_or_create(locality_id=1, field_name=field_name)[0]
             experiment = Experiment.objects.create(name=experiment_name, user=user, field=field, start_date=planting_date)
 
         obs_tracker_stock_id_table = loader_db_mirror.obs_tracker_stock_id_mirror()
