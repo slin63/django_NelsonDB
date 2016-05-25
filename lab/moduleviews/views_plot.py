@@ -109,12 +109,12 @@ def sort_plot_loader(request):
 @login_required
 def download_plot_loader(request):
   response = HttpResponse(content_type='text/csv')
-  response['Content-Disposition'] = 'attachment; filename="selected_experiment_rows.csv"'
+  response['Content-Disposition'] = 'attachment; filename="selected_experiment_plots.csv"'
   plot_loader = sort_plot_loader(request)
   writer = csv.writer(response)
-  writer.writerow(['Exp ID', 'Plot ID', 'Plot Name', 'Field', 'Source Stock', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
+  writer.writerow(['Exp ID', 'Plot ID', 'Plot Name', 'Field', 'Source Stock', 'Row', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
   for row in plot_loader:
-    writer.writerow([row.experiment.name, row.obs_plot.plot_id, row.obs_plot.plot_name, row.field.field_name, row.stock.seed_id, row.obs_plot.range_num, row.obs_plot.plot, row.obs_plot.block, row.obs_plot.rep, row.obs_plot.kernel_num, row.obs_plot.planting_date, row.obs_plot.harvest_date, row.obs_plot.comments])
+    writer.writerow([row.experiment.name, row.obs_plot.plot_id, row.obs_plot.plot_name, row.field.field_name, row.stock.seed_id, row.obs_plot.row_num, row.obs_plot.range_num, row.obs_plot.plot, row.obs_plot.block, row.obs_plot.rep, row.obs_plot.kernel_num, row.obs_plot.planting_date, row.obs_plot.harvest_date, row.obs_plot.comments])
   return response
 
 def suggest_plot_experiment(request):

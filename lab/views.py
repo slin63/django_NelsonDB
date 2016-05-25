@@ -2031,38 +2031,6 @@ def download_env_experiment(request, experiment_name):
 		writer.writerow([row.obs_env.environment_id, row.field.field_name, row.obs_env.longitude, row.obs_env.latitude, row.obs_env.comments])
 	return response
 
-@login_required
-def plot_loader_browse(request):
-	context = RequestContext(request)
-	context_dict = {}
-	plot_loader = sort_plot_loader(request)
-	context_dict = checkbox_session_variable_check(request)
-	context_dict['plot_loader'] = plot_loader
-	context_dict['logged_in_user'] = request.user.username
-	return render_to_response('lab/plot/plot_loader.html', context_dict, context)
-
-def sort_plot_loader(request):
-	plot_loader = {}
-	if request.session.get('checkbox_row_experiment_id_list', None):
-		checkbox_row_experiment_id_list = request.session.get('checkbox_row_experiment_id_list')
-		for row_experiment in checkbox_row_experiment_id_list:
-			rows = ObsTracker.objects.filter(obs_entity_type='row', experiment__id=row_experiment)
-			plot_loader = list(chain(rows, plot_loader))
-	else:
-		plot_loader = ObsTracker.objects.filter(obs_entity_type='row').exclude(stock__seed_id=0).exclude(stock__seed_id='YW').exclude(stock__seed_id='135sib').exclude(stock__seed_id='R. Wisser').exclude(stock__seed_id='R_Wisser')[:2000]
-	return plot_loader
-
-@login_required
-def download_plot_loader(request):
-	response = HttpResponse(content_type='text/csv')
-	response['Content-Disposition'] = 'attachment; filename="selected_experiment_rows.csv"'
-	plot_loader = sort_plot_loader(request)
-	writer = csv.writer(response)
-	writer.writerow(['Exp ID', 'Plot ID', 'Plot Name', 'Field', 'Source Stock', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
-	for row in plot_loader:
-		writer.writerow([row.experiment.name, row.obs_plot.plot_id, row.obs_plot.plot_name, row.field.field_name, row.stock.seed_id, row.obs_plot.range_num, row.obs_plot.plot, row.obs_plot.block, row.obs_plot.rep, row.obs_plot.kernel_num, row.obs_plot.planting_date, row.obs_plot.harvest_date, row.obs_plot.comments])
-	return response
-
 def suggest_row_experiment(request):
 	context = RequestContext(request)
 	context_dict = {}
