@@ -170,9 +170,9 @@
 								<div class="row" style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
 									<div class="span7">
 										<h3>Plot Data</h3>
-										{% if plot_loader %}
-										<h5><a href='/lab/data/row/{{experiment.name}}/'>View</a></h5>
-										<h5><a href='/lab/download/row/{{experiment.name}}/'>Download</a></h5>
+										{% if plot_data %}
+										<h5><a href='/lab/data/plot/{{experiment.name}}/'>View</a></h5>
+										<h5><a href='/lab/download/plot/{{experiment.name}}/'>Download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}

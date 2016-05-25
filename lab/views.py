@@ -261,7 +261,7 @@ def experiment(request, experiment_name_url):
 				treatment_data = None
 			context_dict['treatment_data'] = treatment_data
 
-			obs_type_list = ['stock', 'isolatestock', 'isolate', 'maize', 'row', 'plant', 'sample', 'environment', 'dna', 'tissue', 'plate', 'well', 'microbe', 'culture', 'extract', 'maize']
+			obs_type_list = ['stock', 'isolatestock', 'isolate', 'maize', 'plot', 'plant', 'sample', 'environment', 'dna', 'tissue', 'plate', 'well', 'microbe', 'culture', 'extract', 'maize']
 			for obs_type in obs_type_list:
 				obs_data = "%s_data" % (obs_type)
 				try:
