@@ -493,7 +493,7 @@ def checkbox_seed_inventory_sort(request):
 				selected_stocks=unique_selected_stocks(selected_stocks)
 				return_type='measurement'
 			else:
-				selected_stocks = list(Stock.objects.exclude(seed_id='0').exclude(passport_id='2').exclude(id=1))[:1000]
+				selected_stocks = list(Stock.objects.exclude(seed_id='0').exclude(passport_id='2').exclude(id=1))[:3500]
 				return_type='stock'
 	return (selected_stocks, return_type)
 
@@ -544,7 +544,6 @@ def checkbox_session_variable_check(request):
 @login_required
 def seed_inventory(request):
 	"""
-	::url:: = /isolatestock_inventory/ - To change
 	::func:: = Renders view for the seed inventory page
 	::html:: = seed_inventory.html
 	"""
