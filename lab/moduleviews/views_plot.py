@@ -68,6 +68,33 @@ def plot_loader_from_experiment(request, experiment_name):
   return render_to_response('lab/plot/plot_experiment_data.html', context_dict, context)
 
 @login_required
+def download_fieldmap_experiment(request, experiment_name):
+  response = HttpResponse(content_type='text/csv')
+  response['Content-Disposition'] = 'attachment; filename="%s_plots.csv"' % (experiment_name)
+  plot_loader = find_plot_from_experiment(experiment_name)
+  plot_loader = sort_plot_loader(request)
+  plot_dict = {}
+  rows = []
+  ranges = []
+  experiments = []
+  for obs in plot_loader:
+    plot_id = obs.obs_plot.plot_id
+    row_num = obs.obs_plot.row_num
+    range_num = field_map_generator.number_to_letter(obs.obs_plot.range_num)
+
+    coords = range_num + str(row_num)
+    plot_dict[coords] = plot_id
+    rows.append(int(row_num))
+    ranges.append(range_num)
+    experiments.append(obs.experiment)
+
+  domain = [rows, ranges]
+  info = (plot_dict, domain, set(experiments))
+  response = field_map_generator.compile_info(info, response)
+
+  return response
+
+@login_required
 def download_plot_experiment(request, experiment_name):
   response = HttpResponse(content_type='text/csv')
   response['Content-Disposition'] = 'attachment; filename="%s_plots.csv"' % (experiment_name)
