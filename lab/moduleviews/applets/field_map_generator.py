@@ -2,6 +2,7 @@
 # www.github.com/slin63
 # slin63@illinois.edu
 from openpyxl import Workbook
+from datetime import datetime
 import csv
 
 
@@ -44,6 +45,8 @@ def add_axes(worksheet, domain, experiments):
         for coordinate in axis.keys():
             worksheet[coordinate] = axis[coordinate]
 
+    worksheet['A1'] = 'FieldMapper / slin63@illinois.edu / FCPathology / Rendered: {}'.format(datetime.now())
+
     return 0
 
 
@@ -80,7 +83,7 @@ def generate_axes(domain, experiments):
     experiment_tags = {}
     row_current = row_max_plus_one + 1
     for exp in experiments:
-        experiment_tags[range_min + str(row_current)] = 'EXP: {} - {}. Owner: {}. Field: {}. Purpose: {}'.format(exp.name, exp.start_date, exp.user, exp.field, exp.purpose)
+        experiment_tags[range_min + str(row_current)] = 'EXP: {} - {}. Owner: {}. Field: {}. Purpose: {}. Comments = {}'.format(exp.name, exp.start_date, exp.user, exp.field, exp.purpose, exp.comments)
         row_current += 1
 
     return row_axes, range_axes, experiment_tags, labels
