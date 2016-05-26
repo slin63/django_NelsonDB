@@ -5,38 +5,9 @@ from openpyxl import Workbook
 import csv
 
 
-def get_info(csvfile):
-    """
-    :param csvfile: A pre-formatted CSV file to extract plot_ids, rows, and ranges.
-    :return: Dictionary formatted as {plot_id: (range+row)}
-    """
-    with open(csvfile, 'r') as csvinput:
-        reader = csv.DictReader(csvinput)
-        plot_dict = {}
-        experiments = []
-        rows = []
-        ranges = []
-        for row in reader:
-            plot = row['Plot ID']
-            experiment = row['Experiment Name']
-            range_num = number_to_letter((row['Range']))  # For excel indexing
-            row_num = row['Row']
-            date = row['Planting Date']
-
-            rows.append(int(row_num))
-            ranges.append(range_num)
-
-            experiments.append(experiment + ' - ' + date)
-            plot_dict[(range_num + row_num)] = plot
-
-        domain = [rows, ranges]
-
-    return plot_dict, domain, set(experiments)
-
-
 def compile_info(info, response):
     """
-    :param info: Tuple containing plot locations, domains, and ranges of the rows and ranges.
+    :param info: Tuple containing [0]-Plot locations, [1]-Domains/Ranges, [2]-Experiment information.
     :return: CSV containing a field map of the passed plots.
     """
     wb = Workbook()
@@ -45,12 +16,7 @@ def compile_info(info, response):
         print coordinate
         worksheet[coordinate] = info[0][coordinate]
 
-    count = 1
-    for experiment in info[2]:
-        worksheet['%s1' % number_to_letter(count)] = experiment
-        count += 1
-
-    add_axes(worksheet, info[1])
+    add_axes(worksheet, info[1], info[2])
 
     return convert_to_csv(worksheet, response)
 
@@ -67,13 +33,13 @@ def convert_to_csv(worksheet, response):
     return response
 
 
-def add_axes(worksheet, domain):
+def add_axes(worksheet, domain, experiments):
     """
     :param worksheet: Worksheet we will be appending with information.
     :param domain: Rows and ranges.
     :return: Excel file with row and range axes.
     """
-    axes = generate_axes(domain)
+    axes = generate_axes(domain, experiments)
     for axis in axes:
         for coordinate in axis.keys():
             worksheet[coordinate] = axis[coordinate]
@@ -81,7 +47,7 @@ def add_axes(worksheet, domain):
     return 0
 
 
-def generate_axes(domain):
+def generate_axes(domain, experiments):
     """
     :param domain: Rows and ranges.
     :return: Dictionaries formatted {ExcelIndex (e.g. H23): Row or range value} to use as axes.
@@ -99,6 +65,8 @@ def generate_axes(domain):
     row_min_sub_one = row_min - 1
     row_max_plus_one = row_max + 1
 
+    labels = {range_min_sub_one + str(row_min_sub_one): 'Rows/Ranges'}
+
     row_axes = {}
     for e in xrange(row_min, row_max + 1):
         row_axes[range_min_sub_one + str(e)] = e
@@ -109,7 +77,13 @@ def generate_axes(domain):
         range_axes[number_to_letter(e) + str(row_min_sub_one)] = e
         range_axes[number_to_letter(e) + str(row_max_plus_one)] = e
 
-    return row_axes, range_axes
+    experiment_tags = {}
+    row_current = row_max_plus_one + 1
+    for exp in experiments:
+        experiment_tags[range_min + str(row_current)] = 'EXP: {} - {}. Owner: {}. Field: {}. Purpose: {}'.format(exp.name, exp.start_date, exp.user, exp.field, exp.purpose)
+        row_current += 1
+
+    return row_axes, range_axes, experiment_tags, labels
 
 
 def number_to_letter(number):
@@ -132,9 +106,3 @@ def letter_to_number(letter):
         'ak': 37, 'al': 38, 'am': 39, 'an': 40
     }
     return l_to_n[letter]
-
-if __name__ == "__main__":
-    # file_name, csvfile = argv
-    csvfile = 'plotsbig.csv'
-    info = get_info(csvfile)
-    write_to_excel(info)
