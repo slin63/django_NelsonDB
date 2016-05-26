@@ -736,14 +736,9 @@ def plot_loader_prep(upload_file, user):
 
 
         if source_seed_id != '':
-            try:
-                stock = Stock.objects.get(seed_id=source_seed_id)
-                stock_obs = ObsTracker.objects.get(experiment=experiment, obs_entity_type='stock', stock=stock, user=user)
-                stock_id = stock.id
-            except stock.DoesNotExist or stock_obs.DoesNotExist:
-                stock_id = Stock.objects.get_or_create(seed_id=source_seed_id, pedigree=pedigree, passport_id=1)[0].id
-                stock_obs = ObsTracker.objects.get_or_create(experiment=experiment, obs_entity_type='stock', stock_id=stock_id, user=user)
-                stock_obs.save()
+            stock_id = Stock.objects.get_or_create(seed_id=source_seed_id, pedigree=pedigree, passport_id=1)[0].id
+            stock_obs = ObsTracker.objects.get_or_create(experiment=experiment, obs_entity_type='stock', stock_id=stock_id, user=user)[0]
+            stock_obs.save()
 
 
         obs_tracker_stock_id_table = loader_db_mirror.obs_tracker_stock_id_mirror()
