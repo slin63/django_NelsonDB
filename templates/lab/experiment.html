@@ -172,7 +172,8 @@
 										<h3>Plot Data</h3>
 										{% if plot_data %}
 										<h5><a href='/lab/data/plot/{{experiment.name}}/'>View</a></h5>
-										<h5><a href='/lab/download/plot/{{experiment.name}}/'>Download</a></h5>
+										<h5><a href='/lab/download/plot/{{experiment.name}}/'>Download Plot Data</a></h5>
+										<h5><a href='/lab/download/fieldmap/{{experiment_name}}/'>Download Field Maps</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}
