@@ -736,7 +736,10 @@ def plot_loader_prep(upload_file, user):
 
 
         if source_seed_id != '':
-            stock_id = Stock.objects.get_or_create(seed_id=source_seed_id, pedigree=pedigree, passport_id=1)[0].id
+            try:
+                stock_id = Stock.objects.get(seed_id=source_seed_id).id
+            except IntegrityError:
+                stock_id = Stock.objects.get_or_create(seed_id=source_seed_id, pedigree=pedigree, passport_id=1)[0].id
             stock_obs = ObsTracker.objects.get_or_create(experiment=experiment, obs_entity_type='stock', stock_id=stock_id, user=user)[0]
             stock_obs.save()
 
