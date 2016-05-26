@@ -818,6 +818,10 @@ def update_seed_info(request, stock_id):
 			print(obs_tracker_stock_form.errors)
 	else:
 		stock_data = ObsTracker.objects.filter(obs_entity_type='stock', stock_id=stock_id).values('experiment', 'stock__seed_id', 'stock__seed_name', 'stock__cross_type', 'stock__pedigree', 'stock__stock_status', 'stock__stock_date', 'stock__inoculated', 'stock__comments', 'stock__passport__collecting__user', 'stock__passport__collecting__collection_date', 'stock__passport__collecting__collection_method', 'stock__passport__collecting__comments', 'stock__passport__people__first_name', 'stock__passport__people__last_name', 'stock__passport__people__organization', 'stock__passport__people__phone', 'stock__passport__people__email', 'stock__passport__people__comments', 'stock__passport__taxonomy__binomial', 'stock__passport__taxonomy__population', 'obs_plot__plot_id', 'obs_plant__plant_id', 'field')
+
+						# ___! Below is debugging code that renders the form's POST information !___
+		# context_dict['ETC'] = stock_data
+		# return render_to_response('lab/testcases/test.html', context_dict, context)
 		obs_tracker_stock_form = UpdateSeedDataOnlineForm(initial=stock_data[0])
 	context_dict['stock_id'] = stock_id
 	context_dict['obs_tracker_stock_form'] = obs_tracker_stock_form
