@@ -122,7 +122,7 @@ def file_storage(request):
 		file_form = FileDumpForm()
 
 	all_files = FileDump.objects.all()
-	return render_to_response('lab/file_storage.html', {'file_form': file_form, 'saved': saved, 'all_files': all_files}, context)
+	return render_to_response('lab/file_storage.html', {'file_form': file_form, 'saved': saved, 'all_files': all_files, 'logged_in_user': request.user}, context)
 
 @login_required
 def download_file_dump(request, file_id):
