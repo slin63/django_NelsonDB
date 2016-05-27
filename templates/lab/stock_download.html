@@ -1,0 +1,17 @@
+{% extends 'lab/base.html' %}
+{% block title %}Download Stock From Experiment{% endblock %}
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Enter Stock Experiment</h1>
+  </br>
+  <var>vara</var>
+  <div class="container-fluid">
+     <form action="/lab/download/stock/used/" + experiment_name method="post">
+        Experiment name:<br>
+        <input type="text" name="experiment_name"><br>
+
+        <input type="submit" value="Submit">
+      </form>
+  </div>
+</div>
+{% endblock %}
