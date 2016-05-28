@@ -109,3 +109,13 @@ def letter_to_number(letter):
         'ak': 37, 'al': 38, 'am': 39, 'an': 40
     }
     return l_to_n[letter]
+
+
+def error_message(response):
+    wb = Workbook()
+    worksheet = wb.active
+    worksheet['C3'] = 'Error: Mapper can only map one field at a time.'
+    worksheet['C4'] = 'Reselect experiments and try again!'
+
+    return convert_to_csv(worksheet, response)
+

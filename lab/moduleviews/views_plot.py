@@ -142,6 +142,7 @@ def download_field_map(request):
   rows = []
   ranges = []
   experiments = []
+  fields = []
   for obs in plot_loader:
     plot_id = obs.obs_plot.plot_id
     row_num = obs.obs_plot.row_num
@@ -152,10 +153,16 @@ def download_field_map(request):
     rows.append(int(row_num))
     ranges.append(range_num)
     experiments.append(obs.experiment)
+    fields.append(obs.experiment.field)
 
-  domain = [rows, ranges]
-  info = (plot_dict, domain, set(experiments))
-  response = field_map_generator.compile_info(info, response)
+  if len(set(fields)) > 1:
+    response = field_map_generator.error_message(response)
+    response['Content-Disposition'] = 'attachment; filename="error_response.csv"'
+
+  else:
+    domain = [rows, ranges]
+    info = (plot_dict, domain, set(experiments))
+    response = field_map_generator.compile_info(info, response)
 
   return response
 
