@@ -1,26 +1,27 @@
 NelsonLab Plot Data Template Help,,,,,,
 "This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
 ,,,,,,
-Template Name: plot_loader_v0.2,,,,,,
-Authored 07/01/2015,,,,,,
+Template Name: plot_loader_v1.0,,,,,,
+Authored 5/31/2016,,,,,,
 ,,,,,,
 DataBase Header Dictionary,,,,,,
 ,,,,,,
 Plot Template,For recording information about a row.,,,,,
 Template Header,Dependent,Required,Unique,Database Table,Database Field,Definition
-Plot ID,0,1,1,lab_obsplot,plot_id,A unique ID for the row planted in the format 08PN0023. MUST BE UNIQUE
-Experiment Name,1,1,0,lab_obstracker,experiment_id = Experiment(experiment_name).id,The experiment's name that this row is a part of.
+Plot ID,0,1,1,lab_obsplot,plot_id,A unique ID for the plot planted in the format 08PN0023. MUST BE UNIQUE
+Experiment Name,1,1,0,lab_obstracker,experiment_id = Experiment(experiment_name).id,The experiment's name that this plot is a part of.
 Source Seed ID,1,0,0,lab_obstracker,stock_id = Stock(seed_id).id,The seed ID for the seed that was planted in the row. The Seed ID is a unique ID in the format 08PN0023_001x. This is the ID that is printed on seed packets.
 Pedigree,0,0,0,lab_stock,pedigree,The pedigree of the seed that was planted. E.G. B73
-Field Name,1,0,0,lab_obstracker,field_id = Field(field_name).id,The field name in which the row was planted. Field names are unique. Example: Aurora NY
+Field Name,1,0,0,lab_obstracker,field_id = Field(field_name).id,The field name in which the plot was planted. Field names are unique. Example: Aurora NY
 Plot Name,0,0,0,lab_obsplot,plot_name,A human readable name for the row.
-Range,0,0,0,lab_obsplot,range_num,The number for the range in which the row was grown.
-Plot,0,0,0,lab_obsplot,plot,The name of the plot in which the row was grown.
-Block,0,0,0,lab_obsplot,block,The name of the block in which the row was grown.
-Rep,0,0,0,lab_obsplot,rep,The rep that this row was a part of.
+Range,0,0,0,lab_obsplot,range_num,The number for the range in which the plot was grown.
+Row ,0,0,0,lab_obsplot,row_num,The number for the row in which the plot was grown.
+Plot,0,0,0,lab_obsplot,plot,The name of the plot in which the plot was grown.
+Block,0,0,0,lab_obsplot,block,The name of the block in which the plot was grown.
+Rep,0,0,0,lab_obsplot,rep,The rep that this plot was a part of.
 Kernel Num,0,0,0,lab_obsplot,kernel_num,The number of kernels that were planted in the row.
-Planting Date,0,0,0,lab_obsplot,planting_date,The date that the row wwas planted. Recommended ormat: 2015-01-30
-Harvest Date,0,0,0,lab_obsplot,harvest_date,The date that the row was harvested. Recommended format: 2015-01-30
+Planting Date,0,0,0,lab_obsplot,planting_date,The date that the plot was planted. Recommended format: 2015-01-30
+Harvest Date,0,0,0,lab_obsplot,harvest_date,The date that the plot was harvested. Recommended format: 2015-01-30
 Plot Comments,0,0,0,lab_obsplot,comments,Any additioal comments for the row.
 ,,,,,,
 DEPENDENCIES,,,,,,
