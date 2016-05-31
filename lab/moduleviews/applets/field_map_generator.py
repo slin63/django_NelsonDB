@@ -1,23 +1,51 @@
 # Generates a field map when passed an appropriately formatted CSV with pre-filled row and range information
 # www.github.com/slin63
 # slin63@illinois.edu
-from openpyxl import Workbook
+from openpyxl import Workbook, PatternFill
+from openpyxl.utils import _get_column_letter
 from datetime import datetime
 import csv
 
 
+class PlotCell(object):
+    def __init__(self, coordinate, experiment, plot_id, field):
+        self.coordinate = coordinate
+        self.experiment = experiment
+        self.plot_id = plot_id
+
+    def __repr__(self):
+        return self.plot_id
+
+
 def compile_info(info, response):
     """
-    :param info: Tuple containing [0]-Plot locations, [1]-Domains/Ranges, [2]-Experiment information.
+    :param info: Tuple containing [0]-PlotCell Object, [1]-Domains/Ranges
     :return: CSV containing a field map of the passed plots.
     """
     wb = Workbook()
     worksheet = wb.active
-    for coordinate in info[0].keys():
-        print coordinate
-        worksheet[coordinate] = info[0][coordinate]
+    plot_objects = info[0]
+    domain = info[1]
+    experiment_current = plot_objects[0].experiment
+    experiment_colors = iter(['00ccff', '00ffcc', 'ff6600'])
 
-    add_axes(worksheet, info[1], info[2])
+    for plot in plot_objects:
+        if plot.experiment != experiment_current:
+            experiment_current = plot.experiment
+            # Cycles through three experiment colors so the spreadsheet doesn't look incredibly dull
+            try:
+                experiment_color = experiment_colors.next()
+            except StopIteration:
+                experiment_colors = iter(['00ccff', '00ffcc', 'ff6600'])
+                experiment_color = experiment_colors.next()
+
+        cell_fill = PatternFill(start_color=experiment_color,
+                   end_color=experiment_color,
+                   fill_type='solid')
+        worksheet[plot.coordinate] = plot.plot_id
+        worksheet[plot.coordinate].fill = cell_fill
+
+    add_axes(worksheet, domain)
 
     return convert_to_csv(worksheet, response)
 
@@ -34,13 +62,13 @@ def convert_to_csv(worksheet, response):
     return response
 
 
-def add_axes(worksheet, domain, experiments):
+def add_axes(worksheet, domain):
     """
     :param worksheet: Worksheet we will be appending with information.
     :param domain: Rows and ranges.
     :return: Excel file with row and range axes.
     """
-    axes = generate_axes(domain, experiments)
+    axes = generate_axes(domain)
     for axis in axes:
         for coordinate in axis.keys():
             worksheet[coordinate] = axis[coordinate]
@@ -50,21 +78,20 @@ def add_axes(worksheet, domain, experiments):
     return 0
 
 
-def generate_axes(domain, experiments):
+def generate_axes(domain):
     """
     :param domain: Rows and ranges.
     :return: Dictionaries formatted {ExcelIndex (e.g. H23): Row or range value} to use as axes.
     """
-    rows = domain[0]
     row_max = (max(domain[0]))
     row_min = (min(domain[0]))
 
     ranges = [letter_to_number(e) for e in domain[1]]
-    range_max = number_to_letter(max(ranges))
-    range_min = number_to_letter(min(ranges))
+    range_max = _get_column_letter(max(ranges))
+    range_min = _get_column_letter(min(ranges))
 
-    range_min_sub_one = number_to_letter(letter_to_number(range_min) - 1)
-    range_max_plus_one = number_to_letter(letter_to_number(range_max) + 1)
+    range_min_sub_one = _get_column_letter(letter_to_number(range_min) - 1)
+    range_max_plus_one = _get_column_letter(letter_to_number(range_max) + 1)
     row_min_sub_one = row_min - 1
     row_max_plus_one = row_max + 1
 
@@ -77,27 +104,16 @@ def generate_axes(domain, experiments):
 
     range_axes = {}
     for e in xrange(letter_to_number(range_min), letter_to_number(range_max) + 1):
-        range_axes[number_to_letter(e) + str(row_min_sub_one)] = e
-        range_axes[number_to_letter(e) + str(row_max_plus_one)] = e
+        range_axes[_get_column_letter(e) + str(row_min_sub_one)] = e
+        range_axes[_get_column_letter(e) + str(row_max_plus_one)] = e
 
-    experiment_tags = {}
-    row_current = row_max_plus_one + 1
-    for exp in experiments:
-        experiment_tags[range_min + str(row_current)] = 'EXP: {} - {}. Owner: {}. Field: {}. Purpose: {}. Comments = {}'.format(exp.name, exp.start_date, exp.user, exp.field, exp.purpose, exp.comments)
-        row_current += 1
+    # experiment_tags = {}
+    # row_current = row_max_plus_one + 1
+    # for exp in experiments:
+    #     experiment_tags[range_min + str(row_current)] = 'EXP: {} - {}. Owner: {}. Field: {}. Purpose: {}. Comments = {}'.format(exp.name, exp.start_date, exp.user, exp.field, exp.purpose, exp.comments)
+    #     row_current += 1
 
-    return row_axes, range_axes, experiment_tags, labels
-
-
-def number_to_letter(number):
-    number = int(number)
-    n_to_l = {
-        1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h', 9: 'i', 10: 'j', 11: 'k', 12: 'l', 13: 'm',
-        14: 'n', 15: 'o', 16: 'p', 17: 'q', 18: 'r', 19: 's', 20: 't', 21: 'u', 22: 'v', 23: 'w', 24: 'x', 25: 'y',
-        26: 'z', 27: 'aa', 28: 'ab', 29: 'ac', 30: 'ad', 31: 'ae', 32: 'af', 33: 'ag', 34: 'ah', 35: 'ai', 36: 'aj',
-        37: 'ak', 38: 'al', 39: 'am', 40: 'an'
-    }
-    return n_to_l[number].upper()
+    return row_axes, range_axes, labels
 
 
 def letter_to_number(letter):
