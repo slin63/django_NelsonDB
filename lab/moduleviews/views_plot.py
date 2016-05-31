@@ -1,56 +1,36 @@
-import os, tempfile, zipfile
-from applets import field_map_generator
 import csv
-import loader_scripts
-from django.http import HttpResponseRedirect, HttpResponse
-from django.template import RequestContext
-from django.shortcuts import render_to_response
-from django.conf import settings
-from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsPlot, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, Isolate, FileDump
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogPlotsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolateStocksOnlineForm, LogSeparationsOnlineForm, LogMaizeSurveyOnlineForm, LogIsolatesOnlineForm, FileDumpForm, UpdateIsolatesOnlineForm, UpdateStockPacketOnlineForm
-from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from datetime import datetime
-from django.contrib.auth.models import User
-from django.shortcuts import redirect
+from django.http import HttpResponse
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 from itertools import chain
-from django.forms.models import inlineformset_factory
-from django.forms.formsets import formset_factory
-from django.conf import settings
-from django.db.models import F
-from django import template
-from django.template.defaulttags import register
-from operator import itemgetter
-from django.db import transaction
-from django.core.files import File
-from django.http import JsonResponse
-from django.utils.encoding import smart_str
-from django.core.servers.basehttp import FileWrapper
-from django.conf import settings
-import mimetypes
-import json
+
+from applets import field_map_generator
+from lab.models import Experiment, Stock, ObsPlot, ObsPlant, ObsSample, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, \
+  Measurement, MaizeSample, Isolate
+
 
 @login_required
-def single_row_info(request, obs_plot_id):
+def single_plot_info(request, obs_plot_id):
   context = RequestContext(request)
   context_dict = {}
-  obs_tracker_row = []
+  obs_tracker_plot = []
   try:
-    row_info = ObsPlot.objects.get(id=obs_plot_id)
+    plot_info = ObsPlot.objects.get(id=obs_plot_id)
   except ObsPlot.DoesNotExist:
-    row_info = None
-  if row_info is not None:
+    plot_info = None
+  if plot_info is not None:
     obs_tracker = get_obs_tracker('obs_plot_id', obs_plot_id)
     for t in obs_tracker:
-      if t.obs_id != row_info.plot_id:
-        obs_tracker_row.append(t)
-    obs_source = get_seed_collected_from_row('obs_plot_id', obs_plot_id)
+      if t.obs_id != plot_info.plot_id:
+        obs_tracker_plot.append(t)
+    obs_source = get_seed_collected_from_plot('obs_plot_id', obs_plot_id)
     obs_measurements = get_obs_measurements('obs_plot_id', obs_plot_id)
   else:
-    obs_tracker_row = None
+    obs_tracker_plot = None
     obs_source = None
-  context_dict['row_info'] = row_info
-  context_dict['obs_tracker'] = obs_tracker_row
+  context_dict['plot_info'] = plot_info
+  context_dict['obs_tracker'] = obs_tracker_plot
   context_dict['obs_source'] = obs_source
   context_dict['obs_measurements'] = obs_measurements
   context_dict['logged_in_user'] = request.user.username
@@ -276,3 +256,131 @@ def checkbox_session_variable_check(request):
     context_dict['checkbox_isolatestock_taxonomy_names'] = request.session.get('checkbox_isolatestock_taxonomy_names')
   return context_dict
 
+def get_obs_tracker(obs_type, obs_id):
+  kwargs = {obs_type:obs_id}
+  try:
+    obs_tracker = ObsTracker.objects.filter(**kwargs)
+  except ObsTracker.DoesNotExist:
+    obs_tracker = None
+  if obs_tracker is not None:
+    for tracker in obs_tracker:
+      tracker = make_obs_tracker_info(tracker)
+  return obs_tracker
+
+def make_obs_tracker_info(tracker):
+  obs_entity_type = tracker.obs_entity_type
+  if obs_entity_type == 'stock':
+    try:
+      obs_tracker_id_info = [tracker.stock.seed_id, obs_entity_type, tracker.stock_id]
+    except Stock.DoesNotExist:
+      obs_tracker_id_info = ['No Stock', obs_entity_type, 1]
+  elif obs_entity_type == 'isolatestock':
+    try:
+      obs_tracker_id_info = [tracker.isolatestock.isolatestock_id, obs_entity_type, tracker.isolatestock_id]
+    except IsolateStock.DoesNotExist:
+      obs_tracker_id_info = ['No IsolateStock', obs_entity_type, 1]
+  elif obs_entity_type == 'isolate':
+    try:
+      obs_tracker_id_info = [tracker.isolate.isolate_id, obs_entity_type, tracker.isolate_id]
+    except Isolate.DoesNotExist:
+      obs_tracker_id_info = ['No Isolate', obs_entity_type, 1]
+  elif obs_entity_type == 'maize':
+    try:
+      obs_tracker_id_info = [tracker.maize_sample.maize_sample_id, obs_entity_type, tracker.maize_sample_id]
+    except MaizeSample.DoesNotExist:
+      obs_tracker_id_info = ['No Maize Sample', obs_entity_type, 1]
+  elif obs_entity_type == 'plot':
+    try:
+      obs_tracker_id_info = [tracker.obs_plot.plot_id, obs_entity_type, tracker.obs_plot_id]
+    except ObsPlot.DoesNotExist:
+      obs_tracker_id_info = ['No Plot', obs_entity_type, 1]
+  elif obs_entity_type == 'plant':
+    try:
+      obs_tracker_id_info = [tracker.obs_plant.plant_id, obs_entity_type, tracker.obs_plant_id]
+    except ObsPlant.DoesNotExist:
+      obs_tracker_id_info = ['No Plant', obs_entity_type, 1]
+  elif obs_entity_type == 'culture':
+    try:
+      obs_tracker_id_info = [tracker.obs_culture.culture_id, obs_entity_type, tracker.obs_culture_id]
+    except ObsCulture.DoesNotExist:
+      obs_tracker_id_info = ['No Culture', obs_entity_type, 1]
+  elif obs_entity_type == 'dna':
+    try:
+      obs_tracker_id_info = [tracker.obs_dna.dna_id, obs_entity_type, tracker.obs_dna_id]
+    except ObsDNA.DoesNotExist:
+      obs_tracker_id_info = ['No DNA', obs_entity_type, 1]
+  elif obs_entity_type == 'microbe':
+    try:
+      obs_tracker_id_info = [tracker.obs_microbe.microbe_id, obs_entity_type, tracker.obs_microbe_id]
+    except ObsMicrobe.DoesNotExist:
+      obs_tracker_id_info = ['No Microbe', obs_entity_type, 1]
+  elif obs_entity_type == 'plate':
+    try:
+      obs_tracker_id_info = [tracker.obs_plate.plate_id, obs_entity_type, tracker.obs_plate_id]
+    except ObsPlate.DoesNotExist:
+      obs_tracker_id_info = ['No Plate', obs_entity_type, 1]
+  elif obs_entity_type == 'well':
+    try:
+      obs_tracker_id_info = [tracker.obs_well.well_id, obs_entity_type, tracker.obs_well_id]
+    except ObsWell.DoesNotExist:
+      obs_tracker_id_info = ['No Well', obs_entity_type, 1]
+  elif obs_entity_type == 'tissue':
+    try:
+      obs_tracker_id_info = [tracker.obs_tissue.tissue_id, obs_entity_type, tracker.obs_tissue_id]
+    except ObsTissue.DoesNotExist:
+      obs_tracker_id_info = ['No Tissue', obs_entity_type, 1]
+  elif obs_entity_type == 'culture':
+    try:
+      obs_tracker_id_info = [tracker.obs_culture.culture_id, obs_entity_type, tracker.obs_culture_id]
+    except ObsCulture.DoesNotExist:
+      obs_tracker_id_info = ['No Culture', obs_entity_type, 1]
+  elif obs_entity_type == 'sample':
+    try:
+      obs_tracker_id_info = [tracker.obs_sample.sample_id, obs_entity_type, tracker.obs_sample_id]
+    except ObsSample.DoesNotExist:
+      obs_tracker_id_info = ['No Stock', obs_entity_type, 1]
+  elif obs_entity_type == 'extract':
+    try:
+      obs_tracker_id_info = [tracker.obs_extract.extract_id, obs_entity_type, tracker.obs_extract_id]
+    except ObsExtract.DoesNotExist:
+      obs_tracker_id_info = ['No Extract', obs_entity_type, 1]
+  elif obs_entity_type == 'maize':
+    try:
+      obs_tracker_id_info = [tracker.maize_sample.maize_id, obs_entity_type, tracker.maize_sample_id]
+    except MaizeSample.DoesNotExist:
+      obs_tracker_id_info = ['No Maize Sample', obs_entity_type, 1]
+  elif obs_entity_type == 'experiment':
+    try:
+      obs_tracker_id_info = [tracker.experiment.name, obs_entity_type, tracker.experiment.name]
+    except Experiment.DoesNotExist:
+      obs_tracker_id_info = ['No Experiment', obs_entity_type, 1]
+  else:
+    obs_tracker_id_info = ['None', 'No Type', 1]
+
+  tracker.obs_id = obs_tracker_id_info[0]
+  tracker.obs_id_url = '/lab/%s/%s/' % (obs_tracker_id_info[1], obs_tracker_id_info[2])
+  return tracker
+
+def get_seed_collected_from_plot(obs_type, obs_id):
+  obs_tracker_type = 'source_obs__%s'%(obs_type)
+  kwargs = {obs_tracker_type:obs_id, 'target_obs__obs_entity_type':'stock'}
+  try:
+    obs_source = ObsTrackerSource.objects.filter(**kwargs)
+  except ObsTrackerSource.DoesNotExist:
+    obs_source = None
+  if obs_source is not None:
+    for tracker in obs_source:
+      tracker = make_obs_tracker_info(tracker.target_obs)
+  return obs_source
+
+def get_obs_measurements(obs_type, obs_id):
+  obs_tracker_type = 'obs_tracker__%s'%(obs_type)
+  kwargs = {obs_tracker_type:obs_id}
+  try:
+    obs_measurements = Measurement.objects.filter(**kwargs)
+  except ObsTracker.DoesNotExist:
+    obs_measurements = None
+  if obs_measurements is not None:
+    for measurement in obs_measurements:
+      measurement = make_obs_tracker_info(measurement.obs_tracker)
+  return obs_measurements
