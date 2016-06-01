@@ -219,7 +219,13 @@ urlpatterns = patterns('',
                        url(r'^download/maize/(?P<experiment_name>\w+)/', views.download_maize_experiment, name='download_maize_experiment'),
                        url(r'^download/microbe/(?P<experiment_name>\w+)/', views.download_microbe_experiment, name='download_microbe_experiment'),
                        url(r'^download/plot/(?P<experiment_name>\w+)/', views_plot.download_plot_experiment, name='download_plot_experiment'),
-                       url(r'^download/fieldmap/(?P<experiment_name>\w+)/', views_plot.download_fieldmap_experiment, name='download_plot_experiment'),
+
+
+                       url(r'^download/plot_field/(?P<field_name>\w+)/', views_plot.download_field_map_by_field, name='download_field_map_by_field'),
+
+
+
+                       url(r'^download/fieldmap/(?P<experiment_name>\w+)/', views_plot.download_field_map_experiment, name='download_plot_experiment'),
                        url(r'^download/sample/(?P<experiment_name>\w+)/', views.download_sample_experiment, name='download_sample_experiment'),
                        url(r'^download/separation/(?P<experiment_name>\w+)/', views.download_separation_experiment, name='download_separation_experiment'),
                        url(r'^download/plate/(?P<experiment_name>\w+)/', views.download_plate_experiment, name='download_plate_experiment'),

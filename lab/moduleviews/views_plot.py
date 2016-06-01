@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from itertools import chain
+from openpyxl.writer.excel import save_virtual_workbook
 
 from applets import field_map_generator
 from lab.models import Experiment, Stock, ObsPlot, ObsPlant, ObsSample, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, \
@@ -48,33 +49,6 @@ def plot_loader_from_experiment(request, experiment_name):
   return render_to_response('lab/plot/plot_experiment_data.html', context_dict, context)
 
 @login_required
-def download_fieldmap_experiment(request, experiment_name):
-  response = HttpResponse(content_type='text/csv')
-  response['Content-Disposition'] = 'attachment; filename="%s_plots.csv"' % (experiment_name)
-  plot_loader = find_plot_from_experiment(experiment_name)
-  plot_loader = sort_plot_loader(request)
-  plot_dict = {}
-  rows = []
-  ranges = []
-  experiments = []
-  for obs in plot_loader:
-    plot_id = obs.obs_plot.plot_id
-    row_num = obs.obs_plot.row_num
-    range_num = field_map_generator.number_to_letter(obs.obs_plot.range_num)
-
-    coords = range_num + str(row_num)
-    plot_dict[coords] = plot_id
-    rows.append(int(row_num))
-    ranges.append(range_num)
-    experiments.append(obs.experiment)
-
-  domain = [rows, ranges]
-  info = (plot_dict, domain, set(experiments))
-  response = field_map_generator.compile_info(info, response)
-
-  return response
-
-@login_required
 def download_plot_experiment(request, experiment_name):
   response = HttpResponse(content_type='text/csv')
   response['Content-Disposition'] = 'attachment; filename="%s_plots.csv"' % (experiment_name)
@@ -92,13 +66,22 @@ def find_plot_from_experiment(experiment_name):
     plot_loader = None
   return plot_loader
 
+def get_fields_from_plots(object_list):
+  field_set = set()
+  for obj in object_list:
+    field_set.add(obj.field)
+
+  return field_set
+
 @login_required
 def plot_loader_browse(request):
   context = RequestContext(request)
   context_dict = {}
   plot_loader = sort_plot_loader(request)
+  field_set = get_fields_from_plots(plot_loader)
   context_dict = checkbox_session_variable_check(request)
   context_dict['plot_loader'] = plot_loader
+  context_dict['field_set'] = field_set
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('lab/plot/plot_data.html', context_dict, context)
 
@@ -110,31 +93,60 @@ def sort_plot_loader(request):
       rows = ObsTracker.objects.filter(obs_entity_type='plot', experiment__id=plot_experiment)
       plot_loader = list(chain(rows, plot_loader))
   else:
-    plot_loader = ObsTracker.objects.filter(obs_entity_type='plot').exclude(stock__seed_id=0).exclude(stock__seed_id='YW').exclude(stock__seed_id='135sib').exclude(stock__seed_id='R. Wisser').exclude(stock__seed_id='R_Wisser')[:5000]
+    plot_loader = ObsTracker.objects.filter(obs_entity_type='plot')[:5000]
   return plot_loader
 
 @login_required
 def download_field_map(request):
-  response = HttpResponse(content_type='text/csv')
-  response['Content-Disposition'] = 'attachment; filename="selected_experiment_maps.csv"'
   plot_loader = sort_plot_loader(request)
-  rows = []
-  ranges = []
-  plot_objects = []  # Init: (coordinate, experiment, plot_id)
+  plot_objects = []  # Init: (range, row, experiment, plot_id)
   for obs in plot_loader:
     row_num = obs.obs_plot.row_num
     range_num = field_map_generator._get_column_letter(int(obs.obs_plot.range_num))
-    coords = range_num + str(row_num)
-    rows.append(int(row_num))
-    ranges.append(range_num)
 
     plot_objects.append(field_map_generator.PlotCell(
-       coordinate=coords, experiment=obs.experiment, plot_id=obs.obs_plot.plot_id, field=obs.experiment.field
-  ))
+       range_num=range_num, row_num=row_num, experiment=obs.experiment, plot_id=obs.obs_plot.plot_id, field=obs.experiment.field)
+    )
 
-  domain = [rows, ranges]
-  info = (plot_objects, domain)
-  response = field_map_generator.compile_info(info, response)
+  wb = field_map_generator.compile_info(plot_objects)
+  response = HttpResponse(save_virtual_workbook(wb), content_type='application/vnd.ms-excel')
+  response['Content-Disposition'] = 'attachment; filename="selected_experiment_maps.xlsx"'
+
+  return response
+
+@login_required
+def download_field_map_by_field(request, field_name):
+  plot_loader = ObsTracker.objects.filter(obs_entity_type='plot', field__field_name=field_name)
+  plot_objects = []
+  for obs in plot_loader:
+    row_num = obs.obs_plot.row_num
+    range_num = field_map_generator._get_column_letter(int(obs.obs_plot.range_num))
+
+    plot_objects.append(field_map_generator.PlotCell(
+       range_num=range_num, row_num=row_num, experiment=obs.experiment, plot_id=obs.obs_plot.plot_id, field=obs.experiment.field)
+    )
+
+  wb = field_map_generator.compile_info(plot_objects)
+  response = HttpResponse(save_virtual_workbook(wb), content_type='application/vnd.ms-excel')
+  response['Content-Disposition'] = 'attachment; filename="{}-map.xlsx"'.format(field_name)
+
+  return response
+
+@login_required
+def download_field_map_experiment(request, experiment_name):
+  plot_loader = find_plot_from_experiment(experiment_name)
+  plot_objects = []
+  for obs in plot_loader:
+    row_num = obs.obs_plot.row_num
+    range_num = field_map_generator._get_column_letter(int(obs.obs_plot.range_num))
+
+    plot_objects.append(field_map_generator.PlotCell(
+       range_num=range_num, row_num=row_num, experiment=obs.experiment, plot_id=obs.obs_plot.plot_id, field=obs.experiment.field)
+    )
+
+  wb = field_map_generator.compile_info(plot_objects)
+  response = HttpResponse(save_virtual_workbook(wb), content_type='application/vnd.ms-excel')
+  response['Content-Disposition'] = 'attachment; filename="selected_experiment_maps.xlsx"'
 
   return response
 
