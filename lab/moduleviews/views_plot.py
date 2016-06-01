@@ -7,7 +7,7 @@ from itertools import chain
 from openpyxl.writer.excel import save_virtual_workbook
 
 from applets import field_map_generator
-from lab.models import Experiment, Stock, ObsPlot, ObsPlant, ObsSample, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, \
+from lab.models import Experiment, Stock, ObsPlot, ObsPlant, ObsSample, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, Field, \
   Measurement, MaizeSample, Isolate
 
 
@@ -78,7 +78,7 @@ def plot_loader_browse(request):
   context = RequestContext(request)
   context_dict = {}
   plot_loader = sort_plot_loader(request)
-  field_set = get_fields_from_plots(plot_loader)
+  field_set = Field.objects.exclude(id=1)
   context_dict = checkbox_session_variable_check(request)
   context_dict['plot_loader'] = plot_loader
   context_dict['field_set'] = field_set
@@ -184,6 +184,7 @@ def select_plot_experiment(request):
   plot_loader = []
   checkbox_plot_experiment_name_list = []
   checkbox_plot_experiment_list = request.POST.getlist('checkbox_plot_experiment')
+  field_set = Field.objects.exclude(id=1)
   for plot_experiment in checkbox_plot_experiment_list:
     plots = ObsTracker.objects.filter(obs_entity_type='plot', experiment__id=plot_experiment)
     plot_loader = list(chain(plots, plot_loader))
@@ -193,6 +194,7 @@ def select_plot_experiment(request):
   request.session['checkbox_plot_experiment'] = checkbox_plot_experiment_name_list
   request.session['checkbox_plot_experiment_id_list'] = checkbox_plot_experiment_list
   context_dict = checkbox_session_variable_check(request)
+  context_dict['field_set'] = field_set
   context_dict['plot_loader'] = plot_loader
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('lab/plot/plot_data.html', context_dict, context)
