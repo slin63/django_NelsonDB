@@ -2,73 +2,100 @@
 # www.github.com/slin63
 # slin63@illinois.edu
 from openpyxl import Workbook
+from openpyxl.utils import _get_column_letter
+from openpyxl.styles import PatternFill
 from datetime import datetime
-import csv
 
 
-def compile_info(info, response):
+class PlotCell(object):
+    def __init__(self, range_num, row_num, experiment, plot_id, field):
+        self.range = range_num
+        self.row = row_num
+        self.experiment = experiment
+        self.plot_id = plot_id
+        self.field = field
+
+    def __repr__(self):
+        return self.plot_id
+
+
+def compile_info(plot_objects):
     """
-    :param info: Tuple containing [0]-Plot locations, [1]-Domains/Ranges, [2]-Experiment information.
-    :return: CSV containing a field map of the passed plots.
+    :plot_objects: List containing selected ObsPlot objects
+    :return: .xlsx containing a colored field map of the passed plots.
     """
     wb = Workbook()
-    worksheet = wb.active
-    for coordinate in info[0].keys():
-        print coordinate
-        worksheet[coordinate] = info[0][coordinate]
+    field_set = get_field_object_set(plot_objects)
+    for field in field_set:
+        field_plots = get_plots_in_field(plot_objects, field)
+        worksheet = wb.create_sheet()
+        worksheet.title = field.field_name
+        experiment_current = field_plots[0].experiment
+        experiment_colors = iter(['00ccff', '00ffcc', 'ffcccc'])
+        cell_color = experiment_colors.next()
 
-    add_axes(worksheet, info[1], info[2])
+        for plot in field_plots:
+            coordinate = plot.range + str(plot.row)
+            if plot.experiment != experiment_current:
+                experiment_current = plot.experiment
+                # Cycles through three experiment colors so the spreadsheet doesn't look incredibly dull
+                try:
+                    cell_color = experiment_colors.next()
+                except StopIteration:
+                    experiment_colors = iter(['00ccff', '00ffcc', 'ffcccc'])
+                    cell_color = experiment_colors.next()
 
-    return convert_to_csv(worksheet, response)
+            cell_fill = PatternFill(start_color=cell_color,
+                       end_color=cell_color,
+                       fill_type='solid')
+
+            worksheet[coordinate] = plot.plot_id
+            worksheet[coordinate].fill = cell_fill
+
+        domain = get_plot_domains(field_plots)
+
+        add_axes(worksheet, domain, field_plots)
+
+    wb.remove_sheet(wb.get_sheet_by_name('Sheet'))
+
+    return wb
 
 
-def convert_to_csv(worksheet, response):
-    """
-    :func: Opens an empty csvfile and copies over information from the Excel sheet into the new csvfile.
-    :return: A csv identical to the earlier generated worksheet containing the fieldmaps.
-    """
-    writer = csv.writer(response)
-    for row in worksheet.rows:
-        writer.writerow([cell.value for cell in row])
-
-    return response
-
-
-def add_axes(worksheet, domain, experiments):
+def add_axes(worksheet, domain, plot_objects):
     """
     :param worksheet: Worksheet we will be appending with information.
     :param domain: Rows and ranges.
     :return: Excel file with row and range axes.
     """
-    axes = generate_axes(domain, experiments)
+    axes = generate_axes(domain, plot_objects)
     for axis in axes:
         for coordinate in axis.keys():
             worksheet[coordinate] = axis[coordinate]
 
-    worksheet['A1'] = 'FieldMapper / slin63@illinois.edu / FCPathology / Rendered: {}'.format(datetime.now())
+    worksheet['A1'] = 'FieldMapper / slin63@illinois.edu / FCPathology / Rendered: {}. Experiments described at bottom of sheet.'.format(datetime.now())
 
     return 0
 
 
-def generate_axes(domain, experiments):
+def generate_axes(domain, plot_objects):
     """
     :param domain: Rows and ranges.
     :return: Dictionaries formatted {ExcelIndex (e.g. H23): Row or range value} to use as axes.
     """
-    rows = domain[0]
-    row_max = (max(domain[0]))
-    row_min = (min(domain[0]))
+    row_max = max(domain[0])
+    row_min = min(domain[0])
 
     ranges = [letter_to_number(e) for e in domain[1]]
-    range_max = number_to_letter(max(ranges))
-    range_min = number_to_letter(min(ranges))
+    range_max = _get_column_letter(max(ranges))
+    range_min = _get_column_letter(min(ranges))
 
-    range_min_sub_one = number_to_letter(letter_to_number(range_min) - 1)
-    range_max_plus_one = number_to_letter(letter_to_number(range_max) + 1)
+    range_min_sub_one = _get_column_letter(letter_to_number(range_min) - 1)
+    range_max_plus_one = _get_column_letter(letter_to_number(range_max) + 1)
     row_min_sub_one = row_min - 1
     row_max_plus_one = row_max + 1
 
     labels = {range_min_sub_one + str(row_min_sub_one): 'Rows/Ranges'}
+    experiments = get_plot_experiments(plot_objects)
 
     row_axes = {}
     for e in xrange(row_min, row_max + 1):
@@ -77,27 +104,18 @@ def generate_axes(domain, experiments):
 
     range_axes = {}
     for e in xrange(letter_to_number(range_min), letter_to_number(range_max) + 1):
-        range_axes[number_to_letter(e) + str(row_min_sub_one)] = e
-        range_axes[number_to_letter(e) + str(row_max_plus_one)] = e
+        range_axes[_get_column_letter(e) + str(row_min_sub_one)] = e
+        range_axes[_get_column_letter(e) + str(row_max_plus_one)] = e
 
-    experiment_tags = {}
-    row_current = row_max_plus_one + 1
+    experiment_axes = {}
+    current_row = row_max + 2
     for exp in experiments:
-        experiment_tags[range_min + str(row_current)] = 'EXP: {} - {}. Owner: {}. Field: {}. Purpose: {}. Comments = {}'.format(exp.name, exp.start_date, exp.user, exp.field, exp.purpose, exp.comments)
-        row_current += 1
+        exp_string = 'EXP: {} - {}. Owner: {}. Field: {}. Purpose: {}. Comments: {}.'.format(exp.name, exp.start_date, exp.user, exp.field, exp.purpose, exp.comments)
+        experiment_axes[range_min + str(current_row)] = exp_string
+        current_row += 1
 
-    return row_axes, range_axes, experiment_tags, labels
 
-
-def number_to_letter(number):
-    number = int(number)
-    n_to_l = {
-        1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h', 9: 'i', 10: 'j', 11: 'k', 12: 'l', 13: 'm',
-        14: 'n', 15: 'o', 16: 'p', 17: 'q', 18: 'r', 19: 's', 20: 't', 21: 'u', 22: 'v', 23: 'w', 24: 'x', 25: 'y',
-        26: 'z', 27: 'aa', 28: 'ab', 29: 'ac', 30: 'ad', 31: 'ae', 32: 'af', 33: 'ag', 34: 'ah', 35: 'ai', 36: 'aj',
-        37: 'ak', 38: 'al', 39: 'am', 40: 'an'
-    }
-    return n_to_l[number].upper()
+    return row_axes, range_axes, labels, experiment_axes
 
 
 def letter_to_number(letter):
@@ -111,11 +129,36 @@ def letter_to_number(letter):
     return l_to_n[letter]
 
 
-def error_message(response):
-    wb = Workbook()
-    worksheet = wb.active
-    worksheet['C3'] = 'Error: Mapper can only map one field at a time.'
-    worksheet['C4'] = 'Reselect experiments and try again!'
+def get_field_object_set(object_list):
+    field_set = set()
+    for obj in object_list:
+        field_set.add(obj.field)
 
-    return convert_to_csv(worksheet, response)
+    return field_set
 
+
+def get_plots_in_field(object_list, field):
+    plots_in_field = []
+    for obj in object_list:
+        if obj.field == field:
+            plots_in_field.append(obj)
+
+    return plots_in_field
+
+
+def get_plot_domains(object_list):
+    rows = []
+    ranges = []
+    for obj in object_list:
+        rows.append(int(obj.row))
+        ranges.append(obj.range)
+
+    return [rows, ranges]
+
+
+def get_plot_experiments(object_list):
+    experiment_set = set()
+    for obj in object_list:
+        experiment_set.add(obj.experiment)
+
+    return experiment_set
