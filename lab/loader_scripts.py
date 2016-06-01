@@ -712,6 +712,15 @@ def plot_loader_prep(upload_file, user):
         plot_id = plot["Plot ID"]
         experiment_name = plot["Experiment Name"]
         source_seed_id = plot["Source Seed ID"]
+
+        seed_name = plot["Seed Name"]
+
+        population = plot["Population"]
+
+        organization = plot["Organization"]
+        first_name = plot["First Name"]
+        last_name = plot['Last Name']
+
         pedigree = plot["Pedigree"]
         field_name = plot["Field Name"]
         plot_name = plot["Plot Name"]
@@ -739,14 +748,15 @@ def plot_loader_prep(upload_file, user):
             try:
                 stock_id = Stock.objects.get(seed_id=source_seed_id).id
             except (IntegrityError, Stock.DoesNotExist):
-                stock_id = Stock.objects.get_or_create(seed_id=source_seed_id, pedigree=pedigree, passport_id=1)[0].id
+                new_people = People.objects.get_or_create(first_name=first_name, last_name=last_name, organization=organization)[0]
+                new_taxonomy = Taxonomy.objects.get_or_create(population=population)[0]
+                new_passport = Passport.objects.get_or_create(collecting_id=1, people=new_people, taxonomy=new_taxonomy)
+                stock_id = Stock.objects.get_or_create(seed_id=source_seed_id, seed_name=seed_name, pedigree=pedigree, passport=new_passport)[0].id
             stock_obs = ObsTracker.objects.get_or_create(experiment=experiment, obs_entity_type='stock', stock_id=stock_id, user=user)[0]
             stock_obs.save()
 
-
         obs_tracker_stock_id_table = loader_db_mirror.obs_tracker_stock_id_mirror()
         experiment_name_table = loader_db_mirror.experiment_name_mirror()
-
 
         if field_name != '':
             field_name_fix = field_name + '\r'
