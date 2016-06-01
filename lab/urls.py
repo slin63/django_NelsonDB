@@ -221,7 +221,7 @@ urlpatterns = patterns('',
                        url(r'^download/plot/(?P<experiment_name>\w+)/', views_plot.download_plot_experiment, name='download_plot_experiment'),
 
 
-                       url(r'^download/plot_field/(?P<field_name>\w+)/', views_plot.download_field_map_by_field, name='download_field_map_by_field'),
+                       url(r'^download/plot_field/(?P<field_id>\w+)/', views_plot.download_field_map_by_field, name='download_field_map_by_field'),
 
 
 

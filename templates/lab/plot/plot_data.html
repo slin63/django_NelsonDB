@@ -95,8 +95,8 @@
   <h3>Download by field:</h3>
   <hr>
   {% for field in field_set %}
-    <form action='/lab/download/plot_field/{{ field }}/'>
-      <input class="btn btn-warning" type="submit" name="submit" value="Download {{ field }} map"/>
+    <form action={% url "download_field_map_by_field" field.id %}>
+      <input class="btn btn-primary" type="submit" name="submit" value="Download {{ field }} map"/>
     </form>
   {% endfor %}
 </div><br/><br/>

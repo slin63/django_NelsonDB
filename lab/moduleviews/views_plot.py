@@ -115,8 +115,8 @@ def download_field_map(request):
   return response
 
 @login_required
-def download_field_map_by_field(request, field_name):
-  plot_loader = ObsTracker.objects.filter(obs_entity_type='plot', field__field_name=field_name)
+def download_field_map_by_field(request, field_id):
+  plot_loader = ObsTracker.objects.filter(obs_entity_type='plot', field_id=field_id)
   plot_objects = []
   for obs in plot_loader:
     row_num = obs.obs_plot.row_num
@@ -128,7 +128,7 @@ def download_field_map_by_field(request, field_name):
 
   wb = field_map_generator.compile_info(plot_objects)
   response = HttpResponse(save_virtual_workbook(wb), content_type='application/vnd.ms-excel')
-  response['Content-Disposition'] = 'attachment; filename="{}-map.xlsx"'.format(field_name)
+  response['Content-Disposition'] = 'attachment; filename="{}-map.xlsx"'.format(plot_objects[0].field)
 
   return response
 
