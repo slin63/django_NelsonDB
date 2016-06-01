@@ -66,7 +66,7 @@
       {% for data in plot_loader %}
       <tr>
         <td><a href='/lab/experiment/{{data.experiment.name}}/'>{{data.experiment.name}}</a></td>
-        <td><a href='/lab/row/{{data.obs_plot.id}}/'>{{data.obs_plot.plot_id}}</a></td>
+        <td><a href='/lab/plot/{{data.obs_plot.id}}/'>{{data.obs_plot.plot_id}}</a></td>
         <td>{{data.obs_plot.plot_name}}</td>
         <td><a href='/lab/field/{{data.field.id}}/'>{{data.field.field_name}}</a></td>
         <td><a href='/lab/stock/{{data.stock.id}}/'>{{data.stock.seed_id}}</a></td>
