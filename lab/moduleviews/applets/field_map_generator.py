@@ -118,6 +118,13 @@ def generate_axes(domain, plot_objects):
     return row_axes, range_axes, labels, experiment_axes
 
 
+def empty_field():
+    wb = Workbook()
+    ws = wb.active
+    ws['C3'] = 'No data for this field.'
+
+    return wb
+
 def letter_to_number(letter):
     letter = letter.lower()
     l_to_n = {

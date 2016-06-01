@@ -117,18 +117,23 @@ def download_field_map(request):
 @login_required
 def download_field_map_by_field(request, field_id):
   plot_loader = ObsTracker.objects.filter(obs_entity_type='plot', field_id=field_id)
-  plot_objects = []
-  for obs in plot_loader:
-    row_num = obs.obs_plot.row_num
-    range_num = field_map_generator._get_column_letter(int(obs.obs_plot.range_num))
+  field_name = Field.objects.get(id=field_id).field_name
 
-    plot_objects.append(field_map_generator.PlotCell(
-       range_num=range_num, row_num=row_num, experiment=obs.experiment, plot_id=obs.obs_plot.plot_id, field=obs.experiment.field)
-    )
+  if len(plot_loader) == 0:
+    wb = field_map_generator.empty_field()
+  else:
+    plot_objects = []
+    for obs in plot_loader:
+      row_num = obs.obs_plot.row_num
+      range_num = field_map_generator._get_column_letter(int(obs.obs_plot.range_num))
 
-  wb = field_map_generator.compile_info(plot_objects)
+      plot_objects.append(field_map_generator.PlotCell(
+         range_num=range_num, row_num=row_num, experiment=obs.experiment, plot_id=obs.obs_plot.plot_id, field=obs.experiment.field)
+      )
+
+    wb = field_map_generator.compile_info(plot_objects)
   response = HttpResponse(save_virtual_workbook(wb), content_type='application/vnd.ms-excel')
-  response['Content-Disposition'] = 'attachment; filename="{}-map.xlsx"'.format(plot_objects[0].field)
+  response['Content-Disposition'] = 'attachment; filename="{}-map.xlsx"'.format(field_name)
 
   return response
 
