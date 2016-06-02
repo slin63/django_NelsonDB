@@ -1,9 +1,10 @@
 # Generates a field map when passed an appropriately formatted CSV with pre-filled row and range information
 # www.github.com/slin63
 # slin63@illinois.edu
+from re import split
 from openpyxl import Workbook
 from openpyxl.utils import _get_column_letter
-from openpyxl.styles import PatternFill
+from openpyxl.styles import PatternFill, Border, Side
 from datetime import datetime
 
 
@@ -23,7 +24,6 @@ class PlotCell(object):
 
     def get_row_list(self):
         return [int(e) for e in self.row.split('-')]
-
 
     def get_coordinates(self):
         if len(self.row) == 1:
@@ -72,11 +72,15 @@ def compile_info(plot_objects, field=None):
                        fill_type='solid')
             print plot
             print plot.get_coordinates()
+            side = Side(border_style='thin', color="003300")
             for coordinate in plot.get_coordinates():
-                ##TODO: Broken
-                print coordinate
                 worksheet[coordinate] = plot.plot_id
                 worksheet[coordinate].fill = cell_fill
+                border = Border(bottom=worksheet[coordinate].border.bottom)
+                if check_row_even(coordinate): # Slips in a border every 2 rows
+                    border.bottom = side
+                    worksheet[coordinate].border = border
+
 
         domain = get_plot_domains(field_plots)
 
@@ -86,9 +90,6 @@ def compile_info(plot_objects, field=None):
 
     return wb
 
-test = PlotCell('D','8-12', 1,'id','field')
-print test.get_coordinates()
-print test.get_row_list()
 
 def add_axes(worksheet, domain, plot_objects):
     """
@@ -132,23 +133,27 @@ def generate_axes(domain, plot_objects):
         row_min_sub_one += 1
         left_row = False
 
+    # Generate basic labels
     labels = {}
     if top_range:
         labels = {range_min_sub_one + str(row_min_sub_one): 'Rows/Ranges'}
-    experiments = get_plot_experiments(plot_objects)
 
+    # Generate row axes labels
     row_axes = {}
     for e in xrange(row_min, row_max + 1):
         if left_row:
             row_axes[range_min_sub_one + str(e)] = e
         row_axes[range_max_plus_one + str(e)] = e
 
+    # Generate range axes labels
     range_axes = {}
     for e in xrange(letter_to_number(range_min), letter_to_number(range_max) + 1):
         if top_range:
             range_axes[_get_column_letter(e) + str(row_min_sub_one)] = e
         range_axes[_get_column_letter(e) + str(row_max_plus_one)] = e
 
+    # Generate experiment/script info labels
+    experiments = get_plot_experiments(plot_objects)
     experiment_axes = {
         range_min + str(row_max + 2): 'FieldMapper / slin63@illinois.edu / FCPathology / Rendered: {}. Experiments described at bottom of sheet.'.format(datetime.now())
     }
@@ -157,6 +162,7 @@ def generate_axes(domain, plot_objects):
         exp_string = 'EXP: {} - {}. Owner: {}. Field: {}. Purpose: {}. Comments: {}.'.format(exp.name, exp.start_date, exp.user, exp.field, exp.purpose, exp.comments)
         experiment_axes[range_min + str(current_row)] = exp_string
         current_row += 1
+
 
 
     return row_axes, range_axes, labels, experiment_axes
@@ -213,3 +219,10 @@ def get_plot_experiments(object_list):
         experiment_set.add(obj.experiment)
 
     return experiment_set
+
+
+def check_row_even(coordinate):
+    """
+    Given a string of the form 'COLUMN-ROW' (e.g. 'AD45'), returns whether or not the row is even. (e.g. False from 'AD45')
+    """
+    return int(split('(\d+)', coordinate)[1]) % 2 == 0
