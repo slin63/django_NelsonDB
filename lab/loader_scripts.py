@@ -750,7 +750,7 @@ def plot_loader_prep(upload_file, user):
             except (IntegrityError, Stock.DoesNotExist):
                 new_people = People.objects.get_or_create(first_name=first_name, last_name=last_name, organization=organization)[0]
                 new_taxonomy = Taxonomy.objects.get_or_create(population=population)[0]
-                new_passport = Passport.objects.get_or_create(collecting_id=1, people=new_people, taxonomy=new_taxonomy)
+                new_passport = Passport.objects.get_or_create(collecting_id=1, people=new_people, taxonomy=new_taxonomy)[0]
                 stock_id = Stock.objects.get_or_create(seed_id=source_seed_id, seed_name=seed_name, pedigree=pedigree, passport=new_passport)[0].id
             stock_obs = ObsTracker.objects.get_or_create(experiment=experiment, obs_entity_type='stock', stock_id=stock_id, user=user)[0]
             stock_obs.save()
@@ -884,7 +884,7 @@ def plot_loader(results_dict):
         for key in results_dict['obs_plot_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_obsplot = ObsPlot.objects.create(id=key[0], plot_id=key[1], plot_name=key[2], range_num=key[3], row_num=key[4], plot=key[5], block=key[6], rep=key[7], kernel_num=key[8], planting_date=key[9], harvest_date=key[10], comments=key[11])
+                    new_obsplot = ObsPlot.objects.create(plot_id=key[1], plot_name=key[2], range_num=key[3], row_num=key[4], plot=key[5], block=key[6], rep=key[7], kernel_num=key[8], planting_date=key[9], harvest_date=key[10], comments=key[11])
                     new_obsplot.save()
             except Exception as e:
                 print("ObsPlot Error: %s %s" % (e.message, e.args))
@@ -892,7 +892,7 @@ def plot_loader(results_dict):
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                    new_stock = ObsTracker.objects.create(obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
                     new_stock.save()
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
@@ -900,7 +900,7 @@ def plot_loader(results_dict):
         for key in results_dict['obs_tracker_source_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTrackerSource.objects.create(id=key[0], source_obs_id=key[1], target_obs_id=key[2], relationship=key[3])
+                    new_stock = ObsTrackerSource.objects.create(source_obs_id=key[1], target_obs_id=key[2], relationship=key[3])
                     new_stock.save()
             except Exception as e:
                 print("ObsTrackerSource Error: %s %s" % (e.message, e.args))

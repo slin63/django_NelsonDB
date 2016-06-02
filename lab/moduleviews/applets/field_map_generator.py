@@ -47,10 +47,8 @@ def compile_info(plot_objects, field=None):
         field_set = [field]
     else:
         field_set = get_field_object_set(plot_objects)
-    print 'field_set =', field_set
     for field in field_set:
         field_plots = get_plots_in_field(plot_objects, field)
-        print 'field_plots = ', field_plots
         worksheet = wb.create_sheet()
         worksheet.title = field.field_name
         experiment_current = field_plots[0].experiment
@@ -70,8 +68,6 @@ def compile_info(plot_objects, field=None):
             cell_fill = PatternFill(start_color=cell_color,
                        end_color=cell_color,
                        fill_type='solid')
-            print plot
-            print plot.get_coordinates()
             side = Side(border_style='thin', color="003300")
             for coordinate in plot.get_coordinates():
                 worksheet[coordinate] = plot.plot_id
