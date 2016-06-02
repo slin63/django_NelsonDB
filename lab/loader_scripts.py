@@ -900,7 +900,7 @@ def plot_loader(results_dict):
         for key in results_dict['obs_tracker_source_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTrackerSource.objects.create(source_obs_id=key[1], target_obs_id=key[2], relationship=key[3])
+                    new_stock = ObsTrackerSource.objects.create(id=key[0], source_obs_id=key[1], target_obs_id=key[2], relationship=key[3])
                     new_stock.save()
             except Exception as e:
                 print("ObsTrackerSource Error: %s %s" % (e.message, e.args))
