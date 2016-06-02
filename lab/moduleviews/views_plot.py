@@ -117,7 +117,7 @@ def download_field_map(request):
 @login_required
 def download_field_map_by_field(request, field_id):
   plot_loader = ObsTracker.objects.filter(obs_entity_type='plot', field_id=field_id)
-  field_name = Field.objects.get(id=field_id).field_name
+  field = Field.objects.get(id=field_id)
 
   if len(plot_loader) == 0:
     wb = field_map_generator.empty_field()
@@ -131,9 +131,9 @@ def download_field_map_by_field(request, field_id):
          range_num=range_num, row_num=row_num, experiment=obs.experiment, plot_id=obs.obs_plot.plot_id, field=obs.experiment.field)
       )
 
-    wb = field_map_generator.compile_info(plot_objects)
+    wb = field_map_generator.compile_info(plot_objects, field)
   response = HttpResponse(save_virtual_workbook(wb), content_type='application/vnd.ms-excel')
-  response['Content-Disposition'] = 'attachment; filename="{}-map.xlsx"'.format(field_name)
+  response['Content-Disposition'] = 'attachment; filename="{}-map.xlsx"'.format(field.field_name)
 
   return response
 

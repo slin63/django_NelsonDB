@@ -7,6 +7,7 @@ from openpyxl.styles import PatternFill
 from datetime import datetime
 
 
+
 class PlotCell(object):
     def __init__(self, range_num, row_num, experiment, plot_id, field):
         self.range = range_num
@@ -16,18 +17,40 @@ class PlotCell(object):
         self.field = field
 
     def __repr__(self):
-        return self.plot_id
+        return "Range {}, Row {}, Exp {} Pl_ID {} Field {}".format(
+            self.range, self.row, self.experiment, self.plot_id, self.field
+        )
+
+    def get_row_list(self):
+        return [int(e) for e in self.row.split('-')]
 
 
-def compile_info(plot_objects):
+    def get_coordinates(self):
+        if len(self.row) == 1:
+            coordinates = ('{}{}'.format(self.range, self.row),)
+        else:
+            coordinates = ()
+            row_list = self.get_row_list()
+            for block in xrange(int(min(row_list)), int(max(row_list)) + 1):
+                coordinates += ('{}{}'.format(self.range, block),)
+
+        return coordinates
+
+
+def compile_info(plot_objects, field=None):
     """
     :plot_objects: List containing selected ObsPlot objects
     :return: .xlsx containing a colored field map of the passed plots.
     """
     wb = Workbook()
-    field_set = get_field_object_set(plot_objects)
+    if field:
+        field_set = [field]
+    else:
+        field_set = get_field_object_set(plot_objects)
+    print 'field_set =', field_set
     for field in field_set:
         field_plots = get_plots_in_field(plot_objects, field)
+        print 'field_plots = ', field_plots
         worksheet = wb.create_sheet()
         worksheet.title = field.field_name
         experiment_current = field_plots[0].experiment
@@ -35,7 +58,6 @@ def compile_info(plot_objects):
         cell_color = experiment_colors.next()
 
         for plot in field_plots:
-            coordinate = plot.range + str(plot.row)
             if plot.experiment != experiment_current:
                 experiment_current = plot.experiment
                 # Cycles through three experiment colors so the spreadsheet doesn't look incredibly dull
@@ -48,9 +70,13 @@ def compile_info(plot_objects):
             cell_fill = PatternFill(start_color=cell_color,
                        end_color=cell_color,
                        fill_type='solid')
-
-            worksheet[coordinate] = plot.plot_id
-            worksheet[coordinate].fill = cell_fill
+            print plot
+            print plot.get_coordinates()
+            for coordinate in plot.get_coordinates():
+                ##TODO: Broken
+                print coordinate
+                worksheet[coordinate] = plot.plot_id
+                worksheet[coordinate].fill = cell_fill
 
         domain = get_plot_domains(field_plots)
 
@@ -60,6 +86,9 @@ def compile_info(plot_objects):
 
     return wb
 
+test = PlotCell('D','8-12', 1,'id','field')
+print test.get_coordinates()
+print test.get_row_list()
 
 def add_axes(worksheet, domain, plot_objects):
     """
@@ -72,8 +101,6 @@ def add_axes(worksheet, domain, plot_objects):
         for coordinate in axis.keys():
             worksheet[coordinate] = axis[coordinate]
 
-    worksheet['A1'] = 'FieldMapper / slin63@illinois.edu / FCPathology / Rendered: {}. Experiments described at bottom of sheet.'.format(datetime.now())
-
     return 0
 
 
@@ -82,6 +109,9 @@ def generate_axes(domain, plot_objects):
     :param domain: Rows and ranges.
     :return: Dictionaries formatted {ExcelIndex (e.g. H23): Row or range value} to use as axes.
     """
+    left_row = True
+    top_range = True
+
     row_max = max(domain[0])
     row_min = min(domain[0])
 
@@ -89,26 +119,40 @@ def generate_axes(domain, plot_objects):
     range_max = _get_column_letter(max(ranges))
     range_min = _get_column_letter(min(ranges))
 
-    range_min_sub_one = _get_column_letter(letter_to_number(range_min) - 1)
     range_max_plus_one = _get_column_letter(letter_to_number(range_max) + 1)
-    row_min_sub_one = row_min - 1
-    row_max_plus_one = row_max + 1
+    try:
+        range_min_sub_one = _get_column_letter(letter_to_number(range_min) - 1)
+    except ValueError:
+        range_min_sub_one = range_max_plus_one
+        top_range = False
 
-    labels = {range_min_sub_one + str(row_min_sub_one): 'Rows/Ranges'}
+    row_max_plus_one = row_max + 1
+    row_min_sub_one = row_min - 1
+    if row_min_sub_one == 0:
+        row_min_sub_one += 1
+        left_row = False
+
+    labels = {}
+    if top_range:
+        labels = {range_min_sub_one + str(row_min_sub_one): 'Rows/Ranges'}
     experiments = get_plot_experiments(plot_objects)
 
     row_axes = {}
     for e in xrange(row_min, row_max + 1):
-        row_axes[range_min_sub_one + str(e)] = e
+        if left_row:
+            row_axes[range_min_sub_one + str(e)] = e
         row_axes[range_max_plus_one + str(e)] = e
 
     range_axes = {}
     for e in xrange(letter_to_number(range_min), letter_to_number(range_max) + 1):
-        range_axes[_get_column_letter(e) + str(row_min_sub_one)] = e
+        if top_range:
+            range_axes[_get_column_letter(e) + str(row_min_sub_one)] = e
         range_axes[_get_column_letter(e) + str(row_max_plus_one)] = e
 
-    experiment_axes = {}
-    current_row = row_max + 2
+    experiment_axes = {
+        range_min + str(row_max + 2): 'FieldMapper / slin63@illinois.edu / FCPathology / Rendered: {}. Experiments described at bottom of sheet.'.format(datetime.now())
+    }
+    current_row = row_max + 3
     for exp in experiments:
         exp_string = 'EXP: {} - {}. Owner: {}. Field: {}. Purpose: {}. Comments: {}.'.format(exp.name, exp.start_date, exp.user, exp.field, exp.purpose, exp.comments)
         experiment_axes[range_min + str(current_row)] = exp_string
@@ -157,7 +201,7 @@ def get_plot_domains(object_list):
     rows = []
     ranges = []
     for obj in object_list:
-        rows.append(int(obj.row))
+        rows += obj.get_row_list()
         ranges.append(obj.range)
 
     return [rows, ranges]
