@@ -91,13 +91,19 @@
   <form action='/lab/download/data/fieldmap/'>
     <input class="btn btn-primary" type="submit" name="submit" value="Download Selected Experiment Maps"/>
   </form>
-  <hr>
-  <h3>Download by field:</h3>
-  <hr>
-  {% for field in field_set %}
-    <form action={% url "download_field_map_by_field" field.id %}>
-      <input class="btn btn-primary" type="submit" name="submit" value="Download {{ field }} map"/>
-    </form>
+
+  {# {{ field_year_dict }} #}
+  {% for year, field_set in field_year_dict.items %}
+    <hr>
+     <h3>{{ year }} Fields:</h3>
+    <hr>
+
+    {% for field in field_set %}
+      <form action={% url "download_field_map_by_field" field.id %}>
+          <input class="btn btn-primary" type="submit" name="submit" value="Download {{ field }} map"/>
+      </form>
+    {% endfor %}
+
   {% endfor %}
 </div><br/><br/>
 
