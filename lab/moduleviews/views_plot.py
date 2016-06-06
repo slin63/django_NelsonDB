@@ -1,4 +1,5 @@
 import csv
+from datetime import date
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
@@ -10,6 +11,7 @@ from applets import field_map_generator
 from lab.models import Experiment, Stock, ObsPlot, ObsPlant, ObsSample, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, Field, \
   Measurement, MaizeSample, Isolate
 
+YEAR_INIT = 2015
 
 @login_required
 def single_plot_info(request, obs_plot_id):
@@ -78,12 +80,32 @@ def plot_loader_browse(request):
   context = RequestContext(request)
   context_dict = {}
   plot_loader = sort_plot_loader(request)
-  field_set = Field.objects.exclude(id=1)
+  field_year_dict = get_field_year_dict()
   context_dict = checkbox_session_variable_check(request)
   context_dict['plot_loader'] = plot_loader
-  context_dict['field_set'] = field_set
+  context_dict['field_year_dict'] = field_year_dict
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('lab/plot/plot_data.html', context_dict, context)
+
+def get_year_set(field_set):
+  year_set = []
+  for field in field_set:
+    year_set.append(field.planting_date)
+
+  return set(year_set)
+
+def get_field_year_dict():
+  field_year_dict = {}
+  for year in xrange(YEAR_INIT, date.today().year + 1):
+    field_query = Field.objects.filter(planting_year=year).exclude(id=1)
+
+    if len(field_query) != 0:
+      field_year_dict[year] = field_query
+    else:
+      pass
+
+  return field_year_dict
+
 
 def sort_plot_loader(request):
   plot_loader = {}
