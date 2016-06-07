@@ -7,7 +7,7 @@ from openpyxl.utils import _get_column_letter
 from openpyxl.styles import PatternFill, Border, Side
 from datetime import datetime
 
-
+COLOR_SET = ['b3ecff', '00ffcc', '99ffcc']
 
 class PlotCell(object):
     def __init__(self, range_num, row_num, experiment, plot_id, field):
@@ -52,7 +52,7 @@ def compile_info(plot_objects, field=None):
         worksheet = wb.create_sheet()
         worksheet.title = field.field_name
         experiment_current = field_plots[0].experiment
-        experiment_colors = iter(['00ccff', '00ffcc', 'ffcccc'])
+        experiment_colors = iter(COLOR_SET)
         cell_color = experiment_colors.next()
 
         for plot in field_plots:
@@ -62,7 +62,7 @@ def compile_info(plot_objects, field=None):
                 try:
                     cell_color = experiment_colors.next()
                 except StopIteration:
-                    experiment_colors = iter(['00ccff', '00ffcc', 'ffcccc'])
+                    experiment_colors = iter(COLOR_SET)
                     cell_color = experiment_colors.next()
 
             cell_fill = PatternFill(start_color=cell_color,
@@ -151,7 +151,7 @@ def generate_axes(domain, plot_objects):
     # Generate experiment/script info labels
     experiments = get_plot_experiments(plot_objects)
     experiment_axes = {
-        range_min + str(row_max + 2): 'FieldMapper / slin63@illinois.edu / FCPathology / Rendered: {}. Experiments described at bottom of sheet.'.format(datetime.now())
+        range_min + str(row_max + 2): 'FieldMapper / slin63@illinois.edu / FCPathology / Rendered: {}.'.format(datetime.now())
     }
     current_row = row_max + 3
     for exp in experiments:

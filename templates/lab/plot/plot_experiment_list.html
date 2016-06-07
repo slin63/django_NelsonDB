@@ -6,6 +6,8 @@
       <tr>
         <th>Select</th>
         <th>Experiment</th>
+        <th>Investigator</th>
+        <th>Purpose</th>
         <th>Field</th>
       </tr>
       </thead>
@@ -14,6 +16,8 @@
           <tr>
             <td><input type="checkbox" name="checkbox_plot_experiment" value="{{ plot.experiment__id }}"></td>
             <td><a href='/lab/experiment/{{ plot.experiment__name }}/'>{{ plot.experiment__name }}</a></td>
+            <td>{{ plot.experiment__user }}</td>
+            <td>{{ plot.experiment__purpose }}</td>
             <td><a href='/lab/field/{{plot.experiment__field__id}}/'>{{ plot.experiment__field__field_name }}</a></td>
           </tr>
         {% endfor %}

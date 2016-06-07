@@ -478,6 +478,9 @@ class Primer(models.Model):
     order_date = models.CharField(max_length=200, blank=True)
     comments = models.CharField(max_length=1000, blank=True)
 
+    # Context sequence string
+    # Sequence string
+
     def __unicode__(self):
         return self.primer_id
 
