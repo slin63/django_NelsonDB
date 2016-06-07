@@ -240,7 +240,7 @@ def checkbox_plot_loader_clear(request):
 def show_all_plot_experiment(request):
   context = RequestContext(request)
   context_dict = {}
-  plot_experiment_list = ObsTracker.objects.filter(obs_entity_type='plot').values('experiment__name', 'experiment__field__field_name', 'experiment__user', 'experiment__purpose', 'experiment__field__id', 'experiment__id').distinct()[:2000]
+  plot_experiment_list = ObsTracker.objects.filter(obs_entity_type='plot').values('experiment__name', 'experiment__field__field_name', 'experiment__user__username', 'experiment__purpose', 'experiment__field__id', 'experiment__id').distinct()[:2000]
   context_dict = checkbox_session_variable_check(request)
   context_dict['plot_experiment_list'] = plot_experiment_list
   return render_to_response('lab/plot/plot_experiment_list.html', context_dict, context)
