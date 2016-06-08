@@ -730,6 +730,7 @@ def plot_loader_prep(upload_file, user):
         rep = plot["Rep"]
         kernel_num = plot["Kernel Num"]
         planting_date = plot["Planting Date"]
+        planting_year = plot["Planting Year"]
         harvest_date = plot["Harvest Date"]
         comments = plot["Plot Comments"]
         plot = plot["Plot Name"]
@@ -740,7 +741,7 @@ def plot_loader_prep(upload_file, user):
             try:
                 field = Field.objects.get(field_name=field_name)
             except Field.DoesNotExist:
-                field = Field.objects.get_or_create(locality_id=1, field_name=field_name)[0]
+                field = Field.objects.get_or_create(locality_id=1, field_name=field_name, planting_year=planting_year)[0]
             experiment = Experiment.objects.create(name=experiment_name, user=user, field=field, start_date=planting_date)
 
 
@@ -749,7 +750,10 @@ def plot_loader_prep(upload_file, user):
                 stock_id = Stock.objects.get(seed_id=source_seed_id).id
             except (IntegrityError, Stock.DoesNotExist):
                 new_people = People.objects.get_or_create(first_name=first_name, last_name=last_name, organization=organization)[0]
-                new_taxonomy = Taxonomy.objects.get_or_create(population=population)[0]
+                if population != '':
+                    new_taxonomy = Taxonomy.objects.get_or_create(population=population)[0]
+                else:
+                    new_taxonomy = Taxonomy.objects.get(id=1)
                 new_passport = Passport.objects.get_or_create(collecting_id=1, people=new_people, taxonomy=new_taxonomy)[0]
                 stock_id = Stock.objects.get_or_create(seed_id=source_seed_id, seed_name=seed_name, pedigree=pedigree, passport=new_passport)[0].id
             stock_obs = ObsTracker.objects.get_or_create(experiment=experiment, obs_entity_type='stock', stock_id=stock_id, user=user)[0]
@@ -759,17 +763,18 @@ def plot_loader_prep(upload_file, user):
         experiment_name_table = loader_db_mirror.experiment_name_mirror()
 
         if field_name != '':
-            field_name_fix = field_name + '\r'
-            if field_name in field_name_table:
-                field_id = field_name_table[field_name][0]
-            elif field_name_fix in field_name_table:
-                field_id = field_name_table[field_name_fix][0]
-            else:
-                field_name_error[(plot_id, source_seed_id, field_name, plot_name, plot_range, plot, block,rep, kernel_num, planting_date, harvest_date, comments)] = error_count
-                error_count = error_count + 1
-                field_id = 1
-        else:
-            field_id = 1
+            try:
+                field_id = Field.objects.get(field_name=field_name).id
+            except Field.DoesNotExist:
+                field_name_fix = field_name + '\r'
+                if field_name in field_name_table:
+                    field_id = field_name_table[field_name][0]
+                elif field_name_fix in field_name_table:
+                    field_id = field_name_table[field_name_fix][0]
+                else:
+                    field_name_error[(plot_id, source_seed_id, field_name, plot_name, plot_range, plot, block,rep, kernel_num, planting_date, harvest_date, comments)] = error_count
+                    error_count = error_count + 1
+                    field_id = 1
 
         plot_hash = plot_id + plot_name + plot_range + plot_row + plot + block + rep + kernel_num + planting_date + harvest_date + comments
         plot_hash_fix = plot_hash + '\r'
