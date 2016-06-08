@@ -741,7 +741,7 @@ def plot_loader_prep(upload_file, user):
             try:
                 field = Field.objects.get(field_name=field_name)
             except Field.DoesNotExist:
-                field = Field.objects.get_or_create(locality_id=1, field_name=field_name, planting_year=planting_year)[0]
+                field = Field.objects.create(locality_id=1, field_name=field_name, planting_year=planting_year)
             experiment = Experiment.objects.create(name=experiment_name, user=user, field=field, start_date=planting_date)
 
 
@@ -763,6 +763,7 @@ def plot_loader_prep(upload_file, user):
         experiment_name_table = loader_db_mirror.experiment_name_mirror()
 
         if field_name != '':
+            print field_name
             try:
                 field_id = Field.objects.get(field_name=field_name).id
             except Field.DoesNotExist:
