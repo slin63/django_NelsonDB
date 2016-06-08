@@ -736,14 +736,14 @@ def plot_loader_prep(upload_file, user):
         plot = plot["Plot Name"]
 
         try:
+            field = Field.objects.get(field_name=field_name)
+        except Field.DoesNotExist:
+            field = Field.objects.create(locality_id=1, field_name=field_name, planting_year=planting_year)
+
+        try:
             experiment = Experiment.objects.get(name=experiment_name)
         except Experiment.DoesNotExist:
-            try:
-                field = Field.objects.get(field_name=field_name)
-            except Field.DoesNotExist:
-                field = Field.objects.create(locality_id=1, field_name=field_name, planting_year=planting_year)
             experiment = Experiment.objects.create(name=experiment_name, user=user, field=field, start_date=planting_date)
-
 
         if source_seed_id != '':
             try:
@@ -762,20 +762,21 @@ def plot_loader_prep(upload_file, user):
         obs_tracker_stock_id_table = loader_db_mirror.obs_tracker_stock_id_mirror()
         experiment_name_table = loader_db_mirror.experiment_name_mirror()
 
-        if field_name != '':
-            print field_name
-            try:
-                field_id = Field.objects.get(field_name=field_name).id
-            except Field.DoesNotExist:
-                field_name_fix = field_name + '\r'
-                if field_name in field_name_table:
-                    field_id = field_name_table[field_name][0]
-                elif field_name_fix in field_name_table:
-                    field_id = field_name_table[field_name_fix][0]
-                else:
-                    field_name_error[(plot_id, source_seed_id, field_name, plot_name, plot_range, plot, block,rep, kernel_num, planting_date, harvest_date, comments)] = error_count
-                    error_count = error_count + 1
-                    field_id = 1
+        field_id = field.id
+        # if field_name != '':
+        #     print field_name
+        #     try:
+        #         field_id = Field.objects.get(field_name=field_name).id
+        #     except Field.DoesNotExist:
+        #         field_name_fix = field_name + '\r'
+        #         if field_name in field_name_table:
+        #             field_id = field_name_table[field_name][0]
+        #         elif field_name_fix in field_name_table:
+        #             field_id = field_name_table[field_name_fix][0]
+        #         else:
+        #             field_name_error[(plot_id, source_seed_id, field_name, plot_name, plot_range, plot, block,rep, kernel_num, planting_date, harvest_date, comments)] = error_count
+        #             error_count = error_count + 1
+        #             field_id = 1
 
         plot_hash = plot_id + plot_name + plot_range + plot_row + plot + block + rep + kernel_num + planting_date + harvest_date + comments
         plot_hash_fix = plot_hash + '\r'
