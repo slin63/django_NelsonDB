@@ -21,6 +21,15 @@ class UserForm(forms.ModelForm):
         fields = ['username', 'password', 'email', 'first_name', 'last_name']
 
 
+class DownloadFieldForm(forms.ModelForm):
+    field = forms.ModelChoiceField(queryset=Field.objects.exclude(id=1), empty_label="Download a field map",
+    help_text='\n', required=True)
+
+    class Meta:
+      model = Field
+      fields = ['field']
+
+
 class FileDumpForm(forms.ModelForm):
     user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Username ---",
                                   help_text="Select the primary user:", required=True)
@@ -138,6 +147,8 @@ class NewFieldForm(forms.Form):
                                  help_text="Give a field name:", required=True)
     field_num = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Field Num'}),
                                 help_text="What is the field number:", required=False)
+    planting_year = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Planting Year'}),
+                                help_text="What year was it planted?:", required=True)
     comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}),
                                help_text="Any additional comments:", required=False)
 

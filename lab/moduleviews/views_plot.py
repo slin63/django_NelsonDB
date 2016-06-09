@@ -1,7 +1,7 @@
 import csv
 from datetime import date
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from itertools import chain
@@ -10,6 +10,7 @@ from openpyxl.writer.excel import save_virtual_workbook
 from applets import field_map_generator
 from lab.models import Experiment, Stock, ObsPlot, ObsPlant, ObsSample, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, Field, \
   Measurement, MaizeSample, Isolate
+from lab.forms import DownloadFieldForm
 
 YEAR_INIT = 2015
 
@@ -79,13 +80,24 @@ def get_fields_from_plots(object_list):
 def plot_loader_browse(request):
   context = RequestContext(request)
   context_dict = {}
-  plot_loader = sort_plot_loader(request)
-  field_year_dict = get_field_year_dict()
-  context_dict = checkbox_session_variable_check(request)
-  context_dict['plot_loader'] = plot_loader
-  context_dict['field_year_dict'] = field_year_dict
-  context_dict['logged_in_user'] = request.user.username
-  return render_to_response('lab/plot/plot_data.html', context_dict, context)
+
+  # Handles the little select field-map form at the bottom
+  if request.method == 'POST':
+    form = DownloadFieldForm(request.POST)
+    if form.is_valid():
+      field_id = form.cleaned_data['field'].id
+      return HttpResponseRedirect('/lab/download/plot_field/{}'.format(field_id))
+
+  else:
+    form = DownloadFieldForm()
+    plot_loader = sort_plot_loader(request)
+    field_list = Field.objects.exclude(id=1)
+    context_dict = checkbox_session_variable_check(request)
+    context_dict['form'] = form
+    context_dict['plot_loader'] = plot_loader
+    context_dict['field_list'] = field_list
+    context_dict['logged_in_user'] = request.user.username
+    return render_to_response('lab/plot/plot_data.html', context_dict, context)
 
 def get_year_set(field_set):
   year_set = []
@@ -105,7 +117,6 @@ def get_field_year_dict():
       pass
 
   return field_year_dict
-
 
 def sort_plot_loader(request):
   plot_loader = {}
@@ -417,3 +428,7 @@ def get_obs_measurements(obs_type, obs_id):
     for measurement in obs_measurements:
       measurement = make_obs_tracker_info(measurement.obs_tracker)
   return obs_measurements
+
+
+def drop_down_field_form(request):
+  pass

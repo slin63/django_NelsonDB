@@ -3945,10 +3945,11 @@ def log_data_online(request, data_type):
 						locality = form.cleaned_data['locality']
 						field_name = form.cleaned_data['field_name']
 						field_num = form.cleaned_data['field_num']
+						planting_year = form.cleaned_data['planting_year']
 						comments = form.cleaned_data['comments']
 
 						try:
-							new_field = Field.objects.get_or_create(locality=locality, field_name=field_name, field_num=field_num, comments=comments)
+							new_field = Field.objects.get_or_create(locality=locality, field_name=field_name, field_num=field_num, comments=comments, planting_year=planting_year)
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
