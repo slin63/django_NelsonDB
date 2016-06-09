@@ -83,10 +83,15 @@ def plot_loader_browse(request):
 
   # Handles the little select field-map form at the bottom
   if request.method == 'POST':
+    print request.POST
     form = DownloadFieldForm(request.POST)
     if form.is_valid():
       field_id = form.cleaned_data['field'].id
-      return HttpResponseRedirect('/lab/download/plot_field/{}'.format(field_id))
+      if form.cleaned_data['get_csv_instead']:
+        return download_plot_loader(request, field_id)
+      else:
+        return download_field_map_by_field(request, field_id)
+      # return HttpResponseRedirect('/lab/download/plot_field/{}'.format(field_id))
   else:
     form = DownloadFieldForm()
     plot_loader = sort_plot_loader(request)
@@ -116,14 +121,14 @@ def sort_plot_loader(request, field=None):
 def download_plot_loader(request, field_id=None):
   field = Field.objects.get(id=field_id)
   if field:
-    filename = field.field_name
+    filename = field.field_name.replace(' ', '') + '-Plots.csv'
     plot_loader = sort_plot_loader(request=request, field=field)
   else:
     filename = 'selected-experiments'
     plot_loader = sort_plot_loader(request=request, field=None)
 
   response = HttpResponse(content_type='text/csv')
-  response['Content-Disposition'] = 'attachment; filename={}-sheet.csv'.format(filename)
+  response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
   writer = csv.writer(response)
   writer.writerow(['Experiment Name', 'Plot ID', 'Plot Name', 'Field_Name', 'Source Stock', 'Row', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
   for row in plot_loader:
