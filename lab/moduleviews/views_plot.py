@@ -87,7 +87,6 @@ def plot_loader_browse(request):
     if form.is_valid():
       field_id = form.cleaned_data['field'].id
       return HttpResponseRedirect('/lab/download/plot_field/{}'.format(field_id))
-
   else:
     form = DownloadFieldForm()
     plot_loader = sort_plot_loader(request)
@@ -99,35 +98,37 @@ def plot_loader_browse(request):
     context_dict['logged_in_user'] = request.user.username
     return render_to_response('lab/plot/plot_data.html', context_dict, context)
 
-def get_year_set(field_set):
-  year_set = []
-  for field in field_set:
-    year_set.append(field.planting_date)
-
-  return set(year_set)
-
-def get_field_year_dict():
-  field_year_dict = {}
-  for year in xrange(YEAR_INIT, date.today().year + 1):
-    field_query = Field.objects.filter(planting_year=year).exclude(id=1)
-
-    if len(field_query) != 0:
-      field_year_dict[year] = field_query
-    else:
-      pass
-
-  return field_year_dict
-
-def sort_plot_loader(request):
+def sort_plot_loader(request, field=None):
   plot_loader = {}
-  if request.session.get('checkbox_plot_experiment_id_list', None):
-    checkbox_plot_experiment_id_list = request.session.get('checkbox_plot_experiment_id_list')
-    for plot_experiment in checkbox_plot_experiment_id_list:
-      rows = ObsTracker.objects.filter(obs_entity_type='plot', experiment__id=plot_experiment)
-      plot_loader = list(chain(rows, plot_loader))
+  if field:
+    plot_loader = ObsTracker.objects.filter(field=field, obs_entity_type='plot')
   else:
-    plot_loader = ObsTracker.objects.filter(obs_entity_type='plot')[:5000]
+    if request.session.get('checkbox_plot_experiment_id_list', None):
+      checkbox_plot_experiment_id_list = request.session.get('checkbox_plot_experiment_id_list')
+      for plot_experiment in checkbox_plot_experiment_id_list:
+        rows = ObsTracker.objects.filter(obs_entity_type='plot', experiment__id=plot_experiment)
+        plot_loader = list(chain(rows, plot_loader))
+    else:
+      plot_loader = ObsTracker.objects.filter(obs_entity_type='plot')[:100]
   return plot_loader
+
+@login_required
+def download_plot_loader(request, field_id=None):
+  field = Field.objects.get(id=field_id)
+  if field:
+    filename = field.field_name
+    plot_loader = sort_plot_loader(request=request, field=field)
+  else:
+    filename = 'selected-experiments'
+    plot_loader = sort_plot_loader(request=request, field=None)
+
+  response = HttpResponse(content_type='text/csv')
+  response['Content-Disposition'] = 'attachment; filename={}-sheet.csv'.format(filename)
+  writer = csv.writer(response)
+  writer.writerow(['Experiment Name', 'Plot ID', 'Plot Name', 'Field_Name', 'Source Stock', 'Row', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
+  for row in plot_loader:
+    writer.writerow([row.experiment.name, row.obs_plot.plot_id, row.obs_plot.plot_name, row.field.field_name, row.stock.seed_id, row.obs_plot.row_num, row.obs_plot.range_num, row.obs_plot.plot, row.obs_plot.block, row.obs_plot.rep, row.obs_plot.kernel_num, row.obs_plot.planting_date, row.obs_plot.harvest_date, row.obs_plot.comments])
+  return response
 
 @login_required
 def download_field_map(request):
@@ -188,17 +189,6 @@ def download_field_map_experiment(request, experiment_name):
 
   return response
 
-@login_required
-def download_plot_loader(request):
-  response = HttpResponse(content_type='text/csv')
-  response['Content-Disposition'] = 'attachment; filename="selected_experiment_plots.csv"'
-  plot_loader = sort_plot_loader(request)
-  writer = csv.writer(response)
-  writer.writerow(['Experiment Name', 'Plot ID', 'Plot Name', 'Field_Name', 'Source Stock', 'Row', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date', 'Comments'])
-  for row in plot_loader:
-    writer.writerow([row.experiment.name, row.obs_plot.plot_id, row.obs_plot.plot_name, row.field.field_name, row.stock.seed_id, row.obs_plot.row_num, row.obs_plot.range_num, row.obs_plot.plot, row.obs_plot.block, row.obs_plot.rep, row.obs_plot.kernel_num, row.obs_plot.planting_date, row.obs_plot.harvest_date, row.obs_plot.comments])
-  return response
-
 def suggest_plot_experiment(request):
   context = RequestContext(request)
   context_dict = {}
@@ -233,6 +223,7 @@ def select_plot_experiment(request):
   request.session['checkbox_plot_experiment_id_list'] = checkbox_plot_experiment_list
   context_dict = checkbox_session_variable_check(request)
   context_dict['field_set'] = field_set
+  context_dict['form'] = DownloadFieldForm
   context_dict['plot_loader'] = plot_loader
   context_dict['logged_in_user'] = request.user.username
   return render_to_response('lab/plot/plot_data.html', context_dict, context)

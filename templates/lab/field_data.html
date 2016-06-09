@@ -14,6 +14,8 @@
           <tr>
             <th>Field Name</th>
             <th>Field Num</th>
+            <th>Download Field Map</th>
+            <th>Download Field Data</th>
             <th>Comments</th>
             <th>Locality City</th>
             <th>Locality State</th>
@@ -22,10 +24,12 @@
           </tr>
           </thead>
           <tbody>
-          {% for data in field_list %}
+          {% for data in field_data %}
           <tr>
             <td><a href='/lab/field/{{data.id}}/'>{{data.field_name}}</a></td>
             <td>{{data.field_num}}</td>
+            <td><a href={% url 'download_field_map_by_field' data.id %}>Field map</td>
+            <td><a href={% url 'download_field_plots' data.id %}>Field plot data</a></td>
             <td>{{data.comments}}</td>
             <td>{{data.locality.city}}</td>
             <td>{{data.locality.state}}</td>
@@ -36,8 +40,12 @@
           </tbody>
         </table>
 
+
+
     </div><br/><br/>
   </div>
+
+
 
 
 {% endblock %}

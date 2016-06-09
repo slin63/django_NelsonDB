@@ -1573,7 +1573,7 @@ def browse_locality_data(request):
 def browse_field_data(request):
 	context = RequestContext(request)
 	context_dict = {}
-	field_data = Field.objects.all()
+	field_data = Field.objects.exclude(id=1)
 	context_dict['field_data'] = field_data
 	context_dict['logged_in_user'] = request.user.username
 	return render_to_response('lab/field_data.html', context_dict, context)

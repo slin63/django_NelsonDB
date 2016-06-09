@@ -242,6 +242,7 @@ urlpatterns = patterns('',
                        url(r'^download/isolate/(?P<experiment_name>\w+)/', views.download_isolates_experiment, name='download_isolates_experiment'),
 
                        url(r'^download/data/plot/$', views_plot.download_plot_loader, name='download_plot_loader'),
+                       url(r'^download/data/field/(?P<field_id>\w+)$', views_plot.download_plot_loader, name='download_field_plots'),
                        url(r'^download/data/fieldmap/$', views_plot.download_field_map, name='download_field_map'),
                        url(r'^download/data/tissue/$', views.download_tissue_data, name='download_tissue_data'),
                        url(r'^download/data/plant/$', views.download_plant_data, name='download_plant_data'),
