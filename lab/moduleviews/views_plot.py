@@ -83,15 +83,10 @@ def plot_loader_browse(request):
 
   # Handles the little select field-map form at the bottom
   if request.method == 'POST':
-    print request.POST
     form = DownloadFieldForm(request.POST)
     if form.is_valid():
       field_id = form.cleaned_data['field'].id
-      if form.cleaned_data['get_csv_instead']:
-        return download_plot_loader(request, field_id)
-      else:
-        return download_field_map_by_field(request, field_id)
-      # return HttpResponseRedirect('/lab/download/plot_field/{}'.format(field_id))
+      return HttpResponseRedirect('/lab/download/plot_field/{}'.format(field_id))
   else:
     form = DownloadFieldForm()
     plot_loader = sort_plot_loader(request)

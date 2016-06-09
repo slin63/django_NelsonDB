@@ -23,13 +23,11 @@ class UserForm(forms.ModelForm):
 
 class DownloadFieldForm(forms.ModelForm):
     field = forms.ModelChoiceField(queryset=Field.objects.exclude(id=1), empty_label="Download a field map",
-    help_text='Select a field to download: ', required=True)
-
-    get_csv_instead = forms.BooleanField(required=False, help_text='Check to download the CSV instead: ')
+    help_text='\n', required=True)
 
     class Meta:
       model = Field
-      fields = ['field', 'get_csv_instead']
+      fields = ['field']
 
 
 class FileDumpForm(forms.ModelForm):
