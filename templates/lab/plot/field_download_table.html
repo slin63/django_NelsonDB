@@ -1,7 +1,12 @@
 {% if form %}
+<hr>
   <form action="/lab/data/plot/" method="post">
     {% csrf_token %}
-    {{ form }}
+    {% for f in form.visible_fields %}
+      <p style="font-size:19px">{{ f.help_text }}{{ f }}</p>
+
+    {% endfor %}
+    <br>
     <input type="submit" value="Submit" />
   </form>
 {% endif %}
