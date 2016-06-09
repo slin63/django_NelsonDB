@@ -693,8 +693,6 @@ def plot_loader_prep(upload_file, user):
     obs_plot_hash_table = loader_db_mirror.obs_plot_hash_mirror()
     obs_plot_id = loader_db_mirror.obs_plot_id_mirror()
     plot_id_table = loader_db_mirror.plot_id_mirror()
-    seed_id_table = loader_db_mirror.seed_id_mirror()
-    field_name_table = loader_db_mirror.field_name_mirror()
     obs_tracker_hash_table = loader_db_mirror.obs_tracker_hash_mirror()
     obs_tracker_source_hash_table = loader_db_mirror.obs_tracker_source_hash_mirror()
     obs_tracker_id = loader_db_mirror.obs_tracker_id_mirror()
@@ -763,6 +761,7 @@ def plot_loader_prep(upload_file, user):
         experiment_name_table = loader_db_mirror.experiment_name_mirror()
 
         field_id = field.id
+        print 'FIELD={}, FIELD_ID={}'.format(field, field_id)
         # if field_name != '':
         #     print field_name
         #     try:
