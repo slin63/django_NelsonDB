@@ -161,7 +161,7 @@ def download_field_map_by_field(request, field_id):
       range_num = field_map_generator._get_column_letter(int(obs.obs_plot.range_num))
 
       plot_objects.append(field_map_generator.PlotCell(
-         range_num=range_num, row_num=row_num, experiment=obs.experiment, plot_id=obs.obs_plot.plot_id, field=obs.experiment.field)
+         range_num=range_num, row_num=row_num, experiment=obs.experiment, plot_id=obs.obs_plot.plot_id, field=obs.field)
       )
 
     wb = field_map_generator.compile_info(plot_objects, field)
