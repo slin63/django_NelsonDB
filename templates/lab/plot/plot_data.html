@@ -92,6 +92,9 @@
     <input class="btn btn-primary" type="submit" name="submit" value="Download Selected Experiment Maps"/>
   </form>
 
+  {% include "lab/plot/field_download_table.html" %}
+
+{% comment %}
   {% for year, field_set in field_year_dict.items %}
     <hr> <h3><i>Download {{ year }} Field Maps:</i></h3> <hr>
 
@@ -102,7 +105,9 @@
     {% endfor %}
 
   {% endfor %}
+{% endcomment %}
 
 </div><br/><br/>
+
 
 {% endblock %}
