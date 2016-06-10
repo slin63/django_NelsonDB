@@ -150,7 +150,7 @@ def obs_tracker_plot_id_mirror():
     #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
     obs_plot_file = ObsPlot.objects.all()
-    obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='row').order_by('obs_plot_id')
+    obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='plot').order_by('obs_plot_id')
     for row in obs_tracker_file:
         ot[row.obs_plot_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     for row in obs_plot_file:
@@ -163,7 +163,7 @@ def obs_tracker_obs_plot_id_mirror():
     #--- Key = (obs_plot_id)
     #--- Value = (obs_tracker_id, obs_entity_type, experiment_id, field_id, isolate_id, isolatestock_id, location_id, maize_sample_id, obs_culture_id, obs_dna_id, obs_env_id, obs_extract_id, obs_microbe_id, obs_plant_id, obs_plate_id, obs_plot_id, obs_sample_id, obs_tissue_id, obs_well_id, stock_id, user_id)
 
-    obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='row')
+    obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='plot')
     for row in obs_tracker_file:
         obs_tracker_obs_plot_id_table[row.obs_plot_id] = (row.id, row.obs_entity_type, row.experiment_id, row.field_id, row.isolate_id, row.isolatestock_id, row.location_id, row.maize_sample_id, row.obs_culture_id, row.obs_dna_id, row.obs_env_id, row.obs_extract_id, row.obs_microbe_id, row.obs_plant_id, row.obs_plate_id, row.obs_plot_id, row.obs_sample_id, row.obs_tissue_id, row.obs_well_id, row.stock_id, row.user_id)
     return obs_tracker_obs_plot_id_table
@@ -574,7 +574,7 @@ def plot_id_seed_id_mirror():
     #--- Value = (seed_id)
 
     obs_plot_file = ObsPlot.objects.all()
-    obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='row')
+    obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='plot')
     for obs_tracker in obs_tracker_file:
         obs_tracker_obs_plot_id_table[(obs_tracker.obs_plot_id)] = (obs_tracker.stock.seed_id)
     for obs_plot in obs_plot_file:
@@ -594,7 +594,7 @@ def plot_id_stock_id_mirror():
     #--- Value = (stock_id)
 
     obs_plot_file = ObsPlot.objects.all()
-    obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='row')
+    obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='plot')
     for obs_tracker in obs_tracker_file:
         obs_tracker_obs_plot_id_table[(obs_tracker.obs_plot_id)] = (obs_tracker.stock_id)
     for obs_plot in obs_plot_file:
@@ -614,7 +614,7 @@ def plot_id_field_id_mirror():
     #--- Value = (field_id)
 
     obs_plot_file = ObsPlot.objects.all()
-    obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='row')
+    obs_tracker_file = ObsTracker.objects.filter(obs_entity_type='plot')
     for obs_tracker in obs_tracker_file:
         obs_tracker_obs_plot_id_table[(obs_tracker.obs_plot_id)] = (obs_tracker.field_id)
     for obs_plot in obs_plot_file:
