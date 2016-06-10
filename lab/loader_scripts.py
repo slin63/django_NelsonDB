@@ -4758,6 +4758,8 @@ def measurement_loader_prep(upload_file, user):
                 experiment_id = experiment_name_table[experiment]
             else:
                 experiment_id = 1
+        else:
+            experiment_id = 1
 
         if username != '':
             if username in user_hash_table:
