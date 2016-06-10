@@ -733,6 +733,8 @@ def plot_loader_prep(upload_file, user):
         comments = plot["Plot Comments"]
         plot = plot["Plot Name"]
 
+
+
         try:
             field = Field.objects.get(field_name=field_name)
         except Field.DoesNotExist:
@@ -743,7 +745,9 @@ def plot_loader_prep(upload_file, user):
         except Experiment.DoesNotExist:
             experiment = Experiment.objects.create(name=experiment_name, user=user, field=field, start_date=planting_date)
 
-        if source_seed_id != '':
+        if source_seed_id == '':
+            stock_id = 1
+        else:
             try:
                 stock_id = Stock.objects.get(seed_id=source_seed_id).id
             except (IntegrityError, Stock.DoesNotExist):

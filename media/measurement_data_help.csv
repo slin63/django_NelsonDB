@@ -24,4 +24,3 @@
 "Parameter Type","0","0","0","lab_measurementparameter","parameter_type","A descriptor for the type of measurement being done. Example: Respiration, Toxin, Plot, Plant, Environmental"
 "Protocol","0","0","0","lab_measurementparameter","protocol","A detailed description for how the measurement is taken, include the model of any instrument used."
 "Unit of Measure","0","0","0","lab_measurementparameter","unit_of_measure","The unit that is relevant to the measurement. Example: g, kg, ppm, ml"
-"Trait ID Buckler","0","0","0","lab_measurementparameter","trait_id_buckler","A unique ID that is used by the Buckler Lab. Leave blank if not applicable."
