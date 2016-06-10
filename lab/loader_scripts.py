@@ -464,7 +464,7 @@ def seed_stock_loader(results_dict):
         for key in results_dict['obs_tracker_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(id=key[0], obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolatestock_id=key[4], location_id=key[5], maize_sample_id=key[6], obs_culture_id=key[7], obs_dna_id=key[8], obs_env_id=key[9], obs_extract_id=key[10], obs_microbe_id=key[11], obs_plant_id=key[12], obs_plate_id=key[13], obs_plot_id=key[14], obs_sample_id=key[15], obs_tissue_id=key[16], obs_well_id=key[17], stock_id=key[18], user_id=key[19])
+                    new_stock = ObsTracker.objects.create(obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolatestock_id=key[4], location_id=key[5], maize_sample_id=key[6], obs_culture_id=key[7], obs_dna_id=key[8], obs_env_id=key[9], obs_extract_id=key[10], obs_microbe_id=key[11], obs_plant_id=key[12], obs_plate_id=key[13], obs_plot_id=key[14], obs_sample_id=key[15], obs_tissue_id=key[16], obs_well_id=key[17], stock_id=key[18], user_id=key[19])
                     new_stock.save()
             except Exception as e:
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
@@ -4834,7 +4834,7 @@ def measurement_loader(results_dict):
         for key in results_dict['measurement_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_measurement = Measurement.objects.create(obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6])
+                    new_measurement = Measurement.objects.create(id=key[0], obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6])
             except Exception as e:
                 print key
                 print("Measurement Error: %s %s" % (e.message, e.args))
