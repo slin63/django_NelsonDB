@@ -5124,7 +5124,7 @@ def sidebar_search_page(request):
 	except ObsPlot.DoesNotExist:
 		row_results = None
 	for result in row_results:
-		result.url = "/lab/row/%d/" % (result.id)
+		result.url = "/lab/plot/%d/" % (result.id)
 	try:
 		isolatestock_results = IsolateStock.objects.filter(isolatestock_id__icontains=starts_with).exclude(isolatestock_id='No IsolateStock')
 	except IsolateStock.DoesNotExist:
@@ -5279,7 +5279,7 @@ def sidebar_search(request):
 		except ObsPlot.DoesNotExist:
 			row_results = None
 		for result in row_results:
-			result.url = "/lab/row/%d/" % (result.id)
+			result.url = "/lab/plot/%d/" % (result.id)
 		try:
 			isolatestock_results = IsolateStock.objects.filter(isolatestock_id__contains=starts_with).exclude(isolatestock_id='No IsolateStock')[:10]
 		except IsolateStock.DoesNotExist:
