@@ -4755,7 +4755,7 @@ def measurement_loader_prep(upload_file, user):
 
         if experiment != '':
             if experiment in experiment_name_table:
-                experiment_id = experiment_name_table[experiment].id
+                experiment_id = experiment_name_table[experiment][0]
             else:
                 experiment_id = 1
         else:
