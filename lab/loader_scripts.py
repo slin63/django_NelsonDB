@@ -467,6 +467,7 @@ def seed_stock_loader(results_dict):
                     new_stock = ObsTracker.objects.create(obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolatestock_id=key[4], location_id=key[5], maize_sample_id=key[6], obs_culture_id=key[7], obs_dna_id=key[8], obs_env_id=key[9], obs_extract_id=key[10], obs_microbe_id=key[11], obs_plant_id=key[12], obs_plate_id=key[13], obs_plot_id=key[14], obs_sample_id=key[15], obs_tissue_id=key[16], obs_well_id=key[17], stock_id=key[18], user_id=key[19])
                     new_stock.save()
             except Exception as e:
+                print key
                 print("ObsTracker Error: %s %s" % (e.message, e.args))
                 return False
         for key in results_dict['obs_tracker_source_new'].iterkeys():
@@ -4700,6 +4701,8 @@ def measurement_loader_prep(upload_file, user):
     obs_tracker_extract_id_table = loader_db_mirror.obs_tracker_extract_id_mirror()
     obs_tracker_culture_id_table = loader_db_mirror.obs_tracker_culture_id_mirror()
     obs_tracker_seed_id_table = loader_db_mirror.obs_tracker_seed_id_mirror()
+    experiment_name_table = loader_db_mirror.experiment_name_mirror()
+
     user_hash_table = loader_db_mirror.user_hash_mirror()
     measurement_param_name_table = loader_db_mirror.measurement_parameter_name_mirror()
 
@@ -4717,7 +4720,7 @@ def measurement_loader_prep(upload_file, user):
         time_of_measurement = row["DateTime"]
         value = row["Value"]
         comments = row["Measurement Comments"]
-        obs_tracker_found = False
+        experiment = row["Experiment"]
 
         start = time.clock()
 
@@ -4750,7 +4753,10 @@ def measurement_loader_prep(upload_file, user):
             obs_id_error[(obs_id, parameter, username, time_of_measurement, value, comments)] = obs_id
             error_count = error_count + 1
 
-        print 'TIME: {}'.format(start - time.clock())
+        if experiment in experiment_name_table:
+            experiment_id = experiment_name_table[experiment]
+        else:
+            experiment_id = 1
 
         if username != '':
             if username in user_hash_table:
@@ -4775,7 +4781,7 @@ def measurement_loader_prep(upload_file, user):
         measurement_hash_fix = measurement_hash + '\r'
         if measurement_hash not in measurement_hash_table and measurement_hash_fix not in measurement_hash_table:
             measurement_hash_table[measurement_hash] = measurement_id
-            measurement_new[(measurement_id, obs_tracker_id, parameter_id, user_id, time_of_measurement, value, comments)] = measurement_id
+            measurement_new[(measurement_id, obs_tracker_id, parameter_id, user_id, time_of_measurement, value, comments, experiment_id)] = measurement_id
             measurement_id = measurement_id + 1
         else:
             measurement_hash_exists[(measurement_id, obs_tracker_id, parameter_id, user_id, time_of_measurement, value, comments)] = measurement_id
@@ -4834,7 +4840,7 @@ def measurement_loader(results_dict):
         for key in results_dict['measurement_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_measurement = Measurement.objects.create(id=key[0], obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6])
+                    new_measurement = Measurement.objects.create(id=key[0], obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6], experiment_id=key[7])
             except Exception as e:
                 print key
                 print("Measurement Error: %s %s" % (e.message, e.args))
