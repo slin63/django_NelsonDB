@@ -4753,10 +4753,11 @@ def measurement_loader_prep(upload_file, user):
             obs_id_error[(obs_id, parameter, username, time_of_measurement, value, comments)] = obs_id
             error_count = error_count + 1
 
-        if experiment in experiment_name_table:
-            experiment_id = experiment_name_table[experiment]
-        else:
-            experiment_id = 1
+        if experiment != '':
+            if experiment in experiment_name_table:
+                experiment_id = experiment_name_table[experiment]
+            else:
+                experiment_id = 1
 
         if username != '':
             if username in user_hash_table:
