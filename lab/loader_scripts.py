@@ -9,7 +9,6 @@ from django.http import HttpResponseRedirect, HttpResponse
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsPlot, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, Isolate
 from django.db import IntegrityError, transaction
 
-import random
 
 # Pre-defined lists to populate loader_prep_output rows
 COLLECTING_TABLE = ['collecting_id', 'user_id', 'collection_date', 'collection_method', 'comments']
@@ -4679,8 +4678,9 @@ def isolate_loader(results_dict):
     return True
 
 def measurement_loader_prep(upload_file, user):
-    start = time.clock()
+    ##TODO: Automatically generate stock, parameter, data
 
+    start = time.clock()
     #-- These are the tables that will hold the curated data that is then written to csv files --
     measurement_new = OrderedDict({})
     #--- Key = (measurement_id, obs_tracker_id, measurement_parameter_id, user_id, time_of_measurement, value, comments)
@@ -4717,6 +4717,9 @@ def measurement_loader_prep(upload_file, user):
         time_of_measurement = row["DateTime"]
         value = row["Value"]
         comments = row["Measurement Comments"]
+        obs_tracker_found = False
+
+        start = time.clock()
 
         if obs_id in obs_tracker_plot_id_table:
             obs_tracker_id = obs_tracker_plot_id_table[obs_id][0]
@@ -4746,6 +4749,8 @@ def measurement_loader_prep(upload_file, user):
             obs_tracker_id = 1
             obs_id_error[(obs_id, parameter, username, time_of_measurement, value, comments)] = obs_id
             error_count = error_count + 1
+
+        print 'TIME: {}'.format(start - time.clock())
 
         if username != '':
             if username in user_hash_table:
@@ -4829,8 +4834,9 @@ def measurement_loader(results_dict):
         for key in results_dict['measurement_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_measurement = Measurement.objects.create(id=key[0], obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6])
+                    new_measurement = Measurement.objects.create(obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6])
             except Exception as e:
+                print key
                 print("Measurement Error: %s %s" % (e.message, e.args))
                 return False
     except Exception as e:

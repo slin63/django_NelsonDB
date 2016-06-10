@@ -1,5 +1,5 @@
-NelsonLab Mycotoxin Template Help,,,,,,
-"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
+FCPathology Mycotoxin Template Help,,,,,,
+"This file will be used to upload data to the FCPathologyDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
 ,,,,,,
 Template Name: maize_survey_v0.2,,,,,,
 Authored: 07/01/2015,,,,,,
@@ -14,7 +14,7 @@ County,0,0,0,lab_maizesample,county,The county where the maize sample is from.
 Sub Location,0,0,0,lab_maizesample,sub_location,The sub_location where the maize sample is from.
 Village,0,0,0,lab_maizesample,village,The village where the maize sample is from.
 Weight,0,0,0,lab_maizesample,weight,The weight in grams of the sample.
-Harvest Date,0,0,0,lab_maizesample,harvest_date,The harvest date of the sample. 
+Harvest Date,0,0,0,lab_maizesample,harvest_date,The harvest date of the sample.
 Storage Months,0,0,0,lab_maizesample,storage_months,The number of months the sample was is storage.
 Storage Conditions,0,0,0,lab_maizesample,storage_conditions,A descriptor of the storage conditions.
 Maize Variety,0,0,0,lab_maizesample,maize_variety,"A classification of the genotype, in a way similar to pedigree."

@@ -1,5 +1,5 @@
-NelsonLab Seed Packet Template Help,,,,,,
-"This file will be used to upload data to the NelsonDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
+FCPathology Seed Packet Template Help,,,,,,
+"This file will be used to upload data to the FCPathologyDB. FIELD NAMES CAN BE ADDED, BUT SHOULD BE DONE SPARINGLY",,,,,,
 ,,,,,,
 Template Name: seed_packet_v0.2,,,,,,
 Authored 07/01/2015,,,,,,
@@ -23,4 +23,4 @@ City,0,0,0,lab_locality,city,The city in which the stock packet is located.
 State,0,0,0,lab_locality,state,The state in which the stock packet is located.
 Country,0,0,0,lab_locality,country,The country in which the stock packet is located.
 Zipcode,0,0,0,lab_locality,zipcode,The zipcode in which the stock packet is located.
-Location Comments,0,0,0,lab_location,comments,Any additional comments about the location. 
+Location Comments,0,0,0,lab_location,comments,Any additional comments about the location.

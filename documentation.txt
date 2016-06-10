@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
-Documentation For NelsonLab Online Database
+Documentation For FCPathology Online Database
 Last Updated: 02/25/2015
 Authored By: Nicolas Morales
 
@@ -216,8 +216,8 @@ What is the "MetaMaize" Section on the left bar?
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
 MetaMaize is a project that currently has its own separate database.
-Its database is not directly connected with the NelsonLab database tables.
-Future plans are to merge the data from the MetaMaize database into the NelsonLab database tables.
+Its database is not directly connected with the FCPathology database tables.
+Future plans are to merge the data from the MetaMaize database into the FCPathology database tables.
 
 For example:
 	- The MetaMaize Plot Data will be merged with the overall Plot Data
