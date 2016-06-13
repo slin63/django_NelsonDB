@@ -119,12 +119,12 @@ def sort_plot_loader(request, field=None):
 
 @login_required
 def download_plot_loader(request, field_id=None):
-  field = Field.objects.get(id=field_id)
-  if field:
+  if field_id:
+    field = Field.objects.get(id=field_id)
     filename = field.field_name.replace(' ', '') + '-Plots.csv'
     plot_loader = sort_plot_loader(request=request, field=field)
   else:
-    filename = 'selected-experiments'
+    filename = 'selected-experiments.csv'
     plot_loader = sort_plot_loader(request=request, field=None)
 
   response = HttpResponse(content_type='text/csv')
