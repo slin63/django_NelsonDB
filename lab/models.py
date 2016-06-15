@@ -45,6 +45,7 @@ class Field(models.Model):
     locality = models.ForeignKey(Locality)
     field_name = models.CharField(max_length=200, unique=True)
     field_num = models.CharField(max_length=200, blank=True)
+    dimensions = models.CharField(max_length=200, blank=True)
     comments = models.CharField(max_length=1000, blank=True)
     planting_year = models.CharField(max_length=200, blank=False)
 

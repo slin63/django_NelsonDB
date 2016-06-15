@@ -1020,6 +1020,8 @@ def edit_info(request, obj_type, obj_id):
 						field.field_name = field_form.cleaned_data['field_name']
 						field.field_num = field_form.cleaned_data['field_num']
 						field.comments = field_form.cleaned_data['comments']
+						field.planting_year = field_form.cleaned_data['planting_year']
+						field.dimensions = field_form.cleaned_data['dimensions']
 						field.save()
 						context_dict['updated'] = True
 					except Exception:
@@ -1027,7 +1029,7 @@ def edit_info(request, obj_type, obj_id):
 			else:
 				print(field_form.errors)
 		else:
-			field_data = Field.objects.filter(id=obj_id).values('locality', 'field_name', 'field_num', 'comments')
+			field_data = Field.objects.filter(id=obj_id).values('locality', 'field_name', 'field_num', 'comments', 'planting_year', 'dimensions')
 			field_form = NewFieldForm(initial=field_data[0])
 		context_dict['field_id'] = obj_id
 		context_dict['field_form'] = field_form
@@ -3946,10 +3948,11 @@ def log_data_online(request, data_type):
 						field_name = form.cleaned_data['field_name']
 						field_num = form.cleaned_data['field_num']
 						planting_year = form.cleaned_data['planting_year']
+						dimensions = form.cleaned_data['dimensions']
 						comments = form.cleaned_data['comments']
 
 						try:
-							new_field = Field.objects.get_or_create(locality=locality, field_name=field_name, field_num=field_num, comments=comments, planting_year=planting_year)
+							new_field = Field.objects.get_or_create(locality=locality, field_name=field_name, field_num=field_num, comments=comments, planting_year=planting_year, dimensions=dimensions)
 						except Exception as e:
 							print("Error: %s %s" % (e.message, e.args))
 							failed = True
