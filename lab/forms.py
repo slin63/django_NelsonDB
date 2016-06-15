@@ -151,6 +151,8 @@ class NewFieldForm(forms.Form):
                                 help_text="What is the field number:", required=False)
     planting_year = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Planting Year'}),
                                 help_text="What year was it planted?:", required=True)
+    dimensions = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Field Dimensions'}),
+                                help_text="The range/row dimensions of the field:", required=True)
     comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}),
                                help_text="Any additional comments:", required=False)
 

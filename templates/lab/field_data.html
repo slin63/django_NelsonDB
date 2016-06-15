@@ -17,6 +17,8 @@
             <th>Download Field Map</th>
             <th>Download Field Data</th>
             <th>Comments</th>
+            <th>Planting Year</th>
+            <th>Dimensions</th>
             <th>Locality City</th>
             <th>Locality State</th>
             <th>Locality Country</th>
@@ -31,6 +33,8 @@
             <td><a href={% url 'download_field_map_by_field' data.id %}>Field map</td>
             <td><a href={% url 'download_field_plots' data.id %}>Field plot data</a></td>
             <td>{{data.comments}}</td>
+            <td>{{data.planting_year}}</td>
+            <td>{{data.dimensions}}</td>
             <td>{{data.locality.city}}</td>
             <td>{{data.locality.state}}</td>
             <td>{{data.locality.country}}</td>
