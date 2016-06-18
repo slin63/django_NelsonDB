@@ -1276,7 +1276,7 @@ def datatable_isolate_inventory(request):
 		    	'isolatestock_table_id': isolate.isolatestock.id,
 		    	'isolatestock_id': isolate.isolatestock.isolatestock_id,
 		    	'location_id': isolate.location.id,
-		    	'location_name': isolate.location.location_name,
+		    	'location_name': isolate.location.box_name,
 		    	'stock_date': isolate.stock_date,
 		    	'extract_color': isolate.extract_color,
 		    	'organism': isolate.organism,
