@@ -913,6 +913,12 @@ def stock_delete(request):
 	return JsonResponse({'data':True}, safe=True)
 
 @login_required
+def measurement_delete(request, measurement_id):
+	Measurement.objects.get(id=measurement_id).delete()
+
+	return HttpResponseRedirect('/lab/data/measurement')
+
+@login_required
 def update_isolate_info(request, isolate_id):
 	context = RequestContext(request)
 	context_dict = {}
@@ -3051,7 +3057,6 @@ def datatable_measurement_data(request):
 	arr = []
 	for data in measurement_data:
 		arr.append({
-        	# 'experiment_name': data.obs_tracker.experiment.name,
         	'experiment_name': data.experiment.name,
         	'obs_id': data.obs_tracker.obs_id,
         	'obs_url': data.obs_tracker.obs_id_url,
@@ -3064,6 +3069,7 @@ def datatable_measurement_data(request):
         	'unit_of_measure': data.measurement_parameter.unit_of_measure,
         	'trait_id_buckler': data.measurement_parameter.trait_id_buckler,
         	'comments': data.comments,
+        	'delete': '<a href=/lab/data/measurement_delete/{0}>Delete</a>'.format(data.id),
     	})
 	return JsonResponse({'data':arr, 'recordsTotal':count}, safe=True)
 

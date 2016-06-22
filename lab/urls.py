@@ -90,6 +90,7 @@ urlpatterns = patterns('',
 
                        url(r'^datatable/measurement_data/$', views.datatable_measurement_data, name='datatable_measurement_data'),
                        url(r'^data/measurement/$', views.measurement_data_browse, name='measurement_data_browse'),
+                       url(r'^data/measurement_delete/(?P<measurement_id>\w+)/$', views.measurement_delete, name='measurement_data_delete'),
                        url(r'^data/measurement/suggest_measurement_experiment/$', views.suggest_measurement_experiment, name='suggest_measurement_experiment'),
                        url(r'^data/measurement/select_measurement_experiment/$', views.select_measurement_experiment, name='select_measurement_experiment'),
                        url(r'^data/measurement/suggest_measurement_parameter/$', views.suggest_measurement_parameter, name='suggest_measurement_parameter'),

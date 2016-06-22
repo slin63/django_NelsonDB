@@ -83,6 +83,26 @@ $(document).ready(function(){
 
 });
 
+$('#measurement_detail_delete_button').click(function(){
+	if (confirm("Are you sure you want to delete this measurement? It cannot be undone.")) {
+		$.ajax({
+			dataType: "json",
+			url: "/lab/data/measurement_delete/",
+			type: "POST",
+			data: {'measurement_id':$('#measurement_detail_id').val()},
+			beforeSend: function(xhr, settings) {
+				var csrftoken = getCookie('csrftoken');
+				if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+					xhr.setRequestHeader("X-CSRFToken", csrftoken);
+				}
+			},
+			success: function(data) {
+				location.reload();
+			}
+		});
+	}
+});
+
 $('#isolatestock_detail_delete_button').click(function(){
 	if (confirm("Are you sure you want to delete this isolate stock? It cannot be undone.")) {
 		$.ajax({
@@ -1301,6 +1321,7 @@ $(document).ready(function() {
 				{ "mData": "unit_of_measure"},
 				// { "mData": "trait_id_buckler"},
 				{ "mData": "comments"},
+				{ "mData": "delete"},
 			],
 		});
 
