@@ -4858,6 +4858,7 @@ def measurement_loader(results_dict):
         for key in results_dict['measurement_new'].iterkeys():
             try:
                 with transaction.atomic():
+                    # new_measurement = Measurement.objects.get_or_create(obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6], experiment_id=key[7])[0]
                     new_measurement = Measurement.objects.create(id=key[0], obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6], experiment_id=key[7])
             except Exception as e:
                 print key

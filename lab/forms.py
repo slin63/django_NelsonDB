@@ -736,9 +736,10 @@ class UploadQueueForm(forms.Form):
 
 
 class FieldBookUploadForm(forms.Form):
+    supported_models = ['measurement']
     user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Username ---",
                                   help_text="Select the user who produced data:", required=True)
-    file_type = forms.ModelChoiceField(queryset=ContentType.objects.all(), empty_label="--- Model type ---",
+    file_type = forms.ModelChoiceField(queryset=ContentType.objects.filter(name__in=supported_models), empty_label="--- Model type ---",
                                help_text="Select the model you're uploading info for:", required=True)
     file_name = forms.FileField(help_text="Select your file:")
     verified = forms.BooleanField(help_text="Verified:", required=False)

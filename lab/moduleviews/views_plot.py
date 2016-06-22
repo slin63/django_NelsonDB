@@ -61,10 +61,10 @@ def download_plot_experiment(request, experiment_name):
     plot_loader = find_plot_from_experiment(experiment_name)
     writer = csv.writer(response)
     writer.writerow(
-        ['Plot ID', 'Plot Name', 'Field', 'Source Stock', 'Row', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num',
+        ['Experiment Name', 'Plot ID', 'Plot Name', 'Field', 'Source Stock', 'Row', 'Range', 'Plot', 'Block', 'Rep', 'Kernel Num',
          'Planting Date', 'Harvest Date', 'Comments'])
     for row in plot_loader:
-        writer.writerow([row.obs_plot.plot_id, row.obs_plot.plot_name, row.field.field_name, row.stock.seed_id,
+        writer.writerow([row.experiment, row.obs_plot.plot_id, row.obs_plot.plot_name, row.field.field_name, row.stock.seed_id,
                          row.obs_plot.row_num, row.obs_plot.range_num, row.obs_plot.plot, row.obs_plot.block,
                          row.obs_plot.rep, row.obs_plot.kernel_num, row.obs_plot.planting_date,
                          row.obs_plot.harvest_date, row.obs_plot.comments])

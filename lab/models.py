@@ -620,5 +620,8 @@ class Measurement(models.Model):
     comments = models.CharField(max_length=1000, blank=True)
     experiment = models.ForeignKey(Experiment)
 
+    class Meta:
+        unique_together = ('value', 'time_of_measurement', 'measurement_parameter', 'obs_tracker')
+
     def __unicode__(self):
         return self.value
