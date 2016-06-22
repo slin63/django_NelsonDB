@@ -1,8 +1,11 @@
 # Get issues and assorted information from a github page and return it in a Django-readable format
 from github3 import login
+import os
+from sys import path
+project_path = (os.path.realpath(__file__ + '../../../../..'))
+path.append(project_path)
 from webapp import settings
 from datetime import datetime
-import os
 
 
 def collect_issues():
@@ -110,5 +113,5 @@ def generate_issue_html(issue_list):
 if __name__ == '__main__':
     issues = collect_issues()
     # Should return absolute path to output file
-    html_output = os.path.dirname(os.path.abspath('../..')) + '/templates/lab/index/issues.html'
+    html_output = project_path + '/templates/lab/index/issues.html'
     write_to_html(issues, html_output)
