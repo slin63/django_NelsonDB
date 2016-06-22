@@ -1,9 +1,8 @@
 from django.conf.urls import patterns, url
 
 from lab import views
-from lab.moduleviews import views_genotype, views_about
+from lab.moduleviews import views_genotype, views_about, views_plot, views_fieldbook
 from lab.moduleviews import views_isolate_stock as views_is
-from lab.moduleviews import views_plot
 
 urlpatterns = patterns('',
                        url(r'^$', views.index, name='index'),
@@ -30,6 +29,8 @@ urlpatterns = patterns('',
                        url(r'^experiment/(?P<experiment_name_url>\w+)/$', views.experiment, name='experiment'),
                        url(r'^experiment_edit/(?P<experiment_id>\d+)/$', views.experiment_edit, name='experiment_edit'),
                        url(r'^profile/(?P<profile_name>\w+)/$', views.profile, name ='profile'),
+
+                       url(r'^field_book/upload/$', views_fieldbook.field_book_upload_online, name ='fieldbook_upload'),
 
                        url(r'^datatable/isolate_inventory/$', views.datatable_isolate_inventory, name='datatable_isolate_inventory'),
                        url(r'^isolate/$', views.isolate_inventory, name='isolate_inventory'),
