@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.contenttypes.models import ContentType
 
 from lab.models import UserProfile, Experiment, Field, ObsPlot, ObsPlant, Locality, Stock, ObsPlot, ObsPlant, ObsSample, IsolateStock, \
   ObsEnv, MeasurementParameter, Citation, Medium, Location, DiseaseInfo, FileDump
@@ -731,4 +732,13 @@ class UploadQueueForm(forms.Form):
     file_name = forms.FileField(help_text="Select your file:")
     comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}),
                                help_text="Any additional comments:", required=False)
+    verified = forms.BooleanField(help_text="Verified:", required=False)
+
+
+class FieldBookUploadForm(forms.Form):
+    user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Username ---",
+                                  help_text="Select the user who produced data:", required=True)
+    file_type = forms.ModelChoiceField(queryset=ContentType.objects.all(), empty_label="--- Model type ---",
+                               help_text="Select the model you're uploading info for:", required=True)
+    file_name = forms.FileField(help_text="Select your file:")
     verified = forms.BooleanField(help_text="Verified:", required=False)

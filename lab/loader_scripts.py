@@ -4682,7 +4682,7 @@ def isolate_loader(results_dict):
         return False
     return True
 
-def measurement_loader_prep(upload_file, user):
+def measurement_loader_prep(upload_file, user, field_book_upload=False):
     ##TODO: Automatically generate stock, parameter, data
 
     start = time.clock()
@@ -4718,13 +4718,24 @@ def measurement_loader_prep(upload_file, user):
 
     measurement_file = csv.DictReader(upload_file)
     for row in measurement_file:
-        obs_id = row["Observation Unit"]
-        parameter = row["Parameter Name"]
-        username = row["Username"]
-        time_of_measurement = row["DateTime"]
-        value = row["Value"]
-        comments = row["Measurement Comments"]
-        experiment = row["Experiment"]
+        if field_book_upload:
+            print 'UPLOADING-FROM-FIELD-BOOK'
+            obs_id = row['plot_id']
+            parameter = row['trait']
+            username = user.username
+            time_of_measurement = row['timestamp']
+            value = row['value']
+            comments = row['person'] + '-' + row['location']
+            experiment = row['experiment']
+
+        else:
+            obs_id = row["Observation Unit"]
+            parameter = row["Parameter Name"]
+            username = row["Username"]
+            time_of_measurement = row["DateTime"]
+            value = row["Value"]
+            comments = row["Measurement Comments"]
+            experiment = row["Experiment"]
 
         start = time.clock()
 

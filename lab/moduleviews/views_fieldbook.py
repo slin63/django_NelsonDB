@@ -1,35 +1,81 @@
-import os, tempfile, zipfile
-import csv
-import loader_scripts
-from django.http import HttpResponseRedirect, HttpResponse
-from django.template import RequestContext
 from django.shortcuts import render_to_response
-from django.conf import settings
-from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsPlot, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, Isolate, FileDump
-from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserForm, EditUserProfileForm, NewExperimentForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, LogPlantsOnlineForm, LogPlotsOnlineForm, LogEnvironmentsOnlineForm, LogSamplesOnlineForm, LogMeasurementsOnlineForm, NewTreatmentForm, UploadQueueForm, LogSeedDataOnlineForm, LogStockPacketOnlineForm, NewFieldForm, NewLocalityForm, NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, LogPlatesOnlineForm, LogWellOnlineForm, LogIsolateStocksOnlineForm, LogSeparationsOnlineForm, LogMaizeSurveyOnlineForm, LogIsolatesOnlineForm, FileDumpForm, UpdateIsolatesOnlineForm, UpdateStockPacketOnlineForm
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
-from datetime import datetime
-from django.contrib.auth.models import User
-from django.shortcuts import redirect
-from itertools import chain
-from django.forms.models import inlineformset_factory
-from django.forms.formsets import formset_factory
-from django.conf import settings
-from django.db.models import F
-from django import template
-from django.template.defaulttags import register
-from operator import itemgetter
-from django.db import transaction
-from django.core.files import File
-from django.http import JsonResponse
-from django.utils.encoding import smart_str
-from django.core.servers.basehttp import FileWrapper
-from django.conf import settings
-import mimetypes
-import json
+from django.template import RequestContext
 
-def upload_online(request):
-   context = RequestContext(request)
-   context_dict = {}
-   return render_to_response('lab/fieldbook/field_book_upload.html', context_dict, context)
+from lab.forms import FieldBookUploadForm
+from lab.models import UploadQueue
+from ..loader_scripts import *
+
+
+def field_book_upload_online(request):
+    context = RequestContext(request)
+    context_dict = {}
+    if request.method == 'POST':
+        sent = True
+        upload_form = FieldBookUploadForm(request.POST, request.FILES)
+        if upload_form.is_valid():
+            new_upload_user = upload_form.cleaned_data['user']
+            new_upload_filename = upload_form.cleaned_data['file_name']
+            new_upload_filetype = upload_form.cleaned_data['file_type'].model_class().__name__.lower()
+            new_upload_verified = upload_form.cleaned_data['verified']
+            upload_added = True
+
+            if new_upload_filetype == 'measurement':
+                results_dict = measurement_loader_prep(
+                    upload_file=request.FILES['file_name'], user=new_upload_user, field_book_upload=True
+                )
+            else:
+                results_dict = None
+
+            if results_dict is not None:
+                if new_upload_verified == False:
+                    upload_complete = False
+
+                    if new_upload_filetype == 'measurement':
+                        output = measurement_loader_prep_output(
+                            results_dict=results_dict, new_upload_exp='No Experiment', template_type=new_upload_filetype
+                        )
+                    else:
+                        output = None
+                    return output
+                elif new_upload_verified == True:
+                    if new_upload_filetype == 'measurement':
+                        uploaded = measurement_loader(
+                                results_dict=results_dict
+                            )
+                    else:
+                        uploaded = False
+
+                    if uploaded == True:
+                        new_upload, created = UploadQueue.objects.get_or_create(
+                            experiment_id=1, user=new_upload_user, file_name=new_upload_filename, upload_type=new_upload_filetype
+                        )
+                        new_upload.verified = new_upload_verified
+                        new_upload.completed = True
+                        new_upload.save()
+                        upload_complete = True
+                    else:
+                        upload_complete = False
+                else:
+                    upload_complete = False
+            else:
+                upload_complete = False
+        else:
+            print(upload_form.errors)
+            upload_added = False
+            upload_complete = False
+    else:
+        sent = False
+        upload_form = FieldBookUploadForm()
+        upload_added = False
+        upload_complete = None
+
+    context_dict['upload_form'] = upload_form
+    context_dict['upload_added'] = upload_added
+    context_dict['upload_complete'] = upload_complete
+    context_dict['sent'] = sent
+    context_dict['logged_in_user'] = request.user.username
+    return render_to_response('lab/fieldbook/field_book_upload.html', context_dict, context)
+
+    # # ___! Below is debugging code that renders the form's POST information !___
+    # context_dict['ETC'] = new_upload_filetype
+    # return render_to_response('lab/testcases/test.html', context_dict, context)
