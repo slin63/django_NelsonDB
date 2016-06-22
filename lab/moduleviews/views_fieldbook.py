@@ -75,7 +75,3 @@ def field_book_upload_online(request):
     context_dict['sent'] = sent
     context_dict['logged_in_user'] = request.user.username
     return render_to_response('lab/fieldbook/field_book_upload.html', context_dict, context)
-
-    # # ___! Below is debugging code that renders the form's POST information !___
-    # context_dict['ETC'] = new_upload_filetype
-    # return render_to_response('lab/testcases/test.html', context_dict, context)

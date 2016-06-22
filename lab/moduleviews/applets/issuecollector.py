@@ -110,6 +110,5 @@ def generate_issue_html(issue_list):
 if __name__ == '__main__':
     issues = collect_issues()
     # Should return absolute path to output file
-    html_output = os.path.dirname(os.path.abspath(__file__)) + '/templates/lab/index/issues.html'
+    html_output = os.path.dirname(os.path.abspath('../..')) + '/templates/lab/index/issues.html'
     write_to_html(issues, html_output)
-
