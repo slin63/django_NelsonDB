@@ -41,12 +41,14 @@ class FileDumpForm(forms.ModelForm):
     file_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'File Name'}),
                                 help_text="Give an informative name to the file:")
     file = forms.FileField(help_text="Select your file:")
+    file_subdirectory = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'File subdirectory'}),
+                                help_text="Select a subdirectory to store your file in:")
     comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments:'}),
                                help_text="Any additional comments:", required=False)
 
     class Meta:
         model = FileDump
-        fields = ['user', 'experiment', 'file_name', 'file', 'comments']
+        fields = ['user', 'experiment', 'file_name', 'file_subdirectory', 'file', 'comments']
 
 
 class UserProfileForm(forms.ModelForm):
