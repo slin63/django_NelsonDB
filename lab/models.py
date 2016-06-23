@@ -67,7 +67,7 @@ class Experiment(models.Model):
 def subdirectory_upload(instance, filename):
     # file will be uploaded to subdirectory/filename
     # https://docs.djangoproject.com/en/1.9/ref/models/fields/#django.db.models.FileField.upload_to
-    return '{0}/{1}'.format(instance.file_subdirectory, filename)
+    return 'files/{0}/{1}'.format(instance.file_subdirectory, filename)
 
 class FileDump(models.Model):
     user = models.ForeignKey(User)

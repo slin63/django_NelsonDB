@@ -112,7 +112,6 @@ def file_storage(request):
 		file_form = FileDumpForm(request.POST, request.FILES)
 		if file_form.is_valid():
 			file = file_form.save(commit=False)
-			# file.file_subdirectory = file_form.cleaned_data['file_subdirectory']
 			if 'file' in request.FILES:
 				file.file = request.FILES['file']
 			file.save()
