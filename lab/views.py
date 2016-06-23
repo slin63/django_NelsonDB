@@ -915,7 +915,6 @@ def stock_delete(request):
 @login_required
 def measurement_delete(request, measurement_id):
 	Measurement.objects.get(id=measurement_id).delete()
-
 	return HttpResponseRedirect('/lab/data/measurement')
 
 @login_required
