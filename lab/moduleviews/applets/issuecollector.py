@@ -2,7 +2,7 @@
 from github3 import login
 import os
 from sys import path
-project_path = (os.path.realpath(__file__ + '../../../../..'))
+project_path = os.path.realpath(__file__ + '../../../../..')
 path.append(project_path)
 from webapp import settings
 from datetime import datetime

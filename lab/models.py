@@ -64,10 +64,12 @@ class Experiment(models.Model):
     def __unicode__(self):
         return self.name
 
+
 def subdirectory_upload(instance, filename):
     # file will be uploaded to subdirectory/filename
     # https://docs.djangoproject.com/en/1.9/ref/models/fields/#django.db.models.FileField.upload_to
     return 'files/{0}/{1}'.format(instance.file_subdirectory, filename)
+
 
 class FileDump(models.Model):
     user = models.ForeignKey(User)
@@ -76,7 +78,9 @@ class FileDump(models.Model):
     file = models.FileField(upload_to=subdirectory_upload, blank=True)
     date = models.DateTimeField(auto_now_add=True, blank=True)
     comments = models.CharField(max_length=1000, blank=True)
-    file_subdirectory = models.CharField(max_length=1000, blank=True, default='files')
+    file_subdirectory = models.CharField(
+        max_length=1000, blank=True, default='files'
+    )
 
     def __unicode__(self):
         return self.file_name
