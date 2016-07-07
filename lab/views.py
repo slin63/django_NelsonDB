@@ -3733,7 +3733,7 @@ def sort_measurement_data(request):
                 m = Measurement.objects.filter(measurement_parameter__parameter=p)
                 measurement_data = list(chain(measurement_data, m))
         else:
-            measurement_data = list(Measurement.objects.all())[:1000]
+            measurement_data = list(Measurement.objects.all())[:5000]
 
     for data in measurement_data:
         data = make_obs_tracker_info(data.obs_tracker)
