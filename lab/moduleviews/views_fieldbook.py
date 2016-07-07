@@ -6,6 +6,7 @@ from lab.models import UploadQueue
 from ..loader_scripts import *
 
 
+@login_required
 def field_book_upload_online(request):
     context = RequestContext(request)
     context_dict = {}
