@@ -3676,6 +3676,11 @@ def datatable_measurement_data(request):
     measurement_data = sort_measurement_data(request)
     count = 0
     arr = []
+    if request.user.is_superuser:
+        delete_string = '<a href=/lab/data/measurement_delete/{0}>Delete: ID: {0}</a>'
+    else:
+        delete_string = '<p style="color:#888;">N/A ID: {0}</p>'
+
     for data in measurement_data:
         arr.append({
             'experiment_name': data.experiment.name,
@@ -3690,7 +3695,7 @@ def datatable_measurement_data(request):
             'unit_of_measure': data.measurement_parameter.unit_of_measure,
             'trait_id_buckler': data.measurement_parameter.trait_id_buckler,
             'comments': data.comments,
-            'delete': '<a href=/lab/data/measurement_delete/{0}>Delete</a>'.format(data.id),
+            'delete': delete_string.format(data.id),
         })
     return JsonResponse({'data': arr, 'recordsTotal': count}, safe=True)
 

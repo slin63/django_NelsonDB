@@ -4720,13 +4720,13 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
     for row in measurement_file:
         if field_book_upload:
             print 'UPLOADING-FROM-FIELD-BOOK'
-            obs_id = row['plot_id']
+            obs_id = row['Plot ID']
             parameter = row['trait']
             username = user.username
             time_of_measurement = row['timestamp']
             value = row['value']
             comments = row['person'] + '-' + row['location']
-            experiment = row['experiment']
+            experiment = row['Experiment Name']
 
         else:
             obs_id = row["Observation Unit"]

@@ -17,6 +17,7 @@
             <th>Units</th>
             <th>Protocol</th>
             <th>Description</th>
+            <th>Primary Key</th>
             {% comment %}
             <th>Trait ID Buckler</th>
             {% endcomment %}
@@ -29,7 +30,8 @@
             <td>{{ data.parameter_type }}</td>
             <td>{{ data.unit_of_measure }}</td>
             <td>{{ data.protocol }}</td>
-            <td>{{ data.description }}
+            <td>{{ data.description }}</td>
+            <td>{{ data.id }}</td>
             {% comment %}
             <td>{{data.trait_id_buckler}}</td>
             {% endcomment %}
