@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
+from django.contrib.auth.decorators import login_required
 from lab.forms import FieldBookUploadForm
 from lab.models import UploadQueue
 from ..loader_scripts import *

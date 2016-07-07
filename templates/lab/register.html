@@ -5,10 +5,15 @@
   <h1>Register with {{site_name}}</h1>
   <br />
   <div class="container-fluid">
+      {% if key_failed %}
+         <h2><p>Incorrect lab key! Contact slin63@illinois.edu for the correct key.</p>
+      <p><a href="/lab/register/">Register again</a></p></h2>
+      {% else %}
     {% if registered %}
       <p>Thank you for registering.</p>
       <p><a href="/lab/login/">Login</a></p>
     {% else %}
+
     <form class="form-signin" id="user_form" method="post" action="/lab/register/" enctype="multipart/form-data">
       {% csrf_token %}
       <h2 class="form-signin-heading">Sign up Here</h2><br/>
@@ -30,6 +35,7 @@
       <input class="btn btn-primary" type="submit" name="submit" value="Register"/>
     </form>
     {% endif %}
+      {% endif %}
 	</div>
 </div>
 {% endblock %}

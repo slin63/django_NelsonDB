@@ -16,10 +16,11 @@ class UserForm(forms.ModelForm):
                                help_text="Select a password:")
     first_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'First Name'}), help_text="First name:")
     last_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Last Name'}), help_text="Last name:")
+    lab_key = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Lab Key'}), help_text="Secret lab key:")
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'first_name', 'last_name']
+        fields = ['username', 'password', 'email', 'first_name', 'last_name', 'lab_key']
 
 
 class DownloadFieldForm(forms.ModelForm):
