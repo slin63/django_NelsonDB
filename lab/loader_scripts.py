@@ -4719,7 +4719,7 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
     measurement_file = csv.DictReader(upload_file)
     for row in measurement_file:
         if field_book_upload:
-            print 'UPLOADING-FROM-FIELD-BOOK'
+            # print 'UPLOADING-FROM-FIELD-BOOK'
             obs_id = row['Plot ID']
             parameter = row['trait']
             username = user.username
@@ -4853,7 +4853,26 @@ def measurement_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     return response
 
+def purge_duplicate_measurements():
+    # Because unique_together doesn't work as well as we'd like
+    meas_all = Measurement.objects.all()
+    meas_dup = []
+    for i in meas_all:
+        for j in meas_all:
+            if [i.obs_tracker, i.time_of_measurement, i.value, i.measurement_parameter] == [j.obs_tracker, j.time_of_measurement, j.value. j.measurement_parameter] and i != j:
+                meas_dup.append(j)
+
+    meas_dup = set(meas_dup)
+    num_dups = len(meas_dup)
+
+    [meas.delete() for meas in meas_dump]
+
+    print  "Ran purge_duplicate_measurements: deleted {} duplicates. ".format(num_dups)
+
+    return 0
+
 def measurement_loader(results_dict):
+    success = True
     try:
         for key in results_dict['measurement_new'].iterkeys():
             try:
@@ -4863,8 +4882,12 @@ def measurement_loader(results_dict):
             except Exception as e:
                 print key
                 print("Measurement Error: %s %s" % (e.message, e.args))
-                return False
+                success = False
     except Exception as e:
         print("Error: %s %s" % (e.message, e.args))
-        return False
-    return True
+        success = False
+
+    if success is False:
+        purge_duplicate_measurements()
+
+    return success
