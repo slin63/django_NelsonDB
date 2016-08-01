@@ -4719,7 +4719,6 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
     measurement_file = csv.DictReader(upload_file)
     for row in measurement_file:
         if field_book_upload:
-            # print 'UPLOADING-FROM-FIELD-BOOK'
             obs_id = row['Plot ID']
             parameter = row['trait']
             username = user.username
@@ -4802,7 +4801,8 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
             measurement_new[(measurement_id, obs_tracker_id, parameter_id, user_id, time_of_measurement, value, comments, experiment_id)] = measurement_id
             measurement_id = measurement_id + 1
         else:
-            measurement_hash_exists[(measurement_id, obs_tracker_id, parameter_id, user_id, time_of_measurement, value, comments)] = measurement_id
+            measurement_hash_exists[(obs_id, obs_tracker_id, parameter, user_id, time_of_measurement, value, comments)] = measurement_id
+            error_count += 1
 
     end = time.clock()
     stats = {}
@@ -4859,13 +4859,13 @@ def purge_duplicate_measurements():
     meas_dup = []
     for i in meas_all:
         for j in meas_all:
-            if [i.obs_tracker, i.time_of_measurement, i.value, i.measurement_parameter] == [j.obs_tracker, j.time_of_measurement, j.value. j.measurement_parameter] and i != j:
+            if [i.obs_tracker, i.time_of_measurement, i.value, i.measurement_parameter] == [j.obs_tracker, j.time_of_measurement, j.value, j.measurement_parameter] and i != j:
                 meas_dup.append(j)
 
     meas_dup = set(meas_dup)
     num_dups = len(meas_dup)
 
-    [meas.delete() for meas in meas_dump]
+    [meas.delete() for meas in meas_dup]
 
     print  "Ran purge_duplicate_measurements: deleted {} duplicates. ".format(num_dups)
 
@@ -4877,12 +4877,11 @@ def measurement_loader(results_dict):
         for key in results_dict['measurement_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    # new_measurement = Measurement.objects.get_or_create(obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6], experiment_id=key[7])[0]
                     new_measurement = Measurement.objects.create(id=key[0], obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6], experiment_id=key[7])
             except Exception as e:
-                print key
-                print("Measurement Error: %s %s" % (e.message, e.args))
+                print("Measurement Error: %s %s\n\t%s" % (e.message, e.args, key))
                 success = False
+                continue
     except Exception as e:
         print("Error: %s %s" % (e.message, e.args))
         success = False
