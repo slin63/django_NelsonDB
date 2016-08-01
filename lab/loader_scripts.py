@@ -4854,41 +4854,21 @@ def measurement_loader_prep_output(results_dict, new_upload_exp, template_type):
     return response
 
 def purge_duplicate_measurements():
-    # Because unique_together doesn't work as well as we'd like
-    meas_all = Measurement.objects.all()
-    meas_dup = []
-    for i in meas_all:
-        for j in meas_all:
-            if [i.obs_tracker, i.time_of_measurement, i.value, i.measurement_parameter] == [j.obs_tracker, j.time_of_measurement, j.value, j.measurement_parameter] and i != j:
-                meas_dup.append(j)
+    uni = []
+    dups = []
+    for meas in Measurement.objects.values_list('obs_tracker', 'measurement_parameter', 'value', 'time_of_measurement'):
+        if meas not in uni:
+            uni.append(meas)
+        else:
+            dups.append(meas)
 
-    meas_dup = set(meas_dup)
-    num_dups = len(meas_dup)
-
-    [meas.delete() for meas in meas_dup]
-
-    print  "Ran purge_duplicate_measurements: deleted {} duplicates. ".format(num_dups)
+    dup_models = []
+    for item in dups:
+        trash = Measurement.objects.filter(obs_tracker=item[0], measurement_parameter=item[1], value=item[2], time_of_measurement=item[3])
+        for junk in trash[1:]:
+            junk.delete()
 
     return 0
-
-# def purge_duplicate_measurements():
-#     measurement_table = OrderedDict({})
-#     #--- Key = (measurement_id, obs_tracker_id, user_id, measurement_param_id, time_of_measurement, value, comments)
-#     #--- Value = (measurement_id)
-
-#     ma = Measurement.objects.all()
-#     for row in ma:
-#         measurement_table[(row.id, row.obs_tracker_id, row.user_id, row.measurement_parameter_id, row.time_of_measurement, row.value, row.comments)] = row.id
-
-#     keys = measurement_table.keys()
-#     dups = []
-
-#     for i in keys:
-#         for j in keys:
-#             if i[1:] == j[1:]:
-#                 dups.append(j)
-
-#     return measurement_table
 
 def measurement_loader(results_dict):
     success = True
