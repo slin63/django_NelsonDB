@@ -4794,7 +4794,7 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
             parameter_error[(obs_id, parameter, username, time_of_measurement, value, comments)] = obs_id
             error_count = error_count + 1
 
-        measurement_hash = str(obs_tracker_id) + str(parameter_id) + str(user_id) + time_of_measurement + value + comments
+        measurement_hash = str(obs_tracker_id) + str(user_id) + str(parameter_id) + time_of_measurement + value + comments
         measurement_hash_fix = measurement_hash + '\r'
         if measurement_hash not in measurement_hash_table and measurement_hash_fix not in measurement_hash_table:
             measurement_hash_table[measurement_hash] = measurement_id
@@ -4870,6 +4870,25 @@ def purge_duplicate_measurements():
     print  "Ran purge_duplicate_measurements: deleted {} duplicates. ".format(num_dups)
 
     return 0
+
+# def purge_duplicate_measurements():
+#     measurement_table = OrderedDict({})
+#     #--- Key = (measurement_id, obs_tracker_id, user_id, measurement_param_id, time_of_measurement, value, comments)
+#     #--- Value = (measurement_id)
+
+#     ma = Measurement.objects.all()
+#     for row in ma:
+#         measurement_table[(row.id, row.obs_tracker_id, row.user_id, row.measurement_parameter_id, row.time_of_measurement, row.value, row.comments)] = row.id
+
+#     keys = measurement_table.keys()
+#     dups = []
+
+#     for i in keys:
+#         for j in keys:
+#             if i[1:] == j[1:]:
+#                 dups.append(j)
+
+#     return measurement_table
 
 def measurement_loader(results_dict):
     success = True

@@ -30,14 +30,14 @@
 
 {% if sent %}
   {% if upload_added %}
-    <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Upload Was Saved to the Upload Queue, but Not Necessarily Added to Database!<br/>&nbsp;</h4>
+    <h4>&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Upload Was Saved to the Upload Queue, but Not Necessarily Added to Database!<br/>&nbsp;</h4>
   {% else %}
     <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Upload Was Not Saved to Upload Queue!<br/>&nbsp;</h4>
   {% endif %}
   {% if upload_complete %}
     <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Upload Saved to Database!<br/>&nbsp;</h4>
   {% else %}
-    <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Upload Not Added to Database!<br/>&nbsp;</h4>
+    <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Upload Not Completely Added to Database!<br/>&nbsp;</h4>
   {% endif %}
 {% endif %}
 
