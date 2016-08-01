@@ -69,7 +69,7 @@ def field_book_upload_online(request):
         sent = False
         upload_form = FieldBookUploadForm()
         upload_added = False
-        upload_complete = None
+        upload_complete = False
 
     context_dict['upload_form'] = upload_form
     context_dict['upload_added'] = upload_added
