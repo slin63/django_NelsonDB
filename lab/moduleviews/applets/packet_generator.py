@@ -22,19 +22,18 @@ class SeedPacket(object):
         return self.seed_id + ' ' + self.trailing_info
 
 
-def seed_list_make(poll_dict):
+def seed_list_make(polli_objs):
     seed_list = []
-    for e in poll_dict:
-        split_val = poll_dict[e].split(':')
-        poll_type = split_val[0]
-        poll_range = split_val[1]
+    for e in polli_objs:
+        polli_type = e.polli_type
+        polli_range = e.polli_count
         seed_pedigree = get_pedigree('#TODO')
-        researcher = ObsTracker.objects.values_list('user__first_name', 'user__last_name').get(id=e.id)
+        researcher = ObsTracker.objects.values_list('user__first_name', 'user__last_name').get(id=e.obs.id)
         trailing_info = (' '.join(researcher),)
-        trailing_info += ObsPlot.objects.values_list('plot_id', 'plot_name', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date').get(id=e.obs_plot.id)
+        trailing_info += ObsPlot.objects.values_list('plot_id', 'plot_name', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date').get(id=e.obs.obs_plot.id)
 
-        for num in xrange(1, int(poll_range) + 1):
-            seed_id = seed_name_make(plot_id=e.obs_plot.plot_id, num=num, poll_type=poll_type)
+        for num in xrange(1, int(polli_range) + 1):
+            seed_id = seed_name_make(plot_id=e.obs.obs_plot.plot_id, num=num, polli_type=polli_type)
             seed_list.append(SeedPacket(seed_id=seed_id, pedigree=seed_pedigree, trailing_info=trailing_info))
 
     return seed_list
@@ -44,16 +43,16 @@ def get_pedigree(seed_id):
     return '##TODO'
 
 
-def seed_name_make(plot_id, num, poll_type):
-    if poll_type.lower() == 'sib':
-        poll_type = 'b'
+def seed_name_make(plot_id, num, polli_type):
+    if polli_type.lower() == 'cross':
+        polli_type = 'b'
     else:
-        poll_type = 's'
+        polli_type = 's'
 
     if num < 10:
-        num_str = "{}_00{}{}".format(plot_id, num, poll_type)
+        num_str = "{}_00{}{}".format(plot_id, num, polli_type)
     else:
-        num_str = "{}_0{}{}".format(plot_id, num, poll_type)
+        num_str = "{}_0{}{}".format(plot_id, num, polli_type)
 
     return num_str
 
