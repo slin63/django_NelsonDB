@@ -62,6 +62,8 @@
 										{% if stock_data %}
 										<h5><a href='/lab/data/stock/{{experiment.name}}/'>View</a></h5>
 										<h5><a href='/lab/download/stock/used/{{experiment.name}}/'>Download</a></h5>
+
+										<h5><a href={% url 'generate_packets' experiment.id %}>Generate Packet Labels</a></	h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}

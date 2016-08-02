@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 
 from lab import views
-from lab.moduleviews import views_genotype, views_about, views_plot, views_fieldbook
+from lab.moduleviews import views_genotype, views_about, views_plot, views_fieldbook, views_packet
 from lab.moduleviews import views_isolate_stock as views_is
 
 urlpatterns = patterns('',
@@ -54,6 +54,8 @@ urlpatterns = patterns('',
                        url(r'^seed_inventory/set/(?P<set_type>\w+)/$', views.seed_set_download, name='seed_set_download'),
                        url(r'^seed_inventory/update/(?P<stock_id>\d+)/$', views.update_seed_info, name='update_seed_info'),
                        url(r'^seed_inventory/packet_update/(?P<stock_id>\d+)/$', views.update_seed_packet_info, name='update_seed_packet_info'),
+
+                       url(r'^seed_inventory/generate_packets/(?P<experiment_id>\d+)/$', views_packet.generate_packets, name='generate_packets'),
 
                        # Added 2/15/2016 - slin63
                        url(r'^datatable/isolatestock_inventory/$', views_is.datatable_isolatestock_inventory, name='datatable_isolatestock_inventory'),
