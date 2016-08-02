@@ -4719,7 +4719,6 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
     measurement_file = csv.DictReader(upload_file)
     for row in measurement_file:
         if field_book_upload:
-            print 'UPLOADING-FROM-FIELD-BOOK'
             obs_id = row['Plot ID']
             parameter = row['trait']
             username = user.username
@@ -4795,14 +4794,15 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
             parameter_error[(obs_id, parameter, username, time_of_measurement, value, comments)] = obs_id
             error_count = error_count + 1
 
-        measurement_hash = str(obs_tracker_id) + str(parameter_id) + str(user_id) + time_of_measurement + value + comments
+        measurement_hash = str(obs_tracker_id) + str(user_id) + str(parameter_id) + time_of_measurement + value + comments
         measurement_hash_fix = measurement_hash + '\r'
         if measurement_hash not in measurement_hash_table and measurement_hash_fix not in measurement_hash_table:
             measurement_hash_table[measurement_hash] = measurement_id
             measurement_new[(measurement_id, obs_tracker_id, parameter_id, user_id, time_of_measurement, value, comments, experiment_id)] = measurement_id
             measurement_id = measurement_id + 1
         else:
-            measurement_hash_exists[(measurement_id, obs_tracker_id, parameter_id, user_id, time_of_measurement, value, comments)] = measurement_id
+            measurement_hash_exists[(obs_id, obs_tracker_id, parameter, user_id, time_of_measurement, value, comments)] = measurement_id
+            error_count += 1
 
     end = time.clock()
     stats = {}
@@ -4853,18 +4853,39 @@ def measurement_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     return response
 
+def purge_duplicate_measurements():
+    uni = []
+    dups = []
+    for meas in Measurement.objects.values_list('obs_tracker', 'measurement_parameter', 'value', 'time_of_measurement'):
+        if meas not in uni:
+            uni.append(meas)
+        else:
+            dups.append(meas)
+
+    dup_models = []
+    for item in dups:
+        trash = Measurement.objects.filter(obs_tracker=item[0], measurement_parameter=item[1], value=item[2], time_of_measurement=item[3])
+        for junk in trash[1:]:
+            junk.delete()
+
+    return 0
+
 def measurement_loader(results_dict):
+    success = True
     try:
         for key in results_dict['measurement_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    # new_measurement = Measurement.objects.get_or_create(obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6], experiment_id=key[7])[0]
                     new_measurement = Measurement.objects.create(id=key[0], obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6], experiment_id=key[7])
             except Exception as e:
-                print key
-                print("Measurement Error: %s %s" % (e.message, e.args))
-                return False
+                print("Measurement Error: %s %s\n\t%s" % (e.message, e.args, key))
+                success = False
+                continue
     except Exception as e:
         print("Error: %s %s" % (e.message, e.args))
-        return False
-    return True
+        success = False
+
+    if success is False:
+        purge_duplicate_measurements()
+
+    return success
