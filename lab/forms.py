@@ -407,7 +407,11 @@ class LogPlotsOnlineForm(forms.Form):
     planting_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Planting Date'}), required=False)
     harvest_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Harvest Date'}), required=False)
     row_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}), required=False)
-
+    polli_type = forms.MultipleChoiceField(
+      required=False,
+      widget=forms.CheckBoxSelectMultiple,
+      choices=(('SELF', "Self Pollinate"), ('CROSS', "Cross pollinate"))
+    )
 
 class LogPlantsOnlineForm(forms.Form):
     experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---",

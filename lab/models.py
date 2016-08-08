@@ -154,6 +154,10 @@ class ObsPlot(models.Model):
     rep = models.CharField(max_length=200, blank=True)
     kernel_num = models.CharField(max_length=200, blank=True)
     planting_date = models.CharField(max_length=200, blank=True)
+    polli_type = models.CharField(
+        max_length=30,
+        choices=(('SELF', "Self Pollinate"), ('CROSS', "Cross pollinate"))
+    )
     harvest_date = models.CharField(max_length=200, blank=True)
     comments = models.CharField(max_length=3000, blank=True)
 
