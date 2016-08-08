@@ -4602,6 +4602,7 @@ def log_data_online(request, data_type):
                                 source_phone = form.cleaned_data['stock__passport__people__phone']
                                 source_email = form.cleaned_data['stock__passport__people__email']
                                 source_comments = form.cleaned_data['stock__passport__people__comments']
+                                gen = form.cleaned_data['gen']
 
                                 new_people, created = People.objects.get_or_create(first_name=source_fname,
                                                                                    last_name=source_lname,
@@ -4628,7 +4629,8 @@ def log_data_online(request, data_type):
                                                                                  stock_status=stock_status,
                                                                                  stock_date=stock_date,
                                                                                  inoculated=inoculated,
-                                                                                 comments=stock_comments)
+                                                                                 comments=stock_comments
+                                                                                 gen=gen)
                                 if plot_id != '':
                                     obs_plot = ObsPlot.objects.get(plot_id=plot_id)
                                 else:
@@ -4728,10 +4730,11 @@ def log_data_online(request, data_type):
                                 num_seeds = form.cleaned_data['num_seeds']
                                 packet_comments = form.cleaned_data['comments']
                                 location = form.cleaned_data['location']
+                                gen = form.cleaned_data['gen']
 
                                 new_stock_packet = StockPacket.objects.get_or_create(
                                     stock=Stock.objects.get(seed_id=seed_id), location=location, weight=weight,
-                                    num_seeds=num_seeds, comments=packet_comments)
+                                    num_seeds=num_seeds, comments=packet_comments, gen=gen)
                             except Exception as e:
                                 print("Error: %s %s" % (e.message, e.args))
                                 failed = True
@@ -5067,6 +5070,7 @@ def log_data_online(request, data_type):
                         harvest_date = form.cleaned_data['harvest_date']
                         row_comments = form.cleaned_data['row_comments']
                         user = request.user
+                        gen = form.cleaned_data['gen']
 
                         if seed_id == '':
                             seed_id = 'No Stock'
@@ -5079,7 +5083,9 @@ def log_data_online(request, data_type):
                                                                                  planting_date=planting_date,
                                                                                  harvest_date=harvest_date,
                                                                                  comments=row_comments,
-                                                                                 polli_type=polli_type)
+                                                                                 polli_type=polli_type
+                                                                                 gen=gen)
+
                             new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='plot',
                                                                                         stock=Stock.objects.get(
                                                                                             seed_id=seed_id),

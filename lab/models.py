@@ -152,18 +152,12 @@ class ObsPlot(models.Model):
     plot = models.CharField(max_length=200, blank=True)
     block = models.CharField(max_length=200, blank=True)
     rep = models.CharField(max_length=200, blank=True)
-    polli_type = models.CharField(
-        max_length=30,
-        choices=(('SELF', "Self Pollinate"), ('CROSS', "Cross pollinate"))
-    )
+    polli_type = models.CharField(max_length=30, blank=True)
     kernel_num = models.CharField(max_length=200, blank=True)
     planting_date = models.CharField(max_length=200, blank=True)
-    polli_type = models.CharField(
-        max_length=30,
-        choices=(('SELF', "Self Pollinate"), ('CROSS', "Cross pollinate"))
-    )
     harvest_date = models.CharField(max_length=200, blank=True)
     comments = models.CharField(max_length=3000, blank=True)
+    gen = models.CharField(max_length=30, blank=True)
 
     def __unicode__(self):
         return self.plot_id
@@ -349,6 +343,7 @@ class Stock(models.Model):
     stock_date = models.CharField(max_length=200, blank=True)
     inoculated = models.BooleanField(default=False)
     comments = models.CharField(max_length=1000, blank=True)
+    gen = models.CharField(max_length=30, blank=True)
 
     def __unicode__(self):
         return self.seed_id
@@ -421,6 +416,7 @@ class StockPacket(models.Model):
     weight = models.CharField(max_length=200, blank=True)
     num_seeds = models.CharField(max_length=200, blank=True)
     comments = models.CharField(max_length=1000, blank=True)
+    gen = models.CharField(max_length=30, blank=True)
 
     def __unicode__(self):
         return self.stock.seed_id

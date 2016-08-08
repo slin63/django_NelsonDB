@@ -371,6 +371,7 @@ class LogSeedDataOnlineForm(forms.Form):
                                                      help_text="Source Email", required=False)
     stock__passport__people__comments = forms.CharField(
         widget=forms.TextInput(attrs={'placeholder': 'Source Comments'}), help_text="Source Comments", required=False)
+    gen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Generation'}), required=False)
 
 
 class LogStockPacketOnlineForm(forms.Form):
@@ -380,7 +381,8 @@ class LogStockPacketOnlineForm(forms.Form):
     comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Packet Comments'}), required=False)
     location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Storage Location ---",
                                       required=True)
-
+    gen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Generation'}), required=False)
+    
 
 class UpdateStockPacketOnlineForm(forms.Form):
     weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Weight'}), required=False)
@@ -409,6 +411,8 @@ class LogPlotsOnlineForm(forms.Form):
     planting_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Planting Date'}), required=False)
     harvest_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Harvest Date'}), required=False)
     row_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}), required=False)
+    gen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Generation'}), required=False)
+
 
 class LogPlantsOnlineForm(forms.Form):
     experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---",

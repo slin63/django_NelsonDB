@@ -6,20 +6,20 @@ from django.http import HttpResponse
 from lab.models import ObsPlot, Experiment, ObsTracker
 import csv
 
-HEADER = ['Seed ID', 'Pedigree', 'Researcher', 'Plot ID', 'Plot Name', 'Plot', 'Block', 'Rep', 'Kernel Num', 'Planting Date', 'Harvest Date']
+HEADER = ['Seed ID', 'Seed Name', 'Pedigree', 'Researcher', 'Plot ID', 'Plot Name', 'Plot')
 
 
 class SeedPacket(object):
-    def __init__(self, seed_id, pedigree, trailing_info):
+    def __init__(self, seed_id, pedigree, plot_info):
         self.seed_id = seed_id
         self.pedigree = pedigree
-        self.trailing_info = trailing_info
+        self.plot_info = plot_info
 
     def get_values(self):
-        return (self.seed_id, self.pedigree) + self.trailing_info
+        return (self.seed_id, self.pedigree) + self.plot_info
 
     def __repr__(self):
-        return self.seed_id + ' ' + self.trailing_info
+        return self.seed_id + ' ' + self.plot_info
 
 
 def seed_list_make(polli_objs):
@@ -28,13 +28,13 @@ def seed_list_make(polli_objs):
         polli_type = e.polli_type
         polli_range = e.polli_count
         seed_pedigree = get_pedigree('#TODO')
-        researcher = ObsTracker.objects.values_list('user__first_name', 'user__last_name').get(id=e.obs.id)
-        trailing_info = (' '.join(researcher),)
-        trailing_info += ObsPlot.objects.values_list('plot_id', 'plot_name', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date').get(id=e.obs.obs_plot.id)
+        researcher = "Jamann Lab"
+        plot_info = (' '.join(researcher),)
+        plot_info += ObsPlot.objects.values_list('plot_id', 'plot_name', 'plot').get(id=e.obs.obs_plot.id)
 
         for num in xrange(1, int(polli_range) + 1):
             seed_id = seed_name_make(plot_id=e.obs.obs_plot.plot_id, num=num, polli_type=polli_type)
-            seed_list.append(SeedPacket(seed_id=seed_id, pedigree=seed_pedigree, trailing_info=trailing_info))
+            seed_list.append(SeedPacket(seed_id=seed_id, pedigree=seed_pedigree, plot_info=plot_info))
 
     return seed_list
 
