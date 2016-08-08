@@ -5055,6 +5055,7 @@ def log_data_online(request, data_type):
                         plot_id = form.cleaned_data['plot_id']
                         plot_name = form.cleaned_data['plot_name']
                         seed_id = form.cleaned_data['seed_id']
+                        polli_type = form.cleaned_data['polli_type']
                         field = form.cleaned_data['field']
                         plot_num = form.cleaned_data['row_num']
                         range_num = form.cleaned_data['range_num']
@@ -5077,7 +5078,8 @@ def log_data_online(request, data_type):
                                                                                  kernel_num=kernel_num,
                                                                                  planting_date=planting_date,
                                                                                  harvest_date=harvest_date,
-                                                                                 comments=row_comments)
+                                                                                 comments=row_comments,
+                                                                                 polli_type=polli_type)
                             new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='plot',
                                                                                         stock=Stock.objects.get(
                                                                                             seed_id=seed_id),
