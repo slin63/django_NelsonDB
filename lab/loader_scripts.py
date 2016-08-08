@@ -733,6 +733,7 @@ def plot_loader_prep(upload_file, user):
         comments = plot["Plot Comments"]
         plot = plot["Plot Name"]
         polli_type = plot["Pollination type"]
+        gen = plot["Generation"]
 
         try:
             field = Field.objects.get(field_name=field_name)
@@ -770,8 +771,8 @@ def plot_loader_prep(upload_file, user):
         if plot_id not in plot_id_table and plot_id + '\r' not in plot_id_table:
             if plot_hash not in obs_plot_hash_table and plot_hash_fix not in obs_plot_hash_table:
                 obs_plot_hash_table[plot_hash] = obs_plot_id
-                obs_plot_new[(obs_plot_id, plot_id, plot_name, plot_range, plot_row, plot, block, rep, kernel_num, planting_date, harvest_date, comments, polli_type)] = obs_plot_id
-                plot_id_table[plot_id] = (obs_plot_id, plot_id, plot_name, plot_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments, polli_type)
+                obs_plot_new[(obs_plot_id, plot_id, plot_name, plot_range, plot_row, plot, block, rep, kernel_num, planting_date, harvest_date, comments, polli_type, gen)] = obs_plot_id
+                plot_id_table[plot_id] = (obs_plot_id, plot_id, plot_name, plot_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments, polli_type, gen)
                 obs_plot_id = obs_plot_id + 1
             else:
                 plot_hash_exists[(plot_id, plot_name, plot_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)] = obs_plot_id
@@ -834,7 +835,7 @@ def plot_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Plot Table'])
-    writer.writerow(['obs_plot_id', 'plot_id', 'plot_name', 'range_num', 'row_num', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date', 'comments', 'polli type'])
+    writer.writerow(['obs_plot_id', 'plot_id', 'plot_name', 'range_num', 'row_num', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date', 'comments', 'polli type', 'generation'])
     for key in results_dict['obs_plot_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -878,7 +879,7 @@ def plot_loader(results_dict):
         for key in results_dict['obs_plot_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_obsplot = ObsPlot.objects.create(plot_id=key[1], plot_name=key[2], range_num=key[3], row_num=key[4], plot=key[5], block=key[6], rep=key[7], kernel_num=key[8], planting_date=key[9], harvest_date=key[10], comments=key[11], polli_type=key[12])
+                    new_obsplot = ObsPlot.objects.create(plot_id=key[1], plot_name=key[2], range_num=key[3], row_num=key[4], plot=key[5], block=key[6], rep=key[7], kernel_num=key[8], planting_date=key[9], harvest_date=key[10], comments=key[11], polli_type=key[12], gen=key[13])
                     new_obsplot.save()
             except Exception as e:
                 print("ObsPlot Error: %s %s" % (e.message, e.args))
