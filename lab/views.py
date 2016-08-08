@@ -5078,7 +5078,7 @@ def log_data_online(request, data_type):
                                                                                  kernel_num=kernel_num,
                                                                                  planting_date=planting_date,
                                                                                  harvest_date=harvest_date,
-                                                                                 comments=row_comments
+                                                                                 comments=row_comments,
                                                                                  polli_type=polli_type)
                             new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='plot',
                                                                                         stock=Stock.objects.get(
