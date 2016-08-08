@@ -396,6 +396,8 @@ class LogPlotsOnlineForm(forms.Form):
     plot_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plot ID'}), required=True)
     plot_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plot Name'}), required=True)
     seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Seed ID'}), required=True)
+    polli_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Pollination type'}), required=True)
+  
     field = forms.ModelChoiceField(queryset=Field.objects.all(), initial=Field.objects.get(id=1),
                                    empty_label="--- Field Name ---", required=True)
     row_num = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Row'}), required=False)
@@ -407,13 +409,6 @@ class LogPlotsOnlineForm(forms.Form):
     planting_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Planting Date'}), required=False)
     harvest_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Harvest Date'}), required=False)
     row_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}), required=False)
-
-    polli_type = forms.MultipleChoiceField(
-      required=False,
-      widget=forms.CheckBoxSelectMultiple,
-      choices=(('SELF', "Self Pollinate"), ('CROSS', "Cross pollinate"))
-    )
-
 
 class LogPlantsOnlineForm(forms.Form):
     experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---",
