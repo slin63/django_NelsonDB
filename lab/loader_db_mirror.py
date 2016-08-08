@@ -716,7 +716,7 @@ def measurement_hash_mirror():
 
     measurement_file = Measurement.objects.all()
     for row in measurement_file:
-        measurement_hash = str(row.obs_tracker_id) + str(row.user_id) + str(row.measurement_parameter_id) + row.time_of_measurement + row.value + row.comments
+        measurement_hash = str(row.obs_tracker_id) + str(row.measurement_parameter_id) + row.time_of_measurement + row.value + row.comments
         measurement_hash_table[measurement_hash] = row.id
     return measurement_hash_table
 

@@ -4793,7 +4793,7 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
             parameter_error[(obs_id, parameter, username, time_of_measurement, value, comments)] = obs_id
             error_count = error_count + 1
 
-        measurement_hash = str(obs_tracker_id) + str(user_id) + str(parameter_id) + time_of_measurement + value + comments
+        measurement_hash = str(obs_tracker_id) + str(parameter_id) + time_of_measurement + value + comments
         measurement_hash_fix = measurement_hash + '\r'
         if measurement_hash not in measurement_hash_table and measurement_hash_fix not in measurement_hash_table:
             measurement_hash_table[measurement_hash] = measurement_id
