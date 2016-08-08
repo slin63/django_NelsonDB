@@ -1043,7 +1043,7 @@ def obs_plot_hash_mirror():
 
     row_file = ObsPlot.objects.all()
     for row in row_file:
-        obs_plot_hash = row.plot_id + row.plot_name + row.range_num + row.plot + row.block + row.rep + row.kernel_num + row.planting_date + row.harvest_date + row.comments
+        obs_plot_hash = row.plot_id + row.plot_name + row.range_num + row.row + row.plot + row.block + row.rep + row.kernel_num + row.planting_date + row.harvest_date + row.comments
         obs_plot_hash_table[obs_plot_hash] = row.id
     return obs_plot_hash_table
 
