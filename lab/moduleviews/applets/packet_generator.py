@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from lab.models import ObsPlot, Experiment, ObsTracker
 import csv
 
-HEADER = ['Seed ID', 'Seed Name', 'Pedigree', 'Researcher', 'Plot ID', 'Plot Name', 'Plot')
+HEADER = ['Seed ID', 'Seed Name', 'Pedigree', 'Researcher', 'Plot ID', 'Plot Name', 'Plot']
 
 
 class SeedPacket(object):
@@ -40,6 +40,9 @@ def seed_list_make(polli_objs):
 
 
 def get_pedigree(seed_id):
+    """
+`   ????????????
+    """
     return '##TODO'
 
 

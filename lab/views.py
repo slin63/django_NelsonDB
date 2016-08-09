@@ -4629,7 +4629,7 @@ def log_data_online(request, data_type):
                                                                                  stock_status=stock_status,
                                                                                  stock_date=stock_date,
                                                                                  inoculated=inoculated,
-                                                                                 comments=stock_comments
+                                                                                 comments=stock_comments,
                                                                                  gen=gen)
                                 if plot_id != '':
                                     obs_plot = ObsPlot.objects.get(plot_id=plot_id)
@@ -5083,7 +5083,7 @@ def log_data_online(request, data_type):
                                                                                  planting_date=planting_date,
                                                                                  harvest_date=harvest_date,
                                                                                  comments=row_comments,
-                                                                                 polli_type=polli_type
+                                                                                 polli_type=polli_type,
                                                                                  gen=gen)
 
                             new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='plot',

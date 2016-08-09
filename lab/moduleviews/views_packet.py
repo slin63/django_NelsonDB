@@ -1,62 +1,96 @@
 from collections import OrderedDict
-from lab.models import ObsTracker, Measurement
+from lab.models import ObsTracker, Measurement, Experiment
+from pandas import DataFrame, concat
 from applets import packet_generator
+from PedigreeGen import pedigen
+from django.http import HttpResponse
+from numpy import nan as NULL
+import csv
 
-# Data structs
-class MeasStruct(object):
-    def __init__(self, polli_count, polli_type, obs):
-        self.polli_count = polli_count
-        self.polli_type = polli_type
-        self.obs = obs
-
-class PlotStruct(object):
-    def __init__(self, plot_id, stock_id, gen, poll_type, polli_count):
-        self.plot_id = plot_id
-        self.stock_id = stock_id
-        self.gen = gen
-        self.poll_type = poll_type
-        self.row = split_id('row')
-        self.exp = split_id('exp')
-        self.polli_count = polli_count
-
-    def split_id(self, type):
-        zero_index = self.plot_id.find('0')
-        ret = ''
-        if type == 'row':
-            ret = int(self.plot_id[4:])
-        if type == 'exp':
-            ret =  self.plot_id[:4]
-        return ret
-            
 
 def generate_packets(request, experiment_id):
-    self_polli = Measurement.objects.filter(
-       measurement_parameter__parameter='Self/Sib Pollination', obs_tracker__experiment_id=experiment_id
-    )
+    self_polli = Measurement.objects.filter(measurement_parameter__parameter='Self/Sib Pollination', obs_tracker__experiment_id=experiment_id)
     cross_polli = Measurement.objects.filter(
        measurement_parameter__parameter='Cross Pollination', obs_tracker__experiment_id=experiment_id
     )
-    polli_objs = []
-    plot_objs = []
+    exp_name = Experiment.objects.filter(id=experiment_id).values_list('name', flat=True)[0]
+    quality_count_dict = quality_count_pair(list(self_polli) + list(cross_polli))
+    print quality_count_dict
+
+    test_df = DataFrame()
+
     # Get plots and their pollination measurements
     for meas in list(self_polli) + list(cross_polli):
         obs = meas.obs_tracker
-        polli_type = meas.measurement_parameter.parameter_type
-        polli_count = meas.valu
-        plot_id = obs.obs_plot.plot_id
-        stock_id = obs.stock.seed_id
-        gen = obs.obs_plot.gen
-        
-        if meas.value != 0:
-            polli_objs.append(MeasStruct(polli_count, polli_type, obs))
-            plot_objs.append(PlotStruct(plot_id, stock_id, gen, polli_type, polli_count))
+        plot = obs.obs_plot
+        stock = obs.stock
+        df_dict = {}
+        df_dict['Row'] = split_id(plot.plot_id, 'row')
+        df_dict['Plot_ID'] = split_id(plot.plot_id, 'row')
+        df_dict['Pedigree'] = stock.pedigree
+        df_dict['Source ID'] = stock.seed_id
+        df_dict['Seed Name'] = stock.seed_name
+        df_dict['Gen'] = plot.gen
+        df_dict['Poll_Type'] = plot.polli_type
+        df_dict['Researcher'] = "Jamann Lab"
+        if meas.measurement_parameter.parameter == 'Self/Sib Pollination':
+            df_dict['earno_self'] = meas.value
+            df_dict['earq_self'] = quality_count_dict[meas]
+            df_dict['earq_cross'] = df_dict['earno_cross'] = 0
+        elif meas.measurement_parameter.parameter == 'Cross Pollination':
+            df_dict['earno_self'] = df_dict['earq_self'] = 0
+            df_dict['earno_cross'] = meas.value
+            df_dict['earq_self'] = quality_count_dict[meas]
+
+        if meas.value != 0: # Making sure we got corn from this ear
+            buffer_df = DataFrame(df_dict, index=[0])
+            test_df = concat([test_df, buffer_df])
         else:
             pass
 
-    seed_list = packet_generator.seed_list_make(polli_objs)
-    csv_response = packet_generator.seed_list_to_csv(exp_id=experiment_id, seed_list=seed_list)
+    # print test_df
 
-    return csv_response
+    csv_string = pedigen.process_dataframes(test_df, exp_name)
+
+    return string_to_csv_response(csv_string)
 
 
+def string_to_csv_response(string):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="seed_labels.csv"'
+    writer = csv.writer(response)
+    buffer_l = string.split("\n") # Just using some bs to convert a CSV-format string to a CSV-format list
+    csv_l = [e.split(',') for e in buffer_l]
+    for row in csv_l:
+        writer.writerow(row)
 
+    return response
+
+
+def quality_count_pair(meas_count_objs):
+    # Returns {ear count: ear quality} dict for measurements
+    cnt_to_qlty = {}
+    for meas in meas_count_objs:
+        obs = meas.obs_tracker
+        if meas.measurement_parameter.parameter == 'Self/Sib Pollination':
+            try:
+                cnt_to_qlty[meas] = Measurement.objects.get(measurement_parameter__parameter='Self/Sib Ear Quality', obs_tracker=obs).value
+            except Measurement.DoesNotExist:
+                cnt_to_qlty[meas] = 0
+        elif meas.measurement_parameter.parameter == 'Cross Pollination':
+            try:
+                cnt_to_qlty[meas] = Measurement.objects.get(measurement_parameter__parameter='Cross Ear Quality', obs_tracker=obs).value
+            except Measurement.DoesNotExist:
+                cnt_to_qlty[meas] = 0
+
+    return cnt_to_qlty
+
+
+def split_id(plot_id, type):
+        zero_index = plot_id.find('0')
+        ret = ''
+        if type == 'row':
+            ret = int(plot_id[4:])
+        if type == 'exp':
+            ret =  plot_id[:4]
+        return ret
