@@ -465,5 +465,3 @@ def get_obs_measurements(obs_type, obs_id):
     return obs_measurements
 
 
-def drop_down_field_form(request):
-    pass
