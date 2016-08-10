@@ -158,7 +158,7 @@ def download_file_dump(request, file_id):
     wrapper = FileWrapper(open(filename))
     content_type = mimetypes.guess_type(filename)[0]
     response = HttpResponse(wrapper, content_type=content_type)
-    response['Content-Length'] = os.path.getsize(filename)
+    response['Content-Length'] = path.getsize(filename)
     response['Content-Disposition'] = "attachment; filename=%s" % download_name
     return response
 
