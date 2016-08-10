@@ -17,7 +17,7 @@ def generate_packets(request, experiment_id):
     quality_count_dict = quality_count_pair(list(self_polli) + list(cross_polli))
     print quality_count_dict
 
-    test_df = DataFrame()
+    seed_df = DataFrame()
 
     # Get plots and their pollination measurements
     for meas in list(self_polli) + list(cross_polli):
@@ -44,20 +44,20 @@ def generate_packets(request, experiment_id):
 
         if meas.value != 0: # Making sure we got corn from this ear
             buffer_df = DataFrame(df_dict, index=[0])
-            test_df = concat([test_df, buffer_df])
+            seed_df = concat([seed_df, buffer_df])
         else:
             pass
 
-    # print test_df
+    # print seed_df
 
-    csv_string = pedigen.process_dataframes(test_df, exp_name)
+    csv_string = pedigen.process_dataframes(seed_df, exp_name)
 
-    return string_to_csv_response(csv_string)
+    return string_to_csv_response(csv_string, exp_name)
 
 
-def string_to_csv_response(string):
+def string_to_csv_response(string, exp_name):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="seed_labels.csv"'
+    response['Content-Disposition'] = 'attachment; filename="{}_seed_labels.csv"'.format(exp_name)
     writer = csv.writer(response)
     buffer_l = string.split("\n") # Just using some bs to convert a CSV-format string to a CSV-format list
     csv_l = [e.split(',') for e in buffer_l]

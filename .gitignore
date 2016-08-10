@@ -59,7 +59,7 @@ legacy/migrations/
 jmaize/migrations/
 
 media/upload_queue/
-media/files/
+media/files/*
 media/chromatogram_files/
 media/fasta_files/
 media/profile_images/
