@@ -67,4 +67,4 @@ media/profile_images/
 env/
 templates/lab/index/issues.html
 myvenv/
-
+*.swp

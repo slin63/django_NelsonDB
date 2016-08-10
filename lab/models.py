@@ -154,10 +154,19 @@ class ObsPlot(models.Model):
     rep = models.CharField(max_length=200, blank=True)
     polli_type = models.CharField(max_length=30, blank=True)
     kernel_num = models.CharField(max_length=200, blank=True)
+    shell_single = models.BooleanField(default=False)
+    shell_multi = models.BooleanField(default=False)
+    shell_bulk = models.BooleanField(default=False)
     planting_date = models.CharField(max_length=200, blank=True)
     harvest_date = models.CharField(max_length=200, blank=True)
     comments = models.CharField(max_length=3000, blank=True)
     gen = models.CharField(max_length=30, blank=True)
+
+    def get_shell_types(self):
+        return {'shell_single': self.shell_single, 
+                'shell_multi': self.shell_multi, 
+                'shell_bulk': self.shell_bulk}
+
 
     def __unicode__(self):
         return self.plot_id
