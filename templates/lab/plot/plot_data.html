@@ -49,6 +49,8 @@
         <th>Plot ID</th>
         <th>Plot Name</th>
         <th>Pollination</th>
+        <th>Generation</th>
+        <th>Shelling</th>
         <th>Field</th>
         <th>Source Stock</th>
         <th>Pedigree</th>
@@ -70,6 +72,8 @@
         <td><a href='/lab/plot/{{data.obs_plot.id}}/'>{{data.obs_plot.plot_id}}</a></td>
         <td>{{data.obs_plot.plot_name}}</td>
         <td>{{data.obs_plot.polli_type}}</td>
+        <td>{{data.obs_plot.gen}}</td>
+        <td>{{data.obs_plot.get_shell_type}}</td>
         <td><a href='/lab/field/{{data.field.id}}/'>{{data.field.field_name}}</a></td>
         <td><a href='/lab/stock/{{data.stock.id}}/'>{{data.stock.seed_id}}</a></td>
         <td>{{data.stock.pedigree}}</td>
