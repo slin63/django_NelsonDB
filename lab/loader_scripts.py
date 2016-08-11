@@ -764,7 +764,7 @@ def plot_loader_prep(upload_file, user):
                 else:
                     new_taxonomy = Taxonomy.objects.get(id=1)
                 new_passport = Passport.objects.get_or_create(collecting_id=1, people=new_people, taxonomy=new_taxonomy)[0]
-                stock_id = Stock.objects.get_or_create(seed_id=source_seed_id, seed_name=seed_name, pedigree=pedigree, passport=new_passport)[0].id
+                stock_id = Stock.objects.get_or_create(seed_id=source_seed_id, seed_name=seed_name, pedigree=pedigree, passport=new_passport, gen=gen)[0].id
             stock_obs = ObsTracker.objects.get_or_create(experiment=experiment, obs_entity_type='stock', stock_id=stock_id, user=user)[0]
             stock_obs.save()
 
