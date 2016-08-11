@@ -162,15 +162,18 @@ class ObsPlot(models.Model):
     comments = models.CharField(max_length=3000, blank=True)
     gen = models.CharField(max_length=30, blank=True)
 
-    #property decorator - http://stackoverflow.com/questions/1333189/django-template-system-calling-a-function-inside-a-model
-    @property
-    def get_shell_type(self):
-        if self.shell_single: t = 'Single'
-        elif self.shell_multi: t = 'Multi'
-        elif self.shell_bulk: t = 'Bulk'
-        else: t = 'None'
+    def get_shell_type(self, pedigen=False):
+        if pedigen:
+            if self.shell_single: t = 'SINGLE-EAR'
+            elif self.shell_multi: t = 'MULTI-ROW'
+            elif self.shell_bulk: t = 'BULK'
+        else:
+            if self.shell_single: t = 'Single'
+            elif self.shell_multi: t = 'Multi'
+            elif self.shell_bulk: t = 'Bulk'
+            else: t = 'None'
         return t
-    
+
     def __unicode__(self):
         return self.plot_id
 

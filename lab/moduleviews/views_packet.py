@@ -8,14 +8,17 @@ from numpy import nan as NULL
 import csv
 
 
+EAR_COUNT_SELF_SIB = 'Self/Sib Pollination Ears'
+EAR_QUAL_SELF_SIB = 'Self/Sib Ear Quality'
+EAR_COUNT_CROSS = 'Cross Pollination Ears'
+EAR_QUAL_CROSS = 'Cross Ear Quality'
+
+
 def generate_packets(request, experiment_id):
-    self_polli = Measurement.objects.filter(measurement_parameter__parameter='Self/Sib Pollination', obs_tracker__experiment_id=experiment_id)
-    cross_polli = Measurement.objects.filter(
-       measurement_parameter__parameter='Cross Pollination', obs_tracker__experiment_id=experiment_id
-    )
+    self_polli = Measurement.objects.filter(measurement_parameter__parameter=EAR_COUNT_SELF_SIB, obs_tracker__experiment_id=experiment_id)
+    cross_polli = Measurement.objects.filter(measurement_parameter__parameter=EAR_COUNT_CROSS, obs_tracker__experiment_id=experiment_id)
     exp_name = Experiment.objects.filter(id=experiment_id).values_list('name', flat=True)[0]
     quality_count_dict = quality_count_pair(list(self_polli) + list(cross_polli))
-    print quality_count_dict
 
     seed_df = DataFrame()
 
@@ -33,14 +36,15 @@ def generate_packets(request, experiment_id):
         df_dict['Gen'] = plot.gen
         df_dict['Poll_Type'] = plot.polli_type
         df_dict['Researcher'] = "Jamann Lab"
-        if meas.measurement_parameter.parameter == 'Self/Sib Pollination':
+        if meas.measurement_parameter.parameter == EAR_COUNT_SELF_SIB:
             df_dict['earno_self'] = meas.value
             df_dict['earq_self'] = quality_count_dict[meas]
             df_dict['earq_cross'] = df_dict['earno_cross'] = 0
-        elif meas.measurement_parameter.parameter == 'Cross Pollination':
+        elif meas.measurement_parameter.parameter == EAR_COUNT_CROSS:
             df_dict['earno_self'] = df_dict['earq_self'] = 0
             df_dict['earno_cross'] = meas.value
             df_dict['earq_self'] = quality_count_dict[meas]
+        df_dict['shell'] = plot.get_shell_type(pedigen=True)
 
         if meas.value != 0: # Making sure we got corn from this ear
             buffer_df = DataFrame(df_dict, index=[0])
@@ -48,7 +52,8 @@ def generate_packets(request, experiment_id):
         else:
             pass
 
-    # print seed_df
+    if seed_df.empty:
+        return HttpResponse("No data!")
 
     csv_string = pedigen.process_dataframes(seed_df, exp_name)
 
@@ -72,14 +77,14 @@ def quality_count_pair(meas_count_objs):
     cnt_to_qlty = {}
     for meas in meas_count_objs:
         obs = meas.obs_tracker
-        if meas.measurement_parameter.parameter == 'Self/Sib Pollination':
+        if meas.measurement_parameter.parameter == EAR_COUNT_SELF_SIB:
             try:
-                cnt_to_qlty[meas] = Measurement.objects.get(measurement_parameter__parameter='Self/Sib Ear Quality', obs_tracker=obs).value
+                cnt_to_qlty[meas] = Measurement.objects.get(measurement_parameter__parameter=EAR_QUAL_SELF_SIB, obs_tracker=obs).value
             except Measurement.DoesNotExist:
                 cnt_to_qlty[meas] = 0
-        elif meas.measurement_parameter.parameter == 'Cross Pollination':
+        elif meas.measurement_parameter.parameter == EAR_COUNT_CROSS:
             try:
-                cnt_to_qlty[meas] = Measurement.objects.get(measurement_parameter__parameter='Cross Ear Quality', obs_tracker=obs).value
+                cnt_to_qlty[meas] = Measurement.objects.get(measurement_parameter__parameter=EAR_QUAL_CROSS, obs_tracker=obs).value
             except Measurement.DoesNotExist:
                 cnt_to_qlty[meas] = 0
 
