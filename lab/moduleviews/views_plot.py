@@ -24,6 +24,7 @@ def single_plot_info(request, obs_plot_id):
         plot_info = ObsPlot.objects.get(id=obs_plot_id)
     except ObsPlot.DoesNotExist:
         plot_info = None
+        obs_measurements = None
     if plot_info is not None:
         obs_tracker = get_obs_tracker('obs_plot_id', obs_plot_id)
         for t in obs_tracker:
@@ -94,7 +95,7 @@ def plot_loader_browse(request):
 
     # Handles the little select field-map form at the bottom
     if request.method == 'POST':
-        print request.POST
+        # print request.POST
         form = DownloadFieldForm(request.POST)
         if form.is_valid():
             field_id = form.cleaned_data['field'].id

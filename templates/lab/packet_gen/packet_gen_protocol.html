@@ -1,0 +1,31 @@
+<div>
+  <h2>PROTOCOL: TODO</h2>
+      {% comment %}
+
+      <ul>
+        <li><h4>Profile Setup</h4></li>
+        <ol>
+          <li>Use your <code>NetID</code> for your site username if you haven't already done so</li>
+          <li>Use your <code>NetID</code> for your Field Book username (enter it as your first name and leave the last name field blank.)</li>
+        </ol>
+      </ul>
+
+
+      <ul>
+        <li>
+          <h4>Measurements</h4>
+          <ol>
+           <li>Download plot data by <b><a href={% url "experiment" 'search' %}>experiment</a></b> or by <b><a href={% url "browse_field_data" %}>field</a></b>.</li>
+           <li>Upload downloaded .csv to handheld by connecting it to your computer, extracting the .csv to <code>fieldBook/imports/</code>, importing field from within the app, and later collect the appropiate data.</li>
+           <ul>
+             <li>Select <code>Plot ID</code> as the <code>Unique Identifier</code></li>
+             <li>Set the <code>Range</code> as the <code>Primary Order</code> and <code>Row</code> as the <code>Secondary Order</code></li>
+           </ul>
+           <li>Output data from Field-Book by going to the app's <code>settings > export > database; All imported columns; All traits</code> (This is subject to change later).</li>
+           <li>Using the forms below, enter the username of the data collector (create an account for them if they don't have one), select the <measurements>measurements</measurements> model, and attach the .csv that was extracted from Field Book into the output folder: <code>fieldBook/exports/</code>. </li>
+           <li>Leave the <code>verified</code> checkbox unchecked for a preview of your upload, and check it to actually upload information to the website.</li>
+          </ol>
+        </li>
+      </ul>
+      {% endcomment %}
+</div>

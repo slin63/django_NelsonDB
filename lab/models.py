@@ -428,6 +428,8 @@ class Isolate(models.Model):
 class StockPacket(models.Model):
     stock = models.ForeignKey(Stock)
     location = models.ForeignKey(Location)
+    seed_id = models.CharField(max_length=200, blank=True)
+    pedigree = models.CharField(max_length=200, blank=True)
     weight = models.CharField(max_length=200, blank=True)
     num_seeds = models.CharField(max_length=200, blank=True)
     comments = models.CharField(max_length=1000, blank=True)

@@ -55,7 +55,10 @@ urlpatterns = patterns('',
                        url(r'^seed_inventory/update/(?P<stock_id>\d+)/$', views.update_seed_info, name='update_seed_info'),
                        url(r'^seed_inventory/packet_update/(?P<stock_id>\d+)/$', views.update_seed_packet_info, name='update_seed_packet_info'),
 
-                       url(r'^seed_inventory/generate_packets/(?P<experiment_id>\d+)/$', views_packet.generate_packets, name='generate_packets'),
+                       url(r'^seed_inventory/generate_packets/(?P<experiment_id>\d+)/$', views_packet.generate_packet_dataframe, name='generate_packets'),
+                       url(r'^seed_inventory/generate_packets/$', views_packet.packet_menu, name='packet_menu'),
+
+
 
                        # Added 2/15/2016 - slin63
                        url(r'^datatable/isolatestock_inventory/$', views_is.datatable_isolatestock_inventory, name='datatable_isolatestock_inventory'),
@@ -223,11 +226,7 @@ urlpatterns = patterns('',
                        url(r'^download/maize/(?P<experiment_name>\w+)/', views.download_maize_experiment, name='download_maize_experiment'),
                        url(r'^download/microbe/(?P<experiment_name>\w+)/', views.download_microbe_experiment, name='download_microbe_experiment'),
                        url(r'^download/plot/(?P<experiment_name>\w+)/', views_plot.download_plot_experiment, name='download_plot_experiment'),
-
-
                        url(r'^download/plot_field/(?P<field_id>\w+)/', views_plot.download_field_map_by_field, name='download_field_map_by_field'),
-
-
 
                        url(r'^download/fieldmap/(?P<experiment_name>\w+)/', views_plot.download_field_map_experiment, name='download_plot_experiment'),
                        url(r'^download/sample/(?P<experiment_name>\w+)/', views.download_sample_experiment, name='download_sample_experiment'),

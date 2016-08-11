@@ -1,11 +1,16 @@
 from collections import OrderedDict
-from lab.models import ObsTracker, Measurement, Experiment
-from pandas import DataFrame, concat
+from lab.models import ObsTracker, Measurement, Experiment, StockPacket, Stock
+from pandas import DataFrame, concat, merge
 from applets import packet_generator
 from PedigreeGen import pedigen
-from django.http import HttpResponse
 from numpy import nan as NULL
 import csv
+
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.contrib.auth.decorators import login_required
+from lab.forms import PacketGenForm
 
 
 EAR_COUNT_SELF_SIB = 'Self/Sib Pollination Ears'
@@ -14,14 +19,77 @@ EAR_COUNT_CROSS = 'Cross Pollination Ears'
 EAR_QUAL_CROSS = 'Cross Ear Quality'
 
 
-def generate_packets(request, experiment_id):
+def packet_menu(request):
+    context = RequestContext(request)
+    context_dict = {}
+    test_l = []
+    view = None
+
+    if request.method == 'POST':
+        form = PacketGenForm(request.POST)
+        if form.is_valid():
+            exp = form.cleaned_data['exp']
+            choice = form.cleaned_data['packet_choice']
+            if choice == 'generate_labels':
+                view = download_labels(request, exp)
+            elif choice == 'preview_packets':
+                view = preview_packets(request, exp)
+            elif choice == 'create_packets':
+                view = create_packets(request, exp)
+
+    elif request.method == 'GET':
+        form = PacketGenForm()
+        context_dict['form'] = form
+        view = render_to_response("lab/packet_gen/packet_gen_form.html", context_dict, context)
+
+    return view
+
+
+def download_labels(request, exp):
+    seed_df = generate_packet_dataframe(request, exp.id)
+    file_name = "{}_seed_labels.csv".format(exp.name)
+    return string_to_csv_response(csv_string, file_name)
+
+
+def preview_packets(request, exp):
+    packet_df = generate_packet_dataframe(request, exp.id, df_return=True, processing=True)
+    packet_df = extract_packet_info(df)
+    csv_string = packet_df.to_csv(index=False, index_label=False)
+
+    file_name = "{}_packet_preview.csv".format(exp.name)
+    return string_to_csv_response(csv_string, file_name)
+
+
+def create_packets(request, exp):
+    packet_df = generate_packet_dataframe(request, exp.id, df_return=True, processing=True)
+    packet_df = extract_packet_info(packet_df)
+    print packet_df
+    for index, row in packet_df.iterrows():
+        StockPacket.objects.create(
+            stock=Stock.objects.get(seed_id=row['source_ID']),
+            location_id=1,
+            seed_id=row['seed_ID'],
+            gen=row['seed_gen'],
+            pedigree=row['Pedigree']
+        )
+        row['source_ID']
+    return HttpResponse("TODO")
+
+
+def extract_packet_info(df):
+    packet_df = df[['source_ID', 'seed_ID', 'seed_gen', 'Pedigree']]
+    return packet_df
+
+
+
+def generate_packet_dataframe(request, experiment_id, df_return=False, processing=True):
     self_polli = Measurement.objects.filter(measurement_parameter__parameter=EAR_COUNT_SELF_SIB, obs_tracker__experiment_id=experiment_id)
     cross_polli = Measurement.objects.filter(measurement_parameter__parameter=EAR_COUNT_CROSS, obs_tracker__experiment_id=experiment_id)
     exp_name = Experiment.objects.filter(id=experiment_id).values_list('name', flat=True)[0]
     quality_count_dict = quality_count_pair(list(self_polli) + list(cross_polli))
 
     seed_df = DataFrame()
-
+    view = None
     # Get plots and their pollination measurements
     for meas in list(self_polli) + list(cross_polli):
         obs = meas.obs_tracker
@@ -53,16 +121,20 @@ def generate_packets(request, experiment_id):
             pass
 
     if seed_df.empty:
-        return HttpResponse("No data!")
+        view = HttpResponse("No data!")
 
-    csv_string = pedigen.process_dataframes(seed_df, exp_name)
+    else:
+        if processing:
+            view = pedigen.process_dataframes(seed_df, exp_name, df_return)
+        else:
+            view = seed_df
 
-    return string_to_csv_response(csv_string, exp_name)
+    return view
 
 
-def string_to_csv_response(string, exp_name):
+def string_to_csv_response(string, file_name):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="{}_seed_labels.csv"'.format(exp_name)
+    response['Content-Disposition'] = 'attachment; filename="{}"'.format(file_name)
     writer = csv.writer(response)
     buffer_l = string.split("\n") # Just using some bs to convert a CSV-format string to a CSV-format list
     csv_l = [e.split(',') for e in buffer_l]

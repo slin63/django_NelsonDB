@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.contenttypes.models import ContentType
 
 from lab.models import UserProfile, Experiment, Field, ObsPlot, ObsPlant, Locality, Stock, ObsPlot, ObsPlant, ObsSample, IsolateStock, \
-  ObsEnv, MeasurementParameter, Citation, Medium, Location, DiseaseInfo, FileDump
+  ObsEnv, MeasurementParameter, Citation, Medium, Location, DiseaseInfo, FileDump, StockPacket
 from django.contrib.auth.models import User
 from django.core.validators import EmailValidator
 
@@ -32,6 +32,20 @@ class DownloadFieldForm(forms.ModelForm):
     class Meta:
       model = Field
       fields = ['field', 'get_csv_instead']
+
+
+class PacketGenForm(forms.ModelForm):
+    choices = (
+        ('generate_labels', 'Generate labels for existing seed packets'),
+        ('preview_packets', 'Preview generated stock packets for next year'),
+        ('create_packets', 'Push generated stock packets from preview onto DB')
+    )
+    exp = forms.ModelChoiceField(queryset=Experiment.objects.all(), required=True, help_text="Select experiment to create packet data for: ")
+    packet_choice = forms.ChoiceField(required=False, help_text='Select an action to perform: ', choices=choices, widget=forms.RadioSelect)
+
+    class Meta:
+      model = Experiment
+      fields = ['exp', 'packet_choice']
 
 
 class FileDumpForm(forms.ModelForm):
@@ -382,7 +396,7 @@ class LogStockPacketOnlineForm(forms.Form):
     location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Storage Location ---",
                                       required=True)
     gen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Generation'}), required=False)
-    
+
 
 class UpdateStockPacketOnlineForm(forms.Form):
     weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Weight'}), required=False)
@@ -399,7 +413,7 @@ class LogPlotsOnlineForm(forms.Form):
     plot_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plot Name'}), required=True)
     seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Seed ID'}), required=True)
     polli_type = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Pollination type'}), required=True)
-  
+
     field = forms.ModelChoiceField(queryset=Field.objects.all(), initial=Field.objects.get(id=1),
                                    empty_label="--- Field Name ---", required=True)
     row_num = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Row'}), required=False)
