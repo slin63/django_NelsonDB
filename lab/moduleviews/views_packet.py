@@ -37,7 +37,15 @@ def packet_menu(request):
                 elif choice == 'preview_packets':
                     view = preview_packets(request, exp)
                 elif choice == 'create_packets':
-                    view = create_packets(request, exp)
+                    success = create_packets(request, exp)
+                    if not success:
+                        context_dict['errors'] = "Failed to create packets"
+                        context_dict['form'] = PacketGenForm()
+                        view = render_to_response("lab/packet_gen/packet_gen_form.html", context_dict, context) 
+                    if success:
+                        context_dict['success'] = "Successfully created {} packets!".format(success)
+                        context_dict['form'] = PacketGenForm()
+                        view = render_to_response("lab/packet_gen/packet_gen_form.html", context_dict, context) 
             else:
                 context_dict['errors'] = "Did not confirm!"
                 context_dict['form'] = PacketGenForm()
@@ -74,19 +82,29 @@ def preview_packets(request, exp):
 
 
 def create_packets(request, exp):
+    success = False
     packet_df = generate_packet_dataframe(request, exp.id, df_return=True, processing=True)
-    packet_df = extract_packet_info(packet_df)
-    print packet_df
-    for index, row in packet_df.iterrows():
-        StockPacket.objects.create(
-            stock=Stock.objects.get(seed_id=row['source_ID']),
-            location_id=1,
-            seed_id=row['seed_ID'],
-            gen=row['seed_gen'],
-            pedigree=row['Pedigree']
-        )
+    if packet_df.empty:
+        success = False
+    else:
+        packet_df = extract_packet_info(packet_df) 
+        packet_count = 0
+        for index, row in packet_df.iterrows():
+            try:
+                sp = StockPacket.objects.create(
+                    stock=Stock.objects.get(seed_id=row['source_ID']),
+                    location_id=1,
+                    seed_id=row['seed_ID'],
+                    gen=row['seed_gen'],
+                    pedigree=row['Pedigree']
+                )
+                sp.save()
+                packet_count += 1
+                print "Created PACKET: [ID:{}]-[GEN:{}]-[PED:{}}".format(sp.seed_id, sp.gen, sp.pedigree)
+            except:
+                pass
 
-    return HttpResponse("Donezo")
+    return packet_count
 
 
 def extract_packet_info(df):

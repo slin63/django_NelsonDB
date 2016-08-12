@@ -163,16 +163,22 @@ class ObsPlot(models.Model):
     gen = models.CharField(max_length=30, blank=True)
 
     def get_shell_type(self, pedigen=False):
+        t = 'None'
         if pedigen:
-            if self.shell_single: t = 'SINGLE-EAR'
-            elif self.shell_multi: t = 'MULTI-ROW'
-            elif self.shell_bulk: t = 'BULK'
+            if self.shell_single: 
+                t = 'SINGLE-EAR'
+            elif self.shell_multi: 
+                t = 'MULTI-ROW'
+            elif self.shell_bulk: 
+                t = 'BULK'
         else:
-            if self.shell_single: t = 'Single'
-            elif self.shell_multi: t = 'Multi'
-            elif self.shell_bulk: t = 'Bulk'
-            else: t = 'None'
-        return t
+            if self.shell_single: 
+                t = 'Single'
+            elif self.shell_multi: 
+                t = 'Multi'
+            elif self.shell_bulk: 
+                t = 'Bulk'
+        return 'SINGLE-EAR'
 
     def __unicode__(self):
         return self.plot_id
@@ -428,7 +434,7 @@ class Isolate(models.Model):
 class StockPacket(models.Model):
     stock = models.ForeignKey(Stock)
     location = models.ForeignKey(Location)
-    seed_id = models.CharField(max_length=200, blank=True)
+    seed_id = models.CharField(max_length=200, blank=True, unique=True)
     pedigree = models.CharField(max_length=200, blank=True)
     weight = models.CharField(max_length=200, blank=True)
     num_seeds = models.CharField(max_length=200, blank=True)
