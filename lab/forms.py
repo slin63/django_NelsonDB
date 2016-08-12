@@ -41,11 +41,12 @@ class PacketGenForm(forms.ModelForm):
         ('create_packets', 'Push generated stock packets from preview onto DB')
     )
     exp = forms.ModelChoiceField(queryset=Experiment.objects.all(), required=True, help_text="Select experiment to create packet data for: ")
-    packet_choice = forms.ChoiceField(required=False, help_text='Select an action to perform: ', choices=choices, widget=forms.RadioSelect)
+    packet_choice = forms.ChoiceField(required=True, help_text='Select an action to perform: ', choices=choices, widget=forms.RadioSelect)
+    confirm = forms.BooleanField(required=False, help_text='Check to confirm selected action: ', initial=False)
 
     class Meta:
       model = Experiment
-      fields = ['exp', 'packet_choice']
+      fields = ['exp', 'packet_choice', 'confirm']
 
 
 class FileDumpForm(forms.ModelForm):

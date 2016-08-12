@@ -17,25 +17,35 @@ EAR_COUNT_SELF_SIB = 'Self/Sib Pollination Ears'
 EAR_QUAL_SELF_SIB = 'Self/Sib Ear Quality'
 EAR_COUNT_CROSS = 'Cross Pollination Ears'
 EAR_QUAL_CROSS = 'Cross Ear Quality'
-
+RESEARCHER = 'Jamann Lab'
+EMPTY_DF = DataFrame()
 
 def packet_menu(request):
     context = RequestContext(request)
     context_dict = {}
-    test_l = []
+    context_dict['logged_in_user'] = request.user.username
     view = None
 
     if request.method == 'POST':
         form = PacketGenForm(request.POST)
         if form.is_valid():
-            exp = form.cleaned_data['exp']
-            choice = form.cleaned_data['packet_choice']
-            if choice == 'generate_labels':
-                view = download_labels(request, exp)
-            elif choice == 'preview_packets':
-                view = preview_packets(request, exp)
-            elif choice == 'create_packets':
-                view = create_packets(request, exp)
+            if form.cleaned_data['confirm'] is True:
+                exp = form.cleaned_data['exp']
+                choice = form.cleaned_data['packet_choice']
+                if choice == 'generate_labels':
+                    view = download_labels(request, exp)
+                elif choice == 'preview_packets':
+                    view = preview_packets(request, exp)
+                elif choice == 'create_packets':
+                    view = create_packets(request, exp)
+            else:
+                context_dict['errors'] = "Did not confirm!"
+                context_dict['form'] = PacketGenForm()
+                view = render_to_response("lab/packet_gen/packet_gen_form.html", context_dict, context)
+        else:
+            context_dict['errors'] = "Incomplete Form"
+            context_dict['form'] = PacketGenForm()
+            view = render_to_response("lab/packet_gen/packet_gen_form.html", context_dict, context)
 
     elif request.method == 'GET':
         form = PacketGenForm()
@@ -46,16 +56,19 @@ def packet_menu(request):
 
 
 def download_labels(request, exp):
-    seed_df = generate_packet_dataframe(request, exp.id)
+    csv_string = generate_packet_dataframe(request, exp.id)
     file_name = "{}_seed_labels.csv".format(exp.name)
     return string_to_csv_response(csv_string, file_name)
 
 
 def preview_packets(request, exp):
     packet_df = generate_packet_dataframe(request, exp.id, df_return=True, processing=True)
-    packet_df = extract_packet_info(df)
-    csv_string = packet_df.to_csv(index=False, index_label=False)
+    if packet_df.empty:
+        packet_df = EMPTY_DF
+    else:
+        packet_df = extract_packet_info(packet_df)
 
+    csv_string = packet_df.to_csv(index=False, index_label=False)
     file_name = "{}_packet_preview.csv".format(exp.name)
     return string_to_csv_response(csv_string, file_name)
 
@@ -72,14 +85,13 @@ def create_packets(request, exp):
             gen=row['seed_gen'],
             pedigree=row['Pedigree']
         )
-        row['source_ID']
-    return HttpResponse("TODO")
+
+    return HttpResponse("Donezo")
 
 
 def extract_packet_info(df):
     packet_df = df[['source_ID', 'seed_ID', 'seed_gen', 'Pedigree']]
     return packet_df
-
 
 
 def generate_packet_dataframe(request, experiment_id, df_return=False, processing=True):
@@ -103,7 +115,8 @@ def generate_packet_dataframe(request, experiment_id, df_return=False, processin
         df_dict['Seed Name'] = stock.seed_name
         df_dict['Gen'] = plot.gen
         df_dict['Poll_Type'] = plot.polli_type
-        df_dict['Researcher'] = "Jamann Lab"
+        df_dict['Researcher'] = RESEARCHER
+
         if meas.measurement_parameter.parameter == EAR_COUNT_SELF_SIB:
             df_dict['earno_self'] = meas.value
             df_dict['earq_self'] = quality_count_dict[meas]
@@ -112,6 +125,7 @@ def generate_packet_dataframe(request, experiment_id, df_return=False, processin
             df_dict['earno_self'] = df_dict['earq_self'] = 0
             df_dict['earno_cross'] = meas.value
             df_dict['earq_self'] = quality_count_dict[meas]
+
         df_dict['shell'] = plot.get_shell_type(pedigen=True)
 
         if meas.value != 0: # Making sure we got corn from this ear
@@ -120,14 +134,21 @@ def generate_packet_dataframe(request, experiment_id, df_return=False, processin
         else:
             pass
 
-    if seed_df.empty:
-        view = HttpResponse("No data!")
 
+    # If empty and requesting a processed DF
+    if seed_df.empty and processing and df_return:
+        view = EMPTY_DF
+    # If empty and requesting a processed CSV string
+    elif seed_df.empty and processing:
+        view = EMPTY_DF.to_csv()
+    # Not empty and requesting a processed CSV string
+    elif processing:
+        view = pedigen.process_dataframes(seed_df, exp_name, df_return)
+    # Not empty and requesting a non-processed CSV string
+    elif not seed_df.empty and not processing:
+        view = seed_df.to_csv()
     else:
-        if processing:
-            view = pedigen.process_dataframes(seed_df, exp_name, df_return)
-        else:
-            view = seed_df
+        view = EMPTY_DF
 
     return view
 
@@ -164,10 +185,10 @@ def quality_count_pair(meas_count_objs):
 
 
 def split_id(plot_id, type):
-        zero_index = plot_id.find('0')
-        ret = ''
-        if type == 'row':
-            ret = int(plot_id[4:])
-        if type == 'exp':
-            ret =  plot_id[:4]
-        return ret
+    zero_index = plot_id.find('0')
+    ret = ''
+    if type == 'row':
+        ret = int(plot_id[4:])
+    if type == 'exp':
+        ret =  plot_id[:4]
+    return ret
