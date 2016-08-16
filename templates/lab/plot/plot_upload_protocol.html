@@ -1,0 +1,148 @@
+{% comment %} <h3>Template Guide: </h3>
+  <ul>
+      <li><b>Plot ID</b>: </li>
+      <li><b>Experiment Name</b>: </li>
+      <li><b>Source Seed ID</b>: </li>
+      <li><b>Seed Name</b>: </li>
+      <li><b>Population</b>: </li>
+      <li><b>Pedigree</b>: </li>
+      <li><b>Field Name</b>: </li>
+      <li><b>Planting Year</b>: </li>
+      <li><b>Plot Name</b>: </li>
+      <li><b>Generation</b>: </li>
+      <li><b>Shell Type</b>: </li>
+      <li><b>Row / Range</b>: </li>
+      <li><b>Plot</b>: </li>
+      <li><b>Block</b>: </li>
+      <li><b>Rep</b>: </li>
+      <li><b>Kernel Num</b>: </li>
+      <li><b>Planting Date</b>: </li>
+      <li><b>Harvest Date</b>: </li>
+      <li><b>Plot Comments</b>: </li>
+      <li><b>Organization</b>: </li>
+      <li><b>First Name</b>: </li>
+      <li><b>Last Name</b>: </li>
+  </ul>
+      describe what models these will create and if they'll be generated or queried for.
+  {% endcomment %}
+<style>
+    th, td {
+        padding: 5px;
+    }
+    th {
+    text-align: left;
+    }
+</style>
+<h3>Template Guide: </h3>
+ <table style="width:50%">
+  <tr>
+    <th>Upload Field</th>
+    <th>Corresponding model</th>
+    <th>Details</th>
+  </tr>
+  <tr>
+    <td>Plot ID</td>
+    <td><code>ObsPlot</code></td>
+    <td>Unique identifier for the <code>ObsPlot</code> object, formatted <code>Experiment + 4 digit code</code> (e.g. 14FL0001, 16GGU0015).</td>
+  </tr>
+  <tr>
+    <td>Experiment Name</td>
+    <td><code>Experiment</code></td>
+    <td>A 4-5 character formatted name (e.g. 14FL, 16GGU) referring to an existing experiment. If the experiment does not exist, one will be created with this name. </td>
+  </tr>
+  <tr>
+    <td>Source Seed ID</td>
+    <td><code>Stock</code></td>
+    <td>Unique identifier for the <code>Stock</code> object. If the <code>Stock</code> object does not exist, one will be created with this name.</td>
+  </tr>
+  <tr>
+    <td>Seed Name</td>
+    <td><code>Stock</code></td>
+    <td>Generic identifier for the <code>Stock</code> object. If the <code>Stock</code> object does not exist, one will be created with this name.</td>
+  </tr>
+  <tr>
+    <td>Population</td>
+    <td><code>Stock -> Taxonomy</code></td>
+    <td>Population with which the <code>Stock</code> is associated. </td>
+  </tr>
+  <tr>
+    <td>Pedigree</td>
+    <td><code>Stock</code></td>
+    <td>Pedigree with which the <code>Stock</code> is associated. </td>
+  </tr>
+  <tr>
+    <td>Field Name</td>
+    <td><code>Field</code></td>
+    <td><code>Field</code> the plot is planted in. If the <code>Field</code> object does not exist, one will be created with this name. </td>
+  </tr>
+  <tr>
+    <td>Planting Year</td>
+    <td><code>Field</code></td>
+    <td>Year the plot was planted in. </td>
+  </tr>
+  <tr>
+    <td>Generation</td>
+    <td><code>ObsPlot</code></td>
+    <td>The generation of this <code>ObsPlot</code>'s source seed (does not define gen of the <code>Stock</code>.)</td>
+  </tr>
+  <tr>
+    <td>Pollination type</td>
+    <td><code>ObsPlot</code></td>
+    <td>The pollination type of the plot. Must be entered as displayed in this list, not including text in parentheses: <code>SF (selfing), SB (sibbing), CR (crossing). </code></td>
+  </tr>
+  <tr>
+    <td>Shell Type</td>
+    <td><code>ObsPlot</code></td>
+    <td>How the plot is being shelled. Either <code>'single', 'multi', or 'bulk'</code>.</td>
+  </tr>
+  <tr>
+    <td>Row/Range</td>
+    <td><code>ObsPlot</code></td>
+    <td>Row / range coordinates of the plot.</td>
+  </tr>
+  <tr>
+    <td>Plot</td>
+    <td><code>ObsPlot</code></td>
+    <td>Third identifier for the plot.</td>
+  </tr>
+  <tr>
+    <td>Block</td>
+    <td><code>ObsPlot</code></td>
+    <td>Plot's block.</td>
+  </tr>
+  <tr>
+    <td>Rep</td>
+    <td><code>ObsPlot</code></td>
+    <td>Plot's rep.</td>
+  </tr>
+  <tr>
+    <td>Kernel Num</td>
+    <td><code>ObsPlot</code></td>
+    <td>Number of kernels planted for the plot.</td>
+  </tr>
+  <tr>
+    <td>Planting Date</td>
+    <td><code>Experiment</code></td>
+    <td>Date plot was planted.</td>
+
+  <tr>
+    <td>Harvest Date</td>
+    <td><code>ObsPlot</code></td>
+    <td>Harvest date for the plot.</td>
+  </tr>
+  <tr>
+    <td>Organization</td>
+    <td><code>Stock -> People</code></td>
+    <td>The organization that provided the <code>Stock</code>.</td>
+  </tr>
+  <tr>
+    <td>First Name</td>
+    <td><code>Stock -> People</code></td>
+    <td>The first name of the person that provided the <code>Stock</code>.</td>
+  </tr>
+  <tr>
+    <td>Last Name</td>
+    <td><code>Stock -> People</code></td>
+    <td>The last name of the person that provided the <code>Stock</code>.</td>
+  </tr>
+</table>

@@ -165,18 +165,18 @@ class ObsPlot(models.Model):
     def get_shell_type(self, pedigen=False):
         t = 'None'
         if pedigen:
-            if self.shell_single: 
+            if self.shell_single:
                 t = 'SINGLE-EAR'
-            elif self.shell_multi: 
+            elif self.shell_multi:
                 t = 'MULTI-ROW'
-            elif self.shell_bulk: 
+            elif self.shell_bulk:
                 t = 'BULK'
         else:
-            if self.shell_single: 
+            if self.shell_single:
                 t = 'Single'
-            elif self.shell_multi: 
+            elif self.shell_multi:
                 t = 'Multi'
-            elif self.shell_bulk: 
+            elif self.shell_bulk:
                 t = 'Bulk'
         return 'SINGLE-EAR'
 

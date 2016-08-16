@@ -12,6 +12,7 @@
         <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
           <tr>
+            <th>Locality ID</th>
             <th>City</th>
             <th>County</th>
             <th>State</th>
@@ -22,6 +23,7 @@
           <tbody>
           {% for data in locality_data %}
           <tr>
+            <td>{{data.id}}</td>
             <td><a href='/lab/locality/{{data.id}}/'>{{data.city}}</a></td>
             <td>{{data.county}}</td>
             <td>{{data.state}}</td>
