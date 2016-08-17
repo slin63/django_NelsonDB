@@ -161,6 +161,8 @@ class ObsPlot(models.Model):
     harvest_date = models.CharField(max_length=200, blank=True)
     comments = models.CharField(max_length=3000, blank=True)
     gen = models.CharField(max_length=30, blank=True)
+    is_male = models.BooleanField(default=False)
+    cross_target = models.ForeignKey("ObsPlot")
 
     def get_shell_type(self, pedigen=False):
         t = 'None'
