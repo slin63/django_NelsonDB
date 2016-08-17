@@ -1,0 +1,46 @@
+<style>
+    th, td {
+        padding: 5px;
+    }
+    th {
+    text-align: left;
+    }
+</style>
+<h3>Template Guide: </h3>
+ <table style="width:50%">
+  <tr>
+    <th>Upload Field</th>
+    <th>Corresponding model</th>
+    <th>Details</th>
+  </tr>
+  <tr>
+    <td>IsolateStock ID</td>
+    <td><code>Isolate -> IsolateStock</code></td>
+    <td><code>IsolateStock</code> that this <code>Isolate</code> will be created for</td>
+  </tr>
+  <tr>
+    <td>Isolate ID</td>
+    <td><code>IsolateStock</code></td>
+    <td>Generic identifier for the <code>Isolate</code></td>
+  </tr>
+  <tr>
+    <td>Locality ID</td>
+    <td><code>Isolate -> Locality</code></td>
+    <td>Numerical ID of the <code>IsolateStock / Isolate</code>'s locality. Can be looked up at <b><a href={% url 'browse_locality_data' %}>the locality table.</a></b> </td>
+  </tr>
+  <tr>
+    <td>Shelf / Box Name / Building Name / Room/ Location Name</td>
+    <td><code>Isolate -> Location</code></td>
+    <td><code>Location</code> data specifying where the <code>Isolate</code>s are stored.  </td>
+  </tr>
+  <tr>
+    <td>Stock Date / Extract Color / Organism</td>
+    <td><code>Isolate</code></td>
+    <td>When the <code>Isolate</code> was created, its color, and its source organism. </td>
+  </tr>
+  <tr>
+    <td>User</td>
+    <td><code>Isolate</code></td>
+    <td>The username of the person who curated this <code>Isolate</code>. (e.g. Enter <code>{{user.username}}</code> if you're the one who brought it into this world.)</td>
+  </tr>
+</table>

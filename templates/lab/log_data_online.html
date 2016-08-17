@@ -151,6 +151,15 @@
       <h3>Or Upload Using Online Form: </h3>
     {% endif %}
     {% if data_type == 'isolate' %}
+      <hr>
+      <h3>Upload From File: </h3>
+      <h5><a href='/lab/download/template/isolate/'>Download Template</a></h5>
+      <h5><a href='/lab/upload_online/isolate_data/'>Upload Completed Template</a></h5>
+      <hr>
+      {% include "lab/isolate/isolate_upload_protocol.html" %}
+      <hr>
+      <h3>Or Upload Using Online Form: </h3>
+
       <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
         <div class="row-fluid">
           <div class="span5">
