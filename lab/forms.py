@@ -766,3 +766,10 @@ class FieldBookUploadForm(forms.Form):
                                help_text="Select the model you're uploading info for:", required=True)
     file_name = forms.FileField(help_text="Select your file:")
     verified = forms.BooleanField(help_text="Verified:", required=False)
+
+
+class HarvestDateForm(forms.Form):
+    # user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Username ---",
+                                  # help_text="Select the user who produced data:", required=True)
+    file_name = forms.FileField(help_text="Select your file:")
+    verified = forms.BooleanField(help_text="Verified:", required=True)

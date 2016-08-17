@@ -7,12 +7,65 @@ from itertools import chain
 from openpyxl.writer.excel import save_virtual_workbook
 
 from applets import field_map_generator
-from lab.forms import DownloadFieldForm
+from lab.forms import DownloadFieldForm, HarvestDateForm
 from lab.models import Experiment, Stock, ObsPlot, ObsPlant, ObsSample, ObsWell, ObsCulture, ObsTissue, ObsDNA, \
     ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, Field, \
     Measurement, MaizeSample, Isolate
 
 YEAR_INIT = 2015
+
+
+@login_required
+def add_harvest_date(request):
+    context = RequestContext(request)
+    context_dict = {}
+    context_dict['logged_in_user'] = request.user.username
+    view = None
+
+    if request.method == 'POST':
+        form = HarvestDateForm(request.POST, request.FILES)
+        if form.is_valid():
+            upload_file = request.FILES['file_name']
+            if process_harvest_dates(upload_file):
+                context_dict['success'] = "Harvest dates added!"
+                context_dict['upload_form'] = HarvestDateForm()
+                view = render_to_response("lab/plot/harvest_date.html", context_dict, context)
+            else:
+                context_dict['errors'] = "Invalid Form"
+                context_dict['upload_form'] = HarvestDateForm()
+                view = render_to_response("lab/plot/harvest_date.html", context_dict, context)
+
+        else:
+            context_dict['errors'] = "Incomplete Form"
+            context_dict['upload_form'] = HarvestDateForm()
+            view = render_to_response("lab/plot/harvest_date.html", context_dict, context)
+
+    elif request.method == 'GET':
+        form = HarvestDateForm()
+        context_dict['upload_form'] = form
+        view = render_to_response("lab/plot/harvest_date.html", context_dict, context)
+
+    return view
+
+
+def process_harvest_dates(upload_file):
+    success = True
+    # try:
+    rdr = csv.DictReader(upload_file)
+    try:
+        for row in rdr:
+            print row
+            p_id = row["Plot ID"]
+            date = row["Harvest Date"]
+            plot = ObsPlot.objects.get(plot_id=p_id)
+            plot.harvest_date = date
+            plot.save()
+    except ObsPlot.DoesNotExist:
+        success = False
+        pass
+
+
+    return success
 
 
 @login_required
