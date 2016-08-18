@@ -10,6 +10,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
 from lab.forms import PacketGenForm
 
 
@@ -41,11 +42,11 @@ def packet_menu(request):
                     if not success:
                         context_dict['errors'] = "Failed to create packets"
                         context_dict['form'] = PacketGenForm()
-                        view = render_to_response("lab/packet_gen/packet_gen_form.html", context_dict, context) 
+                        view = render_to_response("lab/packet_gen/packet_gen_form.html", context_dict, context)
                     if success:
                         context_dict['success'] = "Successfully created {} packets!".format(success)
                         context_dict['form'] = PacketGenForm()
-                        view = render_to_response("lab/packet_gen/packet_gen_form.html", context_dict, context) 
+                        view = render_to_response("lab/packet_gen/packet_gen_form.html", context_dict, context)
             else:
                 context_dict['errors'] = "Did not confirm!"
                 context_dict['form'] = PacketGenForm()
@@ -84,31 +85,37 @@ def preview_packets(request, exp):
 def create_packets(request, exp):
     success = False
     packet_df = generate_packet_dataframe(request, exp.id, df_return=True, processing=True)
+
     if packet_df.empty:
         success = False
     else:
-        packet_df = extract_packet_info(packet_df) 
+        packet_df = extract_packet_info(packet_df)
         packet_count = 0
+
         for index, row in packet_df.iterrows():
             try:
                 sp = StockPacket.objects.create(
-                    stock=Stock.objects.get(seed_id=row['source_ID']),
+                    stock=Stock.objects.get(seed_id=row['Original_stock']),
                     location_id=1,
                     seed_id=row['seed_ID'],
                     gen=row['seed_gen'],
                     pedigree=row['Pedigree']
                 )
                 sp.save()
+
                 packet_count += 1
-                print "Created PACKET: [ID:{}]-[GEN:{}]-[PED:{}}".format(sp.seed_id, sp.gen, sp.pedigree)
-            except:
+                print "Created PACKET: [ID:{}]-[GEN:{}]-[PED:{}]".format(sp.seed_id, sp.gen, sp.pedigree)
+            except IntegrityError as e:
+                print("Packet Error: %s %s" % (e.message, e.args))
                 pass
+
+
 
     return packet_count
 
 
 def extract_packet_info(df):
-    packet_df = df[['source_ID', 'seed_ID', 'seed_gen', 'Pedigree']]
+    packet_df = df[['source_ID', 'seed_ID', 'seed_gen', 'Pedigree', 'Original_stock']]
     return packet_df
 
 
@@ -130,19 +137,22 @@ def generate_packet_dataframe(request, experiment_id, df_return=False, processin
         df_dict['Plot_ID'] = split_id(plot.plot_id, 'row')
         df_dict['Pedigree'] = stock.pedigree
         df_dict['Source ID'] = stock.seed_id
+        df_dict['Original_stock'] = stock.seed_id
         df_dict['Seed Name'] = stock.seed_name
         df_dict['Gen'] = plot.gen
+        df_dict['is_male'] = plot.is_male
+        df_dict['cross_target'] = plot.cross_target
         df_dict['Poll_Type'] = plot.polli_type
         df_dict['Researcher'] = RESEARCHER
 
         if meas.measurement_parameter.parameter == EAR_COUNT_SELF_SIB:
+            df_dict['earq_cross'] = df_dict['earno_cross'] = 0
             df_dict['earno_self'] = meas.value
             df_dict['earq_self'] = quality_count_dict[meas]
-            df_dict['earq_cross'] = df_dict['earno_cross'] = 0
         elif meas.measurement_parameter.parameter == EAR_COUNT_CROSS:
             df_dict['earno_self'] = df_dict['earq_self'] = 0
             df_dict['earno_cross'] = meas.value
-            df_dict['earq_self'] = quality_count_dict[meas]
+            df_dict['earq_cross'] = quality_count_dict[meas]
 
         df_dict['shell'] = plot.get_shell_type(pedigen=True)
 

@@ -93,6 +93,7 @@ def single_plot_info(request, obs_plot_id):
     context_dict['obs_source'] = obs_source
     context_dict['obs_measurements'] = obs_measurements
     context_dict['logged_in_user'] = request.user.username
+
     return render_to_response('lab/plot/plot_info.html', context_dict, context)
 
 

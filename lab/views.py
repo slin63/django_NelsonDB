@@ -1,4 +1,5 @@
 import csv
+import sys
 import json
 import mimetypes
 from os import path, listdir
@@ -7474,144 +7475,150 @@ def upload_online(request, template_type):
             new_upload_comments = upload_form.cleaned_data['comments']
             new_upload_verified = upload_form.cleaned_data['verified']
             upload_added = True
+            try:
+                if template_type == 'seed_stock':
+                    results_dict = loader_scripts.seed_stock_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'seed_packet':
+                    results_dict = loader_scripts.seed_packet_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'plot_loader':
+                    results_dict = loader_scripts.plot_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'measurement_data':
+                    results_dict = loader_scripts.measurement_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'plant_data':
+                    results_dict = loader_scripts.plant_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'tissue_data':
+                    results_dict = loader_scripts.tissue_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'culture_data':
+                    results_dict = loader_scripts.culture_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'microbe_data':
+                    results_dict = loader_scripts.microbe_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'dna_data':
+                    results_dict = loader_scripts.dna_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'plate_data':
+                    results_dict = loader_scripts.plate_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'well_data':
+                    results_dict = loader_scripts.well_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'env_data':
+                    results_dict = loader_scripts.env_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'isolatestock_data':
+                    results_dict = loader_scripts.isolatestock_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'samples_data':
+                    results_dict = loader_scripts.samples_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'separation_data':
+                    results_dict = loader_scripts.separation_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'maize_data':
+                    results_dict = loader_scripts.maize_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'isolate_data':
+                    results_dict = loader_scripts.isolate_loader_prep(request.FILES['file_name'], new_upload_user)
+                else:
+                    results_dict = None
+                if results_dict is not None:
+                    if new_upload_verified == False:
+                        upload_complete = False
 
-            if template_type == 'seed_stock':
-                results_dict = loader_scripts.seed_stock_loader_prep(request.FILES['file_name'], new_upload_user)
-            elif template_type == 'seed_packet':
-                results_dict = loader_scripts.seed_packet_loader_prep(request.FILES['file_name'], new_upload_user)
-            elif template_type == 'plot_loader':
-                results_dict = loader_scripts.plot_loader_prep(request.FILES['file_name'], new_upload_user)
-            elif template_type == 'measurement_data':
-                results_dict = loader_scripts.measurement_loader_prep(request.FILES['file_name'], new_upload_user)
-            elif template_type == 'plant_data':
-                results_dict = loader_scripts.plant_loader_prep(request.FILES['file_name'], new_upload_user)
-            elif template_type == 'tissue_data':
-                results_dict = loader_scripts.tissue_loader_prep(request.FILES['file_name'], new_upload_user)
-            elif template_type == 'culture_data':
-                results_dict = loader_scripts.culture_loader_prep(request.FILES['file_name'], new_upload_user)
-            elif template_type == 'microbe_data':
-                results_dict = loader_scripts.microbe_loader_prep(request.FILES['file_name'], new_upload_user)
-            elif template_type == 'dna_data':
-                results_dict = loader_scripts.dna_loader_prep(request.FILES['file_name'], new_upload_user)
-            elif template_type == 'plate_data':
-                results_dict = loader_scripts.plate_loader_prep(request.FILES['file_name'], new_upload_user)
-            elif template_type == 'well_data':
-                results_dict = loader_scripts.well_loader_prep(request.FILES['file_name'], new_upload_user)
-            elif template_type == 'env_data':
-                results_dict = loader_scripts.env_loader_prep(request.FILES['file_name'], new_upload_user)
-            elif template_type == 'isolatestock_data':
-                results_dict = loader_scripts.isolatestock_loader_prep(request.FILES['file_name'], new_upload_user)
-            elif template_type == 'samples_data':
-                results_dict = loader_scripts.samples_loader_prep(request.FILES['file_name'], new_upload_user)
-            elif template_type == 'separation_data':
-                results_dict = loader_scripts.separation_loader_prep(request.FILES['file_name'], new_upload_user)
-            elif template_type == 'maize_data':
-                results_dict = loader_scripts.maize_loader_prep(request.FILES['file_name'], new_upload_user)
-            elif template_type == 'isolate_data':
-                results_dict = loader_scripts.isolate_loader_prep(request.FILES['file_name'], new_upload_user)
-            else:
-                results_dict = None
-            if results_dict is not None:
-                if new_upload_verified == False:
-                    upload_complete = False
+                        if template_type == 'seed_stock':
+                            output = loader_scripts.seed_stock_loader_prep_output(results_dict, new_upload_exp,
+                                                                                  template_type)
+                        elif template_type == 'seed_packet':
+                            output = loader_scripts.seed_packet_loader_prep_output(results_dict, new_upload_exp,
+                                                                                   template_type)
+                        elif template_type == 'plot_loader':
+                            output = loader_scripts.plot_loader_prep_output(results_dict, new_upload_exp, template_type)
+                        elif template_type == 'measurement_data':
+                            output = loader_scripts.measurement_loader_prep_output(results_dict, new_upload_exp,
+                                                                                   template_type)
+                        elif template_type == 'plant_data':
+                            output = loader_scripts.plant_loader_prep_output(results_dict, new_upload_exp, template_type)
+                        elif template_type == 'tissue_data':
+                            output = loader_scripts.tissue_loader_prep_output(results_dict, new_upload_exp, template_type)
+                        elif template_type == 'culture_data':
+                            output = loader_scripts.culture_loader_prep_output(results_dict, new_upload_exp, template_type)
+                        elif template_type == 'microbe_data':
+                            output = loader_scripts.microbe_loader_prep_output(results_dict, new_upload_exp, template_type)
+                        elif template_type == 'dna_data':
+                            output = loader_scripts.dna_loader_prep_output(results_dict, new_upload_exp, template_type)
+                        elif template_type == 'plate_data':
+                            output = loader_scripts.plate_loader_prep_output(results_dict, new_upload_exp, template_type)
+                        elif template_type == 'well_data':
+                            output = loader_scripts.well_loader_prep_output(results_dict, new_upload_exp, template_type)
+                        elif template_type == 'env_data':
+                            output = loader_scripts.env_loader_prep_output(results_dict, new_upload_exp, template_type)
+                        elif template_type == 'isolatestock_data':
+                            output = loader_scripts.isolatestock_loader_prep_output(results_dict, new_upload_exp,
+                                                                                    template_type)
+                        elif template_type == 'samples_data':
+                            output = loader_scripts.samples_loader_prep_output(results_dict, new_upload_exp, template_type)
+                        elif template_type == 'separation_data':
+                            output = loader_scripts.separation_loader_prep_output(results_dict, new_upload_exp,
+                                                                                  template_type)
+                        elif template_type == 'maize_data':
+                            output = loader_scripts.maize_loader_prep_output(results_dict, new_upload_exp, template_type)
+                        elif template_type == 'isolate_data':
+                            output = loader_scripts.isolate_loader_prep_output(results_dict, new_upload_exp, template_type)
+                        else:
+                            output = None
+                        return output
 
-                    if template_type == 'seed_stock':
-                        output = loader_scripts.seed_stock_loader_prep_output(results_dict, new_upload_exp,
-                                                                              template_type)
-                    elif template_type == 'seed_packet':
-                        output = loader_scripts.seed_packet_loader_prep_output(results_dict, new_upload_exp,
-                                                                               template_type)
-                    elif template_type == 'plot_loader':
-                        output = loader_scripts.plot_loader_prep_output(results_dict, new_upload_exp, template_type)
-                    elif template_type == 'measurement_data':
-                        output = loader_scripts.measurement_loader_prep_output(results_dict, new_upload_exp,
-                                                                               template_type)
-                    elif template_type == 'plant_data':
-                        output = loader_scripts.plant_loader_prep_output(results_dict, new_upload_exp, template_type)
-                    elif template_type == 'tissue_data':
-                        output = loader_scripts.tissue_loader_prep_output(results_dict, new_upload_exp, template_type)
-                    elif template_type == 'culture_data':
-                        output = loader_scripts.culture_loader_prep_output(results_dict, new_upload_exp, template_type)
-                    elif template_type == 'microbe_data':
-                        output = loader_scripts.microbe_loader_prep_output(results_dict, new_upload_exp, template_type)
-                    elif template_type == 'dna_data':
-                        output = loader_scripts.dna_loader_prep_output(results_dict, new_upload_exp, template_type)
-                    elif template_type == 'plate_data':
-                        output = loader_scripts.plate_loader_prep_output(results_dict, new_upload_exp, template_type)
-                    elif template_type == 'well_data':
-                        output = loader_scripts.well_loader_prep_output(results_dict, new_upload_exp, template_type)
-                    elif template_type == 'env_data':
-                        output = loader_scripts.env_loader_prep_output(results_dict, new_upload_exp, template_type)
-                    elif template_type == 'isolatestock_data':
-                        output = loader_scripts.isolatestock_loader_prep_output(results_dict, new_upload_exp,
-                                                                                template_type)
-                    elif template_type == 'samples_data':
-                        output = loader_scripts.samples_loader_prep_output(results_dict, new_upload_exp, template_type)
-                    elif template_type == 'separation_data':
-                        output = loader_scripts.separation_loader_prep_output(results_dict, new_upload_exp,
-                                                                              template_type)
-                    elif template_type == 'maize_data':
-                        output = loader_scripts.maize_loader_prep_output(results_dict, new_upload_exp, template_type)
-                    elif template_type == 'isolate_data':
-                        output = loader_scripts.isolate_loader_prep_output(results_dict, new_upload_exp, template_type)
-                    else:
-                        output = None
-                    return output
+                    elif new_upload_verified == True:
+                        if template_type == 'seed_stock':
+                            uploaded = loader_scripts.seed_stock_loader(results_dict)
+                        elif template_type == 'seed_packet':
+                            uploaded = loader_scripts.seed_packet_loader(results_dict)
+                        elif template_type == 'plot_loader':
+                            uploaded = loader_scripts.plot_loader(results_dict)
+                        elif template_type == 'measurement_data':
+                            uploaded = loader_scripts.measurement_loader(results_dict)
+                        elif template_type == 'plant_data':
+                            uploaded = loader_scripts.plant_loader(results_dict)
+                        elif template_type == 'tissue_data':
+                            uploaded = loader_scripts.tissue_loader(results_dict)
+                        elif template_type == 'culture_data':
+                            uploaded = loader_scripts.culture_loader(results_dict)
+                        elif template_type == 'microbe_data':
+                            uploaded = loader_scripts.microbe_loader(results_dict)
+                        elif template_type == 'dna_data':
+                            uploaded = loader_scripts.dna_loader(results_dict)
+                        elif template_type == 'plate_data':
+                            uploaded = loader_scripts.plate_loader(results_dict)
+                        elif template_type == 'well_data':
+                            uploaded = loader_scripts.well_loader(results_dict)
+                        elif template_type == 'env_data':
+                            uploaded = loader_scripts.env_loader(results_dict)
+                        elif template_type == 'isolatestock_data':
+                            uploaded = loader_scripts.isolatestock_loader(results_dict)
+                        elif template_type == 'samples_data':
+                            uploaded = loader_scripts.samples_loader(results_dict)
+                        elif template_type == 'separation_data':
+                            uploaded = loader_scripts.separation_loader(results_dict)
+                        elif template_type == 'maize_data':
+                            uploaded = loader_scripts.maize_loader(results_dict)
+                        elif template_type == 'isolate_data':
+                            uploaded = loader_scripts.isolate_loader(results_dict)
+                        else:
+                            uploaded = False
 
-                elif new_upload_verified == True:
-                    if template_type == 'seed_stock':
-                        uploaded = loader_scripts.seed_stock_loader(results_dict)
-                    elif template_type == 'seed_packet':
-                        uploaded = loader_scripts.seed_packet_loader(results_dict)
-                    elif template_type == 'plot_loader':
-                        uploaded = loader_scripts.plot_loader(results_dict)
-                    elif template_type == 'measurement_data':
-                        uploaded = loader_scripts.measurement_loader(results_dict)
-                    elif template_type == 'plant_data':
-                        uploaded = loader_scripts.plant_loader(results_dict)
-                    elif template_type == 'tissue_data':
-                        uploaded = loader_scripts.tissue_loader(results_dict)
-                    elif template_type == 'culture_data':
-                        uploaded = loader_scripts.culture_loader(results_dict)
-                    elif template_type == 'microbe_data':
-                        uploaded = loader_scripts.microbe_loader(results_dict)
-                    elif template_type == 'dna_data':
-                        uploaded = loader_scripts.dna_loader(results_dict)
-                    elif template_type == 'plate_data':
-                        uploaded = loader_scripts.plate_loader(results_dict)
-                    elif template_type == 'well_data':
-                        uploaded = loader_scripts.well_loader(results_dict)
-                    elif template_type == 'env_data':
-                        uploaded = loader_scripts.env_loader(results_dict)
-                    elif template_type == 'isolatestock_data':
-                        uploaded = loader_scripts.isolatestock_loader(results_dict)
-                    elif template_type == 'samples_data':
-                        uploaded = loader_scripts.samples_loader(results_dict)
-                    elif template_type == 'separation_data':
-                        uploaded = loader_scripts.separation_loader(results_dict)
-                    elif template_type == 'maize_data':
-                        uploaded = loader_scripts.maize_loader(results_dict)
-                    elif template_type == 'isolate_data':
-                        uploaded = loader_scripts.isolate_loader(results_dict)
-                    else:
-                        uploaded = False
-
-                    if uploaded == True:
-                        new_upload, created = UploadQueue.objects.get_or_create(experiment=new_upload_exp,
-                                                                                user=new_upload_user,
-                                                                                file_name=new_upload_filename,
-                                                                                upload_type=template_type)
-                        new_upload.comments = new_upload_comments
-                        new_upload.verified = new_upload_verified
-                        new_upload.completed = True
-                        new_upload.save()
-                        upload_complete = True
+                        if uploaded == True:
+                            new_upload, created = UploadQueue.objects.get_or_create(experiment=new_upload_exp,
+                                                                                    user=new_upload_user,
+                                                                                    file_name=new_upload_filename,
+                                                                                    upload_type=template_type)
+                            new_upload.comments = new_upload_comments
+                            new_upload.verified = new_upload_verified
+                            new_upload.completed = True
+                            new_upload.save()
+                            upload_complete = True
+                        else:
+                            upload_complete = False
                     else:
                         upload_complete = False
                 else:
                     upload_complete = False
-            else:
-                upload_complete = False
+            except KeyError:
+                context_dict['sent'] = True
+                context_dict['error_t'] = 'KeyError'
+                context_dict['errors'] = sys.exc_info()
+                context_dict['upload_form'] = UploadQueueForm()
+                return render_to_response('lab/upload_online.html', context_dict, context)
         else:
             print(upload_form.errors)
             upload_added = False

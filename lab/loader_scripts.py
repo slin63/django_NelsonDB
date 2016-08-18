@@ -708,40 +708,45 @@ def plot_loader_prep(upload_file, user):
     obs_tracker_source_hash_exists = OrderedDict({})
 
     plot_file = csv.DictReader(upload_file)
-    for plot in plot_file:
-        plot_id = plot["Plot ID"]
-        experiment_name = plot["Experiment Name"]
-        source_seed_id = plot["Source Seed ID"]
+    for plot_r in plot_file:
+        plot_id = plot_r["Plot ID"]
+        experiment_name = plot_r["Experiment Name"]
+        source_seed_id = plot_r["Source Seed ID"]
 
-        seed_name = plot["Seed Name"]
+        seed_name = plot_r["Seed Name"]
 
-        population = plot["Population"]
+        population = plot_r["Population"]
 
-        organization = plot["Organization"]
-        first_name = plot["First Name"]
-        last_name = plot['Last Name']
+        organization = plot_r["Organization"]
+        first_name = plot_r["First Name"]
+        last_name = plot_r["Last Name"]
 
-        pedigree = plot["Pedigree"]
-        field_name = plot["Field Name"]
-        plot_name = plot["Plot Name"]
-        plot_row = plot["Row"]
-        plot_range = plot["Range"]
-        block = plot["Block"]
-        rep = plot["Rep"]
-        kernel_num = plot["Kernel Num"]
-        planting_date = plot["Planting Date"]
-        planting_year = plot["Planting Year"]
-        harvest_date = plot["Harvest Date"]
-        comments = plot["Plot Comments"]
-        plot = plot["Plot Name"]
-        polli_type = plot["Pollination type"]
-        gen = plot["Generation"]
-        shell_t = plot["Shell Type"]
+        pedigree = plot_r["Pedigree"]
+        field_name = plot_r["Field Name"]
+        plot_name = plot_r["Plot Name"]
+        plot_row = plot_r["Row"]
+        plot_range = plot_r["Range"]
+        block = plot_r["Block"]
+        rep = plot_r["Rep"]
+        kernel_num = plot_r["Kernel Num"]
+        planting_date = plot_r["Planting Date"]
+        planting_year = plot_r["Planting Year"]
+        harvest_date = plot_r["Harvest Date"]
+        comments = plot_r["Plot Comments"]
+        plot = plot_r["Plot Name"]
+        polli_type = plot_r["Pollination type"]
+        gen = plot_r["Generation"]
+        shell_t = plot_r["Shell Type"]
 
-        shell_dict = {'single': False, 'multi': False, 'bulk': False}
-        if shell_t.lower() == 'single': shell_dict['single'] = True
-        elif shell_t.lower() == 'multi': shell_dict['multi'] = True
-        elif shell_t.lower() == 'bulk': shell_dict['bulk'] = True
+        is_male = plot_r["Is Male"]
+        cross_target = plot_r["Cross Target"]
+
+        single = False
+        multi = False
+        bulk = False
+        if shell_t.lower() == 'single': single = True
+        elif shell_t.lower() == 'multi': multi = True
+        elif shell_t.lower() == 'bulk': bulk = True
 
         try:
             field = Field.objects.get(field_name=field_name)
@@ -772,6 +777,9 @@ def plot_loader_prep(upload_file, user):
         obs_tracker_stock_id_table = loader_db_mirror.obs_tracker_stock_id_mirror()
         experiment_name_table = loader_db_mirror.experiment_name_mirror()
 
+        if is_male != '':
+            is_male = True
+
         field_id = field.id
 
         plot_hash = plot_id + plot_name + plot_range + plot_row + plot + block + rep + kernel_num + planting_date + harvest_date + comments
@@ -779,8 +787,8 @@ def plot_loader_prep(upload_file, user):
         if plot_id not in plot_id_table and plot_id + '\r' not in plot_id_table:
             if plot_hash not in obs_plot_hash_table and plot_hash_fix not in obs_plot_hash_table:
                 obs_plot_hash_table[plot_hash] = obs_plot_id
-                obs_plot_new[(obs_plot_id, plot_id, plot_name, plot_range, plot_row, plot, block, rep, kernel_num, planting_date, harvest_date, comments, polli_type, gen, shell_dict)] = obs_plot_id
-                plot_id_table[plot_id] = (obs_plot_id, plot_id, plot_name, plot_range, plot, block, rep, kernel_num, planting_date, harvest_date, comment)
+                obs_plot_new[(obs_plot_id, plot_id, plot_name, plot_range, plot_row, plot, block, rep, kernel_num, planting_date, harvest_date, comments, polli_type, gen,  is_male, cross_target, single, multi, bulk)] = obs_plot_id
+                plot_id_table[plot_id] = (obs_plot_id, plot_id, plot_name, plot_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)
                 obs_plot_id = obs_plot_id + 1
             else:
                 plot_hash_exists[(plot_id, plot_name, plot_range, plot, block, rep, kernel_num, planting_date, harvest_date, comments)] = obs_plot_id
@@ -843,7 +851,7 @@ def plot_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Plot Table'])
-    writer.writerow(['obs_plot_id', 'plot_id', 'plot_name', 'range_num', 'row_num', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date', 'comments', 'polli type', 'generation', 'shell_t'])
+    writer.writerow(['obs_plot_id', 'plot_id', 'plot_name', 'range_num', 'row_num', 'plot', 'block', 'rep', 'kernel_num', 'planting_date', 'harvest_date', 'comments', 'polli type', 'generation', 'is_male', 'cross_target', 'single', 'multi', 'bulk'])
     for key in results_dict['obs_plot_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -887,7 +895,7 @@ def plot_loader(results_dict):
         for key in results_dict['obs_plot_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_obsplot = ObsPlot.objects.create(plot_id=key[1], plot_name=key[2], range_num=key[3], row_num=key[4], plot=key[5], block=key[6], rep=key[7], kernel_num=key[8], planting_date=key[9], harvest_date=key[10], comments=key[11], polli_type=key[12], gen=key[13], shell_single=key[14]['single'], shell_multi=key[14]['multi'], shell_bulk=key[14]['bulk'])
+                    new_obsplot = ObsPlot.objects.create(plot_id=key[1], plot_name=key[2], range_num=key[3], row_num=key[4], plot=key[5], block=key[6], rep=key[7], kernel_num=key[8], planting_date=key[9], harvest_date=key[10], comments=key[11], polli_type=key[12], gen=key[13], is_male=key[14], cross_target=key[15], shell_single=key[16], shell_multi=key[17], shell_bulk=key[18])
                     new_obsplot.save()
             except Exception as e:
                 print("ObsPlot Error: %s %s" % (e.message, e.args))

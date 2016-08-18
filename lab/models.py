@@ -162,7 +162,7 @@ class ObsPlot(models.Model):
     comments = models.CharField(max_length=3000, blank=True)
     gen = models.CharField(max_length=30, blank=True)
     is_male = models.BooleanField(default=False)
-    cross_target = models.ForeignKey("ObsPlot")
+    cross_target = models.CharField(max_length=200, blank=True)
 
     def get_shell_type(self, pedigen=False):
         t = 'None'
@@ -181,6 +181,13 @@ class ObsPlot(models.Model):
             elif self.shell_bulk:
                 t = 'Bulk'
         return 'SINGLE-EAR'
+
+    def get_cross_target(self):
+        if self.cross_target:
+            return ObsPlot.objects.get(plot_id=self.cross_target)
+        else:
+            return ObsPlot.objects.get(id=1)
+
 
     def __unicode__(self):
         return self.plot_id

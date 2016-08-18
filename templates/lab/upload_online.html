@@ -30,6 +30,9 @@
 </form>
 
 {% if sent %}
+  {% if errors %}
+    <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;{{ error_t }}: {{ errors.1 }}. Check your upload form! Fields are case and whitespace sensitive.<br/>&nbsp;</h4>
+  {% endif %}
   {% if upload_added %}
     <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Your Upload Was Saved to the Upload Queue, but Not Necessarily Added to Database!<br/>&nbsp;</h4>
   {% else %}

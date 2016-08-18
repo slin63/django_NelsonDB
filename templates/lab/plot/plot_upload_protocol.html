@@ -61,6 +61,16 @@
     <td>Generic identifier for the <code>Stock</code> object. If the <code>Stock</code> object does not exist, one will be created with this name.</td>
   </tr>
   <tr>
+    <td>Is Male</td>
+    <td><code>ObsPlot</code></td>
+    <td>Fill with <code>0</code> (not a male) or <code>1</code> (a male). Indicates how the plot will be used in crossing. </td>
+  </tr>
+  <tr>
+    <td>Cross Target</td>
+    <td><code>ObsPlot</code></td>
+    <td>The <code>Plot ID</code> of the plot with which this plot is being crossed with, regardless of whether or not it's male.</td>
+  </tr>
+  <tr>
     <td>Population</td>
     <td><code>Stock -> Taxonomy</code></td>
     <td>Population with which the <code>Stock</code> is associated. </td>
@@ -88,7 +98,7 @@
   <tr>
     <td>Pollination type</td>
     <td><code>ObsPlot</code></td>
-    <td>The pollination type of the plot. Must be entered as displayed in this list, not including text in parentheses: <code>SF (selfing), SB (sibbing), CR (crossing). </code></td>
+    <td>The pollination type of the plot. Must be entered as displayed in this list, not including text in parentheses: <code>SF (selfing), SB (sibbing), CR (crossing), TC (topcrossing), BC (backcrossing), FC (free-crossing), IN (intermating). </code></td>
   </tr>
   <tr>
     <td>Shell Type</td>
