@@ -21,6 +21,7 @@ EAR_QUAL_CROSS = 'Cross Ear Quality'
 RESEARCHER = 'Jamann Lab'
 EMPTY_DF = DataFrame()
 
+
 def packet_menu(request):
     context = RequestContext(request)
     context_dict = {}

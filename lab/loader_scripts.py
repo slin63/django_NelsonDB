@@ -764,7 +764,7 @@ def plot_loader_prep(upload_file, user):
             try:
                 stock_id = Stock.objects.get(seed_id=source_seed_id).id
             except (IntegrityError, Stock.DoesNotExist):
-                new_people = People.objects.get_or_create(first_name=first_name, last_name=last_name, organization=organization)[0]
+                new_people = People.objects.get_or_create(first_name=first_name, last_name=last_name, organization=organization, phone='', email='', comments='')[0]
                 if population != '':
                     new_taxonomy = Taxonomy.objects.get_or_create(population=population)[0]
                 else:
@@ -777,8 +777,14 @@ def plot_loader_prep(upload_file, user):
         obs_tracker_stock_id_table = loader_db_mirror.obs_tracker_stock_id_mirror()
         experiment_name_table = loader_db_mirror.experiment_name_mirror()
 
-        if is_male != '':
+        if is_male == 1:
             is_male = True
+
+        elif is_male == 0:
+            is_male = False
+
+        else:
+            is_male = False
 
         field_id = field.id
 
