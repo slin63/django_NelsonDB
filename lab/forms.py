@@ -748,8 +748,8 @@ class LogMeasurementsOnlineForm(forms.Form):
 
 
 class UploadQueueForm(forms.Form):
-    experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---",
-                                        help_text="Choose the experiment that data is related to:", required=False)
+    # experiment = forms.ModelChoiceField(queryset=Experiment.objects.all(), empty_label="--- Experiment ---",
+    #                                     help_text="Choose the experiment that data is related to:", required=False)
     user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Username ---",
                                   help_text="Select the user who produced data:", required=True)
     file_name = forms.FileField(help_text="Select your file:")
