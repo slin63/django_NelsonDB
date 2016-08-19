@@ -777,10 +777,10 @@ def plot_loader_prep(upload_file, user):
         obs_tracker_stock_id_table = loader_db_mirror.obs_tracker_stock_id_mirror()
         experiment_name_table = loader_db_mirror.experiment_name_mirror()
 
-        if is_male == 1:
+        if is_male == '1':
             is_male = True
 
-        elif is_male == 0:
+        elif is_male == '0':
             is_male = False
 
         else:

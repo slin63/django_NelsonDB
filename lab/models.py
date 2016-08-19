@@ -180,7 +180,7 @@ class ObsPlot(models.Model):
                 t = 'Multi'
             elif self.shell_bulk:
                 t = 'Bulk'
-        return 'SINGLE-EAR'
+        return t
 
     def get_cross_target(self):
         if self.cross_target:

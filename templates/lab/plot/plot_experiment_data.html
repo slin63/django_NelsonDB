@@ -16,6 +16,8 @@
             <th>Plot ID</th>
             <th>Plot Name</th>
             <th>Field</th>
+            <th>Pollination</th>
+            <th>Male</th>
             <th>Source Stock</th>
             <th>Pedigree</th>
             <th>Row</th>
@@ -35,6 +37,8 @@
             <td><a href='/lab/plot/{{data.obs_plot_id}}/'>{{data.obs_plot.plot_id}}</a></td>
             <td>{{data.obs_plot.plot_name}}</td>
             <td><a href='/lab/field/{{data.field.id}}/'>{{data.field.field_name}}</a></td>
+            <td>{{data.obs_plot.polli_type}}</td>
+            <td>{{data.obs_plot.is_male}}</td>
             <td><a href='/lab/stock/{{data.stock.id}}/'>{{data.stock.seed_id}}</a></td>
             <td>{{data.stock.pedigree}}</td>
             <td>{{data.obs_plot.row_num}}</td>
