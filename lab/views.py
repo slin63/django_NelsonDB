@@ -7599,7 +7599,7 @@ def upload_online(request, template_type):
                             uploaded = False
 
                         if uploaded == True:
-                            new_upload, created = UploadQueue.objects.get_or_create(experiment=new_upload_exp,
+                            new_upload, created = UploadQueue.objects.get_or_create(experiment_id=1,
                                                                                     user=new_upload_user,
                                                                                     file_name=new_upload_filename,
                                                                                     upload_type=template_type)
