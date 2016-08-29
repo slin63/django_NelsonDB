@@ -87,6 +87,7 @@ def create_packets(request, exp):
     success = False
     packet_df = generate_packet_dataframe(request, exp.id, df_return=True, processing=True)
 
+
     if packet_df.empty:
         success = False
     else:
@@ -106,7 +107,7 @@ def create_packets(request, exp):
 
                 packet_count += 1
                 print "Created PACKET: [ID:{}]-[GEN:{}]-[PED:{}]".format(sp.seed_id, sp.gen, sp.pedigree)
-            except IntegrityError as e:
+            except (IntegrityError, Stock.DoesNotExist) as e:
                 print("Packet Error: %s %s" % (e.message, e.args))
                 pass
 
@@ -123,17 +124,37 @@ def extract_packet_info(df):
 def generate_packet_dataframe(request, experiment_id, df_return=False, processing=True):
     self_polli = Measurement.objects.filter(measurement_parameter__parameter=EAR_COUNT_SELF_SIB, obs_tracker__experiment_id=experiment_id)
     cross_polli = Measurement.objects.filter(measurement_parameter__parameter=EAR_COUNT_CROSS, obs_tracker__experiment_id=experiment_id)
+    males = ObsTracker.objects.filter(experiment_id=experiment_id, obs_entity_type='plot', obs_plot__is_male=True)
     exp_name = Experiment.objects.filter(id=experiment_id).values_list('name', flat=True)[0]
     quality_count_dict = quality_count_pair(list(self_polli) + list(cross_polli))
 
     seed_df = DataFrame()
     view = None
     # Get plots and their pollination measurements
-    for meas in list(self_polli) + list(cross_polli):
-        obs = meas.obs_tracker
-        plot = obs.obs_plot
-        stock = obs.stock
+    for meas in list(self_polli) + list(cross_polli) + list(males):
         df_dict = {}
+
+        if isinstance(meas, ObsTracker):
+            obs = meas
+            plot = obs.obs_plot
+            stock = obs.stock
+            df_dict['earq_cross'] = df_dict['earno_cross'] = 0
+            df_dict['earno_self'] = 0
+            df_dict['earq_self'] = 0
+
+        else:
+            obs = meas.obs_tracker
+            plot = obs.obs_plot
+            stock = obs.stock
+            if meas.measurement_parameter.parameter == EAR_COUNT_SELF_SIB:
+                df_dict['earq_cross'] = df_dict['earno_cross'] = 0
+                df_dict['earno_self'] = meas.value
+                df_dict['earq_self'] = quality_count_dict[meas]
+            elif meas.measurement_parameter.parameter == EAR_COUNT_CROSS:
+                df_dict['earno_self'] = df_dict['earq_self'] = 0
+                df_dict['earno_cross'] = meas.value
+                df_dict['earq_cross'] = quality_count_dict[meas]
+
         df_dict['Row'] = split_id(plot.plot_id, 'row')
         df_dict['Plot_ID'] = split_id(plot.plot_id, 'row')
         df_dict['Pedigree'] = stock.pedigree
@@ -146,22 +167,17 @@ def generate_packet_dataframe(request, experiment_id, df_return=False, processin
         df_dict['Poll_Type'] = plot.polli_type
         df_dict['Researcher'] = RESEARCHER
 
-        if meas.measurement_parameter.parameter == EAR_COUNT_SELF_SIB:
-            df_dict['earq_cross'] = df_dict['earno_cross'] = 0
-            df_dict['earno_self'] = meas.value
-            df_dict['earq_self'] = quality_count_dict[meas]
-        elif meas.measurement_parameter.parameter == EAR_COUNT_CROSS:
-            df_dict['earno_self'] = df_dict['earq_self'] = 0
-            df_dict['earno_cross'] = meas.value
-            df_dict['earq_cross'] = quality_count_dict[meas]
-
         df_dict['shell'] = plot.get_shell_type(pedigen=True)
 
-        if meas.value != 0: # Making sure we got corn from this ear
+        if isinstance(meas, Measurement):
+            if meas.value != 0: # Making sure we got corn from this ear
+                buffer_df = DataFrame(df_dict, index=[0])
+                seed_df = concat([seed_df, buffer_df])
+            else:
+                pass
+        else:
             buffer_df = DataFrame(df_dict, index=[0])
             seed_df = concat([seed_df, buffer_df])
-        else:
-            pass
 
 
     # If empty and requesting a processed DF
@@ -178,6 +194,8 @@ def generate_packet_dataframe(request, experiment_id, df_return=False, processin
         view = seed_df.to_csv()
     else:
         view = EMPTY_DF
+
+
 
     return view
 
