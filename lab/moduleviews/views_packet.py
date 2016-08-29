@@ -117,7 +117,7 @@ def create_packets(request, exp):
 
 
 def extract_packet_info(df):
-    packet_df = df[['source_ID', 'seed_ID', 'seed_gen', 'Pedigree', 'Original_stock']]
+    packet_df = df[['seed_ID', 'seed_gen', 'Pedigree', 'source_ID', 'Original_stock']]
     return packet_df
 
 
