@@ -391,15 +391,19 @@ class LogSeedDataOnlineForm(forms.Form):
 
 class LogStockPacketOnlineForm(forms.Form):
     stock__seed_id = forms.ModelChoiceField(queryset=Stock.objects.all(), empty_label="--- Seed ID ---", required=True)
+    gen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Generation'}), required=False)
+    pedigree = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Pedigree'}), required=False)
     weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Weight'}), required=False)
     num_seeds = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Num Seeds'}), required=False)
     comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Packet Comments'}), required=False)
     location = forms.ModelChoiceField(queryset=Location.objects.all(), empty_label="--- Storage Location ---",
                                       required=True)
-    gen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Generation'}), required=False)
 
 
 class UpdateStockPacketOnlineForm(forms.Form):
+    seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Seed ID'}), required=False)
+    gen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Generation'}), required=False)
+    pedigree = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Pedigree'}), required=False)
     weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Weight'}), required=False)
     num_seeds = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Num Seeds'}), required=False)
     comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Packet Comments'}), required=False)
@@ -419,6 +423,11 @@ class LogPlotsOnlineForm(forms.Form):
                                    empty_label="--- Field Name ---", required=True)
     row_num = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Row'}), required=False)
     range_num = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Range'}), required=False)
+    gen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Generation'}), required=False)
+    bulk = forms.BooleanField(help_text="Bulk Shelled:", required=False)
+    single = forms.BooleanField(help_text="Single Shelled:", required=False)
+
+    cross_target = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Cross Target'}), required=False)
     plot = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Plot'}), required=False)
     block = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Block'}), required=False)
     rep = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Rep'}), required=False)
@@ -426,7 +435,20 @@ class LogPlotsOnlineForm(forms.Form):
     planting_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Planting Date'}), required=False)
     harvest_date = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Harvest Date'}), required=False)
     row_comments = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Comments'}), required=False)
-    gen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Generation'}), required=False)
+
+
+class UpdatePlotsOnlineForm(forms.Form):
+    plot_id = forms.CharField(help_text="Plot ID", widget=forms.TextInput(attrs={'placeholder': 'Plot ID'}), required=True)
+    plot_name = forms.CharField(help_text="Plot Name", widget=forms.TextInput(attrs={'placeholder': 'Plot Name'}), required=False)
+
+
+    polli_type = forms.CharField(help_text="Pollination Type", widget=forms.TextInput(attrs={'placeholder': 'Pollination type'}), required=True)
+    gen = forms.CharField(help_text="Source Seed Generation", widget=forms.TextInput(attrs={'placeholder': 'Generation'}), required=False)
+    shell_bulk = forms.BooleanField(help_text="Bulk Shelled:", required=False)
+    shell_single = forms.BooleanField(help_text="Single Shelled:", required=False)
+    is_male = forms.BooleanField(help_text="Is Male:", required=False)
+    cross_target = forms.CharField(help_text="Cross target (male) ID", widget=forms.TextInput(attrs={'placeholder': 'Cross Target'}), required=False)
+
 
 
 class LogPlantsOnlineForm(forms.Form):

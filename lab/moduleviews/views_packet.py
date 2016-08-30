@@ -97,7 +97,7 @@ def create_packets(request, exp):
         for index, row in packet_df.iterrows():
             try:
                 sp = StockPacket.objects.create(
-                    stock=Stock.objects.get(seed_id=row['Original_stock']),
+                    stock=Stock.objects.get(seed_id=row['Maternal_ID']),
                     location_id=1,
                     seed_id=row['seed_ID'],
                     gen=row['seed_gen'],
@@ -117,7 +117,7 @@ def create_packets(request, exp):
 
 
 def extract_packet_info(df):
-    packet_df = df[['seed_ID', 'seed_gen', 'Pedigree', 'source_ID', 'Original_stock']]
+    packet_df = df[['seed_ID', 'seed_gen', 'Pedigree', 'source_ID', 'Maternal_ID']]
     return packet_df
 
 
@@ -159,7 +159,7 @@ def generate_packet_dataframe(request, experiment_id, df_return=False, processin
         df_dict['Plot_ID'] = split_id(plot.plot_id, 'row')
         df_dict['Pedigree'] = stock.pedigree
         df_dict['Source ID'] = stock.seed_id
-        df_dict['Original_stock'] = stock.seed_id
+        df_dict['Maternal_ID'] = stock.seed_id
         df_dict['Seed Name'] = stock.seed_name
         df_dict['Gen'] = plot.gen
         df_dict['is_male'] = plot.is_male

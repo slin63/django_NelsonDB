@@ -198,6 +198,8 @@ urlpatterns = patterns('',
                        url(r'^field/(?P<field_id>\d+)/$', views.single_field_info, name='single_field_info'),
                        url(r'^stock/(?P<stock_id>\d+)/$', views.single_stock_info, name='single_stock_info'),
                        url(r'^plot/(?P<obs_plot_id>\d+)/$', views_plot.single_plot_info, name='single_plot_info'),
+                       url(r'^plot/(?P<obs_plot_id>\d+)/update/$', views_plot.update_plot_info, name='plot_update'),
+
                        url(r'^plant/(?P<obs_plant_id>\d+)/$', views.single_plant_info, name='single_plant_info'),
                        url(r'^plate/(?P<obs_plate_id>\d+)/$', views.single_plate_info, name='single_plate_info'),
                        url(r'^well/(?P<obs_well_id>\d+)/$', views.single_well_info, name='single_well_info'),

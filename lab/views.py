@@ -27,7 +27,7 @@ from lab.forms import UserForm, UserProfileForm, ChangePasswordForm, EditUserFor
     NewMeasurementParameterForm, NewLocationForm, NewDiseaseInfoForm, NewTaxonomyForm, NewMediumForm, NewCitationForm, \
     UpdateSeedDataOnlineForm, LogTissuesOnlineForm, LogCulturesOnlineForm, LogMicrobesOnlineForm, LogDNAOnlineForm, \
     LogPlatesOnlineForm, LogWellOnlineForm, LogIsolateStocksOnlineForm, LogSeparationsOnlineForm, \
-    LogMaizeSurveyOnlineForm, LogIsolatesOnlineForm, FileDumpForm, UpdateIsolatesOnlineForm, UpdateStockPacketOnlineForm
+    LogMaizeSurveyOnlineForm, LogIsolatesOnlineForm, FileDumpForm, UpdateIsolatesOnlineForm, UpdateStockPacketOnlineForm, UpdatePlotsOnlineForm
 from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, \
     Locality, Location, ObsPlot, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, \
     ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, DiseaseInfo, Measurement, MeasurementParameter, \
@@ -1046,6 +1046,9 @@ def update_seed_packet_info(request, stock_id):
                     for form in edit_packet_form_set:
                         try:
                             update_packet = StockPacket.objects.filter(stock_id=stock_id)[step]
+                            update_packet.seed_id = form.cleaned_data['seed_id']
+                            update_packet.gen = form.cleaned_data['gen']
+                            update_packet.pedigree = form.cleaned_data['pedigree']
                             update_packet.weight = form.cleaned_data['weight']
                             update_packet.num_seeds = form.cleaned_data['num_seeds']
                             update_packet.comments = form.cleaned_data['comments']
@@ -1062,7 +1065,7 @@ def update_seed_packet_info(request, stock_id):
         else:
             print(edit_packet_form_set.errors)
     else:
-        packets = StockPacket.objects.filter(stock_id=stock_id).values('stock__seed_id', 'weight', 'num_seeds',
+        packets = StockPacket.objects.filter(stock_id=stock_id).values('seed_id', 'pedigree', 'gen', 'stock__seed_id', 'weight', 'num_seeds',
                                                                        'comments', 'location')
         edit_packet_form_set = EditStockPacketFormSet(initial=packets)
     context_dict['edit_packet_form_set'] = edit_packet_form_set
@@ -4732,6 +4735,7 @@ def log_data_online(request, data_type):
                                 packet_comments = form.cleaned_data['comments']
                                 location = form.cleaned_data['location']
                                 gen = form.cleaned_data['gen']
+                                pedigree = form.cleaned_data['pedigree']
 
                                 new_stock_packet = StockPacket.objects.get_or_create(
                                     stock=Stock.objects.get(seed_id=seed_id), location=location, weight=weight,
@@ -5061,7 +5065,7 @@ def log_data_online(request, data_type):
                         seed_id = form.cleaned_data['seed_id']
                         polli_type = form.cleaned_data['polli_type']
                         field = form.cleaned_data['field']
-                        plot_num = form.cleaned_data['row_num']
+                        row_num = form.cleaned_data['row_num']
                         range_num = form.cleaned_data['range_num']
                         plot = form.cleaned_data['plot']
                         block = form.cleaned_data['block']
@@ -5072,36 +5076,42 @@ def log_data_online(request, data_type):
                         row_comments = form.cleaned_data['row_comments']
                         user = request.user
                         gen = form.cleaned_data['gen']
+                        shell_single = form.cleaned_data['single']
+                        shell_bulk = form.cleaned_data['bulk']
+                        cross_target = form.cleaned_data['cross_target']
 
                         if seed_id == '':
                             seed_id = 'No Stock'
 
                         try:
                             new_obsplot, created = ObsPlot.objects.get_or_create(plot_id=plot_id, plot_name=plot_name,
-                                                                                 row_num=row_num, range_num=range_num,
-                                                                                 plot=plot, block=block, rep=rep,
-                                                                                 kernel_num=kernel_num,
-                                                                                 planting_date=planting_date,
-                                                                                 harvest_date=harvest_date,
-                                                                                 comments=row_comments,
-                                                                                 polli_type=polli_type,
-                                                                                 gen=gen)
+                                row_num=row_num, range_num=range_num,
+                                plot=plot, block=block, rep=rep,
+                                kernel_num=kernel_num,
+                                planting_date=planting_date,
+                                harvest_date=harvest_date,
+                                comments=row_comments,
+                                polli_type=polli_type,
+                                gen=gen,
+                                shell_single=shell_single,
+                                shell_bulk=shell_bulk,
+                                cross_target=cross_target)
 
                             new_obs_tracker, created = ObsTracker.objects.get_or_create(obs_entity_type='plot',
-                                                                                        stock=Stock.objects.get(
-                                                                                            seed_id=seed_id),
-                                                                                        experiment=experiment,
-                                                                                        user=user, field=field,
-                                                                                        isolate_id=1, isolatestock_id=1,
-                                                                                        location_id=1,
-                                                                                        maize_sample_id=1,
-                                                                                        obs_culture_id=1, obs_dna_id=1,
-                                                                                        obs_env_id=1, obs_extract_id=1,
-                                                                                        obs_microbe_id=1,
-                                                                                        obs_plant_id=1, obs_plate_id=1,
-                                                                                        obs_plot=new_obsplot,
-                                                                                        obs_sample_id=1,
-                                                                                        obs_tissue_id=1, obs_well_id=1)
+                                stock=Stock.objects.get(
+                                seed_id=seed_id),
+                                experiment=experiment,
+                                user=user, field=field,
+                                isolate_id=1, isolatestock_id=1,
+                                location_id=1,
+                                maize_sample_id=1,
+                                obs_culture_id=1, obs_dna_id=1,
+                                obs_env_id=1, obs_extract_id=1,
+                                obs_microbe_id=1,
+                                obs_plant_id=1, obs_plate_id=1,
+                                obs_plot=new_obsplot,
+                                obs_sample_id=1,
+                                obs_tissue_id=1, obs_well_id=1)
                             if seed_id != '' and seed_id != 'No Stock':
                                 new_source_stock, created = ObsTrackerSource.objects.get_or_create(
                                     source_obs=ObsTracker.objects.get(obs_entity_type='stock', stock__seed_id=seed_id),
@@ -7600,9 +7610,9 @@ def upload_online(request, template_type):
 
                         if uploaded == True:
                             new_upload, created = UploadQueue.objects.get_or_create(experiment_id=1,
-                                                                                    user=new_upload_user,
-                                                                                    file_name=new_upload_filename,
-                                                                                    upload_type=template_type)
+                                user=new_upload_user,
+                                file_name=new_upload_filename,
+                                upload_type=template_type)
                             new_upload.comments = new_upload_comments
                             new_upload.verified = new_upload_verified
                             new_upload.completed = True
