@@ -3,14 +3,16 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.db import transaction
 from itertools import chain
 from openpyxl.writer.excel import save_virtual_workbook
 
 from applets import field_map_generator
-from lab.forms import DownloadFieldForm, HarvestDateForm
+from lab.forms import DownloadFieldForm, HarvestDateForm, UpdatePlotsOnlineForm
 from lab.models import Experiment, Stock, ObsPlot, ObsPlant, ObsSample, ObsWell, ObsCulture, ObsTissue, ObsDNA, \
     ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, Field, \
     Measurement, MaizeSample, Isolate
+
 
 YEAR_INIT = 2015
 
@@ -48,6 +50,48 @@ def add_harvest_date(request):
     return view
 
 
+@login_required
+def update_plot_info(request, obs_plot_id):
+    context = RequestContext(request)
+    context_dict = {}
+    if request.method == 'POST':
+        plot_form = UpdatePlotsOnlineForm(data=request.POST)
+        if plot_form.is_valid():
+            with transaction.atomic():
+                try:
+                    plot = ObsPlot.objects.get(id=obs_plot_id)
+                    plot.plot_id = plot_form.cleaned_data['plot_id']
+                    plot.plot_name = plot_form.cleaned_data['plot_name']
+                    plot.polli_type = plot_form.cleaned_data['polli_type']
+                    plot.gen = plot_form.cleaned_data['gen']
+                    plot.shell_bulk = plot_form.cleaned_data['shell_bulk']
+                    plot.shell_single = plot_form.cleaned_data['shell_single']
+                    plot_is_male = plot_form.cleaned_data['is_male']
+                    plot.cross_target = plot_form.cleaned_data['cross_target']
+                    plot.save()
+                    context_dict['updated'] = True
+                except Exception:
+                    context_dict['failed'] = True
+        else:
+            print(plot_form.errors)
+    else:
+        plot_data = ObsPlot.objects.filter(id=obs_plot_id).values('plot_id', 'plot_name', 'polli_type', 'gen', 'shell_bulk', 'shell_single', 'cross_target')
+        try:
+            plot_form = UpdatePlotsOnlineForm(initial=plot_data[0])
+        except IndexError:
+            plot_form = None
+
+    try:
+        context_dict['plot'] = ObsPlot.objects.get(id=obs_plot_id)
+    except ObsPlot.DoesNotExist:
+        context_dict['plot'] = None
+    context_dict['obs_plot_id'] = obs_plot_id
+    context_dict['plot_form'] = plot_form
+    context_dict['logged_in_user'] = request.user.username
+    return render_to_response('lab/plot/plot_info_update.html', context_dict, context)
+
+
+
 def process_harvest_dates(upload_file):
     success = True
     # try:
@@ -63,7 +107,6 @@ def process_harvest_dates(upload_file):
     except ObsPlot.DoesNotExist:
         success = False
         pass
-
 
     return success
 
