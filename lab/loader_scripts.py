@@ -3,6 +3,7 @@ Handles data input through uploaded .csv forms
 """
 import csv
 from collections import OrderedDict
+from moduleviews.applets import date_fix
 import time
 import loader_db_mirror
 from django.http import HttpResponseRedirect, HttpResponse
@@ -4526,6 +4527,7 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
             comments = row["Measurement Comments"]
             experiment = row["Experiment"]
 
+        time_of_measurement = date_fix.date_fix(time_of_measurement)
         start = time.clock()
 
         if obs_id in obs_tracker_plot_id_table:
@@ -4591,7 +4593,7 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
             measurement_new[(measurement_id, obs_tracker_id, parameter_id, user_id, time_of_measurement, value, comments, experiment_id)] = measurement_id
             measurement_id = measurement_id + 1
         else:
-            measurement_hash_exists[(obs_id, obs_tracker_id, parameter, user_id, time_of_measurement, value, comments)] = measurement_id
+            obs_id_error[(obs_id, obs_tracker_id, parameter, user_id, time_of_measurement, value, comments)] = measurement_id
             error_count += 1
 
     end = time.clock()
