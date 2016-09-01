@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 
 from lab import views
-from lab.moduleviews import views_genotype, views_about, views_plot, views_fieldbook, views_packet
+from lab.moduleviews import views_genotype, views_about, views_plot, views_fieldbook, views_packet, views_upload
 from lab.moduleviews import views_isolate_stock as views_is
 
 urlpatterns = patterns('',
@@ -57,7 +57,6 @@ urlpatterns = patterns('',
 
                        url(r'^seed_inventory/generate_packets/(?P<experiment_id>\d+)/$', views_packet.generate_packet_dataframe, name='generate_packets'),
                        url(r'^seed_inventory/generate_packets/$', views_packet.packet_menu, name='packet_menu'),
-
 
 
                        # Added 2/15/2016 - slin63
@@ -225,6 +224,10 @@ urlpatterns = patterns('',
 
                        url(r'^download/template/(?P<filename>\w+)/', views.serve_data_template_file, name='serve_data_template_file'),
                        url(r'^upload/(?P<data_type>\w+)/$', views.queue_upload_file, name='queue_upload_file'),
+
+                       url(r'^upload_manager/$', views_upload.upload_manager, name='upload_manager'),
+
+
 
                        url(r'^download/measurement/(?P<experiment_name>\w+)/', views.download_measurement_experiment, name='download_measurement_experiment'),
                        url(r'^download/maize/(?P<experiment_name>\w+)/', views.download_maize_experiment, name='download_maize_experiment'),

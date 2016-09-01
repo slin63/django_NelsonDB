@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 
-from lab.models import UserProfile, Experiment, Field, ObsPlot, ObsPlant, Locality, Stock, ObsPlot, ObsPlant, ObsSample, IsolateStock, \
+from lab.models import UserProfile, Experiment, Field, ObsPlot, ObsPlant, Locality, Stock, ObsPlot, ObsPlant, ObsSample, IsolateStock, UploadBatch, \
   ObsEnv, MeasurementParameter, Citation, Medium, Location, DiseaseInfo, FileDump, StockPacket
 from django.contrib.auth.models import User
 from django.core.validators import EmailValidator
@@ -795,3 +795,9 @@ class HarvestDateForm(forms.Form):
                                   # help_text="Select the user who produced data:", required=True)
     file_name = forms.FileField(help_text="Select your file:")
     verified = forms.BooleanField(help_text="Verified:", required=True)
+
+
+class UploadManagerForm(forms.Form):
+    upload_batch = forms.ModelChoiceField(queryset=UploadBatch.objects.all(), empty_label='--- UploadBatch ---', help_text="Select an Upload Batch", required=True)
+    action = forms.ChoiceField(help_text="Select an action:", initial='Delete', choices=[('Delete', 'Delete'), ('Restore', 'Restore')], required=True)
+    lab_key = forms.CharField(help_text="Secret lab key to authorize deletion:", widget=forms.TextInput(attrs={'placeholder': 'Secret Lab key'}), required=True)

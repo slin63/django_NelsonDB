@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from picklefield.fields import PickledObjectField
 
 """User Model
 
@@ -670,3 +671,35 @@ class Measurement(models.Model):
 
     def __unicode__(self):
         return self.value
+
+
+class UploadBatch(models.Model):
+    objs = PickledObjectField(default=[])
+
+    created = models.DateTimeField(auto_now=True)
+
+
+    def del_objs(self):
+        for obj in self.objs:
+            obj.delete()
+
+
+    def restore_objs(self):
+        for obj in self.objs:
+            obj.save()
+
+
+    def add_obj(self, obj):
+        self.objs.append(obj)
+
+
+    def __len__(self):
+        return len(self.objs)
+
+
+    def __unicode__(self):
+        return 'Batch {}:\n\t{}'.format(self.created, self.objs[0:3])
+
+
+
+

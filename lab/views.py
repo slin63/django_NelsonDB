@@ -3083,9 +3083,9 @@ def show_all_plate_experiment(request):
     context = RequestContext(request)
     context_dict = {}
     plate_experiment_list = ObsTracker.objects.filter(obs_entity_type='plate').values('experiment__name',
-                                                                                      'experiment__field__field_name',
-                                                                                      'experiment__field__id',
-                                                                                      'experiment__id').distinct()[
+              'experiment__field__field_name',
+              'experiment__field__id',
+              'experiment__id').distinct()[
                             :2000]
     context_dict = checkbox_session_variable_check(request)
     context_dict['plate_experiment_list'] = plate_experiment_list
@@ -3220,9 +3220,9 @@ def show_all_well_experiment(request):
     context = RequestContext(request)
     context_dict = {}
     well_experiment_list = ObsTracker.objects.filter(obs_entity_type='well').values('experiment__name',
-                                                                                    'experiment__field__field_name',
-                                                                                    'experiment__field__id',
-                                                                                    'experiment__id').distinct()[:2000]
+                'experiment__field__field_name',
+                'experiment__field__id',
+                'experiment__id').distinct()[:2000]
     context_dict = checkbox_session_variable_check(request)
     context_dict['well_experiment_list'] = well_experiment_list
     return render_to_response('lab/well_experiment_list.html', context_dict, context)
@@ -3311,7 +3311,7 @@ def suggest_plant_experiment(request):
         starts_with = request.POST['suggestion']
     if starts_with:
         plant_experiment_list = ObsTracker.objects.filter(obs_entity_type='plant',
-                                                          experiment__name__contains=starts_with).values(
+            experiment__name__contains=starts_with).values(
             'experiment__name', 'experiment__field__field_name', 'experiment__field__id', 'experiment__id').distinct()[
                                 :2000]
     else:
@@ -3355,9 +3355,9 @@ def show_all_plant_experiment(request):
     context = RequestContext(request)
     context_dict = {}
     plant_experiment_list = ObsTracker.objects.filter(obs_entity_type='plant').values('experiment__name',
-                                                                                      'experiment__field__field_name',
-                                                                                      'experiment__field__id',
-                                                                                      'experiment__id').distinct()[
+              'experiment__field__field_name',
+              'experiment__field__id',
+              'experiment__id').distinct()[
                             :2000]
     context_dict = checkbox_session_variable_check(request)
     context_dict['plant_experiment_list'] = plant_experiment_list
@@ -3880,7 +3880,7 @@ def show_all_measurement_parameter(request):
             m['measurement_parameter__parameter'])
     else:
         measurement_parameter_list = list(Measurement.objects.all().values('measurement_parameter__parameter_type',
-                                                                           'measurement_parameter__parameter').distinct())
+           'measurement_parameter__parameter').distinct())
         for m in measurement_parameter_list:
             m['input'] = '<input type="checkbox" name="checkbox_measurement_parameter" value="%s">' % (
             m['measurement_parameter__parameter'])
@@ -4933,10 +4933,10 @@ def log_data_online(request, data_type):
 
                         try:
                             new_medium = Medium.objects.get_or_create(citation=citation, media_name=media_name,
-                                                                      media_type=media_type,
-                                                                      media_description=media_description,
-                                                                      media_preparation=media_preparation,
-                                                                      comments=comments)
+                              media_type=media_type,
+                              media_description=media_description,
+                              media_preparation=media_preparation,
+                              comments=comments)
                         except Exception as e:
                             print("Error: %s %s" % (e.message, e.args))
                             failed = True

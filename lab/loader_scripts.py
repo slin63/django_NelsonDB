@@ -7,7 +7,7 @@ from moduleviews.applets import date_fix
 import time
 import loader_db_mirror
 from django.http import HttpResponseRedirect, HttpResponse
-from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsPlot, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, Isolate
+from lab.models import UserProfile, Experiment, Passport, Stock, StockPacket, Taxonomy, People, Collecting, Field, Locality, Location, ObsPlot, ObsPlant, ObsSample, ObsEnv, ObsWell, ObsCulture, ObsTissue, ObsDNA, ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, DiseaseInfo, Measurement, MeasurementParameter, Treatment, UploadQueue, Medium, Citation, Publication, MaizeSample, Separation, Isolate, UploadBatch
 from django.db import IntegrityError, transaction
 from django.contrib.auth.models import User
 
@@ -898,12 +898,17 @@ def plot_loader_prep_output(results_dict, new_upload_exp, template_type):
     return response
 
 def plot_loader(results_dict):
+    upload_batch = UploadBatch.objects.create()
+
     try:
         for key in results_dict['obs_plot_new'].iterkeys():
             try:
                 with transaction.atomic():
                     new_obsplot = ObsPlot.objects.create(plot_id=key[1], plot_name=key[2], range_num=key[3], row_num=key[4], plot=key[5], block=key[6], rep=key[7], kernel_num=key[8], planting_date=key[9], harvest_date=key[10], comments=key[11], polli_type=key[12], gen=key[13], is_male=key[14], cross_target=key[15], shell_single=key[16], shell_multi=key[17], shell_bulk=key[18])
                     new_obsplot.save()
+
+                    upload_batch.add_obj(new_obsplot)
+
             except Exception as e:
                 print("ObsPlot Error: %s %s" % (e.message, e.args))
                 return False
@@ -926,6 +931,9 @@ def plot_loader(results_dict):
     except Exception as e:
         print("Error: %s %s" % (e.message, e.args))
         return False
+
+    upload_batch.save()
+
     return True
 
 def plant_loader_prep(upload_file, user):
@@ -4664,6 +4672,7 @@ def purge_duplicate_measurements():
 
 def measurement_loader(results_dict):
     success = True
+
     try:
         for key in results_dict['measurement_new'].iterkeys():
             try:
@@ -4676,8 +4685,5 @@ def measurement_loader(results_dict):
     except Exception as e:
         print("Error: %s %s" % (e.message, e.args))
         success = False
-
-    if success is False:
-        purge_duplicate_measurements()
 
     return success
