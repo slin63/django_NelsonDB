@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from picklefield.fields import PickledObjectField
@@ -674,23 +675,39 @@ class Measurement(models.Model):
 
 
 class UploadBatch(models.Model):
-    objs = PickledObjectField(default=[])
+    objs = PickledObjectField()
+    batch_type = models.CharField(max_length=200, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    deleted = models.BooleanField(default=False)
 
-    created = models.DateTimeField(auto_now=True)
+    can_restore = ['measurement']
+
+
+    def restore(self):
+        if self.batch_type in self.can_restore:
+            for obj in self.objs:
+                obj.save()
 
 
     def del_objs(self):
+        print 'UploadBatch deleting {} objects'.format(len(self.objs))
         for obj in self.objs:
             obj.delete()
-
-
-    def restore_objs(self):
-        for obj in self.objs:
-            obj.save()
+        self.deleted = True
+        self.save()
 
 
     def add_obj(self, obj):
-        self.objs.append(obj)
+        try:
+            if isinstance(obj, list):
+                self.objs + obj
+            else:
+                self.objs.append(obj)
+        except (AttributeError, TypeError):
+            print 'Unitialized PickledObjectField: Initializing with []'
+            self.objs = []
+            self.save()
+            self.add_obj(obj)
 
 
     def __len__(self):
@@ -698,7 +715,7 @@ class UploadBatch(models.Model):
 
 
     def __unicode__(self):
-        return 'Batch {}:\n\t{}'.format(self.created, self.objs[0:3])
+        return 'Batch {}:\n\t{} objects'.format(self.created, len(self.objs))
 
 
 
