@@ -680,8 +680,9 @@ class UploadBatch(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     deleted = models.BooleanField(default=False)
 
-    can_restore = ['measurement']
 
+    # we shuold probabyly not even mess arouind with this tbh
+    can_restore = ['measurement']
 
     def restore(self):
         if self.batch_type in self.can_restore:
@@ -715,7 +716,14 @@ class UploadBatch(models.Model):
 
 
     def __unicode__(self):
-        return 'Batch {}:\n\t{} objects'.format(self.created, len(self.objs))
+        if self.objs:
+            uni = 'Batch {}, size={}, first={}, type={}'.format(self.created, len(self.objs), self.objs[0], self.batch_type)
+        else:
+            uni = 'Batch {}, size={}, type={}'.format(self.created, len(self.objs), self.batch_type)
+        return uni
+
+    class Meta:
+        ordering = ['-created']
 
 
 

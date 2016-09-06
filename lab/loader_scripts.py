@@ -898,40 +898,40 @@ def plot_loader_prep_output(results_dict, new_upload_exp, template_type):
     return response
 
 def plot_loader(results_dict):
-    upload_batch = UploadBatch.objects.create()
-    try:
-        for key in results_dict['obs_plot_new'].iterkeys():
-            try:
-                with transaction.atomic():
-                    new_obsplot = ObsPlot.objects.create(plot_id=key[1], plot_name=key[2], range_num=key[3], row_num=key[4], plot=key[5], block=key[6], rep=key[7], kernel_num=key[8], planting_date=key[9], harvest_date=key[10], comments=key[11], polli_type=key[12], gen=key[13], is_male=key[14], cross_target=key[15], shell_single=key[16], shell_multi=key[17], shell_bulk=key[18])
+    with transaction.atomic():
+        upload_batch = UploadBatch.objects.create()
+        try:
+            for key in results_dict['obs_plot_new'].iterkeys():
+                try:
+                    with transaction.atomic():
+                        new_obsplot = ObsPlot.objects.create(plot_id=key[1], plot_name=key[2], range_num=key[3], row_num=key[4], plot=key[5], block=key[6], rep=key[7], kernel_num=key[8], planting_date=key[9], harvest_date=key[10], comments=key[11], polli_type=key[12], gen=key[13], is_male=key[14], cross_target=key[15], shell_single=key[16], shell_multi=key[17], shell_bulk=key[18])
+                        new_obsplot.save()
+                        upload_batch.add_obj(new_obsplot)
 
-                    upload_batch.add_obj(new_obsplot)
+                except Exception as e:
+                    print("ObsPlot Error: %s %s" % (e.message, e.args))
+                    return False
+            for key in results_dict['obs_tracker_new'].iterkeys():
+                try:
+                    with transaction.atomic():
+                        new_stock = ObsTracker.objects.create(obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
+                        new_stock.save()
+                except Exception as e:
+                    print("ObsTracker Error: %s %s" % (e.message, e.args))
+                    return False
+            for key in results_dict['obs_tracker_source_new'].iterkeys():
+                try:
+                    with transaction.atomic():
+                        new_stock = ObsTrackerSource.objects.create(id=key[0], source_obs_id=key[1], target_obs_id=key[2], relationship=key[3])
+                        new_stock.save()
+                except Exception as e:
+                    print("ObsTrackerSource Error: %s %s" % (e.message, e.args))
+                    return False
+        except Exception as e:
+            print("Error: %s %s" % (e.message, e.args))
+            return False
 
-            except Exception as e:
-                print("ObsPlot Error: %s %s" % (e.message, e.args))
-                return False
-        for key in results_dict['obs_tracker_new'].iterkeys():
-            try:
-                with transaction.atomic():
-                    new_stock = ObsTracker.objects.create(obs_entity_type=key[1], experiment_id=key[2], field_id=key[3], isolate_id=key[4], isolatestock_id=key[5], location_id=key[6], maize_sample_id=key[7], obs_culture_id=key[8], obs_dna_id=key[9], obs_env_id=key[10], obs_extract_id=key[11], obs_microbe_id=key[12], obs_plant_id=key[13], obs_plate_id=key[14], obs_plot_id=key[15], obs_sample_id=key[16], obs_tissue_id=key[17], obs_well_id=key[18], stock_id=key[19], user_id=key[20])
-                    new_stock.save()
-            except Exception as e:
-                print("ObsTracker Error: %s %s" % (e.message, e.args))
-                return False
-        for key in results_dict['obs_tracker_source_new'].iterkeys():
-            try:
-                with transaction.atomic():
-                    new_stock = ObsTrackerSource.objects.create(id=key[0], source_obs_id=key[1], target_obs_id=key[2], relationship=key[3])
-                    new_stock.save()
-            except Exception as e:
-                print("ObsTrackerSource Error: %s %s" % (e.message, e.args))
-                return False
-    except Exception as e:
-        print("Error: %s %s" % (e.message, e.args))
-        return False
-
-
-    upload_batch.save()
+        upload_batch.save()
 
     return True
 
@@ -3777,6 +3777,9 @@ def isolatestock_loader_prep(upload_file, user):
             else:
                 stock_id = 1
 
+            if count == '':
+                count = 0
+
             if isolate_id == '':
                 isolate_id = isolatestock_id
 
@@ -4034,7 +4037,10 @@ def isolatestock_loader_prep(upload_file, user):
 
 
 
-            obs_tracker_isolatestock_hash = 'isolatestock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(temp_isolatestock_id) + str(1) + str(1)  + str(1) + str(obs_culture_id) + str(obs_dna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_plot_id) + str(1) + str(obs_tissue_id) + str(obs_well_id) + str(stock_id) + str(user_hash_table[user.username])
+            obs_tracker_isolatestock_hash = 'isolatestock' + str(experiment_name_table[experiment_name][0]) + str(field_id) + str(1) + str(temp_isolatestock_id) + str(1) + str(1) + str(obs_culture_id) + str(obs_dna_id) + str(1) + str(1) + str(obs_microbe_id) + str(obs_plant_id) + str(obs_plate_id) + str(obs_plot_id) + str(1) + str(obs_tissue_id) + str(obs_well_id) + str(stock_id) + str(user_hash_table[user.username])
+
+
+
             obs_tracker_isolatestock_hash_fix = obs_tracker_isolatestock_hash + '\r'
             if obs_tracker_isolatestock_hash not in obs_tracker_hash_table and obs_tracker_isolatestock_hash_fix not in obs_tracker_hash_table:
                 obs_tracker_hash_table[obs_tracker_isolatestock_hash] = obs_tracker_id
@@ -4224,80 +4230,89 @@ def isolatestock_loader_prep_output(results_dict, new_upload_exp, template_type)
 def isolatestock_loader(results_dict):
     success = True
     create_obs = True
-    try:
-        for key in results_dict['collecting_new'].iterkeys():
-            try:
-                with transaction.atomic():
-                    new_isolatestock = Collecting.objects.create(id=key[0], user_id=key[1], collection_date=key[2], collection_method=key[3], comments=key[4])
-                    new_isolatestock.save()
-            except Exception as e:
-                print("Collecting Error: %s %s" % (e.message, e.args))
-                success = False
-        for key in results_dict['people_new'].iterkeys():
-            try:
-                with transaction.atomic():
-                    new_isolatestock = People.objects.create(id=key[0], first_name=key[1], last_name=key[2], organization=key[3], phone=key[4], email=key[5], comments=key[6])
-                    new_isolatestock.save()
-            except Exception as e:
-                print("People Error: %s %s" % (e.message, e.args))
-                success = False
-        for key in results_dict['taxonomy_new'].iterkeys():
-            try:
-                with transaction.atomic():
-                    new_isolatestock = Taxonomy.objects.create(id=key[0], binomial=key[1], population=key[2], common_name=key[3], alias=key[4], race=key[5], subtaxa=key[6])
-                    new_isolatestock.save()
-            except Exception as e:
-                print("Taxonomy Error: %s %s" % (e.message, e.args))
-                success = False
-        for key in results_dict['passport_new'].iterkeys():
-            try:
-                with transaction.atomic():
-                    new_isolatestock = Passport.objects.create(id=key[0], collecting_id=key[1], people_id=key[2], taxonomy_id=key[3])
-                    new_isolatestock.save()
-            except Exception as e:
-                print("Passport Error: %s %s" % (e.message, e.args))
-                success = False
-        for key in results_dict['isolatestock_new'].iterkeys():
-            try:
-                with transaction.atomic():
-                    new_isolatestock = IsolateStock.objects.create(id=key[0], passport_id=key[1], locality_id=key[2], disease_info_id=key[3], isolatestock_id=key[4], isolatestock_name=key[5], plant_organ=key[6], comments=key[7])
-                    new_isolatestock.save()
-            except Exception as e:
-                print("IsolateStock Error: %s %s" % (e.message, e.args))
-                success = False
-                create_obs = False
-        if create_obs is True:
-            for key in results_dict['obs_tracker_new'].iterkeys():
+    with transaction.atomic():
+        batch = UploadBatch.objects.create()
+        batch.batch_type = 'isolatestock'
+
+        try:
+            for key in results_dict['collecting_new'].iterkeys():
                 try:
                     with transaction.atomic():
-                        new_stock, created = ObsTracker.objects.get_or_create(obs_entity_type=key[1], experiment_id=key[2], field_id=key[3],  isolatestock_id=key[4], location_id=key[5], maize_sample_id=key[6], obs_culture_id=key[7], obs_dna_id=key[8], obs_env_id=key[9], obs_extract_id=key[10], obs_microbe_id=key[11], obs_plant_id=key[12], obs_plate_id=key[13], obs_plot_id=key[14], obs_sample_id=key[15], obs_tissue_id=key[16], obs_well_id=key[17], stock_id=key[18], user_id=key[19])
+                        new_isolatestock = Collecting.objects.create(id=key[0], user_id=key[1], collection_date=key[2], collection_method=key[3], comments=key[4])
+                        new_isolatestock.save()
                 except Exception as e:
-                    print("ObsTracker Error: %s %s" % (e.message, e.args))
+                    print("Collecting Error: %s %s" % (e.message, e.args))
                     success = False
-        for key in results_dict['location_new'].iterkeys():
-            try:
-                with transaction.atomic():
-                    new_location = Location.objects.get_or_create(box_name=key[0], building_name=key[1], room=key[2], location_name=key[3], shelf=key[4], locality_id=1)[0]
-                    new_location.save()
-            except Exception as e:
-                print("Location Error: %s %s" % (e.message, e.args))
-                success = False
-        for key in results_dict['isolate_new'].iterkeys():
-            try:
-                with transaction.atomic():
-                    # For legacy location information
+            for key in results_dict['people_new'].iterkeys():
+                try:
+                    with transaction.atomic():
+                        new_isolatestock = People.objects.create(id=key[0], first_name=key[1], last_name=key[2], organization=key[3], phone=key[4], email=key[5], comments=key[6])
+                        new_isolatestock.save()
+                except Exception as e:
+                    print("People Error: %s %s" % (e.message, e.args))
+                    success = False
+            for key in results_dict['taxonomy_new'].iterkeys():
+                try:
+                    with transaction.atomic():
+                        new_isolatestock = Taxonomy.objects.create(id=key[0], binomial=key[1], population=key[2], common_name=key[3], alias=key[4], race=key[5], subtaxa=key[6])
+                        new_isolatestock.save()
+                except Exception as e:
+                    print("Taxonomy Error: %s %s" % (e.message, e.args))
+                    success = False
+            for key in results_dict['passport_new'].iterkeys():
+                try:
+                    with transaction.atomic():
+                        new_isolatestock = Passport.objects.create(id=key[0], collecting_id=key[1], people_id=key[2], taxonomy_id=key[3])
+                        new_isolatestock.save()
+                except Exception as e:
+                    print("Passport Error: %s %s" % (e.message, e.args))
+                    success = False
+            for key in results_dict['isolatestock_new'].iterkeys():
+                try:
+                    with transaction.atomic():
+                        new_isolatestock = IsolateStock.objects.create(id=key[0], passport_id=key[1], locality_id=key[2], disease_info_id=key[3], isolatestock_id=key[4], isolatestock_name=key[5], plant_organ=key[6], comments=key[7])
+                        new_isolatestock.save()
+
+                        batch.add_obj(new_isolatestock)
+
+                        batch.save()
+
+                except Exception as e:
+                    print("IsolateStock Error: %s %s" % (e.message, e.args))
+                    success = False
+                    create_obs = False
+            if create_obs is True:
+                for key in results_dict['obs_tracker_new'].iterkeys():
                     try:
-                        location = Location.objects.filter(box_name=key[2])[0]
-                    except IndexError:
-                        location = Location.objects.get(box_name=key[2])
-                    new_isolate = Isolate.objects.create(isolate_id=key[0], isolatestock_id=key[1], location=location, locality_id=key[3], stock_date=key[4], comments=key[7], user=key[8])
-                    new_isolate.save()
-            except Exception as e:
-                print("Isolate Error: %s %s" % (e.message, e.args))
-                success = False
-    except Exception as e:
-        print("Error: %s %s" % (e.message, e.args))
-        success = False
+                        with transaction.atomic():
+                            new_stock, created = ObsTracker.objects.get_or_create(obs_entity_type=key[1], experiment_id=key[2], field_id=key[3],  isolatestock_id=key[4], location_id=key[5], maize_sample_id=key[6], obs_culture_id=key[7], obs_dna_id=key[8], obs_env_id=key[9], obs_extract_id=key[10], obs_microbe_id=key[11], obs_plant_id=key[12], obs_plate_id=key[13], obs_plot_id=key[14], obs_sample_id=key[15], obs_tissue_id=key[16], obs_well_id=key[17], stock_id=key[18], user_id=key[19])
+                    except Exception as e:
+                        print("ObsTracker Error: %s %s" % (e.message, e.args))
+                        success = False
+            for key in results_dict['location_new'].iterkeys():
+                try:
+                    with transaction.atomic():
+                        new_location = Location.objects.get_or_create(box_name=key[0], building_name=key[1], room=key[2], location_name=key[3], shelf=key[4], locality_id=1)[0]
+                        new_location.save()
+                except Exception as e:
+                    print("Location Error: %s %s" % (e.message, e.args))
+                    success = False
+            for key in results_dict['isolate_new'].iterkeys():
+                try:
+                    with transaction.atomic():
+                        # For legacy location information
+                        try:
+                            location = Location.objects.filter(box_name=key[2])[0]
+                        except IndexError:
+                            location = Location.objects.get(box_name=key[2])
+                        new_isolate = Isolate.objects.create(isolate_id=key[0], isolatestock_id=key[1], location=location, locality_id=key[3], stock_date=key[4], comments=key[7], user=key[8])
+                        new_isolate.save()
+                except Exception as e:
+                    print("Isolate Error: %s %s" % (e.message, e.args))
+                    success = False
+        except Exception as e:
+            print("Error: %s %s" % (e.message, e.args))
+            success = False
     return success
 
 def isolate_loader_prep(upload_file, user):
@@ -4458,26 +4473,32 @@ def isolate_loader_prep_output(results_dict, new_upload_exp, template_type):
     return response
 
 def isolate_loader(results_dict):
-    success = True
-    try:
-        for key in results_dict['location_new'].iterkeys():
-                try:
-                    with transaction.atomic():
-                        new_location = Location.objects.get_or_create(box_name=key[0], building_name=key[1], room=key[2], location_name=key[3], shelf=key[4], locality_id=1)[0]
-                        new_location.save()
-                except Exception as e:
-                    print("Location Error: %s %s" % (e.message, e.args))
-                    success = False
-        for key in results_dict['isolate_new'].iterkeys():
-                try:
-                    with transaction.atomic():
-                        new_isolate = Isolate.objects.create(id=key[0], isolate_id=key[1], stock_date=key[2], extract_color=key[3], organism=key[4], comments=key[5], isolatestock_id=key[6], location=Location.objects.get(box_name=key[7]), locality_id=key[8], user=User.objects.get(username=key[9]))
-                except Exception as e:
-                    print("Isolate Error: %s %s" % (e.message, e.args))
-                    success = False
-    except Exception as e:
-        print("Error: %s %s" % (e.message, e.args))
-        success = False
+    with transaction.atomic():
+        batch = UploadBatch.objects.create()
+        batch.batch_type = 'isolate'
+
+        success = True
+        try:
+            for key in results_dict['location_new'].iterkeys():
+                    try:
+                        with transaction.atomic():
+                            new_location = Location.objects.get_or_create(box_name=key[0], building_name=key[1], room=key[2], location_name=key[3], shelf=key[4], locality_id=1)[0]
+                            new_location.save()
+                    except Exception as e:
+                        print("Location Error: %s %s" % (e.message, e.args))
+                        success = False
+            for key in results_dict['isolate_new'].iterkeys():
+                    try:
+                        with transaction.atomic():
+                            new_isolate = Isolate.objects.create(id=key[0], isolate_id=key[1], stock_date=key[2], extract_color=key[3], organism=key[4], comments=key[5], isolatestock_id=key[6], location=Location.objects.get(box_name=key[7]), locality_id=key[8], user=User.objects.get(username=key[9]))
+                            batch.add_obj(new_isolate)
+                            batch.save()
+                    except Exception as e:
+                        print("Isolate Error: %s %s" % (e.message, e.args))
+                        success = False
+        except Exception as e:
+            print("Error: %s %s" % (e.message, e.args))
+            success = False
     return success
 
 def measurement_loader_prep(upload_file, user, field_book_upload=False):
@@ -4670,23 +4691,24 @@ def purge_duplicate_measurements():
     return 0
 
 def measurement_loader(results_dict):
-    batch = UploadBatch.objects.create()
-    batch.batch_type = 'measurement'
-    success = True
+    with transaction.atomic():
+        batch = UploadBatch.objects.create()
+        batch.batch_type = 'measurement'
+        success = True
 
-    try:
-        for key in results_dict['measurement_new'].iterkeys():
-            try:
-                with transaction.atomic():
-                    new_measurement = Measurement.objects.create(id=key[0], obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6], experiment_id=key[7])
-                    batch.add_obj(new_measurement)
-                    batch.save()
-            except Exception as e:
-                print("Measurement Error: %s %s\n\t%s" % (e.message, e.args, key))
-                success = False
-                continue
-    except Exception as e:
-        print("Error: %s %s" % (e.message, e.args))
-        success = False
+        try:
+            for key in results_dict['measurement_new'].iterkeys():
+                try:
+                    with transaction.atomic():
+                        new_measurement = Measurement.objects.create(id=key[0], obs_tracker_id=key[1], measurement_parameter_id=key[2], user_id=key[3], time_of_measurement=key[4], value=key[5], comments=key[6], experiment_id=key[7])
+                        batch.add_obj(new_measurement)
+                        batch.save()
+                except Exception as e:
+                    print("Measurement Error: %s %s\n\t%s" % (e.message, e.args, key))
+                    success = False
+                    continue
+        except Exception as e:
+            print("Error: %s %s" % (e.message, e.args))
+            success = False
 
     return success

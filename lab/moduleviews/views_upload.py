@@ -21,16 +21,22 @@ def upload_manager(request):
 
     if request.method == 'POST':
         form = UpForm(request.POST)
+
         if form.is_valid():
-            if form.cleaned_data['lab_key'] == settings.LAB_KEY:
+            print form.cleaned_data
+            if form.cleaned_data['lab_key'] == settings.LAB_KEY and form.cleaned_data['confirmed']:
                 batch = form.cleaned_data['upload_batch']
-                print "{} CALLED DELETION OF {} OBJECTS".format(
-                    request.user.username, len(batch)
+                print "{} CALLED DELETION OF {} OBJECTS:\n{}\n\t{}\n{}".format(
+                    request.user.username, len(batch), '-'*90, batch.objs, '-'*90
                 )
                 batch.del_objs()
 
                 context_dict['form'] = UpForm()
                 context_dict['success'] = "{} objects successfully deleted!".format(len(batch))
+
+            else:
+                context_dict['errors'] = "Improper form or incorrect lab key!"
+                context_dict['form'] = UpForm()
 
         else:
             context_dict['errors'] = "Improper form or incorrect lab key!"
