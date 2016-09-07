@@ -800,5 +800,6 @@ class HarvestDateForm(forms.Form):
 class UploadManagerForm(forms.Form):
     upload_batch = forms.ModelChoiceField(queryset=UploadBatch.objects.filter(deleted=False), empty_label='--- UploadBatch ---', help_text="Select an Upload Batch", required=True)
     lab_key = forms.CharField(help_text="Secret lab key to authorize deletion (case sensitive):", widget=forms.PasswordInput(attrs={'placeholder': 'Secret Lab key'}), required=True)
+    justification = forms.CharField(help_text="Justify this deletion:", widget=forms.TextInput(attrs={'placeholder': 'Justification'}), required=True)
     confirmed = forms.BooleanField(help_text="Confirm:", required=True)
 

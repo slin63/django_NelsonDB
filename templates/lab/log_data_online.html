@@ -142,9 +142,13 @@
     {% endif %}
     {% if data_type == 'isolatestock' %}
       <hr>
+      <h3>Upload Isolates Separately: </h3>
+      <h5><a href='/lab/log_data/isolate/'>Isolate Update Page</a></h5>
+      <hr>
       <h3>Upload From File: </h3>
       <h5><a href='/lab/download/template/isolatestock_data/'>Download Template</a></h5>
       <h5><a href='/lab/upload_online/isolatestock_data/'>Upload Completed Template</a></h5>
+
       <hr>
       {% include "lab/isolatestock/isolatestock_upload_protocol.html" %}
       <hr>

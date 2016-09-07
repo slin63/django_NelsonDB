@@ -677,6 +677,7 @@ class Measurement(models.Model):
 class UploadBatch(models.Model):
     objs = PickledObjectField()
     batch_type = models.CharField(max_length=200, blank=True)
+    justification = models.CharField(max_length=200, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     deleted = models.BooleanField(default=False)
 
@@ -696,6 +697,11 @@ class UploadBatch(models.Model):
             obj.delete()
         self.deleted = True
         self.save()
+
+
+    def size_check(self):
+        if len(self) == 0:
+            self.delete()
 
 
     def add_obj(self, obj):
