@@ -1,0 +1,59 @@
+<style>
+    th, td {
+        padding: 5px;
+    }
+    th {
+    text-align: left;
+    }
+</style>
+<h3>Template Guide: </h3>
+ <table style="width:50%">
+  <tr>
+    <th>Upload Field</th>
+    <th>Corresponding model</th>
+    <th>Required</th>
+    <th>Details</th>
+  </tr>
+  <tr>
+    <td>Observation Unit</td>
+    <td><code>Measurement</code></td>
+    <td><code>True</code></td>
+    <td>The unique ID of the model that this measurement was made for. E.g. a plot's <code>plot_id</code>, a stock's <code>seed_id</code>, or an isolate's <code>isolate_id</code>.</td>
+  </tr>
+  <tr>
+    <td>Experiment</td>
+    <td><code>Measurement</code></td>
+    <td><code>True</code></td>
+    <td>The <code>experiment</code> that this measurement will be attached to. This experiment does not have to be the same as the experiment with which the <code>Observation Unit</code> is associated. </td>
+  </tr>
+  <tr>
+    <td>Parameter Name</td>
+    <td><code>Measurement</code></td>
+    <td><code>True</code></td>
+    <td>The case-sensitive name of the parameter name that this measurement was taken for. Parameters can be viewed at <a href='/lab/data/measurement_parameter'>the <code>Measurement Parameter</code> table.</a></td>
+  </tr>
+  <tr>
+    <td>Username</td>
+    <td><code>Measurement</code></td>
+    <td><code>False</code></td>
+    <td><code>Username</code> of the user who collected the data. E.g. <code>{{ user.username }}</code> if you were the one who collected the data.</td>
+  </tr>
+  <tr>
+    <td>DateTime</td>
+    <td><code>Measurement</code></td>
+    <td><code>False</code></td>
+    <td>The time at which the data was taken. </td>
+  </tr>
+  <tr>
+    <td>Value</td>
+    <td><code>Measurement</code></td>
+    <td><code>True</code></td>
+    <td>The value of the <code>Measurement</code>.</td>
+  </tr>
+  <tr>
+    <td>Measurement Comments</td>
+    <td><code>Measurement</code></td>
+    <td><code>False</code></td>
+    <td>Any additional comments related to the <code>Measurement</code>.</td>
+  </tr>
+ </table>

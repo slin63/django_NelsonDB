@@ -1,0 +1,115 @@
+<style>
+    th, td {
+        padding: 5px;
+    }
+    th {
+    text-align: left;
+    }
+</style>
+<h3>Template Guide: </h3>
+ <table style="width:50%">
+  <tr>
+    <th>Upload Field</th>
+    <th>Corresponding model</th>
+    <th>Required</th>
+    <th>Details</th>
+  </tr>
+  <tr>
+    <td>Used</td>
+    <td><code>Stock</code></td>
+    <td><code>False</code></td>
+    <td>Enter <code>1</code> if the <code>Stock</code> was used in an experiment and leave blank otherwise.</td>
+  </tr>
+  <tr>
+    <td>Collected</td>
+    <td><code>Stock</code></td>
+    <td><code>False</code></td>
+    <td>Enter <code>1</code> if the <code>Stock</code> was collected from an experiment and leave blank otherwise.</td>
+  </tr>
+  <tr>
+    <td>Experiment Name</td>
+    <td><code>ObsTracker</code></td>
+    <td><code>False</code></td>
+    <td>The <code>Experiment</code> that this <code>Stock</code> will be associated with. Can be left blank.</td>
+  </tr>
+  <tr>
+    <td>Seed ID</td>
+    <td><code>Stock</code></td>
+    <td><code>True</code></td>
+    <td>A unique identifier for this <code>Stock</code>. </td>
+  </tr>
+  <tr>
+    <td>Seed Name</td>
+    <td><code>Stock</code></td>
+    <td><code>False</code></td>
+    <td>A human readable or alternative name for this <code>Stock</code>.</td>
+  </tr>
+  <tr>
+    <td>Cross Type</td>
+    <td><code>Stock</code></td>
+    <td><code>False</code></td>
+    <td>The breeding method that was used to yield this particular <code>Stock</code>. Cross types should be entered as follows (excluding the text in parantheses): <code>SF (selfing), SB (sibbing), CR (paired row crossing), TC (topcrossing), BC (backcrossing), FC (free-crossing), IN (intermating). </code></td>
+  </tr>
+  <tr>
+    <td>Pedigree</td>
+    <td><code>Stock</code></td>
+    <td><code>True</code></td>
+    <td>The <code>Stock</code>'s Pedigree.</td>
+  </tr>
+  <tr>
+    <td>Stock Status</td>
+    <td><code>Stock</code></td>
+    <td><code>False</code></td>
+    <td>A descriptor of the current role of the <code>Stock</code> in an experiment's progress.</td>
+  </tr>
+  <tr>
+    <td>Stock Date</td>
+    <td><code>Stock</code></td>
+    <td><code>False</code></td>
+    <td>Date the <code>Stock</code> was inventoried.</td>
+  </tr>
+  <tr>
+    <td>Inoculated</td>
+    <td><code>Stock</code></td>
+    <td><code>False</code></td>
+    <td>Whether or not the <code>Stock</code> was inoculated. <code>1</code> for yes, leave blank for no.</td>
+  </tr>
+  <tr>
+    <td>Stock Comments</td>
+    <td><code>Stock</code></td>
+    <td><code>False</code></td>
+    <td>Comments.</td>
+  </tr>
+  <tr>
+    <td>Binomial / Species / Population</td>
+    <td><code>Passport</code></td>
+    <td><code>False</code></td>
+    <td>Information pertaining to the <code>Stock</code>'s genotypic information.</td>
+  </tr>
+  <tr>
+    <td>Plot ID / Field Name</td>
+    <td><code>ObsTracker</code></td>
+    <td><code>False</code></td>
+    <td>The ID's of any <code>ObsPlot</code>s or <code>Field</code>s associated with the <code>Stock</code>.</td>
+  </tr>
+  <tr>
+    <td>Username / Collection Date / Method / Collection Comments </td>
+    <td><code>Collecting</code></td>
+    <td><code>False</code></td>
+    <td>Information for the related <code>Collecting</code> tag.</td>
+  </tr>
+  <tr>
+    <td>Organization / First Name / Last Name / Phone / Email / Source Comments</td>
+    <td><code>People</code></td>
+    <td><code>False</code></td>
+    <td>Information for the related <code>Source</code> tag.</td>
+  </tr>
+
+
+
+
+
+
+
+
+</table>
