@@ -200,12 +200,11 @@
     <hr>
     <h3>Upload From File: </h3>
     <h5><a href='/lab/download/template/measurement_data/'>Download Template</a></h5>
-    <h5><a href='/lab/download/template/measurement_data_help/'>Download Template Help</a></h5>
     <h5><a href='/lab/upload_online/measurement_data/'>Upload Online</a></h5>
     <hr>
-    <h2>Use the search box in the top left to <i>make sure a model exists!</i></h2>
+      {% include "lab/measurement/measurement_upload_protocol.html" %}
     <hr>
-    <h3>Or Upload Using Online Form: </h3>
+    <h2>Use the search box in the top left to <i>make sure a model exists!</i></h2><h3>Or Upload Using Online Form: </h3>
     {% endif %}
 
     <br/>
