@@ -41,7 +41,6 @@ def write_to_html(issue_set, output="issues.html"):
     issue_open_header = """
         <!DOCTYPE html>
         <!-- GENERATED ON: {0} -->
-        <ol>
 
         <div class="hero-unit">
             <h1>Current Changes and Issues:</h1>

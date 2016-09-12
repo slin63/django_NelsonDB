@@ -52,9 +52,9 @@ def trim_leading_zeroes(s):
 #     {
 #     //    person.add_wine(3);
 #         person.add_wine(20);
-#         person.interested = true;
+#         person.set_interested(true);
 #     }
-#     weather.set(globals.SNOWY);
+#     weather.set(globals::SNOWY);
 #
 #     return EXIT_SUCCESS;
 # }

@@ -1,5 +1,7 @@
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
+from picklefield.fields import PickledObjectField
 
 """User Model
 
@@ -670,3 +672,65 @@ class Measurement(models.Model):
 
     def __unicode__(self):
         return self.value
+
+
+class UploadBatch(models.Model):
+    objs = PickledObjectField()
+    batch_type = models.CharField(max_length=200, blank=True)
+    justification = models.CharField(max_length=200, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    deleted = models.BooleanField(default=False)
+
+
+    # we shuold probabyly not even mess arouind with this tbh
+    can_restore = ['measurement']
+
+    def restore(self):
+        if self.batch_type in self.can_restore:
+            for obj in self.objs:
+                obj.save()
+
+
+    def del_objs(self):
+        print 'UploadBatch deleting {} objects'.format(len(self.objs))
+        for obj in self.objs:
+            obj.delete()
+        self.deleted = True
+        self.save()
+
+
+    def size_check(self):
+        if len(self) == 0:
+            self.delete()
+
+
+    def add_obj(self, obj):
+        try:
+            if isinstance(obj, list):
+                self.objs + obj
+            else:
+                self.objs.append(obj)
+        except (AttributeError, TypeError):
+            print 'Unitialized PickledObjectField: Initializing with []'
+            self.objs = []
+            self.save()
+            self.add_obj(obj)
+
+
+    def __len__(self):
+        return len(self.objs)
+
+
+    def __unicode__(self):
+        if self.objs:
+            uni = 'Batch {}, size={}, first={}, type={}'.format(self.created, len(self.objs), self.objs[0], self.batch_type)
+        else:
+            uni = 'Batch {}, size={}, type={}'.format(self.created, len(self.objs), self.batch_type)
+        return uni
+
+    class Meta:
+        ordering = ['-created']
+
+
+
+
