@@ -138,6 +138,7 @@ def obs_tracker_hash_mirror():
     obs_tracker_file = ObsTracker.objects.all()
     for row in obs_tracker_file:
         tracker_hash = row.obs_entity_type + str(row.experiment_id) + str(row.field_id) + str(row.isolate_id) + str(row.isolatestock_id) + str(row.location_id) + str(row.maize_sample_id) + str(row.obs_culture_id) + str(row.obs_dna_id) + str(row.obs_env_id) + str(row.obs_extract_id) + str(row.obs_microbe_id) + str(row.obs_plant_id) + str(row.obs_plate_id) + str(row.obs_plot_id) + str(row.obs_sample_id) + str(row.obs_tissue_id) + str(row.obs_well_id) + str(row.stock_id) + str(row.user_id)
+        tracker_hash = tracker_hash.replace('None', '1')
         obs_tracker_hash_table[tracker_hash] = row.id
     return obs_tracker_hash_table
 

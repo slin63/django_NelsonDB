@@ -62,8 +62,9 @@
       <hr>
       <h3>Upload From File: </h3>
       <h5><a href='/lab/download/template/seed_stock/'>Download Template</a></h5>
-      <h5><a href='/lab/download/template/seed_stock_help/'>Download Template Help</a></h5>
       <h5><a href='/lab/upload_online/seed_stock/'>Upload Online</a></h5>
+      <hr>
+      {% include "lab/stock_upload_protocol.html" %}
       <hr>
       <h3>Or Upload Using Online Form: </h3>
     {% endif %}
@@ -142,9 +143,13 @@
     {% endif %}
     {% if data_type == 'isolatestock' %}
       <hr>
+      <h3>Upload Isolates Separately: </h3>
+      <h5><a href='/lab/log_data/isolate/'>Isolate Update Page</a></h5>
+      <hr>
       <h3>Upload From File: </h3>
       <h5><a href='/lab/download/template/isolatestock_data/'>Download Template</a></h5>
       <h5><a href='/lab/upload_online/isolatestock_data/'>Upload Completed Template</a></h5>
+
       <hr>
       {% include "lab/isolatestock/isolatestock_upload_protocol.html" %}
       <hr>
@@ -195,12 +200,11 @@
     <hr>
     <h3>Upload From File: </h3>
     <h5><a href='/lab/download/template/measurement_data/'>Download Template</a></h5>
-    <h5><a href='/lab/download/template/measurement_data_help/'>Download Template Help</a></h5>
     <h5><a href='/lab/upload_online/measurement_data/'>Upload Online</a></h5>
     <hr>
-    <h2>Use the search box in the top left to <i>make sure a model exists!</i></h2>
+      {% include "lab/measurement/measurement_upload_protocol.html" %}
     <hr>
-    <h3>Or Upload Using Online Form: </h3>
+    <h2>Use the search box in the top left to <i>make sure a model exists!</i></h2><h3>Or Upload Using Online Form: </h3>
     {% endif %}
 
     <br/>

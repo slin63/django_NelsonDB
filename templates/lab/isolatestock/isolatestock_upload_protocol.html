@@ -11,71 +11,67 @@
   <tr>
     <th>Upload Field</th>
     <th>Corresponding model</th>
+    <th>Required</th>
     <th>Details</th>
   </tr>
   <tr>
     <td>IsolateStock ID</td>
     <td><code>IsolateStock</code></td>
+    <td><code>True</code></td>
     <td>Unique identifier for the <code>IsolateStock</code></td>
   </tr>
   <tr>
     <td>IsolateStock Name</td>
     <td><code>IsolateStock</code></td>
+    <td><code>False</code></td>
     <td>A generic (optional) name for the <code>IsolateStock</code></td>
-  </tr>
-  <tr>
-    <td>Isolate ID</td>
-    <td><code>Isolate</code></td>
-    <td>Optional name for the <code>IsolateStock</code>'s <code>Isolate</code>s. If not specified, will use the <code>IsolateStock ID</code> instead.</td>
   </tr>
   <tr>
     <td>Plant Organ</td>
     <td><code>Isolate</code></td>
+    <td><code>False</code></td>
     <td>Plant organ that the <code>IsolateStock</code> was extracted from.</td>
   </tr>
   <tr>
-    <td>Shelf / Box Name / Building Name / Room/ Location Name</td>
-    <td><code>Isolate -> Location</code></td>
-    <td><code>Location</code> data specifying where the <code>Isolate</code>s are stored.  </td>
-  </tr>
-  <tr>
-    <td>IsolateStock / Isolate Comments</td>
-    <td><code>IsolateStock / Isolate</code></td>
+    <td>IsolateStock Comments</td>
+    <td><code>IsolateStock</code></td>
+    <td><code>False</code></td>
     <td>Comments to be attached to the <code>IsolateStock / Isolate</code>.</td>
   </tr>
   <tr>
     <td>Locality ID</td>
-    <td><code>Isolate / IsolateStock -> Locality</code></td>
-    <td>Numerical ID of the <code>IsolateStock / Isolate</code>'s locality. Can be looked up at <b><a href={% url 'browse_locality_data' %}>the locality table.</a></b> </td>
-  </tr>
-  <tr>
-    <td>Count</td>
-    <td><code>Isolate</code></td>
-    <td>Number of <code>Isolate</code>s to generate. (e.g. count = 3 will generate the following <code>Isolate</code>s: 16FG100.1, 16FG100.2, 16FG100.3)</td>
+    <td><code>IsolateStock -> Locality</code></td>
+    <td><code>False</code></td>
+    <td>Numerical ID of the <code>IsolateStock</code>'s locality. Can be looked up at <b><a href={% url 'browse_locality_data' %}>the locality table.</a></b> </td>
   </tr>
   <tr>
     <td>Username</td>
     <td><code>IsolateStock -> Collection</code></td>
+    <td><code>False</code></td>
     <td>The username of the person who curated this <code>IsolateStock</code>. (e.g. Enter <code>{{user.username}}</code> if you're the one who brought it into this world.)</td>
   </tr>
   <tr>
     <td>Stock Date / Method / Collection Comments</td>
     <td><code>IsolateStock -> Collection</code></td>
+    <td><code>False</code></td>
     <td>When the <code>IsolateStock</code> was collected (or catalogued if not possible), what method was used to create it, and any relevant comments.</td>
   </tr>
   <tr>
     <td>Binomial / Alias / Population / Race / Subtaxa</td>
     <td><code>IsolateStock -> Taxonomy</code></td>
+    <td><code>False</code></td>
     <td>Taxonomical information for the <code>IsolateStock</code></td>
   </tr>
   <tr>
     <td>Organization / Names / Phone / Email / Source Comments</td>
     <td><code>IsolateStock -> People</code></td>
+    <td><code>False</code></td>
     <td>Contact information for whoever provided the <code>IsolateStock</code> if it was not an in-house concoction.</td>
   </tr>
   <tr>
     <td>Source IDs</td>
     <td><code>IsolateStock -> ObsTracker</code></td>
+    <td><code>False</code></td>
     <td>Fill these columns with the IDs of other objects in the database if the <code>IsolateStock</code> was created using them or their materials.</td>
   </tr>
 </table>
