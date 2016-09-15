@@ -15,6 +15,7 @@ def upload_manager(request):
     context = RequestContext(request)
     context_dict = {}
     context_dict['user'] = request.user.username
+    context_dict['logged_in_user'] = request.user.username
 
     if not request.user.is_superuser:
         return HttpResponse("Superuser restricted view")
