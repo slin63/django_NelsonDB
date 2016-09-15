@@ -72,7 +72,7 @@ def field_name_mirror():
         field_name_table[row.field_name] = (row.id, row.locality_id, row.field_name, row.field_num, row.comments)
     return field_name_table
 
-def field_hash_mirror():
+def field_hash_mirror(planting_year=False):
     field_hash_table = OrderedDict({})
     #--- Key = (locality_id + field_name + field_num + comments)
     #--- Value = (id)
@@ -80,6 +80,8 @@ def field_hash_mirror():
     field_file = Field.objects.all()
     for row in field_file:
         field_hash = str(row.locality_id) + row.field_name + row.field_num + row.comments
+        if planting_year:
+            field_hash += str(row.planting_year)
         field_hash.rstrip('\r')
         field_hash.rstrip('\n')
         field_hash_table[field_hash] = row.id
