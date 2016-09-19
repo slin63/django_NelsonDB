@@ -635,7 +635,7 @@ def seed_id_mirror():
 
     stock_file = Stock.objects.all()
     for stock in stock_file:
-        seed_id_table[stock.seed_id] = (stock.id, stock.passport_id, stock.seed_id, stock.seed_name, stock.cross_type, stock.pedigree, stock.stock_status, stock.stock_date, stock.inoculated, stock.comments)
+        seed_id_table[stock.seed_id.lower()] = (stock.id, stock.passport_id, stock.seed_id, stock.seed_name, stock.cross_type, stock.pedigree, stock.stock_status, stock.stock_date, stock.inoculated, stock.comments)
     return seed_id_table
 
 def obs_sample_id_mirror():

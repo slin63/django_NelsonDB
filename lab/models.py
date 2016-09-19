@@ -45,11 +45,14 @@ class Locality(models.Model):
 
 class Field(models.Model):
     locality = models.ForeignKey(Locality)
-    field_name = models.CharField(max_length=200, unique=True)
+    field_name = models.CharField(max_length=200)
     field_num = models.CharField(max_length=200, blank=True)
     dimensions = models.CharField(max_length=200, blank=True)
     comments = models.CharField(max_length=1000, blank=True)
     planting_year = models.CharField(max_length=200, blank=False)
+
+    class Meta:
+        unique_together = ('field_name', 'planting_year')
 
     def __unicode__(self):
         return self.field_name + ' - ' + self.planting_year
