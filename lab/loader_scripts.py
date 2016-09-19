@@ -4802,13 +4802,11 @@ def purge_duplicate_measurements():
             uni.append(meas)
         else:
             dups.append(meas)
-
     dup_models = []
     for item in dups:
         trash = Measurement.objects.filter(obs_tracker=item[0], measurement_parameter=item[1], value=item[2], time_of_measurement=item[3])
         for junk in trash[1:]:
             junk.delete()
-
     return 0
 
 def measurement_loader(results_dict):
