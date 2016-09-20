@@ -798,8 +798,14 @@ class HarvestDateForm(forms.Form):
 
 
 class UploadManagerForm(forms.Form):
+    choices = (
+        ('preview', 'Preview the upload to be deleted'),
+        ('delete', 'Delete the selected upload')
+    )
+    action = forms.ChoiceField(required=True, help_text='Select an action to perform: ', choices=choices, widget=forms.RadioSelect)
     upload_batch = forms.ModelChoiceField(queryset=UploadBatch.objects.filter(deleted=False), empty_label='--- UploadBatch ---', help_text="Select an Upload Batch", required=True)
-    lab_key = forms.CharField(help_text="Secret lab key to authorize deletion (case sensitive):", widget=forms.PasswordInput(attrs={'placeholder': 'Secret Lab key'}), required=True)
-    justification = forms.CharField(help_text="Justify this deletion:", widget=forms.TextInput(attrs={'placeholder': 'Justification'}), required=True)
+
+    lab_key = forms.CharField(help_text="Secret lab key to authorize action (case sensitive):", widget=forms.PasswordInput(attrs={'placeholder': 'Secret Lab key'}), required=True)
+    justification = forms.CharField(help_text="If deleting an upload, explain the reason:", widget=forms.TextInput(attrs={'placeholder': 'Justification'}), required=False)
     confirmed = forms.BooleanField(help_text="Confirm:", required=True)
 
