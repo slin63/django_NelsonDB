@@ -807,5 +807,5 @@ class UploadManagerForm(forms.Form):
 
     lab_key = forms.CharField(help_text="Secret lab key to authorize action (case sensitive):", widget=forms.PasswordInput(attrs={'placeholder': 'Secret Lab key'}), required=True)
     justification = forms.CharField(help_text="If deleting an upload, explain the reason:", widget=forms.TextInput(attrs={'placeholder': 'Justification'}), required=False)
-    confirmed = forms.BooleanField(help_text="Confirm:", required=True)
+    confirmed = forms.BooleanField(help_text="If deleting, check to confirm:", required=False)
 
