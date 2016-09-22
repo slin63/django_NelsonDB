@@ -3947,6 +3947,9 @@ def isolatestock_loader_prep(upload_file, user):
 
         # Catches empty row errors
         if isolatestock_id != '':
+            if locality_id == '':
+                locality_id = 1
+
             if seed_id != '':
                 seed_id_fix = seed_id + '\r'
                 if seed_id in seed_id_table:
