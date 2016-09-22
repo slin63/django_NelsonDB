@@ -791,8 +791,11 @@ class FieldBookUploadForm(forms.Form):
 
 
 class HarvestDateForm(forms.Form):
-    # user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label="--- Username ---",
-                                  # help_text="Select the user who produced data:", required=True)
+    file_name = forms.FileField(help_text="Select your file:")
+    verified = forms.BooleanField(help_text="Verified:", required=True)
+
+
+class TreatmentForm(forms.Form):
     file_name = forms.FileField(help_text="Select your file:")
     verified = forms.BooleanField(help_text="Verified:", required=True)
 

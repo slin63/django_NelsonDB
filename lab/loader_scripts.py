@@ -4625,9 +4625,8 @@ def isolate_loader(results_dict):
 
     return success
 
-def measurement_loader_prep(upload_file, user, field_book_upload=False):
-    ##TODO: Automatically generate stock, parameter, data
 
+def measurement_loader_prep(upload_file, user, field_book_upload=False):
     start = time.clock()
     #-- These are the tables that will hold the curated data that is then written to csv files --
     measurement_new = OrderedDict({})
