@@ -177,6 +177,7 @@ def single_plot_info(request, obs_plot_id):
         plot_info = None
         obs_measurements = None
     if plot_info is not None:
+        obs_tracker_only_plot = ObsTracker.objects.get(obs_entity_type='plot', obs_plot_id=obs_plot_id)
         obs_tracker = get_obs_tracker('obs_plot_id', obs_plot_id)
         for t in obs_tracker:
             if t.obs_id != plot_info.plot_id:
@@ -186,6 +187,7 @@ def single_plot_info(request, obs_plot_id):
     else:
         obs_tracker_plot = None
         obs_source = None
+    context_dict['plot_obs_info'] = obs_tracker_only_plot
     context_dict['plot_info'] = plot_info
     context_dict['obs_tracker'] = obs_tracker_plot
     context_dict['obs_source'] = obs_source
