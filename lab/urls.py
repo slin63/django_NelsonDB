@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 
 from lab import views
-from lab.moduleviews import views_genotype, views_about, views_plot, views_fieldbook, views_packet, views_upload
+from lab.moduleviews import views_genotype, views_about, views_plot, views_fieldbook, views_packet, views_upload, views_treatment
 from lab.moduleviews import views_isolate_stock as views_is
 
 urlpatterns = patterns('',
@@ -180,8 +180,9 @@ urlpatterns = patterns('',
                        url(r'^data/separation/$', views.separation_data_browse, name='separation_data_browse'),
                        url(r'^data/separation/(?P<experiment_name>\w+)/$', views.separation_data_from_experiment, name='separation_data_from_experiment'),
 
-
                        url(r'^data/harvest_date/$', views_plot.add_harvest_date, name='harvest_date'),
+                       url(r'^data/plot_treatment/$', views_plot.add_treatment, name='plot_treatment'),
+
                        url(r'^data/plot/$', views_plot.plot_loader_browse, name='plot_loader_browse'),
                        url(r'^data/plot/suggest_plot_experiment/$', views_plot.suggest_plot_experiment, name='suggest_plot_experiment'),
                        url(r'^data/plot/select_plot_experiment/$', views_plot.select_plot_experiment, name='select_plot_experiment'),
@@ -218,7 +219,7 @@ urlpatterns = patterns('',
                        url(r'^edit/(?P<obj_type>\w+)/(?P<obj_id>\d+)/$', views.edit_info, name='edit_info'),
 
                        url(r'^new_experiment/$', views.new_experiment, name='new_experiment'),
-                       url(r'^new_treatment/$', views.new_treatment, name='new_treatment'),
+                       url(r'^new_treatment/$', views_treatment.new_treatment, name='new_treatment'),
                        url(r'^log_data/select_obs/$', views.log_data_select_obs, name='log_data_select_obs'),
                        url(r'^log_data/(?P<data_type>\w+)/$', views.log_data_online, name='log_data_online'),
 

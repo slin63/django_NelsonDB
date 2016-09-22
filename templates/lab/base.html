@@ -42,7 +42,7 @@
 					   <ul class="nav">
                                 {% if logged_in_user %}
 								<li><a href="/lab/new_experiment/">New Experiment</a></li>
-								<li><a href="/lab/new_treatment/">Add Treatment</a></li>
+								<li><a href="{% url 'new_treatment' %}">Add Treatment</a></li>
                                 {% endif %}
 								<li><a href="/lab/log_data/select_obs/">Add Data</a></li>
 
@@ -92,6 +92,7 @@
 								<li class="nav-list"><a href={% url 'packet_menu' %}>Packet Generation</a></li>
 								<li class="nav-list"><a href={% url 'fieldbook_upload' %}>Field Book Upload</a></li>
 								<li class="nav-list"><a href={% url 'harvest_date' %}>Harvest Date Upload</a></li>
+								<li class="nav-list"><a href={% url 'plot_treatment' %}>Plot Treatment Upload</a></li>
 								<li class="nav-list"><a href={% url 'upload_manager' %}>Upload Manager</a></li>
 
               <li class="nav-header"><h4>Browse Data</h4></li>

@@ -558,6 +558,16 @@ def isolatestock_id_mirror():
         isolatestock_id_table[row.isolatestock_id] = (row.id, row.passport_id, row.locality_id, row.disease_info_id, row.isolatestock_id, row.isolatestock_name, row.plant_organ, row.comments)
     return isolatestock_id_table
 
+def treatment_id_table():
+    treatment_id_table = OrderedDict({})
+
+    treatment_file = Treatment.objects.all()
+    for row in treatment_file:
+        treatment_id_table[row.treatment_id] = (row.id,)
+
+def treatment_id_mirror():
+    return Treatment.objects.latest('id').id + 1
+
 def disease_name_mirror():
     disease_name_table = OrderedDict({})
     #--- Key = (common_name)

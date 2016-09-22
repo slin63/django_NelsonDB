@@ -505,6 +505,7 @@ class ObsTracker(models.Model):
     obs_well = models.ForeignKey(ObsWell, blank=True, null=True)
     obs_env = models.ForeignKey(ObsEnv, blank=True, null=True)
     obs_extract = models.ForeignKey(ObsExtract, blank=True, null=True)
+    obs_treatment = models.ForeignKey(Treatment, blank=True, null=True)
 
     def __unicode__(self):
         return self.obs_entity_type
