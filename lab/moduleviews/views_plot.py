@@ -8,10 +8,10 @@ from itertools import chain
 from openpyxl.writer.excel import save_virtual_workbook
 
 from applets import field_map_generator
-from lab.forms import DownloadFieldForm, HarvestDateForm, UpdatePlotsOnlineForm
+from lab.forms import DownloadFieldForm, HarvestDateForm, UpdatePlotsOnlineForm, TreatmentForm
 from lab.models import Experiment, Stock, ObsPlot, ObsPlant, ObsSample, ObsWell, ObsCulture, ObsTissue, ObsDNA, \
     ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, Field, \
-    Measurement, MaizeSample, Isolate
+    Measurement, MaizeSample, Isolate, Treatment
 
 
 YEAR_INIT = 2015
@@ -48,6 +48,61 @@ def add_harvest_date(request):
         view = render_to_response("lab/plot/harvest_date.html", context_dict, context)
 
     return view
+
+
+@login_required
+def add_treatment(request):
+    context = RequestContext(request)
+    context_dict = {}
+    context_dict['logged_in_user'] = request.user.username
+    view = None
+
+    if request.method == 'POST':
+        form = TreatmentForm(request.POST, request.FILES)
+        if form.is_valid():
+            upload_file = request.FILES['file_name']
+            if process_treatments(upload_file):
+                context_dict['success'] = "Treatments added!"
+                context_dict['upload_form'] = TreatmentForm()
+                view = render_to_response("lab/plot/add_treatment.html", context_dict, context)
+            else:
+                context_dict['errors'] = "Invalid Form"
+                context_dict['upload_form'] = TreatmentForm()
+                view = render_to_response("lab/plot/add_treatment.html", context_dict, context)
+
+        else:
+            context_dict['errors'] = "Incomplete Form"
+            context_dict['upload_form'] = TreatmentForm()
+            view = render_to_response("lab/plot/add_treatment.html", context_dict, context)
+
+    elif request.method == 'GET':
+        form = TreatmentForm()
+        context_dict['upload_form'] = form
+        view = render_to_response("lab/plot/add_treatment.html", context_dict, context)
+
+    return view
+
+
+def process_treatments(upload_file):
+    success = True
+
+    rdr = csv.DictReader(upload_file)
+    try:
+        for row in rdr:
+            plot_id = row['Plot ID']
+            treatment_id = row['Treatment ID']
+
+            plot_obs = ObsTracker.objects.get(obs_entity_type='plot', obs_plot__plot_id=plot_id)
+            treatment = Treatment.objects.get(treatment_id=treatment_id)
+
+            plot_obs.obs_treatment = treatment
+            plot_obs.save()
+
+    except ObsTracker.DoesNotExist or Treatment.DoesNotExist:
+        success = False
+        pass
+
+    return success
 
 
 @login_required
@@ -122,6 +177,7 @@ def single_plot_info(request, obs_plot_id):
         plot_info = None
         obs_measurements = None
     if plot_info is not None:
+        obs_tracker_only_plot = ObsTracker.objects.get(obs_entity_type='plot', obs_plot_id=obs_plot_id)
         obs_tracker = get_obs_tracker('obs_plot_id', obs_plot_id)
         for t in obs_tracker:
             if t.obs_id != plot_info.plot_id:
@@ -131,6 +187,7 @@ def single_plot_info(request, obs_plot_id):
     else:
         obs_tracker_plot = None
         obs_source = None
+    context_dict['plot_obs_info'] = obs_tracker_only_plot
     context_dict['plot_info'] = plot_info
     context_dict['obs_tracker'] = obs_tracker_plot
     context_dict['obs_source'] = obs_source

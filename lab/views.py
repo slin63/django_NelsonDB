@@ -6265,33 +6265,6 @@ def log_data_online(request, data_type):
     return render_to_response('lab/log_data_online.html', context_dict, context)
 
 
-@login_required
-def new_treatment(request):
-    context = RequestContext(request)
-    context_dict = {}
-    if request.method == 'POST':
-        new_treatment_form = NewTreatmentForm(data=request.POST)
-        if new_treatment_form.is_valid():
-            new_treatment_exp = new_treatment_form.cleaned_data['experiment']
-            new_treatment_id = new_treatment_form.cleaned_data['treatment_id']
-            new_treatment_type = new_treatment_form.cleaned_data['treatment_type']
-            new_treatment_date = new_treatment_form.cleaned_data['date']
-            new_treatment_comments = new_treatment_form.cleaned_data['comments']
-            new_treatment = Treatment.objects.get_or_create(experiment=new_treatment_exp, treatment_id=new_treatment_id,
-                                                            treatment_type=new_treatment_type, date=new_treatment_date,
-                                                            comments=new_treatment_comments)
-
-            treatment_added = True
-        else:
-            print(new_treatment_form.errors)
-            treatment_added = False
-    else:
-        new_treatment_form = NewTreatmentForm()
-        treatment_added = False
-    context_dict['new_treatment_form'] = new_treatment_form
-    context_dict['treatment_added'] = treatment_added
-    context_dict['logged_in_user'] = request.user.username
-    return render_to_response('lab/new_treatment.html', context_dict, context)
 
 
 def site_map(request):
@@ -7489,6 +7462,8 @@ def upload_online(request, template_type):
             try:
                 if template_type == 'seed_stock':
                     results_dict = loader_scripts.seed_stock_loader_prep(request.FILES['file_name'], new_upload_user)
+                elif template_type == 'treatment':
+                    results_dict = loader_scripts.treatment_loader_prep(request.FILES['file_name'], new_upload_user)
                 elif template_type == 'seed_packet':
                     results_dict = loader_scripts.seed_packet_loader_prep(request.FILES['file_name'], new_upload_user)
                 elif template_type == 'plot_loader':
@@ -7529,15 +7504,15 @@ def upload_online(request, template_type):
 
                         if template_type == 'seed_stock':
                             output = loader_scripts.seed_stock_loader_prep_output(results_dict, new_upload_exp,
-                                                                                  template_type)
+                                          template_type)
                         elif template_type == 'seed_packet':
                             output = loader_scripts.seed_packet_loader_prep_output(results_dict, new_upload_exp,
-                                                                                   template_type)
+                                                       template_type)
                         elif template_type == 'plot_loader':
                             output = loader_scripts.plot_loader_prep_output(results_dict, new_upload_exp, template_type)
                         elif template_type == 'measurement_data':
                             output = loader_scripts.measurement_loader_prep_output(results_dict, new_upload_exp,
-                                                                                   template_type)
+                                                   template_type)
                         elif template_type == 'plant_data':
                             output = loader_scripts.plant_loader_prep_output(results_dict, new_upload_exp, template_type)
                         elif template_type == 'tissue_data':
@@ -7556,12 +7531,12 @@ def upload_online(request, template_type):
                             output = loader_scripts.env_loader_prep_output(results_dict, new_upload_exp, template_type)
                         elif template_type == 'isolatestock_data':
                             output = loader_scripts.isolatestock_loader_prep_output(results_dict, new_upload_exp,
-                                                                                    template_type)
+                                            template_type)
                         elif template_type == 'samples_data':
                             output = loader_scripts.samples_loader_prep_output(results_dict, new_upload_exp, template_type)
                         elif template_type == 'separation_data':
                             output = loader_scripts.separation_loader_prep_output(results_dict, new_upload_exp,
-                                                                                  template_type)
+                                                          template_type)
                         elif template_type == 'maize_data':
                             output = loader_scripts.maize_loader_prep_output(results_dict, new_upload_exp, template_type)
                         elif template_type == 'isolate_data':
