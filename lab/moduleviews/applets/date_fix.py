@@ -4,7 +4,9 @@
 #   7/15/2016 13:03
 
 
-def date_fix(date):
+def date_fix(date)
+    if date == '':
+        return date
     ret_string = ''
     date_dict = split_date(date)
     if '/' in date and len(date.split()) == 1:
@@ -12,6 +14,7 @@ def date_fix(date):
     else:
         ret_string = "{0}/{1}/{2} {3}:{4}".format(date_dict['month'], date_dict['day'], date_dict['year'], date_dict['hour'], date_dict['minute'])
     return ret_string
+
 def split_date(date):
     if '-' in date:
         delimiter = '-'
