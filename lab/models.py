@@ -727,9 +727,10 @@ class UploadBatch(models.Model):
 
     def __unicode__(self):
         if self.objs:
-            uni = 'Batch {}, size={}, first={}, type={}'.format(self.created, len(self.objs), self.objs[0], self.batch_type)
+            uni = '{} {} objects, sample: {}. Created: {}'.format(len(self.objs), self.batch_type, self.objs[0:3], self.created)
         else:
-            uni = 'Batch {}, size={}, type={}'.format(self.created, len(self.objs), self.batch_type)
+            uni = '{} {} objects. Created: {}'.format(len(self.objs), self.batch_type, self.created)
+
         return uni
 
     class Meta:
