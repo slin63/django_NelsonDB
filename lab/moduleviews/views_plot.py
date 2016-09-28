@@ -226,6 +226,36 @@ def download_plot_experiment(request, experiment_name):
     return response
 
 
+@login_required
+def download_plot_measurements(request, experiment_name):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="%s_plot_measurements.csv"' % (experiment_name)
+    plot_loader = find_plot_from_experiment(experiment_name)
+    measurements = Measurement.objects.filter(obs_tracker__obs_plot__plot_id__startswith=experiment_name)
+    header = plot_loader[0].__dict__.keys() + measurements[0].__dict__.keys()
+    header.remove('_state')
+
+    fieldnames = [
+        # Measurement fields
+        'value', 'time_of_measurement', 'measurement_parameter_id', 'comments', 'experiment_id',
+
+        # Plot fields
+        'plot_id', 'row_num', 'shell_multi', 'cross_target', 'polli_type', 'plot', 'rep', 'shell_bulk',
+        'comments', 'gen', 'is_male', 'kernel_num', 'planting_date', 'harvest_date',
+        'plot_name', 'shell_single', 'range_num', 'block',
+    ]
+
+    # writer = csv.DictWriter(response, fieldnames)
+    # writer.writerow({'test2': 'TES!'})
+
+        # for model in measurements:
+        #     info = model.__dict__
+        #     model.__dict__.pop('_state', None)
+        #     writer.writerow(info)
+
+    return response
+
+
 def find_plot_from_experiment(experiment_name):
     try:
         plot_loader = ObsTracker.objects.filter(experiment__name=experiment_name, obs_entity_type='plot')

@@ -4,7 +4,7 @@
 #   7/15/2016 13:03
 
 
-def date_fix(date)
+def date_fix(date):
     if date == '':
         return date
     ret_string = ''
@@ -46,6 +46,7 @@ def split_date(date):
             hour = '0' + hour
     ret_dict = {'month': month,'day': day,'year': year,'hour': hour,'minute': minute}
     return ret_dict
+
 def trim_leading_zeroes(s):
     if s[0] == '0':
         return trim_leading_zeroes(s[1:])

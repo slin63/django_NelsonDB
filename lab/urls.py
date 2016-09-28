@@ -231,6 +231,7 @@ urlpatterns = patterns('',
 
 
                        url(r'^download/measurement/(?P<experiment_name>\w+)/', views.download_measurement_experiment, name='download_measurement_experiment'),
+                       url(r'^download/measurement_plot/(?P<experiment_name>\w+)/', views_plot.download_plot_measurements, name='download_plot_measurement'),
                        url(r'^download/maize/(?P<experiment_name>\w+)/', views.download_maize_experiment, name='download_maize_experiment'),
                        url(r'^download/microbe/(?P<experiment_name>\w+)/', views.download_microbe_experiment, name='download_microbe_experiment'),
                        url(r'^download/plot/(?P<experiment_name>\w+)/', views_plot.download_plot_experiment, name='download_plot_experiment'),

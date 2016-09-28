@@ -143,6 +143,7 @@ def generate_packet_dataframe(request, experiment_id, df_return=False, processin
             df_dict['earq_self'] = 0
 
         else:
+
             obs = meas.obs_tracker
             plot = obs.obs_plot
             stock = obs.stock
@@ -169,15 +170,19 @@ def generate_packet_dataframe(request, experiment_id, df_return=False, processin
 
         df_dict['shell'] = plot.get_shell_type(pedigen=True)
 
-        if isinstance(meas, Measurement):
-            if meas.value != 0: # Making sure we got corn from this ear
+        if str(df_dict['earno_self']) == '0' and str(df_dict['earno_cross']) == '0':
+            continue
+
+        else:
+            if isinstance(meas, Measurement):
+                if meas.value != 0: # Making sure we got corn from this ear
+                    buffer_df = DataFrame(df_dict, index=[0])
+                    seed_df = concat([seed_df, buffer_df])
+                else:
+                    pass
+            else:
                 buffer_df = DataFrame(df_dict, index=[0])
                 seed_df = concat([seed_df, buffer_df])
-            else:
-                pass
-        else:
-            buffer_df = DataFrame(df_dict, index=[0])
-            seed_df = concat([seed_df, buffer_df])
 
 
     # If empty and requesting a processed DF
@@ -194,7 +199,6 @@ def generate_packet_dataframe(request, experiment_id, df_return=False, processin
         view = seed_df.to_csv()
     else:
         view = EMPTY_DF
-
 
 
     return view
