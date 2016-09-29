@@ -11,7 +11,7 @@ from applets import field_map_generator
 from lab.forms import DownloadFieldForm, HarvestDateForm, UpdatePlotsOnlineForm, TreatmentForm
 from lab.models import Experiment, Stock, ObsPlot, ObsPlant, ObsSample, ObsWell, ObsCulture, ObsTissue, ObsDNA, \
     ObsPlate, ObsMicrobe, ObsExtract, ObsTracker, ObsTrackerSource, IsolateStock, Field, \
-    Measurement, MaizeSample, Isolate, Treatment
+    Measurement, MaizeSample, Isolate, Treatment, MeasurementParameter
 
 
 YEAR_INIT = 2015
@@ -236,24 +236,42 @@ def download_plot_measurements(request, experiment_name):
     header.remove('_state')
 
     fieldnames = [
+        'plot_id',
+
         # Measurement fields
         'value', 'time_of_measurement', 'measurement_parameter_id', 'comments', 'experiment_id',
 
         # Plot fields
-        'plot_id', 'row_num', 'shell_multi', 'cross_target', 'polli_type', 'plot', 'rep', 'shell_bulk',
+        'row_num', 'shell_multi', 'cross_target', 'polli_type', 'plot', 'rep', 'shell_bulk',
         'comments', 'gen', 'is_male', 'kernel_num', 'planting_date', 'harvest_date',
         'plot_name', 'shell_single', 'range_num', 'block',
     ]
 
-    # writer = csv.DictWriter(response, fieldnames)
-    # writer.writerow({'test2': 'TES!'})
+    writer = csv.DictWriter(response, fieldnames)
+    writer.writeheader()
 
-        # for model in measurements:
-        #     info = model.__dict__
-        #     model.__dict__.pop('_state', None)
-        #     writer.writerow(info)
+    for model in measurements:
+        info = merge_dicts(model.__dict__, model.obs_tracker.obs_plot.__dict__)
+        parameter_name = MeasurementParameter.objects.get(id=info['measurement_parameter_id']).parameter
+        info['measurement_parameter_id'] = parameter_name
+        info.pop('_state', None)
+        info.pop('obs_tracker_id', None)
+        info.pop('_obs_tracker_cache', None)
+        info.pop('id', None)
+        info.pop('user_id', None)
+
+
+
+
+        writer.writerow(info)
 
     return response
+
+
+def merge_dicts(dict_a, dict_b):
+    ret_dict = dict_a.copy()
+    ret_dict.update(dict_b)
+    return ret_dict
 
 
 def find_plot_from_experiment(experiment_name):

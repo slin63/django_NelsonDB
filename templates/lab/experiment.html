@@ -384,7 +384,8 @@
 										<h3>Measurement Data</h3>
 										{% if measurement_data %}
 										<h5><a href='/lab/data/measurement/{{experiment.name}}/'>View</a></h5>
-										<h5><a href='/lab/download/measurement/{{experiment.name}}/'>Download</a></h5>
+										<h5><a href='/lab/download/measurement/{{experiment.name}}/'> Measurement Download</a></h5>
+										<h5><a href="{% url 'download_plot_measurement' experiment.name %}">Combined plot and measurement download</a></h5>
 										{% else %}
 										<h5>No Data Available</h5>
 										{% endif %}
