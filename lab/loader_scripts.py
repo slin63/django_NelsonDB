@@ -4668,7 +4668,7 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
             value = row['value']
             comments = row['person'] + '-' + row['location']
             experiment = row['Experiment Name']
-
+            time_of_measurement = date_fix.date_fix(time_of_measurement)
         else:
             obs_id = row["Observation Unit"]
             parameter = row["Parameter Name"]
@@ -4678,7 +4678,6 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
             comments = row["Measurement Comments"]
             experiment = row["Experiment"]
 
-        time_of_measurement = date_fix.date_fix(time_of_measurement)
         start = time.clock()
 
         if obs_id in obs_tracker_plot_id_table:
