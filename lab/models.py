@@ -194,11 +194,14 @@ class ObsPlot(models.Model):
             return ObsPlot.objects.get(id=1)
 
     def get_julian(self, format="%m/%d/%Y"):
-        date_time_l = self.planting_date.split('/')
-        year = int('20' + str(date_time_l[2]))
-        dt_obj = datetime(year=year, month=int(date_time_l[0]), day=int(date_time_l[1]))
-        tt = dt_obj.timetuple()
-        julian_time = tt.tm_yday
+        try:
+            date_time_l = self.planting_date.split('/')
+            year = int('20' + str(date_time_l[2]))
+            dt_obj = datetime(year=year, month=int(date_time_l[0]), day=int(date_time_l[1]))
+            tt = dt_obj.timetuple()
+            julian_time = tt.tm_yday
+        except ValueError:
+            julian_time = 'Poor formatting'
         return julian_time
 
     def __unicode__(self):
@@ -682,9 +685,12 @@ class Measurement(models.Model):
         unique_together = ('value', 'time_of_measurement', 'measurement_parameter', 'obs_tracker')
 
     def get_julian(self, format="%m/%d/%Y %H:%M"):
-        dt_obj = datetime.strptime(self.time_of_measurement, format)
-        tt = dt_obj.timetuple()
-        julian_time = tt.tm_yday
+        try:
+            dt_obj = datetime.strptime(self.time_of_measurement, format)
+            tt = dt_obj.timetuple()
+            julian_time = tt.tm_yday
+        except ValueError:
+            julian_time = 'Poor formatting'
         return julian_time
 
     def __unicode__(self):
