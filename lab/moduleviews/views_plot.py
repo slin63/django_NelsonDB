@@ -1,4 +1,6 @@
 import csv
+import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
@@ -239,11 +241,11 @@ def download_plot_measurements(request, experiment_name):
         'plot_id',
 
         # Measurement fields
-        'value', 'time_of_measurement', 'measurement_parameter_id', 'comments', 'experiment_id',
+        'value', 'time_of_measurement', 'time_of_measurement_JULIAN', 'measurement_parameter_id', 'comments', 'experiment_id',
 
         # Plot fields
         'row_num', 'shell_multi', 'cross_target', 'polli_type', 'plot', 'rep', 'shell_bulk',
-        'comments', 'gen', 'is_male', 'kernel_num', 'planting_date', 'harvest_date',
+        'comments', 'gen', 'is_male', 'kernel_num', 'planting_date', 'planting_date_JULIAN', 'harvest_date',
         'plot_name', 'shell_single', 'range_num', 'block',
     ]
 
@@ -260,7 +262,8 @@ def download_plot_measurements(request, experiment_name):
         info.pop('id', None)
         info.pop('user_id', None)
 
-
+        info['time_of_measurement_JULIAN'] = model.get_julian(format="%m/%d/%Y %H:%M")
+        info['planting_date_JULIAN'] = model.obs_tracker.obs_plot.get_julian(format="%m/%d/%Y")
 
 
         writer.writerow(info)
