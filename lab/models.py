@@ -200,7 +200,7 @@ class ObsPlot(models.Model):
             dt_obj = datetime(year=year, month=int(date_time_l[0]), day=int(date_time_l[1]))
             tt = dt_obj.timetuple()
             julian_time = tt.tm_yday
-        except IndexError, ValueError:
+        except (IndexError, ValueError):
             julian_time = 'Poor formatting'
         return julian_time
 
@@ -689,7 +689,7 @@ class Measurement(models.Model):
             dt_obj = datetime.strptime(self.time_of_measurement, format)
             tt = dt_obj.timetuple()
             julian_time = tt.tm_yday
-        except IndexError, ValueError:
+        except (IndexError, ValueError):
             julian_time = 'Poor formatting'
         return julian_time
 

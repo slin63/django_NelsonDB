@@ -123,7 +123,7 @@ def update_plot_info(request, obs_plot_id):
                     plot.gen = plot_form.cleaned_data['gen']
                     plot.shell_bulk = plot_form.cleaned_data['shell_bulk']
                     plot.shell_single = plot_form.cleaned_data['shell_single']
-                    plot_is_male = plot_form.cleaned_data['is_male']
+                    plot.is_male = plot_form.cleaned_data['is_male']
                     plot.cross_target = plot_form.cleaned_data['cross_target']
                     plot.save()
                     context_dict['updated'] = True
