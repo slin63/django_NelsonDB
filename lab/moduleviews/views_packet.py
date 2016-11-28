@@ -6,6 +6,7 @@ from PedigreeGen import pedigen
 from numpy import nan as NULL
 import csv
 
+from pdb import set_trace as st
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -184,7 +185,7 @@ def generate_packet_dataframe(request, experiment_id, df_return=False, processin
                 buffer_df = DataFrame(df_dict, index=[0])
                 seed_df = concat([seed_df, buffer_df])
 
-
+    seed_df = fix_poll_types(seed_df)
     # If empty and requesting a processed DF
     if seed_df.empty and processing and df_return:
         view = EMPTY_DF
@@ -200,9 +201,21 @@ def generate_packet_dataframe(request, experiment_id, df_return=False, processin
     else:
         view = EMPTY_DF
 
-
     return view
 
+
+def fix_poll_types(seed_df):
+    # Finds wrongly assigned pollination types and changes them from CROSS (CR) to SIB (SB) and SIB to CROSS
+#    crosses = seed_df[seed_df['Poll_Type'] == 'CR']
+#    crosses_with_selfs = crosses[crosses['earno_self'] != 0]
+#    crosses_with_selfs = seed_df.query('(Poll_Type == "CR") & (earno_self != 0)', )
+    # Filtering with LOC: .loc[(CONDITION1) & (CONDITION2), Column to filter
+    seed_df.loc[ (seed_df.Poll_Type == 'CR') & (seed_df.earno_cross == 0) &  (seed_df.earno_self != 0), "Poll_Type"] = 'SB'
+    seed_df.loc[ (seed_df.Poll_Type == 'SB') & (seed_df.earno_self == 0) & (seed_df.earno_cross != 0), "Poll_Type"] = 'CR'
+    seed_df.loc[ (seed_df.Poll_Type == 'SF') & (seed_df.earno_self == 0) & (seed_df.earno_cross != 0), "Poll_Type"] = 'CR'
+    return seed_df
+
+ 
 
 def string_to_csv_response(string, file_name):
     response = HttpResponse(content_type='text/csv')
