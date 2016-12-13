@@ -3,6 +3,26 @@ from django.db import models
 from django.contrib.auth.models import User
 from picklefield.fields import PickledObjectField
 
+DATE_MEASUREMENT_FORMATS = [
+                        "%m/%d/%y %H:%M",  # Lower case %y :: Two digit year e.g. 2016 = '16'
+                        "%m/%d/%Y %H:%M",  # Upper case %Y :: Full year e.g. 2016 = '2016'
+                        "%m/%d/%y",
+                        "%m/%d/%Y NA:NA",
+                        "%d/%m/%Y:%H:%M:%S"
+                    ]
+
+# https://docs.python.org/2/library/datetime.html#strftime-strptime-behavior
+def julian_date(date):
+    julian_time = 'Incorrect formatting'
+    for form in DATE_MEASUREMENT_FORMATS:
+        try:
+            dt_obj = datetime.strptime(date, form)
+            tt = dt_obj.timetuple()
+            julian_time = tt.tm_yday
+        except (IndexError, ValueError):
+            print form
+    return julian_time
+
 """User Model
 
 class User:
@@ -193,16 +213,9 @@ class ObsPlot(models.Model):
         else:
             return ObsPlot.objects.get(id=1)
 
-    def get_julian(self, format="%m/%d/%Y"):
-        try:
-            date_time_l = self.planting_date.split('/')
-            year = int('20' + str(date_time_l[2]))
-            dt_obj = datetime(year=year, month=int(date_time_l[0]), day=int(date_time_l[1]))
-            tt = dt_obj.timetuple()
-            julian_time = tt.tm_yday
-        except (IndexError, ValueError):
-            julian_time = 'Poor formatting'
-        return julian_time
+    # https://docs.python.org/2/library/datetime.html#strftime-strptime-behavior
+    def get_julian(self):
+        return julian_date(self.planting_date)
 
     def __unicode__(self):
         return self.plot_id
@@ -684,14 +697,9 @@ class Measurement(models.Model):
     class Meta:
         unique_together = ('value', 'time_of_measurement', 'measurement_parameter', 'obs_tracker')
 
-    def get_julian(self, format="%m/%d/%Y %H:%M"):
-        try:
-            dt_obj = datetime.strptime(self.time_of_measurement, format)
-            tt = dt_obj.timetuple()
-            julian_time = tt.tm_yday
-        except (IndexError, ValueError):
-            julian_time = 'Poor formatting'
-        return julian_time
+    # https://docs.python.org/2/library/datetime.html#strftime-strptime-behavior
+    def get_julian(self):
+        return julian_date(self.time_of_measurement)
 
     def __unicode__(self):
         return self.value

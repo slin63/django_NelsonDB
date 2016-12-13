@@ -262,8 +262,8 @@ def download_plot_measurements(request, experiment_name):
         info.pop('id', None)
         info.pop('user_id', None)
 
-        info['time_of_measurement_JULIAN'] = model.get_julian(format="%m/%d/%Y %H:%M")
-        info['planting_date_JULIAN'] = model.obs_tracker.obs_plot.get_julian(format="%m/%d/%Y")
+        info['time_of_measurement_JULIAN'] = model.get_julian()
+        info['planting_date_JULIAN'] = model.obs_tracker.obs_plot.get_julian()
 
 
         writer.writerow(info)
