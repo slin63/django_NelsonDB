@@ -238,7 +238,7 @@ def download_plot_measurements(request, experiment_name):
     header.remove('_state')
 
     fieldnames = [
-        'plot_id',
+        'plot_id', 'seed_id',
 
         # Measurement fields
         'value', 'time_of_measurement', 'time_of_measurement_JULIAN', 'measurement_parameter_id', 'comments', 'experiment_id',
@@ -253,6 +253,7 @@ def download_plot_measurements(request, experiment_name):
     writer.writeheader()
 
     for model in measurements:
+
         info = merge_dicts(model.__dict__, model.obs_tracker.obs_plot.__dict__)
         parameter_name = MeasurementParameter.objects.get(id=info['measurement_parameter_id']).parameter
         info['measurement_parameter_id'] = parameter_name
@@ -264,7 +265,7 @@ def download_plot_measurements(request, experiment_name):
 
         info['time_of_measurement_JULIAN'] = model.get_julian()
         info['planting_date_JULIAN'] = model.obs_tracker.obs_plot.get_julian()
-
+        info['seed_id'] = model.obs_tracker.stock.seed_id
 
         writer.writerow(info)
 
