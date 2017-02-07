@@ -477,6 +477,8 @@ class StockPacket(models.Model):
     num_seeds = models.CharField(max_length=200, blank=True)
     comments = models.CharField(max_length=1000, blank=True)
     gen = models.CharField(max_length=30, blank=True)
+    last_seen = models.DateTimeField(auto_now_add=False)
+    last_weighed = models.CharField(max_length=200, blank=True)
 
     def __unicode__(self):
         return self.stock.seed_id
