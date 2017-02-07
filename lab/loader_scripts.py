@@ -528,6 +528,8 @@ def seed_packet_loader_prep(upload_file, user):
         seed_id = row["Seed ID"]
         weight = row["Weight"]
         num_seeds = row["Number of Seeds"]
+        last_seen = row["Last Seen"]
+        last_weight = row["Last Weight"]
         packet_comments = row["Seed Packet Comments"]
         location_name = row["Location Name"]
         building_name = row["Building Name"]
@@ -594,7 +596,7 @@ def seed_packet_loader_prep(upload_file, user):
         stock_packet_hash_fix = stock_packet_hash + '\r'
         if stock_packet_hash not in stock_packet_hash_table and stock_packet_hash_fix not in stock_packet_hash_table:
             stock_packet_hash_table[stock_packet_hash] = stock_packet_id
-            stock_packet_new[(stock_packet_id, stock_id, temp_location_id, weight, num_seeds, packet_comments)] = stock_packet_id
+            stock_packet_new[(stock_packet_id, stock_id, temp_location_id, weight, num_seeds, packet_comments, last_seen, last_weight)] = stock_packet_id
             stock_packet_id = stock_packet_id + 1
         else:
             stock_packet_hash_exists[(stock_id, location_id, weight, num_seeds, packet_comments)] = stock_packet_id
@@ -624,7 +626,7 @@ def seed_packet_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Stock Packet Table'])
-    writer.writerow(['stock_packet_id', 'stock_id', 'location_id', 'weight', 'num_seeds', 'comments'])
+    writer.writerow(['stock_packet_id', 'stock_id', 'location_id', 'weight', 'num_seeds', 'comments', last_seen, last_weight])
     for key in results_dict['stock_packet_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -678,7 +680,7 @@ def seed_packet_loader(results_dict):
         for key in results_dict['stock_packet_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock_packet = StockPacket.objects.create(id=key[0], stock_id=key[1], location_id=key[2], weight=key[3], num_seeds=key[4], comments=key[5])
+                    new_stock_packet = StockPacket.objects.create(id=key[0], stock_id=key[1], location_id=key[2], weight=key[3], num_seeds=key[4], comments=key[5], last_seen=key[6], last_weight=key[7])
             except Exception as e:
                 print("StockPacket Error: %s %s" % (e.message, e.args))
                 return False

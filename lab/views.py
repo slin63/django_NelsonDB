@@ -4733,6 +4733,8 @@ def log_data_online(request, data_type):
                             try:
                                 seed_id = form.cleaned_data['stock__seed_id']
                                 last_seen = form.cleaned_data['last_seen']
+                                import pdb; pdb.set_trace()  # breakpoint 1e235c54 //
+
                                 last_weight = form.cleaned_data['last_weight']
                                 weight = form.cleaned_data['weight']
                                 num_seeds = form.cleaned_data['num_seeds']
