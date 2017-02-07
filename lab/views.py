@@ -1068,7 +1068,7 @@ def update_seed_packet_info(request, stock_id):
             print(edit_packet_form_set.errors)
     else:
         packets = StockPacket.objects.filter(stock_id=stock_id).values('seed_id', 'pedigree', 'gen', 'stock__seed_id', 'weight', 'num_seeds',
-                                                                       'comments', 'location')
+                                                                       'comments', 'location', 'last_seen', 'last_weight')
         edit_packet_form_set = EditStockPacketFormSet(initial=packets)
     context_dict['edit_packet_form_set'] = edit_packet_form_set
     context_dict['stock_id'] = stock_id
@@ -4732,20 +4732,19 @@ def log_data_online(request, data_type):
                         with transaction.atomic():
                             try:
                                 seed_id = form.cleaned_data['stock__seed_id']
+                                packet_id = form.cleaned_data['packet_id']
                                 last_seen = form.cleaned_data['last_seen']
-                                import pdb; pdb.set_trace()  # breakpoint 1e235c54 //
-
+                                pedigree = form.cleaned_data['pedigree']
                                 last_weight = form.cleaned_data['last_weight']
                                 weight = form.cleaned_data['weight']
                                 num_seeds = form.cleaned_data['num_seeds']
                                 packet_comments = form.cleaned_data['comments']
                                 location = form.cleaned_data['location']
                                 gen = form.cleaned_data['gen']
-                                pedigree = form.cleaned_data['pedigree']
 
                                 new_stock_packet = StockPacket.objects.get_or_create(
-                                    stock=Stock.objects.get(seed_id=seed_id), location=location, last_seen=last_seen, last_weight=last_weight, weight=weight,
-                                    num_seeds=num_seeds, comments=packet_comments, gen=gen)
+                                    stock=Stock.objects.get(seed_id=seed_id), seed_id=packet_id, location=location, last_seen=last_seen, last_weight=last_weight, weight=weight,
+                                    num_seeds=num_seeds, comments=packet_comments, gen=gen, pedigree=pedigree)
                             except Exception as e:
                                 print("Error: %s %s" % (e.message, e.args))
                                 failed = True

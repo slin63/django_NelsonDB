@@ -391,6 +391,7 @@ class LogSeedDataOnlineForm(forms.Form):
 
 class LogStockPacketOnlineForm(forms.Form):
     stock__seed_id = forms.ModelChoiceField(queryset=Stock.objects.all(), empty_label="--- Seed ID ---", required=True)
+    packet_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Packet ID'}), required=True) 
     last_seen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Date last seen'}), required=False)
     last_weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Last weight'}), required=False)
     gen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Generation'}), required=False)

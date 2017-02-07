@@ -144,6 +144,8 @@
       <thead>
         <tr>
           <th>Seed ID</th>
+          <th>Last Seen</th>
+          <th>Last Weight</th>
           <th>Pedigree</th>
           <th>Generation</th>
           <th>Weight (g)</th>
@@ -156,7 +158,9 @@
       <tbody>
         {% for packet in stock_packets %}
         <tr>
-          <td><a href='/lab/stock/{{packet.stock.id}}/'>{{ packet.seed_id }}</a></td>
+          <td><a href='/lab/stock/{{packet.stock.id}}/'>{{ packet.stock.seed_id }}</a></td>
+          <td>{{ packet.last_seen }}</td>
+          <td>{{ packet.last_weight }}</td>
           <td>{{ packet.pedigree }}</td>
           <td>{{ packet.gen }}</td>
           <td>{{ packet.weight }}</td>
