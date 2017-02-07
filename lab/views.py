@@ -1047,6 +1047,8 @@ def update_seed_packet_info(request, stock_id):
                         try:
                             update_packet = StockPacket.objects.filter(stock_id=stock_id)[step]
                             update_packet.seed_id = form.cleaned_data['seed_id']
+                            update_packet.last_seen = form.cleaned_data['last_seen']
+                            update_packet.last_weight = form.cleaned_data['last_weight']
                             update_packet.gen = form.cleaned_data['gen']
                             update_packet.pedigree = form.cleaned_data['pedigree']
                             update_packet.weight = form.cleaned_data['weight']
@@ -4730,6 +4732,8 @@ def log_data_online(request, data_type):
                         with transaction.atomic():
                             try:
                                 seed_id = form.cleaned_data['stock__seed_id']
+                                last_seen = form.cleaned_data['last_seen']
+                                last_weight = form.cleaned_data['last_weight']
                                 weight = form.cleaned_data['weight']
                                 num_seeds = form.cleaned_data['num_seeds']
                                 packet_comments = form.cleaned_data['comments']
@@ -4738,7 +4742,7 @@ def log_data_online(request, data_type):
                                 pedigree = form.cleaned_data['pedigree']
 
                                 new_stock_packet = StockPacket.objects.get_or_create(
-                                    stock=Stock.objects.get(seed_id=seed_id), location=location, weight=weight,
+                                    stock=Stock.objects.get(seed_id=seed_id), location=location, last_seen=last_seen, last_weight=last_weight, weight=weight,
                                     num_seeds=num_seeds, comments=packet_comments, gen=gen)
                             except Exception as e:
                                 print("Error: %s %s" % (e.message, e.args))

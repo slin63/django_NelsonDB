@@ -391,6 +391,8 @@ class LogSeedDataOnlineForm(forms.Form):
 
 class LogStockPacketOnlineForm(forms.Form):
     stock__seed_id = forms.ModelChoiceField(queryset=Stock.objects.all(), empty_label="--- Seed ID ---", required=True)
+    last_seen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Date last seen'}), required=False)
+    last_weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Last weight'}), required=False)
     gen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Generation'}), required=False)
     pedigree = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Pedigree'}), required=False)
     weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Weight'}), required=False)
@@ -402,6 +404,8 @@ class LogStockPacketOnlineForm(forms.Form):
 
 class UpdateStockPacketOnlineForm(forms.Form):
     seed_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Seed ID'}), required=False)
+    last_seen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Date last seen'}), required=False)
+    last_weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Last weight'}), required=False)
     gen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Generation'}), required=False)
     pedigree = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Pedigree'}), required=False)
     weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Weight'}), required=False)
