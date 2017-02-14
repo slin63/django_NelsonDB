@@ -102,7 +102,7 @@ def create_packets(request, exp):
                     location_id=1,
                     seed_id=row['seed_ID'],
                     gen=row['seed_gen'],
-                    pedigree=row['Pedigree']
+                    pedigree=row['Pedigree Name']
                 )
                 sp.save()
 
