@@ -118,7 +118,7 @@ def create_packets(request, exp):
 
 
 def extract_packet_info(df):
-    packet_df = df[['seed_ID', 'seed_gen', 'Pedigree', 'source_ID', 'Maternal_ID']]
+    packet_df = df[['seed_ID', 'seed_gen', 'Pedigree Name', 'Pedigree_ID', 'Maternal_ID']]
     return packet_df
 
 
@@ -215,7 +215,7 @@ def fix_poll_types(seed_df):
     seed_df.loc[ (seed_df.Poll_Type == 'SF') & (seed_df.earno_self == 0) & (seed_df.earno_cross != 0), "Poll_Type"] = 'CR'
     return seed_df
 
- 
+
 
 def string_to_csv_response(string, file_name):
     response = HttpResponse(content_type='text/csv')
@@ -248,11 +248,11 @@ def quality_count_pair(meas_count_objs):
     return cnt_to_qlty
 
 
-def split_id(plot_id, type):
+def split_id(plot_id, dtype):
     zero_index = plot_id.find('0')
     ret = ''
-    if type == 'row':
+    if dtype == 'row':
         ret = int(plot_id[4:])
-    if type == 'exp':
+    if dtype == 'exp':
         ret =  plot_id[:4]
     return ret
