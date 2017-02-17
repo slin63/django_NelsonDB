@@ -76,7 +76,9 @@ def csv_from_upload_batch(upload_batch):
     for model in models:
         info = model.__dict__
         model.__dict__.pop('_state', None)
-
-        writer.writerow(info)
+        try:
+            writer.writerow(info)
+        except ValueError:
+            print "Multiple model object batch. Excluding some item details."
 
     return response

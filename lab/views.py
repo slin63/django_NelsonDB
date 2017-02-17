@@ -328,7 +328,7 @@ def experiment(request, experiment_name_url):
             context_dict['collected_stock_data'] = collected_stock_data
 
             if collected_stock_data is not None:
-                stockpackets_collected = find_seedpackets_from_obstrackersource_stock(collected_stock_data)
+                stockpackets_collected = find_seedpackets_from_stock(collected_stock_data)
             else:
                 stockpackets_collected = None
             context_dict['stockpackets_collected'] = stockpackets_collected
@@ -407,9 +407,8 @@ def experiment_edit(request, experiment_id):
 
 def find_stock_collected_from_experiment(experiment_name):
     try:
-        collected_stock_data = ObsTrackerSource.objects.filter(source_obs__experiment__name=experiment_name,
-                                                               target_obs__obs_entity_type='stock')
-    except ObsTracker.DoesNotExist:
+        collected_stock_data = Stock.objects.filter(seed_id__startswith=experiment_name)
+    except Stock.DoesNotExist:
         collected_stock_data = None
     return collected_stock_data
 
@@ -1413,10 +1412,10 @@ def download_stock_used_experiment(request, experiment_name):
                 stock_for_experiment.append(s)
     writer = csv.writer(response)
     writer.writerow(
-        ['Seed ID', 'Seed Name', 'Cross Type', 'Pedigree', 'Population', 'Status', 'Inoculated', 'Collector',
+        ['Seed ID', 'Seed Name', 'Cross Type', 'Pedigree Name', 'Pedigree ID', 'Maternal ID' 'Population', 'Status', 'Inoculated', 'Collector',
          'Comments'])
     for data in stock_for_experiment:
-        writer.writerow([data.stock.seed_id, data.stock.seed_name, data.stock.cross_type, data.stock.pedigree,
+        writer.writerow([data.stock.seed_id, data.stock.seed_name, data.stock.cross_type, data.stock.pedigree, data.stock.pedigree_ID, data.stock.maternal_ID,
                          data.stock.passport.taxonomy.population, data.stock.stock_status, data.stock.inoculated,
                          data.stock.passport.collecting.user, data.stock.comments])
     return response
@@ -1427,20 +1426,19 @@ def download_stock_collected_experiment(request, experiment_name):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="%s_seed_collected.csv"' % (experiment_name)
     try:
-        collected_stock_data = ObsTrackerSource.objects.filter(source_obs__experiment__name=experiment_name,
-                                                               target_obs__obs_entity_type='stock')
+        collected_stock_data = find_stock_collected_from_experiment(experiment_name)
     except ObsTracker.DoesNotExist:
         collected_stock_data = None
     writer = csv.writer(response)
     writer.writerow(
-        ['Seed ID', 'Seed Name', 'Cross Type', 'Pedigree', 'Population', 'Status', 'Inoculated', 'Collector',
+        ['Seed ID', 'Seed Name', 'Cross Type', 'Pedigree Name', 'Pedigree ID', 'Maternal ID', 'Population', 'Status', 'Inoculated', 'Collector',
          'Comments'])
-    for data in collected_stock_data:
+    for stock in collected_stock_data:
         writer.writerow(
-            [data.target_obs.stock.seed_id, data.target_obs.stock.seed_name, data.target_obs.stock.cross_type,
-             data.target_obs.stock.pedigree, data.target_obs.stock.passport.taxonomy.population,
-             data.target_obs.stock.stock_status, data.target_obs.stock.inoculated,
-             data.target_obs.stock.passport.collecting.user, data.target_obs.stock.comments])
+            [stock.seed_id, stock.seed_name, stock.cross_type,
+             stock.pedigree, stock.pedigree_ID, stock.maternal_ID, stock.passport.taxonomy.population,
+             stock.stock_status, stock.inoculated,
+             stock.passport.collecting.user, stock.comments])
     return response
 
 
@@ -3989,8 +3987,7 @@ def stock_collected_from_experiment(request, experiment_name):
     context = RequestContext(request)
     context_dict = {}
     try:
-        collected_stock_data = ObsTrackerSource.objects.filter(source_obs__experiment__name=experiment_name,
-                                                               target_obs__obs_entity_type='stock')
+        collected_stock_data = find_stock_collected_from_experiment(experiment_name)
     except ObsTracker.DoesNotExist:
         collected_stock_data = None
     context_dict['collected_stock_data'] = collected_stock_data
@@ -4010,11 +4007,11 @@ def find_seedpackets_from_obstracker_stock(stock_query):
     return seed_packet_list
 
 
-def find_seedpackets_from_obstrackersource_stock(stock_query):
+def find_seedpackets_from_stock(stock_query):
     seed_packet_list = []
-    for packet in stock_query:
+    for stock in stock_query:
         try:
-            seed_packet = StockPacket.objects.filter(stock=packet.target_obs.stock)
+            seed_packet = StockPacket.objects.filter(stock=stock)
         except StockPacket.DoesNotExist:
             seed_packet = None
         seed_packet_list = list(chain(seed_packet, seed_packet_list))
@@ -4066,7 +4063,7 @@ def download_stockpackets_for_experiment(request, experiment_name):
     response['Content-Disposition'] = 'attachment; filename="%s_measurements.csv"' % (experiment_name)
     stock_data = find_stock_for_experiment(experiment_name)
     if stock_data is not None:
-        stockpackets_used = find_seedpackets_from_obstracker_stock(stock_data)
+        stockpackets_used = find_seedpackets_from_stock(collected_stock_data)
     else:
         stockpackets_used = None
     writer = csv.writer(response)
@@ -4086,7 +4083,7 @@ def stockpackets_collected_from_experiment(request, experiment_name):
     context_dict = {}
     collected_stock_data = find_stock_collected_from_experiment(experiment_name)
     if collected_stock_data is not None:
-        stockpackets_collected = find_seedpackets_from_obstrackersource_stock(collected_stock_data)
+        stockpackets_collected = find_seedpackets_from_stock(collected_stock_data)
     else:
         stockpackets_collected = None
     context_dict['stockpackets'] = stockpackets_collected
@@ -4101,7 +4098,7 @@ def download_stockpackets_collected_experiment(request, experiment_name):
     response['Content-Disposition'] = 'attachment; filename="%s_measurements.csv"' % (experiment_name)
     stock_data = find_stock_collected_from_experiment(experiment_name)
     if stock_data is not None:
-        stockpackets_collected = find_seedpackets_from_obstrackersource_stock(stock_data)
+        stockpackets_collected = find_seedpackets_from_stock(stock_data)
     else:
         stockpackets_collected = None
     writer = csv.writer(response)

@@ -28,18 +28,18 @@
       </tr>
       </thead>
       <tbody>
-      {% for t in collected_stock_data %}
+      {% for stock in collected_stock_data %}
       <tr>
-        <td><input type="checkbox" name="checkbox_stock" value="{{ t.target_obs.stock.id }}"></td>
-        <td><a href='/lab/stock/{{t.target_obs.stock.id}}/'>{{ t.target_obs.stock.seed_id }}</a></td>
-        <td>{{ t.target_obs.stock.seed_name }}</td>
-        <td>{{ t.target_obs.stock.cross_type }}</td>
-        <td>{{ t.target_obs.stock.pedigree }}</td>
-        <td>{{ t.target_obs.stock.passport.taxonomy.population }}</td>
-        <td>{{ t.target_obs.stock.stock_status }}</td>
-        <td>{{ t.target_obs.stock.inoculated }}</td>
-        <td><a href='/lab/profile/{{ t.target_obs.stock.passport.collecting.user.username }}/'>{{ t.target_obs.stock.passport.collecting.user.username }}</a></td>
-        <td>{{ t.target_obs.stock.comments }}</td>
+        <td><input type="checkbox" name="checkbox_stock" value="{{ stock.id }}"></td>
+        <td><a href='/lab/stock/{{stock.id}}/'>{{ stock.seed_id }}</a></td>
+        <td>{{ stock.seed_name }}</td>
+        <td>{{ stock.cross_type }}</td>
+        <td>{{ stock.pedigree }}</td>
+        <td>{{ stock.passport.taxonomy.population }}</td>
+        <td>{{ stock.stock_status }}</td>
+        <td>{{ stock.inoculated }}</td>
+        <td><a href='/lab/profile/{{ stock.passport.collecting.user.username }}/'>{{ stock.passport.collecting.user.username }}</a></td>
+        <td>{{ stock.comments }}</td>
       </tr>
       {% endfor %}
       </tbody>
