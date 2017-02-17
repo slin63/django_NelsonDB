@@ -1,9 +1,10 @@
 from collections import OrderedDict
-from lab.models import ObsTracker, Measurement, Experiment, StockPacket, Stock
+from lab.models import ObsTracker, Measurement, Experiment, StockPacket, Stock, ObsPlot, UploadBatch
 from pandas import DataFrame, concat, merge
 from applets import packet_generator
 from PedigreeGen import pedigen
 from numpy import nan as NULL
+from lab import loader_db_mirror
 import csv
 
 from pdb import set_trace as st
@@ -87,38 +88,70 @@ def preview_packets(request, exp):
 def create_packets(request, exp):
     success = False
     packet_df = generate_packet_dataframe(request, exp.id, df_return=True, processing=True)
-
+    plot_table_mirror = loader_db_mirror.plot_id_mirror()
 
     if packet_df.empty:
         success = False
     else:
-        packet_df = extract_packet_info(packet_df)
+        packet_df = extract_packet_info(packet_df, stock=True)
         packet_count = 0
+
+        batch = UploadBatch.objects.create()
+        batch.batch_type = 'stock+stockpackets'
 
         for index, row in packet_df.iterrows():
             try:
-                sp = StockPacket.objects.create(
-                    stock=Stock.objects.get(seed_id=row['Maternal_ID']),
-                    location_id=1,
+
+                # So that we can easily transfer older info
+                original_stock = Stock.objects.get(seed_id=row['Maternal_ID'])
+
+                if row['cross_target'] == '1':
+                    source_plot_male = plot_table_mirror['No Plot']
+                else:
+                    source_plot_male = plot_table_mirror[row['cross_target']]
+
+                source_plot_female = plot_table_mirror[row['plot_ID_verbose']]
+
+                # Stock containing all breeding and identification information
+                new_stock = Stock.objects.create(
                     seed_id=row['seed_ID'],
+                    seed_name=original_stock.seed_name,
+                    cross_type=row['Poll_Type'],
+                    source_plot_male_id=source_plot_male[0],
+                    source_plot_female_id=source_plot_female[0],
+                    pedigree=row['Pedigree Name'],
+                    pedigree_ID=row['Pedigree_ID'],
+                    maternal_ID=row['Maternal_ID'],
                     gen=row['seed_gen'],
-                    pedigree=row['Pedigree Name']
+                    passport_id=original_stock.passport_id
                 )
-                sp.save()
+
+                # The packet that will be created to represent the physical location of the above stock
+                new_packet = StockPacket.objects.create(
+                    stock=new_stock,
+                    location_id=1,
+                    seed_id=row['seed_ID']
+                )
+
+                batch.add_obj(new_stock)
+                batch.add_obj(new_packet)
 
                 packet_count += 1
-                print "Created PACKET: [ID:{}]-[GEN:{}]-[PED:{}]".format(sp.seed_id, sp.gen, sp.pedigree)
+                print "Created STOCK/PACKET: [STOCK_ID:{}]-[GEN:{}]-[PED:{}]-[PAC_ID:{}]".format(new_stock.seed_id, new_stock.gen, new_stock.pedigree, new_packet.seed_id)
             except (IntegrityError, Stock.DoesNotExist) as e:
                 print("Packet Error: %s %s" % (e.message, e.args))
                 pass
 
-
+    batch.size_check()
 
     return packet_count
 
 
-def extract_packet_info(df):
+def extract_packet_info(df, stock=False):
     packet_df = df[['seed_ID', 'seed_gen', 'Pedigree Name', 'Pedigree_ID', 'Maternal_ID']]
+    if stock:
+        packet_df = df[['seed_ID', 'seed_gen', 'Pedigree Name', 'Pedigree_ID', 'Maternal_ID', 'cross_target', 'plot_ID_verbose', 'Poll_Type']]
+
     return packet_df
 
 
@@ -166,6 +199,8 @@ def generate_packet_dataframe(request, experiment_id, df_return=False, processin
         df_dict['Gen'] = plot.gen
         df_dict['is_male'] = plot.is_male
         df_dict['cross_target'] = plot.cross_target
+        df_dict['plot_ID_verbose'] = plot.plot_id
+
         df_dict['Poll_Type'] = plot.polli_type
         df_dict['Researcher'] = RESEARCHER
 
