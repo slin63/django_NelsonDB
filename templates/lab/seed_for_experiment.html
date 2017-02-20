@@ -8,7 +8,8 @@
 
   <h2>Seed Stocks Used</h2><br/>
 
-  <form id="select_stocks_form" method="post" action="/lab/seed_inventory/select_stocks/">
+  <form id="select_stocks_form" method="post" action="/lab/seed_inventory/download_selected_stocks/">
+    <input class="btn btn-primary" type="submit" name="submit" value="Download Selected Stocks"/>
     {% csrf_token %}
     <table id="selected_stocks" class="table table-striped table-bordered" cellspacing="0" width="100%">
       <thead>
@@ -43,7 +44,6 @@
       </tbody>
     </table>
     <br/>
-    <input class="btn btn-primary" type="submit" name="submit" value="Search Inventory for Selected Stocks"/>
   </form>
 
 {% endblock %}

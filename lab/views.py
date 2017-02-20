@@ -547,7 +547,7 @@ def checkbox_seed_inventory_sort(request):
                 selected_stocks = unique_selected_stocks(selected_stocks)
                 return_type = 'measurement'
             else:
-                selected_stocks = list(Stock.objects.exclude(seed_id='0').exclude(passport_id='2').exclude(id=1))[:3500]
+                selected_stocks = list(Stock.objects.exclude(seed_id='0').exclude(passport_id='2').exclude(id=1))[:10000]
                 return_type = 'stock'
     return (selected_stocks, return_type)
 
@@ -1368,25 +1368,23 @@ def edit_info(request, obj_type, obj_id):
         return render_to_response('lab/edit_taxonomy.html', context_dict, context)
 
 
-def select_stockpacket_from_stock(request):
-    """
-    ::url:: seed_inventory/select_stocks/
-    ::func:: Deprecated, replaced by upload_online, log_data_online,
-    ::html:: stock.html
-    """
-    context = RequestContext(request)
-    context_dict = {}
-    selected_packets = []
+def download_selected_stocks(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="selected_stocks.csv"'
+
+    selected_stocks = []
     checkbox_stock_list = request.POST.getlist('checkbox_stock')
     request.session['checkbox_stock'] = checkbox_stock_list
     for stock in checkbox_stock_list:
-        packet = StockPacket.objects.filter(stock__id=stock)
-        selected_packets = list(chain(packet, selected_packets))
-    context_dict = checkbox_session_variable_check(request)
-    context_dict['selected_packets'] = selected_packets
-    context_dict['logged_in_user'] = request.user.username
-    return render_to_response('lab/stock.html', context_dict, context)
+        stock = Stock.objects.filter(id=stock)
+        selected_stocks = list(chain(stock, selected_stocks))
+    
+    writer = csv.writer(response)
+    writer.writerow(['seed_id', 'seed_name', 'cross_type', 'generation', 'male_source', 'female_source', 'planting_year', 'pedigree_name', 'pedigree_ID', 'maternal_ID'])
+    for data in selected_stocks:
+        writer.writerow([data.seed_id, data.seed_name, data.cross_type, data.gen, data.source_plot_male, data.source_plot_female, data.planting_year, data.pedigree, data.pedigree_ID, data.maternal_ID])
 
+    return response
 
 @login_required
 def download_stock_used_experiment(request, experiment_name):
