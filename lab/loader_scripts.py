@@ -551,15 +551,14 @@ def seed_packet_loader_prep(upload_file, user):
             elif seed_id_fix.lower() in seed_id_table:
                 stock_id = seed_id_table[seed_id_fix.lower()][0]
             else:
-                seed_id_error[(seed_id, weight, num_seeds, packet_comments, location_name, building_name, room, shelf, column, box_name, city, state, country, zipcode, location_comments)] = error_count
-                error_count = error_count + 1
-                stock_id = 1
+                raise KeyError("Stock ID: \'{}\' not found in stock table!".format(seed_id))
+                # seed_id_error[(seed_id, weight, num_seeds, packet_comments, location_name, building_name, room, shelf, column, box_name, city, state, country, zipcode, location_comments)] = error_count
+                # error_count = error_count + 1
+                # stock_id = 1
         else:
             seed_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, plot_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
             error_count = error_count + 1
             stock_id = 1
-
-
 
         locality_hash = city + state + country + zipcode
         locality_hash_fix = locality_hash + '\r'
