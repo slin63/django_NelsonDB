@@ -817,3 +817,4 @@ class UploadManagerForm(forms.Form):
     justification = forms.CharField(help_text="If deleting an upload, explain the reason:", widget=forms.TextInput(attrs={'placeholder': 'Justification'}), required=False)
     confirmed = forms.BooleanField(help_text="If deleting, check to confirm:", required=False)
 
+

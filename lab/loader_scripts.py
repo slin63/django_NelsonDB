@@ -526,6 +526,7 @@ def seed_packet_loader_prep(upload_file, user):
     stock_packet_file = csv.DictReader(upload_file)
     for row in stock_packet_file:
         seed_id = row["Seed ID"]
+        packet_id = row["Packet ID"]
         weight = row["Weight"]
         num_seeds = row["Number of Seeds"]
         last_seen = row["Last Seen"]
@@ -545,10 +546,10 @@ def seed_packet_loader_prep(upload_file, user):
 
         if seed_id != '':
             seed_id_fix = seed_id + '\r'
-            if seed_id in seed_id_table:
-                stock_id = seed_id_table[seed_id][0]
-            elif seed_id_fix in seed_id_table:
-                stock_id = seed_id_table[seed_id_fix][0]
+            if seed_id.lower() in seed_id_table:
+                stock_id = seed_id_table[seed_id.lower()][0]
+            elif seed_id_fix.lower() in seed_id_table:
+                stock_id = seed_id_table[seed_id_fix.lower()][0]
             else:
                 seed_id_error[(seed_id, weight, num_seeds, packet_comments, location_name, building_name, room, shelf, column, box_name, city, state, country, zipcode, location_comments)] = error_count
                 error_count = error_count + 1
@@ -557,6 +558,8 @@ def seed_packet_loader_prep(upload_file, user):
             seed_id_error[(seed_id, seed_name, cross_type, pedigree, stock_status, stock_date, inoculated, stock_comments, binomial, species, population, plot_id, field_name, plant_id, collection_username, collection_date, collection_method, collection_comments, organization, first_name, last_name, phone, email, source_comments)] = error_count
             error_count = error_count + 1
             stock_id = 1
+
+
 
         locality_hash = city + state + country + zipcode
         locality_hash_fix = locality_hash + '\r'
@@ -595,8 +598,7 @@ def seed_packet_loader_prep(upload_file, user):
         stock_packet_hash = str(stock_id) + str(temp_location_id) + weight + num_seeds + packet_comments
         stock_packet_hash_fix = stock_packet_hash + '\r'
         if stock_packet_hash not in stock_packet_hash_table and stock_packet_hash_fix not in stock_packet_hash_table:
-            stock_packet_hash_table[stock_packet_hash] = stock_packet_id
-            stock_packet_new[(stock_packet_id, stock_id, temp_location_id, weight, num_seeds, packet_comments, last_seen, last_weight)] = stock_packet_id
+            stock_packet_new[(packet_id, stock_id, temp_location_id, weight, num_seeds, packet_comments, last_seen, last_weight)] = stock_packet_id
             stock_packet_id = stock_packet_id + 1
         else:
             stock_packet_hash_exists[(stock_id, location_id, weight, num_seeds, packet_comments)] = stock_packet_id
@@ -626,7 +628,7 @@ def seed_packet_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['New Stock Packet Table'])
-    writer.writerow(['stock_packet_id', 'stock_id', 'location_id', 'weight', 'num_seeds', 'comments', last_seen, last_weight])
+    writer.writerow(['stock_packet_id', 'stock_id', 'location_id', 'weight', 'num_seeds', 'comments', 'last_seen', 'last_weight'])
     for key in results_dict['stock_packet_new'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
@@ -680,7 +682,7 @@ def seed_packet_loader(results_dict):
         for key in results_dict['stock_packet_new'].iterkeys():
             try:
                 with transaction.atomic():
-                    new_stock_packet = StockPacket.objects.create(id=key[0], stock_id=key[1], location_id=key[2], weight=key[3], num_seeds=key[4], comments=key[5], last_seen=key[6], last_weight=key[7])
+                    new_stock_packet = StockPacket.objects.create(seed_id=key[0], stock_id=key[1], location_id=key[2], weight=key[3], num_seeds=key[4], comments=key[5], last_seen=key[6], last_weight=key[7])
             except Exception as e:
                 print("StockPacket Error: %s %s" % (e.message, e.args))
                 return False

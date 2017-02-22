@@ -245,6 +245,8 @@ def fix_poll_types(seed_df):
 #    crosses_with_selfs = crosses[crosses['earno_self'] != 0]
 #    crosses_with_selfs = seed_df.query('(Poll_Type == "CR") & (earno_self != 0)', )
     # Filtering with LOC: .loc[(CONDITION1) & (CONDITION2), Column to filter
+    if seed_df.empty:
+        raise KeyError("Empty Dataframe! No pollination info, probably.")
     seed_df.loc[ (seed_df.Poll_Type == 'CR') & (seed_df.earno_cross == 0) &  (seed_df.earno_self != 0), "Poll_Type"] = 'SB'
     seed_df.loc[ (seed_df.Poll_Type == 'SB') & (seed_df.earno_self == 0) & (seed_df.earno_cross != 0), "Poll_Type"] = 'CR'
     seed_df.loc[ (seed_df.Poll_Type == 'SF') & (seed_df.earno_self == 0) & (seed_df.earno_cross != 0), "Poll_Type"] = 'CR'
@@ -291,3 +293,5 @@ def split_id(plot_id, dtype):
     if dtype == 'exp':
         ret =  plot_id[:4]
     return ret
+
+

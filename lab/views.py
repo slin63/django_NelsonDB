@@ -1378,7 +1378,7 @@ def download_selected_stocks(request):
     for stock in checkbox_stock_list:
         stock = Stock.objects.filter(id=stock)
         selected_stocks = list(chain(stock, selected_stocks))
-    
+
     writer = csv.writer(response)
     writer.writerow(['seed_id', 'seed_name', 'cross_type', 'generation', 'male_source', 'female_source', 'planting_year', 'pedigree_name', 'pedigree_ID', 'maternal_ID'])
     for data in selected_stocks:
