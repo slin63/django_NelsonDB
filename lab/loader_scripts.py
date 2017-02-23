@@ -4735,9 +4735,7 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
         elif parameter + '\r' in measurement_param_name_table:
             parameter_id = measurement_param_name_table[parameter + '\r'][0]
         else:
-            parameter_id = 1
-            parameter_error[(obs_id, parameter, username, time_of_measurement, value, comments)] = obs_id
-            error_count = error_count + 1
+            raise KeyError("Measurement parameter: \'{}\' not found in parameter table!")
 
         measurement_hash = str(obs_tracker_id) + str(parameter_id) + time_of_measurement + value + comments
         measurement_hash_fix = measurement_hash + '\r'
