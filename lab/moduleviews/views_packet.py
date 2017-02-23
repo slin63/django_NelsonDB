@@ -135,6 +135,7 @@ def create_packets(request, exp):
 
                 batch.add_obj(new_stock)
                 batch.add_obj(new_packet)
+                batch.save()
 
                 packet_count += 1
                 print "Created STOCK/PACKET: [STOCK_ID:{}]-[GEN:{}]-[PED:{}]-[PAC_ID:{}]".format(new_stock.seed_id, new_stock.gen, new_stock.pedigree, new_packet.seed_id)
