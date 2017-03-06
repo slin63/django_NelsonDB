@@ -7600,6 +7600,7 @@ def upload_online(request, template_type):
             except KeyError:
                 context_dict['sent'] = True
                 context_dict['error_t'] = 'KeyError'
+                context_dict['template_type'] = template_type
                 context_dict['errors'] = sys.exc_info()
                 context_dict['upload_form'] = UploadQueueForm()
                 return render_to_response('lab/upload_online.html', context_dict, context)
