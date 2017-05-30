@@ -788,6 +788,9 @@ def plot_loader_prep(upload_file, user):
         is_male = plot_r["Is Male"]
         cross_target = plot_r["Cross Target"]
 
+        # Prevent whitespace from sneaking into object names
+        source_seed_id = clear_trailing_whitespace(source_seed_id)
+
         single = False
         multi = False
         bulk = False
@@ -4835,3 +4838,11 @@ def measurement_loader(results_dict):
         batch.size_check()
 
     return success
+
+
+def clear_trailing_whitespace(string):
+    while string[-1] == ' ':
+        string = string[0:-1]
+   
+    return string
+
