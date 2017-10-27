@@ -4663,9 +4663,11 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
     username_error = OrderedDict({})
     parameter_error = OrderedDict({})
     measurement_hash_exists = OrderedDict({})
+    duplicate_meas_error = OrderedDict({})
 
     measurement_file = csv.DictReader(upload_file)
     for row in measurement_file:
+        # Reads in information from the spreadsheet
         if field_book_upload:
             obs_id = row['Plot ID']
             parameter = row['trait']
@@ -4686,6 +4688,7 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
 
         start = time.clock()
 
+        # Assigns the FOREIGN_KEY.ID to the Object that the measurement is measuring
         if obs_id in obs_tracker_plot_id_table:
             obs_tracker_id = obs_tracker_plot_id_table[obs_id][0]
         elif obs_id in obs_tracker_plant_id_table:
@@ -4711,10 +4714,12 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
         elif obs_id in obs_tracker_seed_id_table:
             obs_tracker_id = obs_tracker_seed_id_table[obs_id][0]
         else:
+            # If the object does not exist in the database or the name is mistyped, it will get added to the obs_id_error column here
             obs_tracker_id = 1
             obs_id_error[(obs_id, parameter, username, time_of_measurement, value, comments)] = obs_id
             error_count = error_count + 1
 
+        # Has an experiment been asigned to this set of measurements? If not, assign it the NULL EXPERIMENT ID
         if experiment != '':
             if experiment in experiment_name_table:
                 experiment_id = experiment_name_table[experiment][0]
@@ -4723,6 +4728,7 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
         else:
             experiment_id = 1
 
+        # Username check
         if username != '':
             if username in user_hash_table:
                 user_id = user_hash_table[username]
@@ -4733,13 +4739,16 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
         else:
             user_id = user_hash_table['unknown_person']
 
+        # Checks if parameter is valid, if not adds it to the parameter error table
         if parameter in measurement_param_name_table:
             parameter_id = measurement_param_name_table[parameter][0]
         elif parameter + '\r' in measurement_param_name_table:
             parameter_id = measurement_param_name_table[parameter + '\r'][0]
         else:
-            raise KeyError("Measurement parameter: \'{0}\' not found in parameter table!".format(parameter))
+            parameter_error[(parameter)] = parameter
+            raise KeyError("Measurement parameter: \'{}\' not found in parameter table!".format(parameter))
 
+        # Hashes the measurement object and makes it sure it does not already exist in the database; if so: add to the duplicate parameter data table
         measurement_hash = str(obs_tracker_id) + str(parameter_id) + time_of_measurement + value + comments
         measurement_hash_fix = measurement_hash + '\r'
         if measurement_hash not in measurement_hash_table and measurement_hash_fix not in measurement_hash_table:
@@ -4747,7 +4756,7 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
             measurement_new[(measurement_id, obs_tracker_id, parameter_id, user_id, time_of_measurement, value, comments, experiment_id)] = measurement_id
             measurement_id = measurement_id + 1
         else:
-            obs_id_error[(obs_id, obs_tracker_id, parameter, user_id, time_of_measurement, value, comments)] = measurement_id
+            duplicate_meas_error[(obs_id, obs_tracker_id, parameter, user_id, time_of_measurement, value, comments)] = measurement_id
             error_count += 1
 
     end = time.clock()
@@ -4757,6 +4766,7 @@ def measurement_loader_prep(upload_file, user, field_book_upload=False):
     results_dict = {}
     results_dict['measurement_new'] = measurement_new
     results_dict['obs_id_error'] = obs_id_error
+    results_dict['duplicate_meas_error'] = duplicate_meas_error
     results_dict['username_error'] = username_error
     results_dict['parameter_error'] = parameter_error
     results_dict['measurement_hash_exists'] = measurement_hash_exists
@@ -4780,8 +4790,13 @@ def measurement_loader_prep_output(results_dict, new_upload_exp, template_type):
     writer.writerow(['---------------------------------------------------------------------------------------------------'])
     writer.writerow([''])
     writer.writerow(['Observation ID Errors'])
-    writer.writerow(['observation_id', 'parameter', 'username', 'time_of_measurement', 'value', 'comments'])
+    writer.writerow(['observation_id', 'obs_tracker_id', 'parameter', 'user_id', 'time_of_measurement', 'value', 'comments'])
     for key in results_dict['obs_id_error'].iterkeys():
+        writer.writerow(key)
+    writer.writerow([''])
+    writer.writerow(['Duplicate Upload Errors'])
+    writer.writerow(['observation_id', 'obs_tracker_id', 'parameter', 'user_id', 'time_of_measurement', 'value', 'comments'])
+    for key in results_dict['duplicate_meas_error'].iterkeys():
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Username Errors'])
@@ -4790,7 +4805,7 @@ def measurement_loader_prep_output(results_dict, new_upload_exp, template_type):
         writer.writerow(key)
     writer.writerow([''])
     writer.writerow(['Parameter Errors'])
-    writer.writerow(['observation_id', 'parameter', 'username', 'time_of_measurement', 'value', 'comments'])
+    writer.writerow(['Parameter Name'])
     for key in results_dict['parameter_error'].iterkeys():
         writer.writerow([key])
     writer.writerow([''])
