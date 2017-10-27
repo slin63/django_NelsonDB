@@ -391,7 +391,7 @@ class LogSeedDataOnlineForm(forms.Form):
 
 class LogStockPacketOnlineForm(forms.Form):
     stock__seed_id = forms.ModelChoiceField(queryset=Stock.objects.all(), empty_label="--- Seed ID ---", required=True)
-    packet_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Packet ID'}), required=True) 
+    packet_id = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Packet ID'}), required=True)
     last_seen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Date last seen'}), required=False)
     last_weight = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Last weight'}), required=False)
     gen = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Generation'}), required=False)
@@ -799,6 +799,9 @@ class HarvestDateForm(forms.Form):
     file_name = forms.FileField(help_text="Select your file:")
     verified = forms.BooleanField(help_text="Verified:", required=True)
 
+class PacketWeightForm(forms.Form):
+    file_name = forms.FileField(help_text="Select your file:")
+    verified = forms.BooleanField(help_text="Verified:", required=True)
 
 class TreatmentForm(forms.Form):
     file_name = forms.FileField(help_text="Select your file:")

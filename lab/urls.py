@@ -180,6 +180,7 @@ urlpatterns = patterns('',
                        url(r'^data/separation/$', views.separation_data_browse, name='separation_data_browse'),
                        url(r'^data/separation/(?P<experiment_name>\w+)/$', views.separation_data_from_experiment, name='separation_data_from_experiment'),
 
+                       url(r'^data/packet_weight/$', views_packet.add_packet_weights, name='packet_weight'),
                        url(r'^data/harvest_date/$', views_plot.add_harvest_date, name='harvest_date'),
                        url(r'^data/plot_treatment/$', views_plot.add_treatment, name='plot_treatment'),
 

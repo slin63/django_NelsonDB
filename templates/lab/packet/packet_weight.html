@@ -1,0 +1,40 @@
+{% extends "lab/base.html" %}
+
+{% block title %}Add Packet Weights{% endblock %}
+
+{% block body_block %}
+<div class="hero-unit">
+  <h1>Add Packet Weights</h1>
+</div>
+
+<form class="form-signin" id="packet_weight" enctype="multipart/form-data" method="post" action="/lab/data/packet_weight/"
+  <div style="-webkit-box-shadow:2px 2px 3px 3px #888888; -moz-box-shadow:2px 2px 3px 3px #888888; box-shadow:2px 2px 3px 3px #888888; padding:15px">
+
+    {% include "lab/packet/packet_weight_info.html" %}
+
+  <hr>
+  <h4 class="bg-default">&nbsp;<br/>&nbsp;&nbsp;&nbsp;Contact slin63@illinois.edu if you need assistance.<br/>&nbsp;</h4>
+  <hr>
+  {% csrf_token %}
+  <h3 class="form-signin-heading">Upload Data:</h3>
+  {% for field in upload_form.visible_fields %}
+    <div class="row">
+      <div class="span4 offset1"><font color="247eca">{{ field.help_text }}</font></div>
+      <div class="span3">{{ field }}</div>
+      <div class="span4"><font color="red">{{ field.errors }}</font></div>
+    </div>
+  {% endfor %}
+  <input class="btn btn-primary" type="submit" name="submit" value="Submit" />
+  </div>
+</form>
+
+{% if success %}
+    <h4 class="bg-success">&nbsp;<br/>&nbsp;&nbsp;&nbsp;{{ success  }}<br/>&nbsp;</h4>
+{% endif %}
+
+{% if errors %}
+    <h4 class="bg-danger">&nbsp;<br/>&nbsp;&nbsp;&nbsp;{{ errors }}<br/>&nbsp;</h4>
+{% endif %}
+
+
+{% endblock %}

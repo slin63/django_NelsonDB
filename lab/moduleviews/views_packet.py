@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from lab.models import ObsTracker, Measurement, Experiment, StockPacket, Stock, ObsPlot, UploadBatch
+from lab.forms import PacketWeightForm
 from pandas import DataFrame, concat, merge
 from applets import packet_generator
 from PedigreeGen import pedigen
@@ -83,6 +84,60 @@ def preview_packets(request, exp):
     csv_string = packet_df.to_csv(index=False, index_label=False)
     file_name = "{}_packet_preview.csv".format(exp.name)
     return string_to_csv_response(csv_string, file_name)
+
+
+# Needs: PACKET_WEIGHT_PAGE.html
+@login_required
+def add_packet_weights(request):
+    context = RequestContext(request)
+    context_dict = {}
+    context_dict['logged_in_user'] = request.user.username
+    view = None
+
+    if request.method == 'POST':
+        form = PacketWeightForm(request.POST, request.FILES)
+        if form.is_valid():
+            upload_file = request.FILES['file_name']
+            if process_packet_weights(upload_file):
+                context_dict['success'] = "Packet weights added!"
+                context_dict['upload_form'] = PacketWeightForm()
+                view = render_to_response("lab/packet/packet_weight.html", context_dict, context)
+            else:
+                context_dict['errors'] = "Invalid Form"
+                context_dict['upload_form'] = PacketWeightForm()
+                view = render_to_response("lab/packet/packet_weight.html", context_dict, context)
+
+        else:
+            context_dict['errors'] = "Incomplete Form"
+            context_dict['upload_form'] = PacketWeightForm()
+            view = render_to_response("lab/packet/packet_weight.html", context_dict, context)
+
+    elif request.method == 'GET':
+        form = PacketWeightForm()
+        context_dict['upload_form'] = form
+        view = render_to_response("lab/packet/packet_weight.html", context_dict, context)
+
+    return view
+
+
+# Header file: seed_id,weight,date
+def process_packet_weights(upload_file):
+    success = True
+    rdr = csv.DictReader(upload_file)
+    try:
+        for row in rdr:
+            seed_id = row["seed_id"]
+            weight = row["weight"]
+            date = row["date"]
+            seed_packet = StockPacket.objects.get(seed_id=seed_id)
+            seed_packet.weight = weight
+            seed_packet.last_seen = date
+            seed_packet.save()
+    except StockPacket.DoesNotExist:
+        success = False
+        pass
+
+    return success
 
 
 def create_packets(request, exp):
