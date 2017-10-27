@@ -135,6 +135,7 @@ def process_packet_weights(upload_file):
             seed_packet.save()
     except StockPacket.DoesNotExist:
         success = False
+        print("{0} DoesNotExist: Check spelling or upload file.".format(seed_id))
         pass
 
     return success
